@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS users (
 -- 2. USER PROFILES
 
 CREATE TABLE IF NOT EXISTS user_profiles (
-    user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,Use Control + Shift + m to toggle the tab key moving focus. Alternatively, use esc then tab to move to the next interactive element on the page.
+
     first_name VARCHAR(100),
     last_name VARCHAR(100),
     language_code VARCHAR(20) DEFAULT 'en',
@@ -113,6 +114,47 @@ CREATE TABLE IF NOT EXISTS mining_sessions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id),
     started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    ended_at TIMESTAMPTZ,
+    last_claim_at TIMESTAMPTZ,
+    status VARCHAR(20) NOT NULL DEFAULT 'active'
+        CHECK (status IN ('active', 'completed', 'cancelled')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    CHECK (ended_at IS NULL OR ended_at >= started_at),
+    UNIQUE (id, user_id)
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS
+    idx_mining_sessions_one_active_per_user
+ON mining_sessions(user_id)
+WHERE status = 'active';
+
+
+-- 10. MINING REWARDS
+
+CREATE TABLE IF NOT EXISTS mining_rewards (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id),
+    session_id UUID NOT NULL,
+    amount_base_units NUMERIC(38,0) NOT NULL
+        CHECK (amount_base_units > 0),
+    reward_type VARCHAR(30) NOT NULL DEFAULT 'mining',
+    operation_id UUID NOT NULL UNIQUE,
+    idempotency_key VARCHAR(150) NOT NULL UNIQUE,
+    status VARCHAR(20) NOT NULL DEFAULT 'pending'
+        CHECK (status IN (
+            'pending',
+            'confirmed',
+            'rejected',
+            'reversed'
+        )),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    confirmed_at TIMESTAMPTZ,
+
+    FOREIGN KEY (session_id, user_id)
+        REFERENCES mining_sessions(id, user_id)
+);
     -- 11. REFERRAL CODES
 
 CREATE TABLE IF NOT EXISTS referral_codes (

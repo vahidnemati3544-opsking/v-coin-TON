@@ -224,6 +224,7 @@ BEGIN
         'Mining reward reservation'
     );
 
+
     RETURN QUERY
     SELECT
         p_reward_id,
@@ -231,27 +232,112 @@ BEGIN
         p_amount_base_units::NUMERIC(38,0),
         TRUE;
 END;
-$$;
-UPDATE mining_reserve
-        SET
-            distributed_base_units =
-                distributed_base_units - v_reservation.amount_base_units,
-            updated_at = clock_timestamp()
-        WHERE reserve_code = 'USER_MINING'
-          AND distributed_base_units >= v_reservation.amount_base_units;
+-- =========================================================
+-- Confirm mining reward
+-- =========================================================
 
+CREATE OR REPLACE FUNCTION confirm_mining_reward(
+    p_reward_id UUID,
+    p_operation_key VARCHAR(190)
+)
+RETURNS VARCHAR(20)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_reservation mining_reward_reservations%ROWTYPE;
+    v_operation mining_reserve_operations%ROWTYPE;
+    v_rows INTEGER;
+    v_operation_key VARCHAR(200);
+BEGIN
+    IF p_reward_id IS NULL THEN
+        RAISE EXCEPTION 'reward_id is required';
     END IF;
 
+    IF p_operation_key IS NULL
+       OR LENGTH(BTRIM(p_operation_key)) < 8
+       OR LENGTH(p_operation_key) > 190 THEN
+        RAISE EXCEPTION 'invalid operation key';
+    END IF;
+
+    v_operation_key := 'confirm:' || p_operation_key;
+
+    PERFORM 1
+    FROM mining_reserve
+    WHERE reserve_code = 'USER_MINING'
+    FOR UPDATE;
+
     IF NOT FOUND THEN
+        RAISE EXCEPTION 'USER_MINING reserve not initialized';
+    END IF;
+
+    SELECT *
+    INTO v_reservation
+    FROM mining_reward_reservations
+    WHERE reward_id = p_reward_id
+    FOR UPDATE;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'mining reward reservation not found';
+    END IF;
+
+    SELECT *
+    INTO v_operation
+    FROM mining_reserve_operations
+    WHERE operation_key = v_operation_key;
+
+    IF FOUND THEN
+        IF v_operation.reward_id <> p_reward_id
+           OR v_operation.operation_type <> 'confirmed'
+           OR v_operation.amount_base_units <> v_reservation.amount_base_units THEN
+            RAISE EXCEPTION 'operation key conflict';
+        END IF;
+
+        IF v_reservation.status = 'confirmed' THEN
+            RETURN 'confirmed';
+        END IF;
+
+        RAISE EXCEPTION 'operation history and reservation status mismatch';
+    END IF;
+
+    IF v_reservation.status = 'confirmed' THEN
+        RETURN 'confirmed';
+    END IF;
+
+    IF v_reservation.status <> 'pending' THEN
+        RAISE EXCEPTION 'only pending rewards can be confirmed';
+    END IF;
+
+    UPDATE mining_reserve
+    SET
+        pending_base_units =
+            pending_base_units - v_reservation.amount_base_units,
+        distributed_base_units =
+            distributed_base_units + v_reservation.amount_base_units,
+        updated_at = clock_timestamp()
+    WHERE reserve_code = 'USER_MINING'
+      AND pending_base_units >= v_reservation.amount_base_units
+      AND distributed_base_units + v_reservation.amount_base_units
+          <= allocated_base_units;
+
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+
+    IF v_rows <> 1 THEN
         RAISE EXCEPTION 'reserve accounting inconsistency';
     END IF;
 
     UPDATE mining_reward_reservations
     SET
-        status = 'reversed',
-        reversed_at = clock_timestamp(),
+        status = 'confirmed',
+        confirmed_at = clock_timestamp(),
         updated_at = clock_timestamp()
-    WHERE reward_id = p_reward_id;
+    WHERE reward_id = p_reward_id
+      AND status = 'pending';
+
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+
+    IF v_rows <> 1 THEN
+        RAISE EXCEPTION 'reservation status update failed';
+    END IF;
 
     INSERT INTO mining_reserve_operations (
         operation_key,
@@ -261,7 +347,143 @@ UPDATE mining_reserve
         reason
     )
     VALUES (
-        p_operation_key,
+        v_operation_key,
+        p_reward_id,
+        'confirmed',
+        v_reservation.amount_base_units,
+        'Mining reward confirmed'
+    );
+
+    RETURN 'confirmed';
+END;
+$$;
+-- =========================================================
+-- Reverse mining reward
+-- =========================================================
+
+CREATE OR REPLACE FUNCTION reverse_mining_reward(
+    p_reward_id UUID,
+    p_operation_key VARCHAR(190),
+    p_reason TEXT DEFAULT NULL
+)
+RETURNS VARCHAR(20)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_reservation mining_reward_reservations%ROWTYPE;
+    v_operation mining_reserve_operations%ROWTYPE;
+    v_rows INTEGER;
+    v_operation_key VARCHAR(200);
+BEGIN
+    IF p_reward_id IS NULL THEN
+        RAISE EXCEPTION 'reward_id is required';
+    END IF;
+
+    IF p_operation_key IS NULL
+       OR LENGTH(BTRIM(p_operation_key)) < 8
+       OR LENGTH(p_operation_key) > 190 THEN
+        RAISE EXCEPTION 'invalid operation key';
+    END IF;
+
+    v_operation_key := 'reverse:' || p_operation_key;
+
+    PERFORM 1
+    FROM mining_reserve
+    WHERE reserve_code = 'USER_MINING'
+    FOR UPDATE;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'USER_MINING reserve not initialized';
+    END IF;
+
+    SELECT *
+    INTO v_reservation
+    FROM mining_reward_reservations
+    WHERE reward_id = p_reward_id
+    FOR UPDATE;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'mining reward reservation not found';
+    END IF;
+
+    SELECT *
+    INTO v_operation
+    FROM mining_reserve_operations
+    WHERE operation_key = v_operation_key;
+
+    IF FOUND THEN
+        IF v_operation.reward_id <> p_reward_id
+           OR v_operation.operation_type <> 'reversed'
+           OR v_operation.amount_base_units <> v_reservation.amount_base_units THEN
+            RAISE EXCEPTION 'operation key conflict';
+        END IF;
+
+        IF v_reservation.status = 'reversed' THEN
+            RETURN 'reversed';
+        END IF;
+
+        RAISE EXCEPTION 'operation history and reservation status mismatch';
+    END IF;
+
+    IF v_reservation.status = 'reversed' THEN
+        RETURN 'reversed';
+    END IF;
+
+    IF v_reservation.status NOT IN ('pending', 'confirmed') THEN
+        RAISE EXCEPTION 'invalid reservation status';
+    END IF;
+
+    IF v_reservation.status = 'pending' THEN
+
+        UPDATE mining_reserve
+        SET
+            pending_base_units =
+                pending_base_units - v_reservation.amount_base_units,
+            updated_at = clock_timestamp()
+        WHERE reserve_code = 'USER_MINING'
+          AND pending_base_units >= v_reservation.amount_base_units;
+
+    ELSE
+
+        UPDATE mining_reserve
+        SET
+            distributed_base_units =
+                distributed_base_units - v_reservation.amount_base_units,
+            updated_at = clock_timestamp()
+        WHERE reserve_code = 'USER_MINING'
+          AND distributed_base_units >= v_reservation.amount_base_units;
+
+    END IF;
+
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+
+    IF v_rows <> 1 THEN
+        RAISE EXCEPTION 'reserve accounting inconsistency';
+    END IF;
+
+    UPDATE mining_reward_reservations
+    SET
+        status = 'reversed',
+        reversed_at = clock_timestamp(),
+        updated_at = clock_timestamp()
+    WHERE reward_id = p_reward_id
+      AND status IN ('pending', 'confirmed');
+
+    GET DIAGNOSTICS v_rows = ROW_COUNT;
+
+    IF v_rows <> 1 THEN
+        RAISE EXCEPTION 'reservation status update failed';
+    END IF;
+
+    INSERT INTO mining_reserve_operations (
+        operation_key,
+        reward_id,
+        operation_type,
+        amount_base_units,
+        reason
+    )
+    VALUES (
+        v_operation_key,
         p_reward_id,
         'reversed',
         v_reservation.amount_base_units,
@@ -291,8 +513,6 @@ SELECT
     updated_at
 FROM mining_reserve
 WHERE reserve_code = 'USER_MINING';
-
-
 -- =========================================================
 -- Migration completed
 -- =========================================================

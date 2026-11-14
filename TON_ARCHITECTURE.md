@@ -47,7 +47,14 @@ Blockchain: TON
 The token contract must enforce the approved supply limits and distribution rules.
 5. Token Distribution
 The approved token allocation is:
-AllocationPercentageAmountFounder20%2,000,000,000Mining Rewards50%5,000,000,000Treasury10%1,000,000,000Liquidity and Market10%1,000,000,000Ecosystem and Marketing10%1,000,000,000Total100%10,000,000,000 
+ | Allocation | Percentage | Amount |
+|---|---:|---:|
+| Founder | 20% | 2,000,000,000 |
+| Mining Rewards | 50% | 5,000,000,000 |
+| Treasury | 10% | 1,000,000,000 |
+| Liquidity and Market | 10% | 1,000,000,000 |
+| Ecosystem and Marketing | 10% | 1,000,000,000 |
+| Total | 100% | 10,000,000,000 |
 Founder allocation must follow a four-year vesting schedule.
 Mining rewards are designed around a minimum two-year distribution target and must continue according to the approved distribution rules until the allocated reserve is fully distributed.
 The smart contract implementation must prevent unauthorized changes to the approved supply and allocation rules.

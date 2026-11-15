@@ -232,14 +232,121 @@ BEGIN
         TRUE;
 END;
 $$;
-UPDATE mining_reserve
-        SET
-            distributed_base_units =
-                distributed_base_units - v_reservation.amount_base_units,
-            updated_at = clock_timestamp()
-        WHERE reserve_code = 'USER_MINING'
-          AND distributed_base_units >= v_reservation.amount_base_units;
+-- =========================================================
+-- Confirm mining reward reservation
+-- =========================================================
 
+CREATE OR REPLACE FUNCTION confirm_mining_reward(
+    p_reward_id UUID,
+    p_operation_key VARCHAR(200)
+)
+RETURNS VARCHAR(20)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_reservation mining_reward_reservations%ROWTYPE;
+BEGIN
+    IF p_reward_id IS NULL OR p_operation_key IS NULL
+       OR LENGTH(BTRIM(p_operation_key)) < 8 THEN
+        RAISE EXCEPTION 'invalid confirmation input';
+    END IF;
+
+    SELECT *
+      INTO STRICT v_reservation
+      FROM mining_reward_reservations
+     WHERE reward_id = p_reward_id
+     FOR UPDATE;
+
+    IF v_reservation.status = 'confirmed' THEN
+        RETURN 'confirmed';
+    END IF;
+
+    IF v_reservation.status <> 'pending' THEN
+        RAISE EXCEPTION 'reservation cannot be confirmed';
+    END IF;
+
+    UPDATE mining_reserve
+       SET pending_base_units = pending_base_units
+               - v_reservation.amount_base_units,
+           distributed_base_units = distributed_base_units
+               + v_reservation.amount_base_units,
+           updated_at = clock_timestamp()
+     WHERE reserve_code = 'USER_MINING'
+       AND pending_base_units >= v_reservation.amount_base_units;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'reserve accounting inconsistency';
+    END IF;
+
+    UPDATE mining_reward_reservations
+       SET status = 'confirmed',
+           confirmed_at = clock_timestamp(),
+           updated_at = clock_timestamp()
+     WHERE reward_id = p_reward_id;
+
+    INSERT INTO mining_reserve_operations (
+        operation_key, reward_id, operation_type,
+        amount_base_units, reason
+    )
+    VALUES (
+        p_operation_key, p_reward_id, 'confirmed',
+        v_reservation.amount_base_units,
+        'Mining reward confirmed'
+    );
+
+    RETURN 'confirmed';
+END;
+$$;
+
+
+-- =========================================================
+-- Reverse mining reward reservation
+-- =========================================================
+
+CREATE OR REPLACE FUNCTION reverse_mining_reward(
+    p_reward_id UUID,
+    p_operation_key VARCHAR(200),
+    p_reason TEXT
+)
+RETURNS VARCHAR(20)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_reservation mining_reward_reservations%ROWTYPE;
+BEGIN
+    IF p_reward_id IS NULL OR p_operation_key IS NULL
+       OR LENGTH(BTRIM(p_operation_key)) < 8 THEN
+        RAISE EXCEPTION 'invalid reversal input';
+    END IF;
+
+    SELECT *
+      INTO STRICT v_reservation
+      FROM mining_reward_reservations
+     WHERE reward_id = p_reward_id
+     FOR UPDATE;
+
+    IF v_reservation.status = 'reversed' THEN
+        RETURN 'reversed';
+    END IF;
+
+    IF v_reservation.status = 'pending' THEN
+        UPDATE mining_reserve
+           SET pending_base_units = pending_base_units
+                   - v_reservation.amount_base_units,
+               updated_at = clock_timestamp()
+         WHERE reserve_code = 'USER_MINING'
+           AND pending_base_units >= v_reservation.amount_base_units;
+
+    ELSIF v_reservation.status = 'confirmed' THEN
+        UPDATE mining_reserve
+           SET distributed_base_units = distributed_base_units
+                   - v_reservation.amount_base_units,
+               updated_at = clock_timestamp()
+         WHERE reserve_code = 'USER_MINING'
+           AND distributed_base_units >= v_reservation.amount_base_units;
+
+    ELSE
+        RAISE EXCEPTION 'reservation cannot be reversed';
     END IF;
 
     IF NOT FOUND THEN
@@ -247,32 +354,23 @@ UPDATE mining_reserve
     END IF;
 
     UPDATE mining_reward_reservations
-    SET
-        status = 'reversed',
-        reversed_at = clock_timestamp(),
-        updated_at = clock_timestamp()
-    WHERE reward_id = p_reward_id;
+       SET status = 'reversed',
+           reversed_at = clock_timestamp(),
+           updated_at = clock_timestamp()
+     WHERE reward_id = p_reward_id;
 
     INSERT INTO mining_reserve_operations (
-        operation_key,
-        reward_id,
-        operation_type,
-        amount_base_units,
-        reason
+        operation_key, reward_id, operation_type,
+        amount_base_units, reason
     )
     VALUES (
-        p_operation_key,
-        p_reward_id,
-        'reversed',
-        v_reservation.amount_base_units,
-        p_reason
+        p_operation_key, p_reward_id, 'reversed',
+        v_reservation.amount_base_units, p_reason
     );
 
     RETURN 'reversed';
 END;
 $$;
-
-
 -- =========================================================
 -- Reserve integrity view
 -- =========================================================

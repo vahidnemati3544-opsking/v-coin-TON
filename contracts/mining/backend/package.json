@@ -1,14 +1,14 @@
 {
   "name": "vcoin-ton-backend",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "private": true,
   "description": "V COIN TON Backend Core Engine",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
-    "test": "node --test",
-    "check": "node --check src/server.js && node --check src/config/database.js"
+    "check": "node --check src/server.js && node --check src/config/database.js",
+    "test": "node --test"
   },
   "engines": {
     "node": ">=22"

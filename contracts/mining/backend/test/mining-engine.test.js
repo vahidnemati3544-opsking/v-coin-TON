@@ -7,7 +7,7 @@ const {
   parseRate,
   calculateReward,
   createMiningEngine
-} = require('../../engine.gs');
+} = require('../../engine.js');
 
 test('parseRate converts decimal rates to 12-place integers', () => {
   assert.equal(parseRate('1').toString(), '1000000000000');

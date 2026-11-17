@@ -21,7 +21,7 @@ function parseRate(rate) {
   }
 
   const value = String(rate).trim();
-  if (!/^(0|[1-9]\\d*)(\\.\\d{1,12})?$/.test(value)) {
+  if (!/^(0|[1-9]\d*)(\.\d{1,12})?$/.test(value)) {
     throw new MiningError('INVALID_RATE', 'Mining rate format is invalid.');
   }
 

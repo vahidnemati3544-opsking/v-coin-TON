@@ -128,7 +128,25 @@ Before production:
 
 11. Development Status
 
-Architecture specification and development preparation.
+The backend mining engine implementation is in progress.
+
+Implemented in engine.gs:
+- PostgreSQL-transactional mining session start and completion.
+- Server-side elapsed-time calculation using the database clock.
+- Integer-only reward calculation in indivisible VCOIN base units.
+- Idempotency-key checks for reward claims.
+- Reservation of pending rewards against the fixed mining reserve.
+- Unit tests for rate parsing and reward arithmetic.
+- GitHub Actions checks for JavaScript syntax and unit tests.
+
+Not yet implemented or verified:
+- Posting confirmed rewards to the double-entry ledger and user balance snapshots.
+- A reviewed administrative confirmation/reversal workflow.
+- Integration tests against a real PostgreSQL instance.
+- Concurrency, abuse, and security tests.
+- TON Jetton distribution and blockchain reconciliation.
+
+The engine must remain disabled for real reward issuance until all accounting, security, integration, and operator-approval gates pass. Pending reserve records are not proof of user ownership or on-chain token distribution.
 
 No production mining or reward distribution is authorized at this stage.
 

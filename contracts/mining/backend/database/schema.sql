@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- 2. USER PROFILES
 
 CREATE TABLE IF NOT EXISTS user_profiles (
-    user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,Use Control + Shift + m to toggle the tab key moving focus. Alternatively, use esc then tab to move to the next interactive element on the page.
+    user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,-- Removed accidental editor help text from SQL source.
 
     first_name VARCHAR(100),
     last_name VARCHAR(100),

@@ -2,8 +2,8 @@
 
 const { randomUUID } = require('node:crypto');
 
-const SCALE = 10n ** 12n;
-const DENOMINATOR = SCALE * 1000n;
+const RATE_SCALE = 10n ** 12n;
+const REWARD_DENOMINATOR = RATE_SCALE * 1000n;
 
 class MiningError extends Error {
   constructor(code, message) {
@@ -17,294 +17,205 @@ function parseRate(rate) {
   if (typeof rate !== 'string' && typeof rate !== 'number') {
     throw new MiningError('INVALID_RATE', 'Mining rate must be a string or number.');
   }
-
   const value = String(rate).trim();
-
   if (!/^(0|[1-9]\d*)(\.\d{1,12})?$/.test(value)) {
-    throw new MiningError('INVALID_RATE', 'Mining rate format is invalid.');
+    throw new MiningError('INVALID_RATE', 'Mining rate must have up to 12 decimal places.');
   }
-
   const [whole, fraction = ''] = value.split('.');
-  const scaled = BigInt(whole) * SCALE +
+  return BigInt(whole) * RATE_SCALE +
     BigInt((fraction + '0'.repeat(12)).slice(0, 12));
-
-  if (scaled <= 0n) {
-    throw new MiningError('INVALID_RATE', 'Mining rate must be greater than zero.');
-  }
-
-  return scaled;
 }
 
 function calculateReward(rate, elapsedMilliseconds) {
   const scaledRate = typeof rate === 'bigint' ? rate : parseRate(rate);
-  const elapsed = BigInt(elapsedMilliseconds);
-
-  if (scaledRate <= 0n || elapsed < 0n) {
-    throw new MiningError('INVALID_REWARD_INPUT', 'Invalid reward calculation input.');
+  let elapsed;
+  try { elapsed = BigInt(elapsedMilliseconds); } catch {
+    throw new MiningError('INVALID_ELAPSED_TIME', 'Elapsed time must be an integer number of milliseconds.');
   }
-
-  return (scaledRate * elapsed) / DENOMINATOR;
+  if (scaledRate < 0n || elapsed < 0n) {
+    throw new MiningError('INVALID_REWARD_INPUT', 'Reward inputs cannot be negative.');
+  }
+  return (scaledRate * elapsed) / REWARD_DENOMINATOR;
 }
 
-function validateUserId(userId) {
-  if (
-    typeof userId !== 'string' ||
-    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)
-  ) {
-    throw new MiningError('INVALID_USER_ID', 'A valid user UUID is required.');
+function validateUuid(value, code, label) {
+  if (typeof value !== 'string' ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)) {
+    throw new MiningError(code, label + ' must be a valid UUID.');
   }
 }
 
 function validateIdempotencyKey(key) {
-  if (
-    typeof key !== 'string' ||
-    key.length < 8 ||
-    key.length > 150 ||
-    !/^[a-zA-Z0-9._:-]+$/.test(key)
-  ) {
-    throw new MiningError(
-      'INVALID_IDEMPOTENCY_KEY',
-      'Idempotency key must contain 8 to 150 valid characters.'
-    );
+  if (typeof key !== 'string' || key.length < 8 || key.length > 150 ||
+      !/^[a-zA-Z0-9._:-]+$/.test(key)) {
+    throw new MiningError('INVALID_IDEMPOTENCY_KEY', 'Idempotency key must contain 8 to 150 valid characters.');
   }
 }
 
 async function withTransaction(pool, callback) {
   const client = await pool.connect();
-
   try {
     await client.query('BEGIN');
     const result = await callback(client);
     await client.query('COMMIT');
     return result;
   } catch (error) {
-    try {
-      await client.query('ROLLBACK');
-    } catch (_) {
-      // Preserve the original transaction error.
-    }
+    try { await client.query('ROLLBACK'); } catch (_) { /* preserve original error */ }
     throw error;
   } finally {
     client.release();
   }
 }
 
-function createMiningEngine({ pool, getMiningRate }) {
+function createMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
   if (!pool || typeof pool.connect !== 'function') {
     throw new MiningError('INVALID_DATABASE_POOL', 'A PostgreSQL pool is required.');
   }
-
-  if (typeof getMiningRate !== 'function') {
-    throw new MiningError('INVALID_RATE_PROVIDER', 'getMiningRate callback is required.');
+  if (!Number.isSafeInteger(maxClaimIntervalMs) || maxClaimIntervalMs <= 0) {
+    throw new MiningError('INVALID_CLAIM_INTERVAL', 'Maximum claim interval must be a positive integer.');
   }
 
-  async function lockUser(client, userId) {
+  async function lockActiveUser(client, userId) {
     const result = await client.query(
-      'SELECT id FROM users WHERE id = $1 FOR UPDATE',
+      'SELECT id, account_status FROM users WHERE id = $1 FOR UPDATE',
       [userId]
     );
-
-    if (result.rowCount !== 1) {
-      throw new MiningError('USER_NOT_FOUND', 'User does not exist.');
+    if (result.rowCount !== 1) throw new MiningError('USER_NOT_FOUND', 'User does not exist.');
+    if (result.rows[0].account_status !== 'active') {
+      throw new MiningError('USER_NOT_ACTIVE', 'User account is not active.');
     }
   }
 
-  async function getExistingReward(client, userId, sessionId, key) {
-    const result = await client.query(
-      SELECT id, user_id, session_id, amount_base_units, status
-         FROM mining_rewards
-        WHERE idempotency_key = $1,
-      [key]
+  async function accrue(client, userId, session, idempotencyKey) {
+    const rateResult = await client.query(
+      'SELECT l.mining_rate_base_units_per_second ' +
+      'FROM user_levels ul JOIN levels l ON l.level = ul.current_level ' +
+      'WHERE ul.user_id = $1',
+      [userId]
+    );
+    if (rateResult.rowCount !== 1) {
+      throw new MiningError('USER_LEVEL_NOT_CONFIGURED', 'User level or mining rate is not configured.');
+    }
+
+    const clock = await client.query('SELECT clock_timestamp() AS now');
+    const now = new Date(clock.rows[0].now);
+    const lastClaim = new Date(session.last_claim_at || session.started_at);
+    const elapsedMs = now.getTime() - lastClaim.getTime();
+    if (!Number.isFinite(elapsedMs) || elapsedMs < 0) {
+      throw new MiningError('INVALID_SESSION_TIME', 'Mining session timestamps are invalid.');
+    }
+    if (elapsedMs > maxClaimIntervalMs) {
+      throw new MiningError('CLAIM_INTERVAL_EXCEEDED', 'Mining claim interval exceeded the configured maximum.');
+    }
+
+    const amount = calculateReward(String(rateResult.rows[0].mining_rate_base_units_per_second), elapsedMs);
+    if (amount <= 0n) {
+      throw new MiningError('REWARD_TOO_SMALL', 'Accrued reward is below one token base unit.');
+    }
+
+    const inserted = await client.query(
+      'INSERT INTO mining_rewards ' +
+      '(id, user_id, session_id, amount_base_units, reward_type, operation_id, idempotency_key, status) ' +
+      "VALUES ($1, $2, $3, $4::numeric, 'mining', $5, $6, 'pending') " +
+      'RETURNING id, user_id, session_id, amount_base_units, status, created_at',
+      [randomUUID(), userId, session.id, amount.toString(), randomUUID(), idempotencyKey]
     );
 
-    if (result.rowCount === 0) return null;
-
-    const reward = result.rows[0];
-
-    if (
-      reward.user_id !== userId ||
-      reward.session_id !== sessionId
-    ) {
-      throw new MiningError(
-        'IDEMPOTENCY_CONFLICT',
-        'This idempotency key belongs to another mining session.'
-      );
-    }
-
-    return {
-      id: reward.id,
-      amountBaseUnits: reward.amount_base_units,
-      status: reward.status,
-      duplicate: true
-    };
+    await client.query(
+      'UPDATE mining_sessions SET last_claim_at = $2, updated_at = $2 ' +
+      "WHERE id = $1 AND user_id = $3 AND status = 'active'",
+      [session.id, now, userId]
+    );
+    return inserted.rows[0];
   }
-  if (activeResult.rowCount > 0) {
-        throw new MiningError(
-          'ACTIVE_SESSION_EXISTS',
-          'User already has an active mining session.'
-        );
-      }
 
-      const sessionId = randomUUID();
-
-      const result = await client.query(
-        INSERT INTO mining_sessions (
-           id,
-           user_id,
-           started_at,
-           last_claim_at,
-           status,
-           created_at,
-           updated_at
-         )
-         VALUES (
-           $1,
-           $2,
-           clock_timestamp(),
-           NULL,
-           'active',
-           clock_timestamp(),
-           clock_timestamp()
-         )
-         RETURNING id, user_id, started_at, status,
-        [sessionId, userId]
+  async function startSession({ userId }) {
+    validateUuid(userId, 'INVALID_USER_ID', 'User ID');
+    return withTransaction(pool, async (client) => {
+      await lockActiveUser(client, userId);
+      const level = await client.query(
+        'SELECT 1 FROM user_levels ul JOIN levels l ON l.level = ul.current_level WHERE ul.user_id = $1',
+        [userId]
       );
-
+      if (level.rowCount !== 1) {
+        throw new MiningError('USER_LEVEL_NOT_CONFIGURED', 'User level or mining rate is not configured.');
+      }
+      const result = await client.query(
+        "INSERT INTO mining_sessions (id, user_id, started_at, last_claim_at, status, created_at, updated_at) " +
+        "VALUES ($1, $2, clock_timestamp(), clock_timestamp(), 'active', clock_timestamp(), clock_timestamp()) " +
+        'RETURNING id, user_id, started_at, last_claim_at, status',
+        [randomUUID(), userId]
+      );
       return result.rows[0];
     });
   }
-async function claimReward({ userId, idempotencyKey }) {
-    validateUserId(userId);
+
+  async function claimReward({ userId, idempotencyKey }) {
+    validateUuid(userId, 'INVALID_USER_ID', 'User ID');
     validateIdempotencyKey(idempotencyKey);
-
     return withTransaction(pool, async (client) => {
-      await lockUser(client, userId);
+      await lockActiveUser(client, userId);
+      const duplicate = await client.query(
+        'SELECT id, user_id, session_id, amount_base_units, status ' +
+        'FROM mining_rewards WHERE idempotency_key = $1',
+        [idempotencyKey]
+      );
+      if (duplicate.rowCount) {
+        if (duplicate.rows[0].user_id !== userId) {
+          throw new MiningError('IDEMPOTENCY_CONFLICT', 'Idempotency key belongs to another user.');
+        }
+        return { ...duplicate.rows[0], duplicate: true };
+      }
 
-      const sessionResult = await client.query(
-        SELECT id
-           FROM mining_sessions
-          WHERE user_id = $1
-            AND status = 'active'
-          LIMIT 1
-          FOR UPDATE,
+      const result = await client.query(
+        "SELECT id, started_at, last_claim_at FROM mining_sessions " +
+        "WHERE user_id = $1 AND status = 'active' FOR UPDATE",
         [userId]
       );
-
-      if (sessionResult.rowCount !== 1) {
-        throw new MiningError(
-          'ACTIVE_SESSION_NOT_FOUND',
-          'User has no active mining session.'
-        );
+      if (result.rowCount !== 1) {
+        throw new MiningError('ACTIVE_SESSION_NOT_FOUND', 'User has no active mining session.');
       }
-
-      return accrue(
-        client,
-        userId,
-        sessionResult.rows[0].id,
-        idempotencyKey
-      );
+      return accrue(client, userId, result.rows[0], idempotencyKey);
     });
   }
 
-  async function endSession({
-    userId,
-    sessionId,
-    finalClaimIdempotencyKey
-  }) {
-    validateUserId(userId);
+  async function endSession({ userId, sessionId, finalClaimIdempotencyKey }) {
+    validateUuid(userId, 'INVALID_USER_ID', 'User ID');
+    validateUuid(sessionId, 'INVALID_SESSION_ID', 'Session ID');
     validateIdempotencyKey(finalClaimIdempotencyKey);
-
-    if (
-      typeof sessionId !== 'string' ||
-      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sessionId)
-    ) {
-      throw new MiningError(
-        'INVALID_SESSION_ID',
-        'A valid session UUID is required.'
-      );
-    }
-
     return withTransaction(pool, async (client) => {
-      await lockUser(client, userId);
-
-      const sessionResult = await client.query(
-        SELECT id
-           FROM mining_sessions
-          WHERE id = $1
-            AND user_id = $2
-            AND status = 'active'
-          FOR UPDATE,
+      await lockActiveUser(client, userId);
+      const result = await client.query(
+        "SELECT id, started_at, last_claim_at FROM mining_sessions " +
+        "WHERE id = $1 AND user_id = $2 AND status = 'active' FOR UPDATE",
         [sessionId, userId]
       );
-
-      if (sessionResult.rowCount !== 1) {
-        throw new MiningError(
-          'ACTIVE_SESSION_NOT_FOUND',
-          'The requested active mining session was not found.'
-        );
+      if (result.rowCount !== 1) {
+        throw new MiningError('ACTIVE_SESSION_NOT_FOUND', 'Requested active mining session was not found.');
       }
-
-      const previousFinalReward = await client.query(
-        SELECT id
-           FROM mining_rewards
-          WHERE idempotency_key = $1,
+      const duplicate = await client.query(
+        'SELECT id FROM mining_rewards WHERE idempotency_key = $1',
         [finalClaimIdempotencyKey]
       );
-
-      if (previousFinalReward.rowCount > 0) {
-        throw new MiningError(
-          'IDEMPOTENCY_CONFLICT',
-          'A separate idempotency key is required for the final session claim.'
-        );
+      if (duplicate.rowCount) {
+        throw new MiningError('IDEMPOTENCY_CONFLICT', 'Final claim key has already been used.');
       }
 
-      const finalReward = await accrue(
-        client,
-        userId,
-        sessionId,
-        finalClaimIdempotencyKey
-      );
-
-      const updateResult = await client.query(
-        UPDATE mining_sessions
-            SET status = 'completed',
-                ended_at = clock_timestamp(),
-                updated_at = clock_timestamp()
-          WHERE id = $1
-            AND user_id = $2
-            AND status = 'active'
-          RETURNING id, status, ended_at,
+      const finalReward = await accrue(client, userId, result.rows[0], finalClaimIdempotencyKey);
+      const updated = await client.query(
+        "UPDATE mining_sessions SET status = 'completed', ended_at = clock_timestamp(), " +
+        "updated_at = clock_timestamp() WHERE id = $1 AND user_id = $2 AND status = 'active' " +
+        'RETURNING id, status, ended_at',
         [sessionId, userId]
       );
-
-      if (updateResult.rowCount !== 1) {
-        throw new MiningError(
-          'SESSION_COMPLETION_FAILED',
-          'Mining session could not be completed.'
-        );
+      if (updated.rowCount !== 1) {
+        throw new MiningError('SESSION_COMPLETION_FAILED', 'Mining session could not be completed.');
       }
-
-      return {
-        session: updateResult.rows[0],
-        finalReward
-      };
+      return { session: updated.rows[0], finalReward };
     });
   }
 
-  return Object.freeze({
-    startSession,
-    claimReward,
-    endSession
-  });
+  return Object.freeze({ startSession, claimReward, endSession });
 }
 
-module.exports = {
-  MiningError,
-  parseRate,
-  calculateReward,
-  createMiningEngine
-};
-  
-  
-  
-  
+module.exports = { MiningError, parseRate, calculateReward, createMiningEngine };

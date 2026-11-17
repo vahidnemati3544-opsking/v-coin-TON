@@ -111,7 +111,7 @@ async function startServer() {
     await connectDatabase();
 
     server = app.listen(PORT, "0.0.0.0", () => {
-      console.log(V COIN TON Backend running on port ${PORT});
+      console.log(`V COIN TON Backend running on port ${PORT}`);
     });
 
     let shuttingDown = false;
@@ -120,7 +120,7 @@ async function startServer() {
       if (shuttingDown) return;
 
       shuttingDown = true;
-      console.log(${signal} received. Shutting down gracefully...);
+      console.log(`${signal} received. Shutting down gracefully...`);
 
       server.close(async () => {
         try {

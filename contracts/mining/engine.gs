@@ -225,6 +225,35 @@ function createMiningEngine({ pool, getMiningRate }) {
     };
   }
 
+  async function confirmReward({ rewardId, operationKey }) {
+    validateUuid(rewardId, 'INVALID_REWARD_ID', 'reward');
+    validateIdempotencyKey(operationKey);
+
+    return withTransaction(pool, async (client) => {
+      const result = await client.query(
+        `SELECT *
+           FROM post_mining_reward($1, $2)`,
+        [rewardId, operationKey]
+      );
+
+      if (result.rowCount !== 1 || result.rows[0].result_status !== 'posted') {
+        throw new MiningError(
+          'REWARD_POSTING_FAILED',
+          'Mining reward could not be posted to the internal ledger.'
+        );
+      }
+
+      return {
+        rewardId: result.rows[0].result_reward_id,
+        userId: result.rows[0].result_user_id,
+        amountBaseUnits: String(result.rows[0].result_amount_base_units),
+        ledgerTransactionId: result.rows[0].result_ledger_transaction_id,
+        availableReserveBaseUnits: String(result.rows[0].result_available_reserve_base_units),
+        status: 'confirmed'
+      };
+    });
+  }
+
   async function startSession({ userId }) {
     validateUuid(userId, 'INVALID_USER_ID', 'user');
     return withTransaction(pool, async (client) => {
@@ -357,7 +386,7 @@ function createMiningEngine({ pool, getMiningRate }) {
     });
   }
 
-  return Object.freeze({ startSession, claimReward, endSession });
+  return Object.freeze({ startSession, claimReward, endSession, confirmReward });
 }
 
 module.exports = {

@@ -139,14 +139,22 @@ Implemented in engine.gs:
 - Unit tests for rate parsing and reward arithmetic.
 - GitHub Actions checks for JavaScript syntax and unit tests.
 
-Not yet implemented or verified:
-- Posting confirmed rewards to the double-entry ledger and user balance snapshots.
-- A reviewed administrative confirmation/reversal workflow.
-- Integration tests against a real PostgreSQL instance.
-- Concurrency, abuse, and security tests.
+Implemented in the isolated backend branch (database migration not yet applied or PostgreSQL-verified):
+- Atomic reward-posting migration in database/migrations/002-mining-ledger-posting.sql.
+- Double-entry posting: debit mining-reward expense and credit the user's internal VCOIN liability account.
+- Atomic update of the user's available internal balance snapshot.
+- Reward and reserve confirmation in the same PostgreSQL transaction.
+- Idempotent retry through the reward's unique operation ID and ledger transaction.
+
+Still not implemented or verified:
+- Applying and validating migrations against the project's actual PostgreSQL database.
+- Real PostgreSQL integration, rollback, and concurrency tests.
+- A protected administrative/API workflow for approving or reversing rewards.
+- Independent reconciliation tests proving ledger entries and balance snapshots agree.
+- Abuse and security tests.
 - TON Jetton distribution and blockchain reconciliation.
 
-The engine must remain disabled for real reward issuance until all accounting, security, integration, and operator-approval gates pass. Pending reserve records are not proof of user ownership or on-chain token distribution.
+The engine must remain disabled for real reward issuance until all accounting, security, integration, and operator-approval gates pass. Internal balance credits are not proof of wallet ownership or on-chain token distribution.
 
 No production mining or reward distribution is authorized at this stage.
 

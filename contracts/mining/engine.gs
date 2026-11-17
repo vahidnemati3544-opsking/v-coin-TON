@@ -291,17 +291,43 @@ function createMiningEngine({ pool, getMiningRate }) {
       await lockActiveUser(client, userId);
 
       const sessionResult = await client.query(
-        `SELECT id, started_at, last_claim_at
+        `SELECT id, started_at, last_claim_at, status, ended_at
            FROM mining_sessions
           WHERE id = $1
             AND user_id = $2
-            AND status = 'active'
           FOR UPDATE`,
         [sessionId, userId]
       );
 
       if (sessionResult.rowCount !== 1) {
-        throw new MiningError('ACTIVE_SESSION_NOT_FOUND', 'Requested active mining session was not found.');
+        throw new MiningError('SESSION_NOT_FOUND', 'Requested mining session was not found.');
+      }
+
+      if (sessionResult.rows[0].status === 'completed') {
+        const previousFinalReward = await findExistingReward(
+          client,
+          userId,
+          finalClaimIdempotencyKey,
+          sessionId
+        );
+        if (!previousFinalReward) {
+          throw new MiningError(
+            'SESSION_ALREADY_COMPLETED',
+            'Session is completed and its final reward key does not match.'
+          );
+        }
+        return {
+          session: {
+            id: sessionId,
+            status: 'completed',
+            ended_at: sessionResult.rows[0].ended_at
+          },
+          finalReward: previousFinalReward
+        };
+      }
+
+      if (sessionResult.rows[0].status !== 'active') {
+        throw new MiningError('ACTIVE_SESSION_NOT_FOUND', 'Requested mining session is not active.');
       }
 
       const finalReward = await accrue(

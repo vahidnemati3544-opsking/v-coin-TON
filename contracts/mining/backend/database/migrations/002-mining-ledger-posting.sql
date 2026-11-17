@@ -59,6 +59,20 @@ BEGIN
             RAISE EXCEPTION 'Existing ledger transaction is not consistently posted';
         END IF;
 
+        -- A retry must use the exact confirmation operation that moved the reserve.
+        -- Otherwise a different key could silently reuse an already-posted reward.
+        PERFORM 1
+          FROM mining_reserve_operations
+         WHERE operation_key = p_operation_key
+           AND reward_id = v_reward.id
+           AND operation_type = 'confirmed'
+           AND amount_base_units = v_reward.amount_base_units;
+
+        IF NOT FOUND THEN
+            RAISE EXCEPTION
+                'Posted reward retry must use its original confirmation operation key';
+        END IF;
+
         v_available := v_reserve.allocated_base_units
                      - v_reserve.pending_base_units
                      - v_reserve.distributed_base_units;

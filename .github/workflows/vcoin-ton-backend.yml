@@ -14,6 +14,26 @@ permissions:
 jobs:
   backend:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: vcoin
+          POSTGRES_PASSWORD: vcoin_test_only
+          POSTGRES_DB: vcoin_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U vcoin -d vcoin_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGDATABASE: vcoin_test
+      PGUSER: vcoin
+      PGPASSWORD: vcoin_test_only
     defaults:
       run:
         working-directory: contracts/mining/backend
@@ -30,3 +50,5 @@ jobs:
         run: npm run check
       - name: Run unit tests
         run: npm test
+      - name: Run PostgreSQL integration tests
+        run: npm run test:integration

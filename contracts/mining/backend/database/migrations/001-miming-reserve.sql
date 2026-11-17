@@ -382,7 +382,9 @@ BEGIN
            distributed_base_units =
                distributed_base_units + v_reservation.amount_base_units,
            updated_at = clock_timestamp()
-     WHERE reserve_code = 'USER_MINING';
+     WHERE reserve_code = 'USER_MINING'
+     RETURNING *
+          INTO v_reserve;
 
     UPDATE mining_reward_reservations
        SET status = 'confirmed',

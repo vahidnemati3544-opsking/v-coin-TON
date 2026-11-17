@@ -28,6 +28,23 @@ Branch: repair/backend-foundation-2026-11-17
 - The user's local PostgreSQL database has NOT yet been migrated or verified.
 - A successful CI run does NOT mean the public application is deployed or ready for real users.
 
+## Laptop execution sequence (follow in this order)
+1. Check the laptop environment: confirm Node.js 22 or newer, PostgreSQL, and pgAdmin access. PostgreSQL/pgAdmin were previously installed by the user's specialist; do not reinstall unless a concrete fault is found.
+2. Open only repository vahidnemati3544-opsking/v-coin-TON and branch repair/backend-foundation-2026-11-17. Do not open or change the older BNB project.
+3. Prepare the backend's local environment file from contracts/mining/backend/.env.example. Enter database credentials locally only; never commit .env or expose passwords in chat/GitHub.
+4. Start the backend database connection check and verify PostgreSQL connectivity before running migrations.
+5. Select/create a dedicated V COIN–TON database and apply contracts/mining/backend/database/schema.sql once, after confirming the target database.
+6. Inspect migration history and existing objects first. If not already applied, run migration 001 (the existing filename is 001-miming-reserve.sql; do not rename it casually), then migration 002 (002-mining-ledger-posting.sql). Do not blindly rerun either migration.
+7. Run the backend PostgreSQL integration tests against the laptop database and verify reserve, reward posting, double-entry ledger, balance snapshot, and idempotent retry behavior.
+8. Implement and test the missing Express API routes for mining session start/claim/end, internal balance reads, and controlled reward confirmation. The current server foundation does not yet expose these mining routes.
+9. Implement secure Telegram Mini App/init-data authentication and session controls; no government identity/KYC flow is required by the user's product direction, but Telegram request authenticity must be verified.
+10. Connect the Telegram bot to the backend and test the complete account/session flow.
+11. Complete level progression, purchased-token balance accounting, and referral rules: 100 VCOIN for a valid invitation and 2% of qualifying referred-user activity while active. Add anti-fraud controls.
+12. Implement TON wallet connection and transaction verification. Never request or store seed phrases/private keys; do not enable real transfers at this stage.
+13. Add reconciliation, rollback, concurrency, authorization, and security tests; configure staging, HTTPS, monitoring, backups, and operational controls.
+14. After all gates pass, run a controlled end-to-end test using the user's own account. This is a test milestone, not permission for production mining, withdrawals, minting, or mainnet.
+15. Keep production/mainnet actions disabled until separate review and the user's explicit approval.
+
 ## Remaining before a controlled test launch
 1. Apply schema.sql and migrations 001 and 002 to the user's local PostgreSQL database, then verify connection and health endpoints.
 2. Implement and test API routes for mining sessions, reward claims, internal balances, and administrative approval/reversal.

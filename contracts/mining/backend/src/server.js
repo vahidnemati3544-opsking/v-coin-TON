@@ -10,7 +10,8 @@ const {
   closeDatabase,
   testDatabaseConnection
 } = require("./config/database");
-const { createTelegramAuthRouter } = require("./auth/telegram");
+const { createTelegramAuthRouter, createSessionAuthMiddleware } = require("./auth/telegram");
+const { createMiningRouter } = require("./routes/mining");
 
 const app = express();
 
@@ -49,6 +50,11 @@ app.use(
       ? telegramAuthMaxAge
       : 86400
   })
+);
+app.use(
+  "/api/v1/mining",
+  createSessionAuthMiddleware({ pool }),
+  createMiningRouter({ pool })
 );
 
 app.get("/", (req, res) => {

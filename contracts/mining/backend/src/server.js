@@ -12,6 +12,7 @@ const {
   testDatabaseConnection
 } = require("./config/database");
 const { createTelegramAuthRouter, createSessionAuthMiddleware } = require("./auth/telegram");
+const { createPriceReferenceRouter, startPriceReferenceScheduler } = require("./services/price-reference");
 
 const app = express();
 
@@ -72,6 +73,9 @@ app.use(
       : 86400
   })
 );
+// Public modelled reference price and 72-hour candle history.
+app.use("/api/v1/price-reference", createPriceReferenceRouter({ pool }));
+
 // Fail closed until the wallet-balance mining implementation is complete.
 // The current engine still uses internal PostgreSQL balances and must not be
 // exposed as an extraction API under the owner's approved TON-wallet rule.
@@ -155,9 +159,11 @@ app.use((err, req, res, next) => {
 
 async function startServer() {
   let server;
+  let stopPriceReferenceScheduler;
 
   try {
     await connectDatabase();
+    stopPriceReferenceScheduler = startPriceReferenceScheduler({ pool });
 
     server = app.listen(PORT, "0.0.0.0", () => {
       console.log(`V COIN TON Backend running on port ${PORT}`);
@@ -170,6 +176,7 @@ async function startServer() {
 
       shuttingDown = true;
       console.log(`${signal} received. Shutting down gracefully...`);
+      if (stopPriceReferenceScheduler) stopPriceReferenceScheduler();
 
       server.close(async () => {
         try {
@@ -189,6 +196,7 @@ async function startServer() {
   } catch (error) {
     console.error("Backend startup failed:", error.message);
 
+    if (stopPriceReferenceScheduler) stopPriceReferenceScheduler();
     if (server) {
       server.close();
     }

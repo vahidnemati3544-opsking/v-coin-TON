@@ -11,8 +11,11 @@ Provide a public, read-only dashboard that displays the project's internally def
 ## 2. Approved display parameters
 
 - Initial reference index: **USD 0.004000 per VCOIN**.
-- Target growth rate: **1% compounded per 72 hours**.
-- Mathematical model: `P(t) = 0.004 × 1.01^(elapsed_seconds / 259200)`.
+- Target increase: **1% of the initial USD 0.004000 reference value per completed 72-hour period**.
+- Fixed increment per period: **USD 0.000040**.
+- Mathematical model: `P(n) = 0.004000 + (n × 0.000040)`, where `n` is the number of completed 72-hour periods since the administrator starts the index.
+- This is a **linear fixed-step model**, not compound growth and not 1% of the changing current index.
+- Example: period 0 = USD 0.004000; period 1 = USD 0.004040; period 2 = USD 0.004080; period 3 = USD 0.004120.
 - The dashboard is intended to update its display every second.
 - Candlesticks should use a green visual treatment.
 - The index clock begins only when an authorized project administrator starts the extraction period and stops only when an authorized administrator declares that period finished.
@@ -41,7 +44,7 @@ Do not describe the index as a live market price, guaranteed appreciation, inves
 - PostgreSQL: persist the configured base index, growth interval/rate, start/finish timestamps, lifecycle state, and administrative audit events.
 - Use UTC timestamps internally and render local time only as a presentation choice.
 - Reconnect/reload must reproduce the same index from server state; browser local storage must not be the source of truth.
-- Validate numeric precision and rounding policy before implementation; avoid floating-point drift in persisted financial-style values.
+- Use exact integer arithmetic at 12 USD decimal places; each completed period adds exactly USD 0.000040. Avoid floating-point drift in persisted values.
 - The dashboard must remain clearly labelled as an internal model even when publicly accessible.
 
 ## 6. Candlestick definition
@@ -52,7 +55,7 @@ Candles are a visualization of the internal index only. The implementation team 
 
 1. Review the existing repository and backend before adding implementation files; avoid duplicate files and preserve existing project architecture.
 2. Implement backend persistence, public read-only API, and protected administrator controls.
-3. Add tests for compounding, time boundaries, pause/finish behavior, authorization, audit logging, and reload/reconnect consistency.
+3. Add tests for fixed-step calculation, time boundaries, pause/finish behavior, authorization, audit logging, and reload/reconnect consistency.
 4. Review security and ensure public endpoints disclose no secrets or private treasury/founder information.
 5. Deploy only after the owner supplies or confirms the production hosting provider and domain/subdomain, and deployment credentials/access are available.
 6. Verify HTTPS, public reachability, monitoring, backups, and search-engine indexing configuration separately. GitHub registration alone does not publish a website or make it searchable.

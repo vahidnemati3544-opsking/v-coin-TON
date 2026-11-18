@@ -11,7 +11,9 @@
   const resetButton = document.getElementById('reset-view');
   const ctx = canvas.getContext('2d');
 
-  const state = { candles: [], status: 'idle', scale: 1, offset: 0, dragX: null, plot: null, hitBoxes: [] };
+  const INITIAL_REFERENCE_PRICE = 0.004;
+  const FIXED_PERIOD_INCREMENT = 0.00004;
+  const state = { candles: [], current: null, status: 'idle', scale: 1, offset: 0, dragX: null, plot: null, hitBoxes: [] };
   const green = '#24c98a';
   const muted = '#71808d';
   let refreshBusy = false;
@@ -70,8 +72,25 @@
     ctx.textAlign = 'right';
     ctx.fillText('جدیدتر', width - right, height - 9);
 
-    const candles = state.candles;
+    const candles = state.candles.slice();
     state.hitBoxes = [];
+    const current = state.current;
+    if (current && current.status === 'active' && current.next_period_at) {
+      const open = Number(current.current_price_usd);
+      const end = new Date(current.next_period_at);
+      const start = current.last_period_end || current.started_at;
+      if (Number.isFinite(open) && Number.isFinite(end.getTime()) && start) {
+        candles.push({
+          period_start: start,
+          period_end: current.next_period_at,
+          open_usd: open.toFixed(12),
+          high_usd: (open + FIXED_PERIOD_INCREMENT).toFixed(12),
+          low_usd: open.toFixed(12),
+          close_usd: (open + FIXED_PERIOD_INCREMENT).toFixed(12),
+          forming: true
+        });
+      }
+    }
     if (!candles.length) {
       emptyState.hidden = false;
       return;
@@ -88,10 +107,24 @@
     const visible = candles.slice(start, end);
     const values = visible.flatMap(c => [Number(c.open_usd), Number(c.close_usd), Number(c.high_usd), Number(c.low_usd)]).filter(Number.isFinite);
     if (!values.length) return;
-    let min = Math.min(...values), max = Math.max(...values);
-    if (max === min) { max += 0.00004; min -= 0.00004; }
-    const pad = (max - min) * 0.14;
-    min -= pad; max += pad;
+    let min = Math.min(INITIAL_REFERENCE_PRICE, ...values);
+    let max = Math.max(...values);
+    if (max <= INITIAL_REFERENCE_PRICE) max = INITIAL_REFERENCE_PRICE + FIXED_PERIOD_INCREMENT;
+    const pad = Math.max((max - min) * 0.12, FIXED_PERIOD_INCREMENT * 0.8);
+    max += pad;
+    const baselineY = top + ((max - INITIAL_REFERENCE_PRICE) / (max - min)) * plotHeight;
+    ctx.save();
+    ctx.strokeStyle = '#d5b36a';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5, 5]);
+    ctx.globalAlpha = 0.8;
+    ctx.beginPath(); ctx.moveTo(left, baselineY); ctx.lineTo(width - right, baselineY); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#d5b36a';
+    ctx.font = '10px Tahoma, Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('نقطه شروع', left + 4, Math.max(top + 11, baselineY - 7));
+    ctx.restore();
     const yFor = value => top + ((max - value) / (max - min)) * plotHeight;
 
     visible.forEach((candle, index) => {
@@ -106,6 +139,7 @@
       const yOpen = yFor(open), yClose = yFor(close);
       const yHigh = yFor(high), yLow = yFor(low);
       const color = close >= open ? green : '#df6871';
+      ctx.globalAlpha = candle.forming ? 0.62 : 1;
       ctx.strokeStyle = color;
       ctx.lineWidth = 1.5;
       ctx.beginPath(); ctx.moveTo(x, yHigh); ctx.lineTo(x, yLow); ctx.stroke();
@@ -116,6 +150,7 @@
       ctx.shadowBlur = 7;
       ctx.fillRect(x - bodyWidth / 2, bodyTop, bodyWidth, bodyHeight);
       ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
       state.hitBoxes.push({ x, y: Math.min(yHigh, yLow), w: Math.max(15, slot * state.scale), h: Math.max(18, Math.abs(yLow - yHigh)), candle, index: globalIndex });
     });
   }
@@ -123,7 +158,7 @@
   function showTooltip(clientX, clientY, candle) {
     tooltip.innerHTML = '';
     const title = document.createElement('strong');
-    title.textContent = 'کندل رشد V COIN';
+    title.textContent = candle.forming ? 'کندل در حال شکل‌گیری' : 'کندل رشد ثبت‌شده';
     const from = document.createElement('div');
     from.textContent = 'آغاز دوره: ' + dateLabel(candle.period_start);
     const to = document.createElement('div');
@@ -159,6 +194,7 @@
         throw new Error('UNEXPECTED_PRICE_SOURCE');
       }
       state.candles = Array.isArray(history.candles) ? history.candles : [];
+      state.current = current;
       setStatus(current.status);
       connectionLabel.textContent = 'اتصال برقرار';
       connectionLabel.style.color = green;

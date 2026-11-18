@@ -202,7 +202,7 @@ test('Telegram login creates a hashed session that can be read and revoked in Po
         language_code: 'en'
       })
     };
-    const checkString = Object.keys(values).sort().map((key) => key + '=' + values[key]).join('\\n');
+    const checkString = Object.keys(values).sort().map((key) => key + '=' + values[key]).join('\n');
     const secretKey = createHmac('sha256', 'WebAppData').update(botToken).digest();
     const hash = createHmac('sha256', secretKey).update(checkString).digest('hex');
     const initData = new URLSearchParams({ ...values, hash }).toString();

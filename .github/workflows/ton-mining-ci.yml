@@ -1,0 +1,52 @@
+name: V COIN TON Mining CI
+
+on:
+  push:
+    paths:
+      - 'contracts/mining/**'
+      - '.github/workflows/ton-mining-ci.yml'
+  pull_request:
+    paths:
+      - 'contracts/mining/**'
+      - '.github/workflows/ton-mining-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mining-tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: vcoin_test
+          POSTGRES_PASSWORD: vcoin_test_password
+          POSTGRES_DB: vcoin_ton_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U vcoin_test -d vcoin_ton_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    defaults:
+      run:
+        working-directory: contracts/mining/backend
+    env:
+      NODE_ENV: test
+      TEST_DATABASE_URL: postgresql://vcoin_test:vcoin_test_password@localhost:5432/vcoin_ton_test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Syntax and static checks
+        run: npm run check
+      - name: Unit and PostgreSQL integration tests
+        run: npm test

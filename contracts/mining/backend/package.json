@@ -8,7 +8,7 @@
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
     "test": "node --test",
-    "check": "node --check src/server.js && node --check src/config/database.js && node --check src/auth/telegram.js && node --check src/routes/mining.js && node --check ../engine.js && node --check test/mining-engine.test.js && node --check test/telegram-auth.test.js && node --check test/mining-ledger.integration.test.js && node --check scripts/setup-database.js",
+    "check": "node --check src/server.js && node --check src/config/database.js && node --check src/auth/telegram.js && node --check src/routes/mining.js && node --check ../engine.js && node --check test/mining-engine.test.js && node --check test/telegram-auth.test.js && node --check test/mining-ledger.integration.test.js && node --check scripts/setup-database.js && node --check src/services/price-reference.js && node --check test/price-reference.test.js",
     "db:setup": "node scripts/setup-database.js"
   },
   "engines": {

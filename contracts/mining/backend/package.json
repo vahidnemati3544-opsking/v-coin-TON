@@ -8,7 +8,7 @@
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
     "test": "node --test",
-    "check": "node --check src/server.js && node --check src/config/database.js && node --check ../engine.js && node --check test/mining-engine.test.js && node --check scripts/setup-database.js",
+    "check": "node --check src/server.js && node --check src/config/database.js && node --check src/auth/telegram.js && node --check ../engine.js && node --check test/mining-engine.test.js && node --check scripts/setup-database.js",
     "db:setup": "node scripts/setup-database.js"
   },
   "engines": {

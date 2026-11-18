@@ -27,6 +27,16 @@ if (!['postgres:', 'postgresql:'].includes(parsedDatabaseUrl.protocol) ||
   throw new Error('DATABASE_URL must use postgres:// or postgresql:// and include a host and database name.');
 }
 
+// This script is a local development setup only. Refuse remote hosts so a
+// copied .env cannot accidentally run schema changes against a hosted database.
+const normalizedHost = parsedDatabaseUrl.hostname.replace(/^\[|\]$/g, '').toLowerCase();
+const localDatabaseHosts = new Set(['localhost', '127.0.0.1', '::1']);
+if (!localDatabaseHosts.has(normalizedHost)) {
+  throw new Error(
+    'Refusing database setup for a non-local host. Use localhost, 127.0.0.1, or ::1 only.'
+  );
+}
+
 const { pool } = require('../src/config/database');
 const MIGRATION_LOCK_ID = 741230018;
 
@@ -48,7 +58,7 @@ const migrations = [
   },
   {
     version: '003_balance_based_mining',
-    description: 'Balance-based 1 percent daily mining snapshots',
+    description: 'Legacy internal-balance mining snapshot fields; public mining remains disabled',
     file: path.resolve(__dirname, '../database/migrations/003-balance-based-mining.sql')
   }
 ];
@@ -74,7 +84,7 @@ async function main() {
       'SELECT current_database() AS database_name, current_user AS database_role'
     );
     console.log(
-      'Applying V COIN – TON database setup to database "' +
+      'Applying V COIN – TON development database setup to local database "' +
       target.rows[0].database_name +
       '" as role "' +
       target.rows[0].database_role +
@@ -108,7 +118,7 @@ async function main() {
       console.log('Applied: ' + migration.version + ' — ' + migration.description);
     }
 
-    console.log('Database schema and migrations are up to date.');
+    console.log('Local development database schema and migrations are up to date.');
   } catch (error) {
     try { await client.query('ROLLBACK'); } catch (_) { /* preserve original error */ }
     throw error;

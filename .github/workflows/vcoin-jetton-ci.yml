@@ -21,20 +21,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install Acton
-        shell: bash
-        run: |
-          curl -LsSf https://ton.org/acton/install.sh | sh
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
-          source "$HOME/.profile" 2>/dev/null || true
-          acton --version
       - name: Generate wrappers
         working-directory: contracts/jetton/acton
-        run: acton run generate-wrappers
+        run: docker run --rm -v "$PWD":/workspace -w /workspace ghcr.io/ton-blockchain/acton:1.2.1 run generate-wrappers
       - name: Compile contracts
         working-directory: contracts/jetton/acton
-        run: acton build
+        run: docker run --rm -v "$PWD":/workspace -w /workspace ghcr.io/ton-blockchain/acton:1.2.1 build
       - name: Run emulator tests
         working-directory: contracts/jetton/acton
-        run: acton test tests
+        run: docker run --rm -v "$PWD":/workspace -w /workspace ghcr.io/ton-blockchain/acton:1.2.1 test tests

@@ -32,6 +32,10 @@ Security
 
 Security is a fundamental development priority. Smart contracts, wallet interactions, backend services and financial operations will require appropriate testing and independent security reviews before production deployment.
 
+Documentation
+
+Detailed architecture, API, database, security and tokenomics documents are maintained in the docs/ directory. Start with docs/README.md.
+
 Development Status
 
 V COIN – TON is under development.

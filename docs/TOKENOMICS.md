@@ -109,3 +109,7 @@ No Mainnet deployment, initial issuance, liquidity commitment, or irreversible a
 12. Change control
 Any change to the total supply, allocation percentages, founder vesting period, or prohibition on additional minting requires explicit approval from the project owner and an updated version of this document.
 Document status: Approved tokenomics design — implementation pending.
+
+
+13. Smart contract specification
+The technical specification for the VCOIN TON Jetton Master and Wallet contracts is maintained in docs/JETTON_CONTRACT_SPEC.md. This is a design specification, not compiled contract source code or deployment evidence. Implementation, compilation, tests, independent security review and Testnet deployment remain pending. The deployment parameter template is contracts/jetton/deployment.config.template.json. Null addresses and vesting parameters must be explicitly approved before deployment.

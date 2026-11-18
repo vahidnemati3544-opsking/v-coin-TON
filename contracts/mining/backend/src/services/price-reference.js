@@ -2,17 +2,17 @@
 
 const INTERVAL_MS = 72 * 60 * 60 * 1000;
 const PRICE_SCALE = 1_000_000_000_000n;
-const INCREASE_NUMERATOR = 1_002_041n;
-const INCREASE_DENOMINATOR = 1_000_000n;
+const INITIAL_PRICE_SCALED = 4_000_000_000n;
+const FIXED_INCREMENT_SCALED = INITIAL_PRICE_SCALED / 100n;
 const MINING_RESERVE_CODE = 'USER_MINING';
 
 function increasePriceScaled(currentScaled) {
   if (typeof currentScaled !== 'bigint' || currentScaled <= 0n) {
     throw new TypeError('currentScaled must be a positive bigint');
   }
-  // Exact integer arithmetic, rounded to 12 decimal places in USD.
-  return (currentScaled * INCREASE_NUMERATOR + INCREASE_DENOMINATOR / 2n)
-    / INCREASE_DENOMINATOR;
+  // Add exactly 1% of the initial USD 0.004 reference value per 72-hour period.
+  // This is a fixed linear increment, not 1% of the changing current value.
+  return currentScaled + FIXED_INCREMENT_SCALED;
 }
 
 function scaledPriceToDecimal(value) {
@@ -85,7 +85,7 @@ async function advancePriceReference({ pool, now = new Date() }) {
       await client.query(
         'INSERT INTO price_reference_candles ' +
         '(period_start, period_end, open_usd, high_usd, low_usd, close_usd, increase_rate_percent) ' +
-        'VALUES ($1, $2, $3, $4, $5, $6, 0.20410000) ' +
+        'VALUES ($1, $2, $3, $4, $5, $6, 1.00000000) ' +
         'ON CONFLICT (period_start) DO NOTHING',
         [
           periodStart.toISOString(),

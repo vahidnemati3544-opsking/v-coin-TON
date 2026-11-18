@@ -144,3 +144,12 @@ Project: V COIN – TON
 Module: Mining Engine
 Network: The Open Network (TON)
 Status: Under Development
+
+
+## Owner-approved wallet-balance rule (2026-11-18)
+
+The source of truth for the next mining interval is the user's **verified on-chain VCOIN Jetton balance in the linked Telegram TON wallet**, not the internal PostgreSQL mining balance. The reward remains 1% per 24 hours at every level from 1 to 400.
+
+The current engine still uses the internal `balances.available_base_units` field and credits rewards back to that internal balance. It is therefore not yet compliant with the approved wallet-balance rule and must not be used for owner extraction. See `docs/WALLET_BALANCE_MINING_SPEC.md` for the required wallet proof, Jetton master validation, immutable balance snapshot, pending reward, confirmed payout, anti-double-counting, and fail-closed rules.
+
+Wallet balance reader, ownership proof, Jetton payout, and on-chain reconciliation are not implemented/verified by the current code. Keep extraction disabled until these components and their TON Testnet integration tests pass.

@@ -32,14 +32,14 @@ Status is based on repository evidence, not on the existence of documentation or
 | 2 | `contracts/mining/engine.js` | Replace internal-balance eligibility with immutable verified wallet snapshots | BLOCKED | Implement after master/network/provider are approved |
 | 3 | `contracts/mining/backend/src/routes/mining.js` | Expose only wallet-policy-compliant status/start/claim/end routes | BLOCKED | Keep public API disabled; add wallet routes after implementation |
 | 4 | PostgreSQL schema | Store wallet links, proof status, network/master, snapshots and payout lifecycle | PENDING | Design migrations without treating internal balance as wallet balance |
-| 5 | Mining reserve migration | Preserve 5B cap with atomic reservation/release | CODE PRESENT; TEST PENDING | Verify rollback and exhaustion on PostgreSQL 18 |
+| 5 | Mining reserve migration | Preserve 5B cap with atomic reservation/release | CI PASS; EXTREME CASES PENDING | Add reserve exhaustion, concurrent-claim and forced-rollback tests on PostgreSQL 18 |
 | 6 | Ledger settlement | Separate pending reward from on-chain confirmed payout | BLOCKED | Implement payout-aware double-entry lifecycle |
 | 7 | Migration 003 | Existing migration snapshots internal balances, not wallet balances | NOT COMPLIANT | Replace/retire only through a reviewed migration |
-| 8 | Database setup | Verify ordered migrations and checksums on isolated PostgreSQL 18 | PENDING | Run against dedicated test DB after backup |
+| 8 | Database setup | Verify ordered migrations and checksums on isolated PostgreSQL 18 | PARTIAL | Run the checksum-based setup runner on the owner's dedicated local DB; add migration 004 to full integration setup |
 | 9 | Reward arithmetic | Test exact integer formula and levels 1, 2, 100, 200, 399, 400 | PARTIAL | Add wallet-snapshot unit tests and execute suite |
-| 10 | PostgreSQL integration | Prove concurrency, idempotency, reserve rollback and ledger reconciliation | PENDING | Run against isolated PostgreSQL 18; do not count skipped tests |
-| 11 | GitHub Actions | Verify a successful PostgreSQL 18 CI run | NOT VERIFIED | Inspect actual workflow run and logs |
-| 12 | Telegram authentication | Verify Mini App HMAC and revocable sessions | CODE PRESENT; TEST PENDING | Run integration suite |
+| 10 | PostgreSQL integration | Prove concurrency, idempotency, reserve rollback and ledger reconciliation | PARTIAL — CORE TESTS PASS | Add concurrency, reserve-exhaustion/rollback and payout-reconciliation tests; repeat against local PostgreSQL 18 |
+| 11 | GitHub Actions | Verify a successful PostgreSQL 18 CI run | PASS — 30 PASSED, 0 FAILED, 0 SKIPPED | Keep the PostgreSQL 18 workflow green on every backend change |
+| 12 | Telegram authentication | Verify Mini App HMAC and revocable sessions | CI PASS | Verify the owner's real Telegram Mini App login using privately configured bot credentials |
 | 13 | Telegram bot / Mini App | Verify configured bot and owner's real login flow | PENDING | Configure secrets privately and test |
 | 14 | User account setup | Create owner test account with auditable onboarding | PENDING | Implement after wallet-link flow |
 | 15 | 400-level schedule | Seed and verify all 400 levels; keep rate invariant | PENDING | Define upgrade economics separately; do not invent costs |

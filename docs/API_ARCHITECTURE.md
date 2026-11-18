@@ -1,6 +1,6 @@
 # V COIN – TON API Architecture
 
-**Status:** API foundation implemented; user-facing business APIs are not yet implemented.
+**Status:** Health endpoints and Telegram account authentication are implemented; mining, wallet, balance, referral, and level APIs remain pending.
 
 ## 1. Current backend endpoints
 
@@ -13,7 +13,7 @@ The current Express server exposes only:
 | GET | /health/ready | PostgreSQL connectivity readiness |
 | GET | /health | Compatibility redirect to /health/live |
 
-The current server does not yet expose authenticated mining, wallet, balance, referral, or level endpoints. Architecture plans below are not claims of implemented routes.
+The server also exposes the Telegram authentication endpoints listed below. Mining, wallet, balance, referral, and level routes are not yet implemented. Architecture plans below are not claims of implemented routes.
 
 ## 2. Planned API groups
 
@@ -63,7 +63,9 @@ Referral rules must be enforced by the backend, not by the Telegram client. The 
 
 ## 3. Authentication and sessions
 
-The planned Telegram authentication flow must:
+The Telegram authentication flow is implemented in `contracts/mining/backend/src/auth/telegram.js`. It verifies the HMAC signature, rejects duplicate fields and expired timestamps, creates the user/profile, issues a random bearer token, and stores only its SHA-256 hash in `user_sessions`. Session expiry and revocation are checked against PostgreSQL for authenticated requests.
+
+The implementation must continue to be integration-tested against the local PostgreSQL database. The flow must:
 
 1. Receive the original Telegram init data.
 2. Verify its HMAC signature using the configured bot token.

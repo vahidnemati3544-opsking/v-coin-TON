@@ -2,9 +2,8 @@
 
 **Database:** PostgreSQL  
 **Schema file:** contracts/mining/backend/database/schema.sql  
-**Mining reserve migration:** contracts/mining/backend/database/migrations/001-mining-reserve.sql  
-**Ledger settlement migration:** contracts/mining/backend/database/migrations/002-mining-ledger-settlement.sql  
-**Status:** Core schema, reserve controls, and atomic internal ledger settlement are implemented; CI PostgreSQL integration is configured. Local database verification remains pending.
+**Migrations:** contracts/mining/backend/database/migrations/  
+**Status:** Core schema, reserve controls, and atomic internal-ledger settlement are implemented in code. Local PostgreSQL verification remains pending. These components do not establish wallet-based mining or on-chain payouts.
 
 ## 1. Core tables
 
@@ -36,11 +35,13 @@ mining_sessions records server-timed sessions and permits only one active sessio
 
 mining_rewards records each reward with user and session references, a positive integer base-unit amount, a unique operation ID, a unique idempotency key, and pending/confirmed/rejected/reversed status.
 
-The mining engine locks the user and active session in a transaction. Newly accrued rewards are inserted and reserved against the mining reserve in the same transaction. A reserve failure must roll back the reward and session timestamp update.
+The legacy internal-balance mining engine locks the user and active session in a transaction. It inserts rewards and reserves them against the mining reserve in the same transaction. A reserve failure must roll back the reward and session timestamp update.
+
+**Important:** this describes the legacy internal-balance engine only. It is not the approved TON wallet-balance extraction flow and must remain unavailable through the public API.
 
 ## 4. Mining reserve
 
-Migration 001-mining-reserve.sql creates:
+Migration `001-mining-reserve.sql` creates:
 - mining_reserve
 - mining_reward_reservations
 - mining_reserve_operations
@@ -49,41 +50,52 @@ Migration 001-mining-reserve.sql creates:
 - confirm_mining_reward(...)
 - reverse_mining_reward(...)
 
-The fixed allocation is 5,000,000,000 VCOIN = 5,000,000,000,000,000 base units. The migration checks this exact amount and prevents pending plus distributed amounts from exceeding the allocation.
+The fixed design allocation is 5,000,000,000 VCOIN = 5,000,000,000,000,000 base units. The migration checks this exact amount and prevents pending plus distributed amounts from exceeding the allocation.
 
-The mining engine calls the reservation function when it creates a reward. Migration 002 adds `confirm_mining_reward_to_internal_balance(...)`, which confirms the reserve, posts equal debit/credit ledger entries, updates the user's internal available balance, and marks the reward confirmed in one transaction. Repeated confirmation is idempotent and does not increment the balance twice. This is an internal accounting entry, not an on-chain transfer.
+Migration `002-mining-ledger-settlement.sql` adds `confirm_mining_reward_to_internal_balance(...)`, which confirms the reserve, posts equal debit/credit ledger entries, updates the user's internal available balance, and marks the reward confirmed in one transaction. Repeated confirmation is idempotent and does not increment the balance twice. This is an internal accounting entry, not an on-chain transfer.
 
-## 5. Important configuration gap: levels
+## 5. Legacy balance snapshot migration
 
-The levels table is created but the current schema does not seed the 400 level rows or define approved mining rates and upgrade costs. user_levels.current_level references levels(level), and the mining engine requires a configured level and rate.
+Migration `003-balance-based-mining.sql` adds `rate_balance_base_units` and backfills active sessions from PostgreSQL internal balances. It exists for the legacy internal-balance engine and is **not compliant with the approved wallet-balance mining specification**.
 
-Therefore, a new account cannot be fully initialized for mining until the owner-approved level schedule is supplied and inserted. Do not invent mining rates or upgrade prices.
+Do not interpret this column or migration as proof of a verified Jetton wallet snapshot. Do not activate the public mining routes. The public API must remain fail-closed until the separate wallet-proof, Jetton-balance-reader, immutable wallet-snapshot and payout lifecycle implementation is complete.
 
-## 6. Ledger and balances
+The PostgreSQL integration tests replay this legacy migration against an isolated test database. They drop only its named CHECK constraint before replaying it; the checksum-based development setup runner does not rewrite or replay already-applied migrations.
 
-The schema defines double-entry ledger tables and a balance snapshot table. Migration 002 posts a debit to the mining reward expense account and a matching credit to the user's VCOIN liability account. It updates the user's internal available balance in the same transaction and verifies the balanced entries on retry.
+## 6. Important configuration gap: levels
 
-Every posted transaction must balance by asset and operation, and financial history must be append-only. Balance snapshots must be reconcilable to ledger entries.
+The levels table is created but the current schema does not seed the 400 level rows or define approved upgrade costs. user_levels.current_level references levels(level), and the legacy mining engine requires a configured level and rate.
 
-## 7. Database setup
+Therefore, a new account cannot be fully initialized for mining until the owner-approved level schedule is supplied and inserted. Do not invent upgrade prices. The approved wallet-balance policy specifies the same 1% per 24 hours at all levels; this must be enforced by the future wallet-based engine, not inferred from legacy level-rate fields.
 
-From contracts/mining/backend:
+## 7. Ledger and balances
 
-1. Copy .env.example to .env.
-2. Set a valid local DATABASE_URL.
-3. Create the intended local database and role in PostgreSQL.
-4. Run npm install.
-5. Run npm run db:setup.
+The schema defines double-entry ledger tables and an internal balance snapshot table. Migration 002 posts a debit to the mining reward expense account and a matching credit to the user's VCOIN liability account. It updates the user's internal available balance in the same transaction and verifies the balanced entries on retry.
 
-The setup script applies the core schema and migrations 001/002 in order. It records versions and SHA-256 checksums in schema_migrations, uses a PostgreSQL advisory lock to prevent concurrent setup, skips unchanged migrations, and refuses checksum drift. It refuses to run with NODE_ENV=production. It is an explicit development setup command, not an automatic production migration system.
+Every posted transaction must balance by asset and operation, and financial history must be append-only. Balance snapshots must be reconcilable to ledger entries. Internal balances are not eligible wallet holdings.
 
-## 8. Outstanding database work
+## 8. Safe local database setup
 
-- Add a formal migration history/version mechanism.
-- Seed approved levels and costs after economic approval.
-- Verify migration history and checksums on the user's local PostgreSQL installation.
-- Add full PostgreSQL integration tests for Telegram session lifecycle, mining session lifecycle, rollback, reserve exhaustion, and concurrent claims.
-- Implement balance reconciliation queries and tests.
+From `contracts/mining/backend`:
+
+1. Copy `.env.example` to `.env`.
+2. Set a local `DATABASE_URL` for the dedicated V COIN–TON development database.
+3. Confirm the target database name and role in pgAdmin.
+4. Back up the target database before schema setup.
+5. Run `npm install`, then `npm run check` and `npm test`.
+6. Run `npm run db:setup` only after confirming the target.
+
+The setup script applies the core schema and migrations 001–003 in order, records versions and SHA-256 checksums in `schema_migrations`, uses a PostgreSQL advisory lock to prevent concurrent setup, skips unchanged migrations, and refuses checksum drift. It refuses `NODE_ENV=production` and rejects non-local database hosts. It is a local development setup command, not a production migration system.
+
+The integration suite uses `TEST_DATABASE_URL` and must point to a separate, disposable test database — never the development database and never production.
+
+## 9. Outstanding database work
+
+- Verify migration history and checksums on the user's local PostgreSQL 18 installation.
+- Seed approved levels and costs only after the owner approves the schedule.
+- Run full PostgreSQL integration tests without skips, against an isolated test database.
+- Verify rollback, reserve exhaustion, concurrency, idempotency and ledger reconciliation.
+- Implement the separate wallet snapshot and payout schema after the TON wallet and provider architecture is approved.
 - Verify backup/restore and least-privilege database roles.
 
-A successful JavaScript CI run does not prove that the SQL has been applied to the user's local PostgreSQL instance.
+A successful JavaScript CI run does not prove that SQL has been applied to the user's local PostgreSQL instance. A successful database connection does not prove that mining is live.

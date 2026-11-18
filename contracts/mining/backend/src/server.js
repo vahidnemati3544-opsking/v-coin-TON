@@ -5,10 +5,12 @@ const helmet = require("helmet");
 const cors = require("cors");
 
 const {
+  pool,
   connectDatabase,
   closeDatabase,
   testDatabaseConnection
 } = require("./config/database");
+const { createTelegramAuthRouter } = require("./auth/telegram");
 
 const app = express();
 
@@ -36,6 +38,18 @@ app.use(
 );
 
 app.use(express.json({ limit: "100kb" }));
+
+const telegramAuthMaxAge = Number.parseInt(process.env.TELEGRAM_AUTH_MAX_AGE_SECONDS || "86400", 10);
+app.use(
+  "/api/v1/auth",
+  createTelegramAuthRouter({
+    pool,
+    botToken: process.env.TELEGRAM_BOT_TOKEN,
+    maxAgeSeconds: Number.isSafeInteger(telegramAuthMaxAge) && telegramAuthMaxAge > 0
+      ? telegramAuthMaxAge
+      : 86400
+  })
+);
 
 app.get("/", (req, res) => {
   res.status(200).json({

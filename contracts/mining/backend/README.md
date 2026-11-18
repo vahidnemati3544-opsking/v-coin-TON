@@ -12,8 +12,9 @@ This directory contains the Node.js backend core for the independent V COIN proj
 
 1. Copy `.env.example` to `.env` in this directory.
 2. Set `DATABASE_URL` to the dedicated V COIN–TON development/test database.
-3. Keep `.env` private. Never commit database passwords, bot tokens, wallet secrets, or recovery phrases.
+3. Keep `.env` private. The backend `.gitignore` excludes local environment files while allowing the placeholder `.env.example`.
 4. Set `CORS_ORIGIN` to the exact client origin when one is configured.
+5. Never commit database passwords, bot tokens, wallet secrets, or recovery phrases.
 
 Example URL format:
 
@@ -21,7 +22,7 @@ Example URL format:
 postgresql://DATABASE_USER:DATABASE_PASSWORD@localhost:5432/VCOIN_TON
 ```
 
-Use the actual database name, role and password configured on the local PostgreSQL server.
+Use the actual database name, role and password configured on the local PostgreSQL server. If a password contains URL-reserved characters, percent-encode it in the connection URL.
 
 ## Install and verify
 
@@ -35,15 +36,22 @@ npm test
 
 The PostgreSQL integration tests are skipped unless `TEST_DATABASE_URL` points to an isolated test database. A successful run with skipped database tests is not evidence that migrations, ledger settlement or mining lifecycle work on PostgreSQL.
 
-## Database setup
+## Database setup — local development only
 
-After creating and verifying a dedicated development database and configuring `.env`, the explicit development-only command is:
+After creating and verifying a dedicated development database and configuring `.env`:
+
+- The setup script accepts only local PostgreSQL hosts: `localhost`, `127.0.0.1`, or `::1`.
+- It refuses `NODE_ENV=production`.
+- It records migration versions and SHA-256 checksums and refuses to silently change an already-applied migration.
+- Back up the target database and verify the database name and role before setup.
+
+Run:
 
 ```bash
 npm run db:setup
 ```
 
-The setup runner applies the schema and migrations in order, tracks versions/checksums, and refuses to run with `NODE_ENV=production`. Do not run it against a production database. Back up the target database and verify its name and role before setup.
+This is a development setup command, not a production migration procedure. Do not point it at a hosted or production database.
 
 ## API and authentication
 
@@ -55,6 +63,8 @@ The setup runner applies the schema and migrations in order, tracks versions/che
 ## Mining status — intentionally disabled
 
 The legacy internal-balance mining engine in `../engine.js` reads PostgreSQL `balances.available_base_units` and posts rewards to an internal ledger. It does **not** use a verified TON Jetton wallet balance, prove wallet ownership, send VCOIN Jettons, or reconcile on-chain payouts.
+
+Migration `003-balance-based-mining.sql` supports this legacy internal-balance engine and is not proof of wallet-balance mining. It must not be presented as compliant with the approved wallet-balance rule.
 
 Accordingly, `src/server.js` deliberately returns HTTP 503 with `WALLET_BALANCE_MINING_NOT_IMPLEMENTED` for every public `/api/v1/mining` request. The internal-balance router is not mounted. Do not remove this block or enable the legacy routes as a workaround.
 

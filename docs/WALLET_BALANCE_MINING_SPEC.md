@@ -11,16 +11,38 @@ The balance used to calculate the next mining reward is the user's **verified, o
 
 The internal mining-bot balance is not the source of truth for the next mining interval. A displayed internal reward, pending reward, or unconfirmed withdrawal must never be counted as wallet balance.
 
-## 2. Reward formula
+## 2. Reward formula — approved USD-value rule
 
-- Reward rate: 1% per 24 hours.
-- Same formula at every level from 1 through 400; level does not multiply or reduce the reward.
-- VCOIN precision: 6 decimals; all calculations use integer Jetton base units.
-- For a fixed verified wallet-balance snapshot:
+The business rule is **1% of the eligible VCOIN wallet balance's USD value per 24 hours**, with the same 1% rate at every level from 1 through 400. Level number does not multiply or reduce this rate.
 
-  `reward_base_units = floor(wallet_snapshot_base_units * elapsed_ms / 8,640,000,000)`
+For one immutable verified wallet snapshot, define:
+- `B`: eligible VCOIN balance.
+- `P`: approved VCOIN/USD reference price for that same valuation snapshot.
+- `V_USD = B * P`: eligible account value in USD.
+- `R_USD = V_USD * 0.01`: reward value in USD per full day.
+- `R_VCOIN = R_USD / P`: reward amount in VCOIN.
 
-- The maximum accrual interval and missed-claim policy must be explicitly configured and tested before unattended operation. The existing 24-hour hard rejection is not silently changed by this document.
+Since the same price snapshot values the VCOIN balance and converts the reward, `P` cancels: a full 24-hour reward is exactly 1% of the eligible VCOIN balance before integer rounding. The USD-value rule is the approved business definition; the equivalent integer calculation is:
+
+`reward_base_units = floor(wallet_snapshot_base_units * elapsed_ms / 8,640,000,000)`
+
+For a full 24 hours this is `floor(wallet_snapshot_base_units / 100)`. VCOIN precision is 6 decimals and all calculations use integer Jetton base units.
+
+Illustrative examples using USD 0.004 per VCOIN (not a live quote or guaranteed value):
+
+| Eligible account value | Daily reward value | Daily VCOIN reward |
+|---:|---:|---:|
+| USD 215 | USD 2.15 | 537.5 VCOIN |
+| USD 235 | USD 2.35 | 587.5 VCOIN |
+| USD 260 | USD 2.60 | 650 VCOIN |
+| USD 315 | USD 3.15 | 787.5 VCOIN |
+| USD 420 | USD 4.20 | 1,050 VCOIN |
+
+The price used for USD display must be identified as a modelled reference or a verified market source. A modelled reference is not an exchange quote, guaranteed sale price, or promise of returns. Do not use a modelled price as proof of market value.
+
+The eligible balance must be derived from the verified on-chain VCOIN Jetton wallet balance; a client-entered USD amount or internal PostgreSQL balance is not eligible. Pending internal rewards do not count toward the next interval. They become eligible only after the VCOIN payout is confirmed on-chain and a fresh wallet snapshot includes them. Deposits during an interval apply to the next interval, not retroactively. Reserved balances are excluded.
+
+The maximum accrual interval and missed-claim policy must be explicitly configured and tested before unattended operation. The existing 24-hour hard rejection is not silently changed by this document.
 
 ## 3. Source of truth and wallet verification
 

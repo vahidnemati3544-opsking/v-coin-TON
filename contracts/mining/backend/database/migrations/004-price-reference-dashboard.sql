@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS price_reference_state (
     current_price_usd NUMERIC(24,12) NOT NULL CHECK (current_price_usd > 0),
     increase_rate_percent NUMERIC(10,8) NOT NULL CHECK (increase_rate_percent >= 0),
     interval_seconds INTEGER NOT NULL CHECK (interval_seconds > 0),
+    last_period_end TIMESTAMPTZ,
+    next_period_at TIMESTAMPTZ,
     status VARCHAR(20) NOT NULL DEFAULT 'idle'
         CHECK (status IN ('idle', 'active', 'paused', 'completed')),
     started_at TIMESTAMPTZ,

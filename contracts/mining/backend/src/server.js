@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
+const { rateLimit } = require("express-rate-limit");
 
 const {
   pool,
@@ -40,7 +41,28 @@ app.use(
 
 app.use(express.json({ limit: "100kb" }));
 
+const telegramLoginRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler(req, res) {
+    return res.status(429).json({ error: "RATE_LIMIT_EXCEEDED" });
+  }
+});
+
+const miningApiRateLimit = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler(req, res) {
+    return res.status(429).json({ error: "RATE_LIMIT_EXCEEDED" });
+  }
+});
+
 const telegramAuthMaxAge = Number.parseInt(process.env.TELEGRAM_AUTH_MAX_AGE_SECONDS || "86400", 10);
+app.use("/api/v1/auth/telegram", telegramLoginRateLimit);
 app.use(
   "/api/v1/auth",
   createTelegramAuthRouter({
@@ -54,6 +76,7 @@ app.use(
 app.use(
   "/api/v1/mining",
   createSessionAuthMiddleware({ pool }),
+  miningApiRateLimit,
   createMiningRouter({ pool })
 );
 

@@ -172,3 +172,84 @@ test('mining engine claim settles internal balance and repeated start/claim are 
     await pool.end();
   }
 });
+
+
+test('Telegram login creates a hashed session that can be read and revoked in PostgreSQL', {
+  skip: !databaseUrl
+}, async () => {
+  const pool = new Pool({ connectionString: databaseUrl, max: 4 });
+  const express = require('express');
+  const { createHmac } = require('node:crypto');
+  const { createTelegramAuthRouter, hashSessionToken } = require('../src/auth/telegram');
+  const botToken = '123456789:ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghi';
+  const authDate = Math.floor(Date.now() / 1000);
+  const telegramId = Date.now() * 100 + (process.pid % 100);
+
+  let server;
+  try {
+    const databaseDir = path.resolve(__dirname, '../database');
+    await pool.query(await fs.readFile(path.join(databaseDir, 'schema.sql'), 'utf8'));
+    await pool.query(await fs.readFile(path.join(databaseDir, 'migrations/001-mining-reserve.sql'), 'utf8'));
+    await pool.query(await fs.readFile(path.join(databaseDir, 'migrations/002-mining-ledger-settlement.sql'), 'utf8'));
+
+    const values = {
+      auth_date: String(authDate),
+      user: JSON.stringify({
+        id: telegramId,
+        first_name: 'CI',
+        last_name: 'Telegram',
+        username: 'ci_telegram_auth',
+        language_code: 'en'
+      })
+    };
+    const checkString = Object.keys(values).sort().map((key) => key + '=' + values[key]).join('\\n');
+    const secretKey = createHmac('sha256', 'WebAppData').update(botToken).digest();
+    const hash = createHmac('sha256', secretKey).update(checkString).digest('hex');
+    const initData = new URLSearchParams({ ...values, hash }).toString();
+
+    const app = express();
+    app.use(express.json());
+    app.use('/auth', createTelegramAuthRouter({ pool, botToken, maxAgeSeconds: 300 }));
+    server = app.listen(0, '127.0.0.1');
+    await new Promise((resolve) => server.once('listening', resolve));
+    const address = server.address();
+    const baseUrl = 'http://127.0.0.1:' + address.port;
+
+    const loginResponse = await fetch(baseUrl + '/auth/telegram', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ initData })
+    });
+    assert.equal(loginResponse.status, 200);
+    const login = await loginResponse.json();
+    assert.equal(login.token_type, 'Bearer');
+    assert.ok(login.access_token);
+
+    const stored = await pool.query(
+      'SELECT token_hash FROM user_sessions WHERE user_id = $1',
+      [login.user.id]
+    );
+    assert.equal(stored.rowCount, 1);
+    assert.equal(stored.rows[0].token_hash, hashSessionToken(login.access_token));
+    assert.notEqual(stored.rows[0].token_hash, login.access_token);
+
+    const meResponse = await fetch(baseUrl + '/auth/me', {
+      headers: { authorization: 'Bearer ' + login.access_token }
+    });
+    assert.equal(meResponse.status, 200);
+
+    const logoutResponse = await fetch(baseUrl + '/auth/logout', {
+      method: 'POST',
+      headers: { authorization: 'Bearer ' + login.access_token }
+    });
+    assert.equal(logoutResponse.status, 200);
+
+    const revokedResponse = await fetch(baseUrl + '/auth/me', {
+      headers: { authorization: 'Bearer ' + login.access_token }
+    });
+    assert.equal(revokedResponse.status, 401);
+  } finally {
+    if (server) await new Promise((resolve) => server.close(resolve));
+    await pool.end();
+  }
+});

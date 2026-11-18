@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0e12">
+  <meta name="description" content="نمودار رسمی شاخص رشد داخلی V COIN روی TON">
+  <title>V COIN | Growth</title>
+  <link rel="stylesheet" href="/growth/styles.css">
+  <script src="/growth/app.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/growth" aria-label="V COIN Growth">
+        <span class="brand-mark">V</span>
+        <span class="brand-copy"><strong>V COIN</strong><small>TON ECOSYSTEM</small></span>
+      </a>
+      <div class="header-right">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span id="connection-label" class="connection-label">در حال اتصال</span>
+        <span class="header-divider"></span>
+        <span class="growth-label">GROWTH INDEX</span>
+      </div>
+    </header>
+
+    <section class="intro">
+      <div>
+        <p class="eyebrow">V COIN · مسیر رشد</p>
+        <h1>رشد V COIN را دنبال کنید</h1>
+        <p class="subtitle">تاریخچه تصویری شاخص رشد اختصاصی پروژه روی شبکه TON</p>
+      </div>
+      <div id="status-pill" class="status-pill status-idle"><span class="status-indicator"></span><span id="status-text">در انتظار آغاز رسمی</span></div>
+    </section>
+
+    <section class="chart-card" aria-label="نمودار کندلی رشد V COIN">
+      <div class="chart-heading">
+        <div class="chart-title">
+          <span class="coin-icon">V</span>
+          <div><h2>VCOIN <span>/ GROWTH</span></h2><p>شاخص داخلی پروژه · کندل‌های دوره‌ای</p></div>
+        </div>
+        <div class="chart-tools">
+          <span class="timeframe">۷۲ ساعت</span>
+          <button id="reset-view" class="tool-button" type="button" title="نمای کامل تاریخچه">نمای کامل</button>
+        </div>
+      </div>
+
+      <div class="chart-stage" id="chart-stage">
+        <canvas id="growth-chart" aria-label="نمودار کندلی تاریخچه رشد" role="img"></canvas>
+        <div id="empty-state" class="empty-state">
+          <span class="empty-mark">V</span>
+          <strong>مسیر رشد در انتظار آغاز رسمی است</strong>
+          <span>پس از شروع دوره توسط مدیر مجاز، کندل‌های واقعی شاخص در این بخش نمایش داده می‌شوند.</span>
+        </div>
+        <div id="chart-tooltip" class="chart-tooltip" hidden></div>
+      </div>
+
+      <div class="chart-footer">
+        <span><i class="legend-candle"></i> کندل رشد ثبت‌شده</span>
+        <span class="footer-hint">برای جابه‌جایی بکشید · برای بزرگ‌نمایی اسکرول کنید</span>
+      </div>
+    </section>
+
+    <section class="below-grid">
+      <article class="info-card">
+        <span class="info-icon">↗</span>
+        <div><h3>مسیر رشد مرحله‌ای</h3><p>هر کندل نشان‌دهنده یک دوره کامل رشد شاخص است.</p></div>
+      </article>
+      <article class="info-card">
+        <span class="info-icon">◷</span>
+        <div><h3>به‌روزرسانی خودکار</h3><p>تاریخچه از سرور پروژه دریافت و پس از ثبت هر دوره تازه‌سازی می‌شود.</p></div>
+      </article>
+      <article class="info-card">
+        <span class="info-icon">◇</span>
+        <div><h3>شفافیت محاسبات</h3><p>کندل‌ها فقط از داده‌های مدل داخلی V COIN ساخته می‌شوند؛ نه معاملات بازار.</p></div>
+      </article>
+    </section>
+
+    <footer class="disclosure">
+      <span class="disclosure-mark">i</span>
+      <p>این نمودار صرفاً شاخص رشد داخلی و مدل‌محور پروژه V COIN را نمایش می‌دهد و قیمت بازار، نرخ صرافی، حجم معاملات یا تضمین افزایش ارزش و سود نیست. ارزش بازار، در صورت شکل‌گیری، ممکن است متفاوت باشد یا وجود نداشته باشد.</p>
+    </footer>
+    <div class="page-foot"><span>V COIN · TON</span><span>رشد شفاف، بر پایه داده‌های ثبت‌شده</span></div>
+  </main>
+</body>
+</html>

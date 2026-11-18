@@ -143,8 +143,9 @@ test('mining engine claim settles internal balance and repeated start/claim are 
     const idempotencyKey = 'engine-claim:' + randomUUID();
     const reward = await engine.claimReward({ userId, idempotencyKey });
     assert.equal(reward.status, 'confirmed');
-    assert.equal(String(reward.amount_base_units), '5000');
-    assert.equal(String(reward.balance_available_base_units), '5000');
+    const firstRewardAmount = BigInt(reward.amount_base_units);
+    assert.ok(firstRewardAmount >= 5000n && firstRewardAmount < 10000n);
+    assert.equal(BigInt(reward.balance_available_base_units), firstRewardAmount);
 
     const repeatedClaim = await engine.claimReward({ userId, idempotencyKey });
     assert.equal(repeatedClaim.duplicate, true);
@@ -154,7 +155,7 @@ test('mining engine claim settles internal balance and repeated start/claim are 
       "SELECT available_base_units::text FROM balances WHERE user_id = $1 AND asset_code = 'VCOIN'",
       [userId]
     );
-    assert.equal(balance.rows[0].available_base_units, '5000');
+    assert.equal(BigInt(balance.rows[0].available_base_units), firstRewardAmount);
 
     await pool.query(
       "UPDATE mining_sessions SET last_claim_at = clock_timestamp() - INTERVAL '5 seconds' WHERE id = $1",

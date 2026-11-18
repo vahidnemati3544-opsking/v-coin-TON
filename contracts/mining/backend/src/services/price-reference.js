@@ -114,7 +114,8 @@ function createPriceReferenceRouter({ pool }) {
       await advancePriceReference({ pool });
       const result = await pool.query(
         'SELECT initial_price_usd, current_price_usd, increase_rate_percent, ' +
-        'interval_seconds, next_period_at, status FROM price_reference_state WHERE singleton = TRUE'
+        'interval_seconds, started_at, last_period_end, next_period_at, status ' +
+        'FROM price_reference_state WHERE singleton = TRUE'
       );
       if (result.rowCount !== 1) {
         return res.status(503).json({ error: 'PRICE_REFERENCE_NOT_INITIALIZED' });

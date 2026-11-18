@@ -77,3 +77,9 @@ Until every mandatory gate is evidenced as passed, status remains **NOT READY FO
 - 2026-11-18: Added a unit-test case iterating through levels 1–400 to prove the daily reward formula is level-invariant, plus elapsed-time/input boundary tests. Commit: 32c6c9edc39e21354c1fe0832e35e9af39f8694e. Tests have **not yet been executed**.
 - 2026-11-18: Corrected the backend README so it accurately states that authenticated mining routes are mounted, while readiness remains blocked. Commit: 183afc3bc5ac03e78c625518db64d932d8842535.
 - 2026-11-18: Readiness plan committed. Commit: 8b6c5e552534583dac80e5ea2d1349168acefc94.
+## Follow-up implementation checkpoint — 2026-11-18
+- Updated `contracts/mining/backend/test/mining-ledger.integration.test.js` so all three PostgreSQL integration fixtures apply migration 003. The engine lifecycle fixture now seeds 10,000 VCOIN as eligible balance and expects the resulting balance to include the original balance plus the mined reward. Commit: `2d7e1950a224cf42f8205f57b2b218154c6f36a9`.
+- Added `.github/workflows/ton-mining-ci.yml` to run Node.js 22 syntax checks, unit tests, and PostgreSQL 18 integration tests on relevant pushes, pull requests, and manual dispatch. Commit: `831eb26a7785cbbc3895a26c7a7090e9a4ed2556`.
+- Fixed duplicate start-session responses to include the stored eligible-balance snapshot. Commit: `a746ebc7eb305c120b37a24c79138b3579e683ab`.
+- These changes are committed but have **not yet been executed** in GitHub Actions or against the owner's local PostgreSQL database. Do not mark test gates complete until CI reports success and local migration status is verified.
+- Remaining owner policy decision: should mined rewards be included in the eligible balance for the next interval (daily compounding), or should only purchased/referral/other qualifying credits count? Current engine snapshot includes post-claim available balance, so it compounds.

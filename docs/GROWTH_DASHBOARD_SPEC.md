@@ -64,9 +64,10 @@ The owner has approved a professional Bitcoin/TradingView-inspired candlestick p
 
 - The canonical candle interval is one completed 72-hour index period.
 - Each completed 72-hour period produces one historical candle.
-- For period n, the candle opens at the index value at the beginning of that period and closes at the index value after its fixed USD 0.000040 step is applied.
+- The visual price scale is internally anchored to the original USD 0.004000 baseline even though numerical price labels are hidden from visitors.
+- For period n, the candle opens at the index value at the beginning of that period and closes at the index value after its fixed USD 0.000040 step is applied. Each completed green candle therefore visualizes exactly 1% of the original USD 0.004000 baseline, not 1% of the previous candle's close.
 - Since the approved index is monotonic and has no intra-period market trades, the candle high equals its close and the candle low equals its open. Do not invent intraperiod price movement, red candles, wicks, volatility, or market volume.
-- The currently active 72-hour period may be shown as a forming candle. It must not be shown as a completed growth step until the backend confirms the period boundary.
+- The currently active 72-hour period is shown as a subdued forming green candle from the current confirmed index level toward the next fixed step. It must not be shown as a completed growth step until the backend confirms the period boundary.
 - The first candle must be anchored to the administrator-approved start time. Historical candles must be reproducible from persisted backend state.
 - Do not offer 1-hour, 4-hour, or daily candlestick timeframes as if they represented independent price observations. A future visual zoom or date-range filter may change the visible history without changing the canonical 72-hour candle data.
 

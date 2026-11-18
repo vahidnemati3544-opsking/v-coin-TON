@@ -24,10 +24,14 @@ test('PostgreSQL mining reward is reserved, double-entry posted, and idempotentl
     const ledgerMigration = await fs.readFile(
       path.join(databaseDir, 'migrations/002-mining-ledger-settlement.sql'), 'utf8'
     );
+    const balanceMiningMigration = await fs.readFile(
+      path.join(databaseDir, 'migrations/003-balance-based-mining.sql'), 'utf8'
+    );
 
     await client.query(schema);
     await client.query(reserveMigration);
     await client.query(ledgerMigration);
+    await client.query(balanceMiningMigration);
 
     await client.query('BEGIN');
 
@@ -110,6 +114,7 @@ test('mining engine claim settles internal balance and repeated start/claim are 
     await pool.query(await fs.readFile(path.join(databaseDir, 'schema.sql'), 'utf8'));
     await pool.query(await fs.readFile(path.join(databaseDir, 'migrations/001-mining-reserve.sql'), 'utf8'));
     await pool.query(await fs.readFile(path.join(databaseDir, 'migrations/002-mining-ledger-settlement.sql'), 'utf8'));
+    await pool.query(await fs.readFile(path.join(databaseDir, 'migrations/003-balance-based-mining.sql'), 'utf8'));
 
     const { createMiningEngine } = require('../../engine');
     await pool.query(
@@ -126,6 +131,10 @@ test('mining engine claim settles internal balance and repeated start/claim are 
     const userId = userResult.rows[0].id;
     await pool.query(
       'INSERT INTO user_levels (user_id, current_level) VALUES ($1, 1)',
+      [userId]
+    );
+    await pool.query(
+      "INSERT INTO balances (user_id, asset_code, available_base_units) VALUES ($1, 'VCOIN', 10000000000)",
       [userId]
     );
 
@@ -145,7 +154,7 @@ test('mining engine claim settles internal balance and repeated start/claim are 
     assert.equal(reward.status, 'confirmed');
     const firstRewardAmount = BigInt(reward.amount_base_units);
     assert.ok(firstRewardAmount >= 5000n && firstRewardAmount < 10000n);
-    assert.equal(BigInt(reward.balance_available_base_units), firstRewardAmount);
+    assert.equal(BigInt(reward.balance_available_base_units), 10000000000n + firstRewardAmount);
 
     const repeatedClaim = await engine.claimReward({ userId, idempotencyKey });
     assert.equal(repeatedClaim.duplicate, true);
@@ -155,7 +164,7 @@ test('mining engine claim settles internal balance and repeated start/claim are 
       "SELECT available_base_units::text FROM balances WHERE user_id = $1 AND asset_code = 'VCOIN'",
       [userId]
     );
-    assert.equal(BigInt(balance.rows[0].available_base_units), firstRewardAmount);
+    assert.equal(BigInt(balance.rows[0].available_base_units), 10000000000n + firstRewardAmount);
 
     await pool.query(
       "UPDATE mining_sessions SET last_claim_at = clock_timestamp() - INTERVAL '5 seconds' WHERE id = $1",
@@ -191,6 +200,7 @@ test('Telegram login creates a hashed session that can be read and revoked in Po
     await pool.query(await fs.readFile(path.join(databaseDir, 'schema.sql'), 'utf8'));
     await pool.query(await fs.readFile(path.join(databaseDir, 'migrations/001-mining-reserve.sql'), 'utf8'));
     await pool.query(await fs.readFile(path.join(databaseDir, 'migrations/002-mining-ledger-settlement.sql'), 'utf8'));
+    await pool.query(await fs.readFile(path.join(databaseDir, 'migrations/003-balance-based-mining.sql'), 'utf8'));
 
     const values = {
       auth_date: String(authDate),

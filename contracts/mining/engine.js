@@ -87,14 +87,15 @@ function createMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
   }
 
   async function accrue(client, userId, session, idempotencyKey) {
-    const rateResult = await client.query(
-      'SELECT l.mining_rate_base_units_per_second ' +
-      'FROM user_levels ul JOIN levels l ON l.level = ul.current_level ' +
-      'WHERE ul.user_id = $1',
+    const balanceResult = await client.query(
+      "SELECT available_base_units::text AS available_base_units FROM balances " +
+      "WHERE user_id = $1 AND asset_code = 'VCOIN'",
       [userId]
     );
-    if (rateResult.rowCount !== 1) {
-      throw new MiningError('USER_LEVEL_NOT_CONFIGURED', 'User level or mining rate is not configured.');
+    const balanceBaseUnits = BigInt(balanceResult.rows[0]?.available_base_units || '0');
+    const snapshotBaseUnits = BigInt(session.rate_balance_base_units ?? balanceBaseUnits.toString());
+    if (snapshotBaseUnits <= 0n) {
+      throw new MiningError('INSUFFICIENT_MINING_BALANCE', 'A positive VCOIN balance is required for mining.');
     }
 
     const clock = await client.query('SELECT clock_timestamp() AS now');
@@ -108,7 +109,11 @@ function createMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
       throw new MiningError('CLAIM_INTERVAL_EXCEEDED', 'Mining claim interval exceeded the configured maximum.');
     }
 
-    const amount = calculateReward(String(rateResult.rows[0].mining_rate_base_units_per_second), elapsedMs);
+    // Daily reward is exactly 1% of the eligible internal VCOIN balance.
+    // Price cancels algebraically: (balance * price * 1%) / price = balance * 1%.
+    // Snapshot balance is fixed for this accrual interval to prevent end-of-interval deposits
+    // from being applied retroactively. Amounts are integer base units (6 decimals).
+    const amount = (snapshotBaseUnits * BigInt(elapsedMs)) / 8640000000n;
     if (amount <= 0n) {
       throw new MiningError('REWARD_TOO_SMALL', 'Accrued reward is below one token base unit.');
     }
@@ -161,10 +166,15 @@ function createMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
       );
     }
 
+    const postSettlementBalance = await client.query(
+      "SELECT available_base_units::text AS available_base_units FROM balances " +
+      "WHERE user_id = $1 AND asset_code = 'VCOIN'",
+      [userId]
+    );
     await client.query(
-      'UPDATE mining_sessions SET last_claim_at = $2, updated_at = $2 ' +
-      "WHERE id = $1 AND user_id = $3 AND status = 'active'",
-      [session.id, now, userId]
+      'UPDATE mining_sessions SET last_claim_at = $2, rate_balance_base_units = $3::numeric, updated_at = $2 ' +
+      "WHERE id = $1 AND user_id = $4 AND status = 'active'",
+      [session.id, now, postSettlementBalance.rows[0]?.available_base_units || '0', userId]
     );
 
     return {
@@ -180,13 +190,18 @@ function createMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
     return withTransaction(pool, async (client) => {
       await lockActiveUser(client, userId);
       const level = await client.query(
-        'SELECT l.mining_rate_base_units_per_second ' +
-        'FROM user_levels ul JOIN levels l ON l.level = ul.current_level WHERE ul.user_id = $1',
-        [userId]
+        'SELECT current_level FROM user_levels WHERE user_id = $1', [userId]
       );
-      if (level.rowCount !== 1 ||
-          parseRate(String(level.rows[0].mining_rate_base_units_per_second)) <= 0n) {
-        throw new MiningError('USER_LEVEL_NOT_CONFIGURED', 'User level or positive mining rate is not configured.');
+      if (level.rowCount !== 1 || level.rows[0].current_level < 1 || level.rows[0].current_level > 400) {
+        throw new MiningError('USER_LEVEL_NOT_CONFIGURED', 'User level is not configured.');
+      }
+      const balance = await client.query(
+        "SELECT available_base_units::text AS available_base_units FROM balances " +
+        "WHERE user_id = $1 AND asset_code = 'VCOIN' FOR UPDATE", [userId]
+      );
+      const eligibleBalance = BigInt(balance.rows[0]?.available_base_units || '0');
+      if (eligibleBalance <= 0n) {
+        throw new MiningError('INSUFFICIENT_MINING_BALANCE', 'A positive VCOIN balance is required for mining.');
       }
 
       const existing = await client.query(
@@ -199,10 +214,10 @@ function createMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
       }
 
       const result = await client.query(
-        "INSERT INTO mining_sessions (id, user_id, started_at, last_claim_at, status, created_at, updated_at) " +
-        "VALUES ($1, $2, clock_timestamp(), clock_timestamp(), 'active', clock_timestamp(), clock_timestamp()) " +
-        'RETURNING id, user_id, started_at, last_claim_at, status',
-        [randomUUID(), userId]
+        "INSERT INTO mining_sessions (id, user_id, started_at, last_claim_at, rate_balance_base_units, status, created_at, updated_at) " +
+        "VALUES ($1, $2, clock_timestamp(), clock_timestamp(), $3::numeric, 'active', clock_timestamp(), clock_timestamp()) " +
+        'RETURNING id, user_id, started_at, last_claim_at, rate_balance_base_units, status',
+        [randomUUID(), userId, eligibleBalance.toString()]
       );
       return result.rows[0];
     });

@@ -49,6 +49,7 @@ This explicit development-only command applies, in order:
 1. `database/schema.sql` — core users, levels, mining, referral, ledger, balance, and audit tables.
 2. `database/migrations/001-mining-reserve.sql` — the fixed 5,000,000,000 VCOIN mining reserve and its reservation, confirmation, reversal, and integrity functions.
 3. `database/migrations/002-mining-ledger-settlement.sql` — atomic confirmation of a pending mining reward into a balanced double-entry ledger transaction and the user's internal VCOIN balance. This does not transfer tokens on-chain.
+4. `database/migrations/003-balance-based-mining.sql` — adds the per-session eligible-balance snapshot used by the 1% daily reward formula.
 
 The setup script refuses to run when `NODE_ENV=production`. It records migration versions and SHA-256 checksums in `schema_migrations`, takes a PostgreSQL advisory lock to prevent concurrent setup, skips unchanged applied migrations, and refuses to silently rerun a migration whose file has been edited. Review the target database name and role shown in its output before proceeding. Do not run it against a production database.
 
@@ -81,7 +82,7 @@ The current automated tests cover HMAC validation, tampering, expiry, duplicate 
 
 ## Mining engine status
 
-The mining engine is in `../engine.js`. It supports session start, reward claim, and session end operations. Each newly accrued reward is written and reserved against the approved mining allocation in the same PostgreSQL transaction. If the reserve migration is missing or the reserve is exhausted, the claim must roll back.
+The mining engine is in `../engine.js`. It supports session start, reward claim, and session end operations. Reward accrual is 1% of the eligible available internal VCOIN balance per 24 hours for every level from 1 to 400; the level-specific fixed mining-rate field is no longer used for reward calculation. Each newly accrued reward is written and reserved against the approved mining allocation in the same PostgreSQL transaction. If the reserve migration is missing or the reserve is exhausted, the claim must roll back.
 
 The current API server does not yet expose user-facing mining routes. Mining session API routes remain disabled until Telegram authentication is connected to the mining engine, the approved 400-level schedule is supplied, and full session/claim/end integration tests pass.
 

@@ -87,12 +87,12 @@ Never request or store a user's seed phrase or private key. Wallet signing must 
 
 ## Modelled 72-hour VCOIN reference price
 
-Migration `004-price-reference-candles.sql` initializes a **modelled reference price** at USD 0.004000000000. The backend advances it by 0.2041% every 72 hours using fixed-point integer arithmetic and stores OHLC candles. A scheduler checks for due periods every minute and catches up missed periods after a restart. PostgreSQL advisory locking and a transaction protect against duplicate concurrent updates.
+Migration `database/migrations/004-price-reference-dashboard.sql` initializes a **modelled reference price** at USD 0.004000000000. Each completed 72-hour period adds a fixed USD 0.000040 (1% of the initial USD 0.004000 reference value). This is a linear fixed-step model, not 0.2041% growth and not compound growth. The backend uses fixed-point integer arithmetic and stores modelled OHLC candles. A scheduler checks for due periods every minute and catches up missed periods after a restart, but it advances the index only when the persisted state is `active` and its period timestamps are initialized. PostgreSQL advisory locking and a transaction protect against duplicate concurrent updates.
 
 The series is explicitly **not a market quote, exchange price, guaranteed value, or promise of returns**. Since this calculation has no live trades, each candle is a deterministic modelled step (open/low at the prior reference price; close/high at the increased reference price), not observed market volatility.
 
-The schedule marks itself completed only when the `USER_MINING` reserve's confirmed `distributed_base_units` reaches its full allocation. The dashboard can read:
+The current service does **not** automatically mark the index completed when the mining reserve is distributed. It also does not currently implement administrator start, pause, resume, or finish endpoints. The migration initializes the index as `idle`; therefore, do not assume that the scheduler is advancing it. The dashboard can read:
 - `GET /api/v1/price-reference/current`
 - `GET /api/v1/price-reference/candles?limit=100`
 
-The database migration must be applied before starting the backend. No front-end dashboard was present in the inspected repository, so rendering these API candles on the public home page remains a separate client-side task.
+The database migrations must be applied before starting the backend. A first public read-only frontend is present under `public/growth/` and is served at `/growth`; browser/runtime verification and deployment are still pending.

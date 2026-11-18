@@ -241,7 +241,7 @@ function createMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
       }
 
       const result = await client.query(
-        "SELECT id, started_at, last_claim_at FROM mining_sessions " +
+        "SELECT id, started_at, last_claim_at, rate_balance_base_units FROM mining_sessions " +
         "WHERE user_id = $1 AND status = 'active' FOR UPDATE",
         [userId]
       );
@@ -259,7 +259,7 @@ function createMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
     return withTransaction(pool, async (client) => {
       await lockActiveUser(client, userId);
       const result = await client.query(
-        "SELECT id, started_at, last_claim_at FROM mining_sessions " +
+        "SELECT id, started_at, last_claim_at, rate_balance_base_units FROM mining_sessions " +
         "WHERE id = $1 AND user_id = $2 AND status = 'active' FOR UPDATE",
         [sessionId, userId]
       );

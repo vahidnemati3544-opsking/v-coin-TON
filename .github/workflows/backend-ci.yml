@@ -51,5 +51,7 @@ jobs:
         run: npm run check
       - name: Initialize PostgreSQL schema and migrations
         run: npm run db:setup
+      - name: Verify migration runner is idempotent
+        run: npm run db:setup
       - name: Run backend unit and integration tests
         run: npm test

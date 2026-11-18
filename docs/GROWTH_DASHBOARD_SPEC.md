@@ -47,9 +47,44 @@ Do not describe the index as a live market price, guaranteed appreciation, inves
 - Use exact integer arithmetic at 12 USD decimal places; each completed period adds exactly USD 0.000040. Avoid floating-point drift in persisted values.
 - The dashboard must remain clearly labelled as an internal model even when publicly accessible.
 
-## 6. Candlestick definition
+## 6. Approved candlestick presentation and visitor experience
 
-Candles are a visualization of the internal index only. The implementation team must define and document the candle interval, open/high/low/close derivation, and historical sampling method. Do not fabricate exchange volume or market trades. If no meaningful intra-interval observations exist, use explicitly model-derived candles and label them as simulated/modelled.
+The owner has approved a professional Bitcoin/TradingView-inspired candlestick presentation, adapted strictly for the V COIN internal growth index. This is a growth-history chart, not a trading terminal.
+
+### 6.1 Visual direction
+
+- Dark/near-black chart background with restrained gold V COIN branding.
+- Green candlesticks for completed upward index steps; use a restrained neutral treatment for an unfinished/current period if needed.
+- Clean chart grid and a smooth, professional charting layout.
+- Remove numerical labels from the chart canvas: no numeric price scale, no numeric tick labels, and no numeric values printed over candles. The underlying exact index values remain stored and calculated by the backend.
+- Keep the chart uncluttered. Do not add buy/sell buttons, order-book panels, trading signals, or exchange-style volume bars.
+- The chart must be responsive on mobile and desktop, with touch interaction on mobile and pointer interaction on desktop.
+
+### 6.2 Candle interval and calculation
+
+- The canonical candle interval is one completed 72-hour index period.
+- Each completed 72-hour period produces one historical candle.
+- For period n, the candle opens at the index value at the beginning of that period and closes at the index value after its fixed USD 0.000040 step is applied.
+- Since the approved index is monotonic and has no intra-period market trades, the candle high equals its close and the candle low equals its open. Do not invent intraperiod price movement, red candles, wicks, volatility, or market volume.
+- The currently active 72-hour period may be shown as a forming candle. It must not be shown as a completed growth step until the backend confirms the period boundary.
+- The first candle must be anchored to the administrator-approved start time. Historical candles must be reproducible from persisted backend state.
+- Do not offer 1-hour, 4-hour, or daily candlestick timeframes as if they represented independent price observations. A future visual zoom or date-range filter may change the visible history without changing the canonical 72-hour candle data.
+
+### 6.3 How visitors see and interact with the chart
+
+- Any visitor can open the public dashboard without signing in.
+- The page initially shows the V COIN growth candlestick chart, newest data at the right and older history to the left.
+- Visitors can zoom, pan, and move across historical candles; on phones, these actions use touch gestures.
+- Selecting or hovering over a candle may show a compact information panel with its period status and date/time. Do not reveal numerical price labels in the chart or tooltip under the approved number-free presentation.
+- The chart refreshes from the public read-only API. A browser refresh or reconnect must restore the same history and current period.
+- A clear, persistent disclosure must explain that the chart represents the project's internal reference-growth model, not a market price or guaranteed return.
+- Public visitors cannot start, pause, resume, or finish the index. Those actions remain restricted to authenticated, authorized administrators.
+
+### 6.4 Data integrity
+
+- Do not fabricate exchange volume, trades, volatility, technical-analysis signals, or red/down candles.
+- If the owner later approves a different growth model, preserve the historical record and document the model change rather than silently rewriting old candles.
+- The visual chart may omit numerical labels, but backend calculations, audit records, and administrator reports must retain exact numerical values for accountability.
 
 ## 7. Release and deployment gates
 
@@ -64,9 +99,11 @@ Candles are a visualization of the internal index only. The implementation team 
 
 - Product direction and display parameters: approved by project owner.
 - Specification file: recorded in this repository.
+- Chart visual direction: approved — TradingView/Bitcoin-inspired, dark background, gold branding, green growth candles, number-free chart canvas.
+- Candle semantics: approved — one model-derived candle per completed 72-hour period; no fabricated market activity or intraperiod volatility.
 - Frontend implementation: pending.
-- Backend/API/database implementation: pending.
-- Automated tests and security review: pending.
+- Backend/API/database implementation: partially prepared on feature branch; administrator lifecycle controls and complete integration remain pending.
+- Automated runtime tests and security review: pending.
 - Hosting provider, domain/subdomain, and production deployment: not yet confirmed.
 - Public launch and search-engine indexing: pending.
 

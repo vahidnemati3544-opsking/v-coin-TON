@@ -1,7 +1,23 @@
 const { Pool } = require("pg");
 
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL is required. Configure it in the backend .env file.");
+}
+
+let parsedDatabaseUrl;
+try {
+  parsedDatabaseUrl = new URL(databaseUrl);
+} catch {
+  throw new Error("DATABASE_URL must be a valid PostgreSQL connection URL.");
+}
+
+if (!['postgres:', 'postgresql:'].includes(parsedDatabaseUrl.protocol)) {
+  throw new Error("DATABASE_URL must use postgres:// or postgresql://.");
+}
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: databaseUrl,
   ssl:
     process.env.NODE_ENV === "production"
       ? { rejectUnauthorized: true }

@@ -34,7 +34,7 @@ npm test
 ```
 
 - `npm run check` checks JavaScript syntax, including the mining engine and database setup script.
-- `npm test` runs the current Node.js unit tests. These tests do not replace a real PostgreSQL integration test.
+- `npm test` runs Node.js unit tests and, when `TEST_DATABASE_URL` is set, a PostgreSQL integration test for reserve reservation, ledger settlement, balance posting, and idempotent confirmation. GitHub Actions runs this integration test against PostgreSQL 18.
 
 ## Initialize the local database
 
@@ -48,6 +48,7 @@ This explicit development-only command applies, in order:
 
 1. `database/schema.sql` — core users, levels, mining, referral, ledger, balance, and audit tables.
 2. `database/migrations/001-mining-reserve.sql` — the fixed 5,000,000,000 VCOIN mining reserve and its reservation, confirmation, reversal, and integrity functions.
+3. `database/migrations/002-mining-ledger-settlement.sql` — atomic confirmation of a pending mining reward into a balanced double-entry ledger transaction and the user's internal VCOIN balance. This does not transfer tokens on-chain.
 
 The setup script refuses to run when `NODE_ENV=production`. Review the target database name and role shown in its output before proceeding. Do not run it against a production database.
 
@@ -72,13 +73,13 @@ Set `TELEGRAM_BOT_TOKEN` in the private `.env` file. The API provides:
 
 Only a SHA-256 hash of each session token is stored in PostgreSQL. Telegram init data is checked for signature, timestamp age, duplicate fields, and a valid Telegram user ID. A Telegram username or raw user ID alone is never accepted as authentication. The bot token must never be committed to Git.
 
-The current automated tests cover HMAC validation, tampering, expiry, duplicate parameters, missing configuration, and session-token hashing. A live PostgreSQL authentication integration test remains outstanding.
+The current automated tests cover HMAC validation, tampering, expiry, duplicate parameters, missing configuration, and session-token hashing. The PostgreSQL integration test exercises reward reserve and ledger settlement; Telegram session creation/revocation still needs a dedicated live-database integration test.
 
 ## Mining engine status
 
 The mining engine is in `../engine.js`. It supports session start, reward claim, and session end operations. Each newly accrued reward is written and reserved against the approved mining allocation in the same PostgreSQL transaction. If the reserve migration is missing or the reserve is exhausted, the claim must roll back.
 
-The current API server does not yet expose user-facing mining routes. Authentication, level configuration, ledger posting, and end-to-end PostgreSQL tests must be completed before enabling user mining.
+The current API server does not yet expose user-facing mining routes. Mining session API routes remain disabled until Telegram authentication is connected to the mining engine, the approved 400-level schedule is supplied, and full session/claim/end integration tests pass.
 
 ## Deployment restrictions
 

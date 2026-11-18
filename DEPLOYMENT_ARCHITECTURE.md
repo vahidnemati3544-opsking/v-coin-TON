@@ -300,3 +300,20 @@ End of Document
 
 V COIN – TON
 Deployment Architecture v1.0
+
+
+22. Founder treasury and sale settlement
+
+All proceeds from VCOIN primary sales and other approved VCOIN sale transactions must be directed to the founder-controlled TON wallet designated by the project owner.
+
+The production wallet address must be configured only in the protected server/deployment secret store as FOUNDER_TREASURY_WALLET_ADDRESS. It must never be hardcoded in frontend code, committed to Git, or included in public deployment manifests. Testnet must use a separate verified Testnet destination.
+
+The sale settlement service must:
+- Validate the configured TON network and destination address before enabling sales.
+- Verify incoming TON/Jetton payments on-chain before recording a sale.
+- Reject wrong-network, underpaid, expired, or duplicate payment references.
+- Deliver purchased VCOIN only after payment finality and ledger reconciliation.
+- Record transaction hashes and immutable accounting entries.
+- Remain disabled until the Jetton Master, delivery workflow, and treasury destination have been independently verified.
+
+A configured treasury destination is not evidence that sale settlement is implemented or live.

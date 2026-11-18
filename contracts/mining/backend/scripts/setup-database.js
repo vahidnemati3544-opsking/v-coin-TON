@@ -45,6 +45,11 @@ const migrations = [
     version: '002_mining_ledger_settlement',
     description: 'Atomic mining reward ledger settlement',
     file: path.resolve(__dirname, '../database/migrations/002-mining-ledger-settlement.sql')
+  },
+  {
+    version: '003_balance_based_mining',
+    description: 'Balance-based 1 percent daily mining snapshots',
+    file: path.resolve(__dirname, '../database/migrations/003-balance-based-mining.sql')
   }
 ];
 

@@ -60,6 +60,11 @@ const migrations = [
     version: '003_balance_based_mining',
     description: 'Legacy internal-balance mining snapshot fields; public mining remains disabled',
     file: path.resolve(__dirname, '../database/migrations/003-balance-based-mining.sql')
+  },
+  {
+    version: '004_price_reference_dashboard',
+    description: 'Linear internal VCOIN reference index and audit schema',
+    file: path.resolve(__dirname, '../database/migrations/004-price-reference-dashboard.sql')
   }
 ];
 

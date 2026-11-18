@@ -38,6 +38,22 @@ function calculateReward(rate, elapsedMilliseconds) {
   return (scaledRate * elapsed) / REWARD_DENOMINATOR;
 }
 
+function calculateBalanceReward(balanceBaseUnits, elapsedMilliseconds) {
+  let balance;
+  let elapsed;
+  try {
+    balance = BigInt(balanceBaseUnits);
+    elapsed = BigInt(elapsedMilliseconds);
+  } catch {
+    throw new MiningError('INVALID_REWARD_INPUT', 'Balance and elapsed time must be integers.');
+  }
+  if (balance < 0n || elapsed < 0n) {
+    throw new MiningError('INVALID_REWARD_INPUT', 'Balance and elapsed time cannot be negative.');
+  }
+  // 1% per 24 hours: balance * elapsed_ms / (100 * 86,400,000).
+  return (balance * elapsed) / 8640000000n;
+}
+
 function validateUuid(value, code, label) {
   if (typeof value !== 'string' ||
       !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)) {
@@ -113,7 +129,7 @@ function createMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
     // Price cancels algebraically: (balance * price * 1%) / price = balance * 1%.
     // Snapshot balance is fixed for this accrual interval to prevent end-of-interval deposits
     // from being applied retroactively. Amounts are integer base units (6 decimals).
-    const amount = (snapshotBaseUnits * BigInt(elapsedMs)) / 8640000000n;
+    const amount = calculateBalanceReward(snapshotBaseUnits, elapsedMs);
     if (amount <= 0n) {
       throw new MiningError('REWARD_TOO_SMALL', 'Accrued reward is below one token base unit.');
     }
@@ -291,4 +307,4 @@ function createMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
   return Object.freeze({ startSession, claimReward, endSession });
 }
 
-module.exports = { MiningError, parseRate, calculateReward, createMiningEngine };
+module.exports = { MiningError, parseRate, calculateReward, calculateBalanceReward, createMiningEngine };

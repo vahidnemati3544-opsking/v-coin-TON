@@ -3,7 +3,8 @@
 **Database:** PostgreSQL  
 **Schema file:** contracts/mining/backend/database/schema.sql  
 **Mining reserve migration:** contracts/mining/backend/database/migrations/001-mining-reserve.sql  
-**Status:** Core schema and reserve controls are present; application integration and live database verification remain pending.
+**Ledger settlement migration:** contracts/mining/backend/database/migrations/002-mining-ledger-settlement.sql  
+**Status:** Core schema, reserve controls, and atomic internal ledger settlement are implemented; CI PostgreSQL integration is configured. Local database verification remains pending.
 
 ## 1. Core tables
 
@@ -50,7 +51,7 @@ Migration 001-mining-reserve.sql creates:
 
 The fixed allocation is 5,000,000,000 VCOIN = 5,000,000,000,000,000 base units. The migration checks this exact amount and prevents pending plus distributed amounts from exceeding the allocation.
 
-The engine currently calls the reservation function when it creates a reward. Confirmation/reversal must still be integrated with the account ledger and balance lifecycle before user balances can be considered complete.
+The mining engine calls the reservation function when it creates a reward. Migration 002 adds `confirm_mining_reward_to_internal_balance(...)`, which confirms the reserve, posts equal debit/credit ledger entries, updates the user's internal available balance, and marks the reward confirmed in one transaction. Repeated confirmation is idempotent and does not increment the balance twice. This is an internal accounting entry, not an on-chain transfer.
 
 ## 5. Important configuration gap: levels
 
@@ -60,7 +61,7 @@ Therefore, a new account cannot be fully initialized for mining until the owner-
 
 ## 6. Ledger and balances
 
-The schema defines double-entry ledger tables and a balance snapshot table. The current mining engine does not yet post balanced debit/credit ledger entries or update balances when rewards are accrued/confirmed. That integration is a required implementation stage.
+The schema defines double-entry ledger tables and a balance snapshot table. Migration 002 posts a debit to the mining reward expense account and a matching credit to the user's VCOIN liability account. It updates the user's internal available balance in the same transaction and verifies the balanced entries on retry.
 
 Every posted transaction must balance by asset and operation, and financial history must be append-only. Balance snapshots must be reconcilable to ledger entries.
 
@@ -80,9 +81,9 @@ The setup script applies the core schema and mining reserve migration in order a
 
 - Add a formal migration history/version mechanism.
 - Seed approved levels and costs after economic approval.
-- Implement atomic reward confirmation and ledger posting.
+- Add formal migration history/version tracking.
+- Add full PostgreSQL integration tests for Telegram session lifecycle, mining session lifecycle, rollback, reserve exhaustion, and concurrent claims.
 - Implement balance reconciliation queries and tests.
-- Add PostgreSQL integration tests for rollback, idempotency, reserve exhaustion, concurrency, and session lifecycle.
 - Verify backup/restore and least-privilege database roles.
 
 A successful JavaScript CI run does not prove that the SQL has been applied to the user's local PostgreSQL instance.

@@ -1,7 +1,7 @@
 'use strict';
 
 const express = require('express');
-const { createMiningEngine, MiningError } = require('../../engine');
+const { createMiningEngine, MiningError } = require('../../../engine');
 
 function sendMiningError(error, res, next) {
   if (!(error instanceof MiningError)) return next(error);

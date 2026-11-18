@@ -62,6 +62,18 @@ Health endpoints:
 - `GET /health/live` — process liveness.
 - `GET /health/ready` — checks PostgreSQL connectivity.
 
+## Telegram authentication
+
+Set `TELEGRAM_BOT_TOKEN` in the private `.env` file. The API provides:
+
+- `POST /api/v1/auth/telegram` — validates Telegram Mini App init data using the bot-token HMAC scheme and issues a random bearer session token.
+- `GET /api/v1/auth/me` — returns the current authenticated account.
+- `POST /api/v1/auth/logout` — revokes the current session.
+
+Only a SHA-256 hash of each session token is stored in PostgreSQL. Telegram init data is checked for signature, timestamp age, duplicate fields, and a valid Telegram user ID. A Telegram username or raw user ID alone is never accepted as authentication. The bot token must never be committed to Git.
+
+The current automated tests cover HMAC validation, tampering, expiry, duplicate parameters, missing configuration, and session-token hashing. A live PostgreSQL authentication integration test remains outstanding.
+
 ## Mining engine status
 
 The mining engine is in `../engine.js`. It supports session start, reward claim, and session end operations. Each newly accrued reward is written and reserved against the approved mining allocation in the same PostgreSQL transaction. If the reserve migration is missing or the reserve is exhausted, the claim must roll back.

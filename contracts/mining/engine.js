@@ -186,6 +186,16 @@ function createMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
       if (level.rowCount !== 1) {
         throw new MiningError('USER_LEVEL_NOT_CONFIGURED', 'User level or mining rate is not configured.');
       }
+
+      const existing = await client.query(
+        "SELECT id, user_id, started_at, last_claim_at, status FROM mining_sessions " +
+        "WHERE user_id = $1 AND status = 'active' FOR UPDATE",
+        [userId]
+      );
+      if (existing.rowCount === 1) {
+        return { ...existing.rows[0], duplicate: true };
+      }
+
       const result = await client.query(
         "INSERT INTO mining_sessions (id, user_id, started_at, last_claim_at, status, created_at, updated_at) " +
         "VALUES ($1, $2, clock_timestamp(), clock_timestamp(), 'active', clock_timestamp(), clock_timestamp()) " +

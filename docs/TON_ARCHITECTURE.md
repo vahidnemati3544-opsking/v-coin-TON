@@ -3,7 +3,7 @@
 **Project:** V COIN – TON  
 **Network:** The Open Network (TON)  
 **Token standard:** Jetton (TEP-74)  
-**Status:** Architecture specification; implementation and deployment remain in progress.
+**Status:** Architecture specification; Jetton implementation, deployment and wallet-based mining remain unverified/in progress.
 
 ## 1. Scope and separation
 
@@ -11,69 +11,42 @@ V COIN – TON is an independent TON implementation. It must not import, reuse, 
 
 ## 2. System layers
 
-1. TON Jetton contracts: fixed initial supply, Jetton master, standard-compatible Jetton wallets, and controlled allocation.
-2. Backend API: user authentication, mining sessions, reward processing, levels, referrals, internal balances, and audit records.
-3. PostgreSQL: authoritative application records, transaction-safe operations, reserve accounting, and audit history.
-4. Telegram interface: user onboarding, account presentation, mining actions, referrals, and notifications. Telegram is a client, not the authority for balances.
-5. Wallet connectivity: Tonkeeper and other TON-compatible wallets through approved connection/signature flows. Private keys and recovery phrases remain with the user.
-6. Operations and monitoring: deployment, backups, security logs, reconciliation, and alerting.
+1. TON Jetton master and per-owner Jetton wallet contracts.
+2. Backend API for authentication, wallet linking, mining, levels, referrals and audit records.
+3. PostgreSQL for application records, immutable wallet snapshots, pending rewards, payout lifecycle and reconciliation.
+4. Telegram Mini App as the user interface; Telegram is not the authority for token balances.
+5. TON Connect-compatible wallet proof and transaction approval; private keys and recovery phrases remain with the user.
+6. Monitoring, backups, security logs and reconciliation.
 
-## 3. Token design
+## 3. Approved token design
 
-The approved design in docs/TOKENOMICS.md specifies:
+The approved design in `docs/TOKENOMICS.md` specifies an initial supply of 10,000,000,000 VCOIN, six decimals, no additional minting, and a 5,000,000,000 VCOIN mining allocation. These are design decisions, not evidence of an issued token or deployed contract.
 
-- Initial supply: 10,000,000,000 VCOIN.
-- Decimal precision: 6.
-- Additional minting: prohibited.
-- Founder allocation: 20% (2,000,000,000 VCOIN), subject to a four-year vesting design.
-- Mining reserve: 50% (5,000,000,000 VCOIN).
-- Treasury: 10%.
-- Liquidity and market: 10%.
-- Ecosystem and marketing: 10%.
+## 4. Balance authority and mining
 
-The database reserve migration records the mining allocation in base units. Database records do not create Jettons or prove on-chain ownership.
+The next mining interval is calculated from the user's verified on-chain VCOIN Jetton balance in the linked TON wallet. Internal pending rewards, unconfirmed payouts and PostgreSQL internal balances are not wallet holdings.
 
-## 4. Internal balances versus on-chain assets
+The rate is exactly 1% per 24 hours at every level 1–400. Use integer base units and an immutable wallet snapshot. After a payout is confirmed on-chain, obtain a fresh snapshot for the next interval. The 5B mining allocation is a hard reserve, not minting authority.
 
-The backend must distinguish purchased VCOIN records, newly accrued mining rewards, pending and confirmed internal rewards, available and restricted internal balances, tokens transferred to a user's TON wallet, and confirmed on-chain Jetton transfers.
+## 5. Security and payout
 
-A mining reward shown in the application is not an on-chain token transfer. Transfers must remain disabled until the owner-approved release policy, wallet verification, ledger reconciliation, and contract controls are implemented.
+- Verify wallet ownership with a supported TON Connect proof/signature; a pasted address is insufficient.
+- Validate the exact approved Jetton master, owner address, network and wallet relationship. Token name, ticker and image are not identity proof.
+- Use a trusted chain/indexer provider and fail closed on stale, inconsistent or unavailable data.
+- Keep pending internal rewards separate from confirmed on-chain transfers.
+- Reconcile payout transaction identity, amount, recipient, bounce state and finality before marking paid.
+- Never request, store, log or transmit private keys or recovery phrases.
 
-## 5. Mining and reserve
+## 6. Network and release gates
 
-Mining calculations are performed server-side using integer/base-unit arithmetic. Each claim must be idempotent and run in a PostgreSQL transaction. Every newly accrued reward must reserve against the fixed mining allocation; a missing reserve migration or exhausted reserve must cause the claim to roll back.
+Development, Testnet and Mainnet configurations must be separate. Testnet deployment and wallet-based extraction require completed local tests, verified contract identity, wallet proof, chain reader, payout reconciliation and owner approval. Mainnet deployment, initial issuance and real-value transfers require separate explicit approval and independent security review.
 
-The approved reserve amount is a hard cap, not a minting permission. The mining engine must never create additional token supply.
+## 7. Current evidence-based status
 
-## 6. Wallet security
+- PostgreSQL schema, internal reserve/ledger code and Telegram HMAC authentication code exist in the repository.
+- The current mining engine still uses internal PostgreSQL balances; it is not compliant with the approved wallet-balance policy.
+- The public mining API is intentionally blocked with HTTP 503 until wallet-based mining is implemented.
+- The repository review has not established a deployed VCOIN Jetton master address or a complete deployable Jetton contract package. See `docs/JETTON_DEPLOYMENT_INVENTORY.md`.
+- PostgreSQL execution, non-skipped integration tests, CI success, Telegram end-to-end login, TON wallet proof, Testnet deployment and on-chain payout have not been demonstrated by the evidence currently available.
 
-- Private keys and seed phrases must never reach the backend.
-- Wallet ownership checks must use a verifiable wallet signature or supported TON connection proof.
-- The backend stores public wallet addresses and verification metadata only.
-- Transaction details must be presented for explicit user approval.
-- Tonkeeper/Gram Wallet connection is not equivalent to custody or permission to spend.
-
-## 7. Network and release gates
-
-Development, TON Testnet, and TON Mainnet must use separate configuration and credentials. Testnet deployment follows local tests and review. Mainnet deployment, initial issuance, liquidity commitment, and irreversible administrative actions require a separate explicit approval.
-
-## 8. Current implementation status
-
-Implemented in the repository:
-- PostgreSQL core schema, fixed mining reserve, and atomic reserve controls.
-- Node.js health endpoints and database connectivity checks.
-- Telegram Mini App HMAC verification, hashed/revocable application sessions, and authenticated account endpoints.
-- Authenticated mining status, start, claim, and end API routes.
-- Atomic mining reward reservation, confirmation, balanced double-entry ledger posting, and internal balance updates.
-- PostgreSQL 18 CI integration tests for reserve settlement and mining session/claim lifecycle.
-- Local database setup command applying the schema and both migrations.
-
-Still pending or not yet demonstrated:
-- Approved rates and upgrade costs for all 400 levels.
-- Telegram bot token configuration and end-to-end Mini App login against the user's bot.
-- Local PostgreSQL setup and verification on the user's Windows laptop.
-- Tonkeeper/Gram Wallet signature verification.
-- TON Jetton contract implementation and Testnet deployment.
-- Independent security review, operational monitoring, and Mainnet readiness.
-
-The project must not be described as production-ready or as performing real on-chain mining until these gates pass.
+The project must not be described as performing real on-chain mining or as extraction-ready until all release gates pass.

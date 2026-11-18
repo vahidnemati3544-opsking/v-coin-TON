@@ -22,18 +22,25 @@
 - UUID and idempotency-key validation in the mining engine.
 - Unique database constraints for sessions, operations, and idempotency keys.
 - Fixed mining reserve checks and atomic reservation of each newly accrued reward.
+- Atomic confirmation of the reserve, double-entry ledger posting, and internal balance credit in one transaction.
+- Idempotent mining start and claim handling, covered by PostgreSQL integration tests.
 - Production PostgreSQL TLS configuration with certificate verification enabled.
 
 These controls do not constitute a complete security audit.
 
-## 3. Authentication and authorization still required
+## 3. Authentication and authorization
 
-- Server-side Telegram Mini App init-data signature validation.
-- Session token generation, hashed storage, expiry, and revocation.
-- Per-route authentication and account ownership checks.
+Implemented:
+- Telegram Mini App init-data HMAC signature verification using the bot token.
+- Rejection of expired data, duplicate parameters, malformed user IDs, and invalid signatures.
+- Cryptographically random bearer sessions with SHA-256-only token storage, expiry, and revocation.
+- Database-backed authentication on private mining endpoints.
+
+Still required:
 - Role-based authorization for administrative actions.
 - Separate authorization for treasury and reserve operations.
-- Secure Telegram webhook verification.
+- Secure Telegram webhook verification and end-to-end bot deployment testing.
+- Rate limiting and abuse monitoring on authentication and mining routes.
 
 A Telegram username or user ID alone must never authenticate a request.
 
@@ -48,7 +55,7 @@ Required before real users are enabled:
 - Reserve cap enforced inside the same transaction as reward creation.
 - Detection and review of abnormal account patterns.
 - Rate limits and abuse controls on authentication and mining routes.
-- Atomic ledger posting and reconciliation.
+- Expanded abuse detection, rate limiting, and continuous reserve/ledger reconciliation.
 - Safe handling of retries, duplicate requests, and concurrent claims.
 
 Device/IP signals may support risk review but must not be treated as conclusive identity proof.

@@ -221,7 +221,7 @@ function createMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
       }
 
       const existing = await client.query(
-        "SELECT id, user_id, started_at, last_claim_at, status FROM mining_sessions " +
+        "SELECT id, user_id, started_at, last_claim_at, rate_balance_base_units, status FROM mining_sessions " +
         "WHERE user_id = $1 AND status = 'active' FOR UPDATE",
         [userId]
       );

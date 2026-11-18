@@ -73,12 +73,19 @@ app.use(
       : 86400
   })
 );
-app.use(
-  "/api/v1/mining",
-  createSessionAuthMiddleware({ pool }),
-  miningApiRateLimit,
-  createMiningRouter({ pool })
-);
+// Fail closed until the wallet-balance mining implementation is complete.
+// The current engine still uses internal PostgreSQL balances and must not be
+// exposed as an extraction API under the owner's approved TON-wallet rule.
+app.use("/api/v1/mining", (req, res) => {
+  return res.status(503).json({
+    error: "WALLET_BALANCE_MINING_NOT_IMPLEMENTED",
+    message: "Mining is unavailable until verified TON Jetton wallet balances and confirmed payouts are implemented."
+  });
+});
+
+// Keep the internal-balance router available for isolated tests only.
+// Do not mount it on the public API before the wallet-balance adapter is complete.
+
 
 app.get("/", (req, res) => {
   res.status(200).json({

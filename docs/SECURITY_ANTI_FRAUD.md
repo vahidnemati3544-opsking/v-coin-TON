@@ -116,6 +116,10 @@ No real-value transfer, token issuance, Mainnet deployment, or public mining lau
 - Ordinary non-financial engineering work may continue without this additional financial-domain approval, provided it does not inspect, change, or affect protected financial controls, balances, destinations, or transfer capabilities.
 - If it is unclear whether a task enters or affects the protected financial domain, stop before accessing or changing that area and ask the founder for explicit approval.
 
+
+- The approval request must be made before opening or reviewing the protected financial material, not after access has occurred. The request must identify the specific file, subsystem, or operation and the intended scope. Approval applies only to the scope and session expressly authorized; it does not create blanket or continuing permission.
+- Read-only inspection is also considered access and requires fresh approval after mining/extraction has begun. If no clear approval is received, do not access the protected area.
+
 ### 9.3 Transaction and deployment safeguards
 
 - Documentation approval is not authorization to sign or broadcast a blockchain transaction.

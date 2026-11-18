@@ -4,7 +4,6 @@ const INTERVAL_MS = 72 * 60 * 60 * 1000;
 const PRICE_SCALE = 1_000_000_000_000n;
 const INITIAL_PRICE_SCALED = 4_000_000_000n;
 const FIXED_INCREMENT_SCALED = INITIAL_PRICE_SCALED / 100n;
-const MINING_RESERVE_CODE = 'USER_MINING';
 
 function increasePriceScaled(currentScaled) {
   if (typeof currentScaled !== 'bigint' || currentScaled <= 0n) {
@@ -51,25 +50,8 @@ async function advancePriceReference({ pool, now = new Date() }) {
       return { advanced, status: state.status };
     }
 
-    const reserveResult = await client.query(
-      "SELECT allocated_base_units::text, distributed_base_units::text " +
-      "FROM mining_reserve WHERE reserve_code = $1 FOR UPDATE",
-      [MINING_RESERVE_CODE]
-    );
-    if (reserveResult.rowCount !== 1) {
-      throw new Error('MINING_RESERVE_NOT_INITIALIZED');
-    }
-    const reserve = reserveResult.rows[0];
-    const allocated = BigInt(reserve.allocated_base_units);
-    const distributed = BigInt(reserve.distributed_base_units);
-    if (distributed >= allocated) {
-      await client.query(
-        "UPDATE price_reference_state SET status = 'completed', updated_at = clock_timestamp() " +
-        'WHERE singleton = TRUE'
-      );
-      await client.query('COMMIT');
-      return { advanced, status: 'completed' };
-    }
+    // The growth-index lifecycle is administrator-controlled and independent
+    // of mining-reserve distribution or user extraction activity.
 
     const nowMs = now instanceof Date ? now.getTime() : new Date(now).getTime();
     if (!Number.isFinite(nowMs)) throw new TypeError('Invalid current time');

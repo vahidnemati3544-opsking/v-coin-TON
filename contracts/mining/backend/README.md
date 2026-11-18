@@ -84,7 +84,7 @@ The current automated tests cover HMAC validation, tampering, expiry, duplicate 
 
 The mining engine is in `../engine.js`. It supports session start, reward claim, and session end operations. Reward accrual is 1% of the eligible available internal VCOIN balance per 24 hours for every level from 1 to 400; the level-specific fixed mining-rate field is no longer used for reward calculation. Each newly accrued reward is written and reserved against the approved mining allocation in the same PostgreSQL transaction. If the reserve migration is missing or the reserve is exhausted, the claim must roll back.
 
-The current API server does not yet expose user-facing mining routes. Mining session API routes remain disabled until Telegram authentication is connected to the mining engine, the approved 400-level schedule is supplied, and full session/claim/end integration tests pass.
+The API server currently mounts authenticated mining routes at `/api/v1/mining` (`GET /status`, `POST /start`, `POST /claim`, and `POST /end`) behind database-backed Telegram session authentication. Route presence does not mean the feature is ready for users: controlled extraction remains blocked until the 400-level seed, balance-eligibility policy, migration 003, PostgreSQL lifecycle/concurrency tests, Telegram end-to-end flow, and security gates in `docs/MINING_READINESS_PLAN.md` are verified.
 
 ## Deployment restrictions
 

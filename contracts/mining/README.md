@@ -34,18 +34,42 @@ The system must support:
 
 Mining calculations must be deterministic and auditable.
 
-### Approved balance-based reward rule
+### Owner-approved USD-value reward formula (2026-11-18)
 
-For every account at every level from 1 through 400, the daily reward is 1% of the user's eligible available internal VCOIN balance. Level number does not multiply, reduce, or otherwise change the reward rate.
+The daily mining reward is **1% of the user's eligible VCOIN wallet balance value in USD**, accrued over 24 hours. The rule is identical at every level from 1 through 400. The level number does not multiply, reduce, or otherwise change the 1% daily rate.
 
-With six token decimals, calculations use integer base units:
-- Daily reward: eligible balance / 100.
-- Hourly equivalent: eligible balance / 2,400.
-- General accrual: eligible balance × elapsed milliseconds / 8,640,000,000.
+Definitions:
+- `B`: verified eligible VCOIN Jetton wallet balance, in VCOIN.
+- `P`: the approved VCOIN USD reference price for the same valuation snapshot.
+- `V_USD = B * P`: eligible account value in USD.
+- `R_USD = V_USD * 0.01`: daily reward value in USD.
+- `R_VCOIN = R_USD / P`: daily reward amount in VCOIN.
 
-The USD interpretation is 1% of the account's VCOIN value per day. Since the same VCOIN market price values both the balance and the reward, the price cancels when converting the rule back into VCOIN units. Therefore no hard-coded USD price or unverified price feed is used by the reward engine. If the VCOIN price changes, the user's USD balance value and the USD value of the reward change proportionally, while the token reward remains 1% of the eligible token balance per 24 hours.
+Because the same VCOIN price snapshot is used to value the eligible VCOIN balance and convert its reward, the price cancels algebraically: **`R_VCOIN = B * 0.01` for a full 24-hour interval**. The USD-value formula is the business rule; the equivalent integer-base-unit formula is used by the engine.
 
-The engine snapshots eligible available balance at session start and after each successful claim. A later deposit is applied to the next accrual interval and is not retroactively rewarded. Reserved balances are excluded. Rewards are credited to the internal account and remain subject to the 5,000,000,000 VCOIN mining reserve. This rule is identical for levels 1–400.
+For six-decimal VCOIN precision, calculate with integer base units and round down:
+- Full-day reward: `floor(snapshot_base_units / 100)`.
+- Partial interval: `floor(snapshot_base_units * elapsed_ms / 8,640,000,000)`.
+- The maximum accrual interval and missed-claim policy remain subject to the separately approved operational policy.
+
+Illustrative examples only, using a reference price of USD 0.004 per VCOIN:
+| Eligible account value | Daily reward value | Daily VCOIN reward |
+|---:|---:|---:|
+| USD 215 | USD 2.15 | 537.5 VCOIN |
+| USD 235 | USD 2.35 | 587.5 VCOIN |
+| USD 260 | USD 2.60 | 650 VCOIN |
+| USD 315 | USD 3.15 | 787.5 VCOIN |
+| USD 420 | USD 4.20 | 1,050 VCOIN |
+
+The USD 0.004 figure above is an illustration, not a guaranteed market price, exchange quote, or promise of value. A modelled reference price must never be represented as a live market price.
+
+Eligibility and accrual controls:
+- The source of truth is the user's **verified on-chain VCOIN Jetton balance** in the linked TON wallet, not an internal PostgreSQL balance or a client-entered USD amount.
+- Wallet ownership, TON network, approved VCOIN Jetton master, owner address, decimals, source freshness, and chain context must be verified before a snapshot is eligible.
+- A snapshot is immutable for its accrual interval. Deposits arriving during an interval apply to the next interval and are not rewarded retroactively.
+- Pending internal mining rewards do not count toward the next interval. A reward becomes eligible only after its VCOIN transfer is confirmed on-chain and a fresh wallet snapshot includes it. This prevents double counting.
+- Reserved balances are excluded. All rewards are subject to the hard 5,000,000,000 VCOIN mining reserve; this rule does not authorize minting.
+- If the wallet proof, chain data, Jetton identity, or balance freshness cannot be verified, mining must fail closed. Never fall back to an internal balance.
 
 4. Level Progression System
 

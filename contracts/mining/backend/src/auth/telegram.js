@@ -155,6 +155,16 @@ function createTelegramAuthRouter({ pool, botToken, maxAgeSeconds = DEFAULT_AUTH
           [user.id, identity.firstName, identity.lastName, identity.languageCode]
         );
 
+        // If the approved level-1 configuration already exists, initialize
+        // this account at level 1. If levels are not seeded yet, onboarding
+        // still succeeds and mining remains safely unavailable.
+        await client.query(
+          'INSERT INTO user_levels (user_id, current_level) ' +
+          'SELECT $1, 1 WHERE EXISTS (SELECT 1 FROM levels WHERE level = 1) ' +
+          'ON CONFLICT (user_id) DO NOTHING',
+          [user.id]
+        );
+
         await client.query(
           'INSERT INTO user_sessions (user_id, token_hash, expires_at) ' +
           "VALUES ($1, $2, clock_timestamp() + ($3 * INTERVAL '1 second'))",

@@ -121,3 +121,5 @@ The earlier checklist item 16 (balance eligibility) is now defined by the wallet
 7. Local PostgreSQL 18 migration execution and migration checksum status have not been verified in the owner's environment.
 
 No item is marked tested or production-ready based only on source presence or commit history.
+
+- 2026-11-18 safety correction: the public `/api/v1/mining` API is now fail-closed with HTTP 503 and `WALLET_BALANCE_MINING_NOT_IMPLEMENTED` until verified TON Jetton wallet balance sourcing and confirmed payout reconciliation are implemented. The internal-balance engine remains available only for isolated tests; it is not an owner extraction path. Commit: `d1a1c29914da7b94cc32d23de14458ca1f328416`.

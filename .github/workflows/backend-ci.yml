@@ -33,6 +33,7 @@ jobs:
           --health-timeout 5s
           --health-retries 10
     env:
+      DATABASE_URL: postgresql://vcoin_test:vcoin_test_password@localhost:5432/vcoin_ton_test
       TEST_DATABASE_URL: postgresql://vcoin_test:vcoin_test_password@localhost:5432/vcoin_ton_test
     defaults:
       run:
@@ -48,5 +49,7 @@ jobs:
         run: npm install
       - name: Check JavaScript syntax
         run: npm run check
-      - name: Run backend unit tests
+      - name: Initialize PostgreSQL schema and migrations
+        run: npm run db:setup
+      - name: Run backend unit and integration tests
         run: npm test

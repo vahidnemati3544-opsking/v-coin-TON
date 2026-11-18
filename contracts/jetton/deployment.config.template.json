@@ -1,0 +1,41 @@
+{
+  "project": "V COIN – TON",
+  "token_name": "V COIN",
+  "token_symbol": "VCOIN",
+  "standard": "TEP-74",
+  "metadata_standard": "TEP-64",
+  "decimals": 6,
+  "initial_supply_tokens": "10000000000",
+  "initial_supply_base_units": "10000000000000000",
+  "additional_minting": false,
+  "target_network": "testnet",
+  "master_address": null,
+  "deployment_transaction": null,
+  "allocation_base_units": {
+    "founder": "2000000000000000",
+    "mining_reserve": "5000000000000000",
+    "treasury": "1000000000000000",
+    "liquidity_market": "1000000000000000",
+    "ecosystem_marketing": "1000000000000000"
+  },
+  "allocation_destinations": {
+    "founder_vesting_contract": null,
+    "mining_reserve_wallet": null,
+    "treasury_wallet": null,
+    "liquidity_market_wallet": null,
+    "ecosystem_marketing_wallet": null
+  },
+  "founder_vesting": {
+    "duration_seconds": 126144000,
+    "start_timestamp": null,
+    "cliff_seconds": null,
+    "release_frequency_seconds": null
+  },
+  "metadata": {
+    "uri": null,
+    "immutable": true
+  },
+  "deployment_authorized": false,
+  "mainnet_authorized": false,
+  "notes": "Template only. Null values require owner approval and verification. Never commit secrets, seed phrases or private keys."
+}

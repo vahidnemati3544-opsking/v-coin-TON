@@ -1,0 +1,40 @@
+name: VCOIN TON Jetton CI
+
+on:
+  push:
+    branches:
+      - feature/growth-dashboard-backend
+    paths:
+      - "contracts/jetton/acton/**"
+      - ".github/workflows/vcoin-jetton-ci.yml"
+  pull_request:
+    paths:
+      - "contracts/jetton/acton/**"
+      - ".github/workflows/vcoin-jetton-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Acton
+        shell: bash
+        run: |
+          curl -LsSf https://ton.org/acton/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+          source "$HOME/.profile" 2>/dev/null || true
+          acton --version
+      - name: Generate wrappers
+        working-directory: contracts/jetton/acton
+        run: acton run generate-wrappers
+      - name: Compile contracts
+        working-directory: contracts/jetton/acton
+        run: acton build
+      - name: Run emulator tests
+        working-directory: contracts/jetton/acton
+        run: acton test tests

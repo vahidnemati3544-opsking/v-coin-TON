@@ -156,9 +156,9 @@ Before production:
 
 11. Development Status
 
-Implemented in code: deterministic balance-based 1% daily reward calculation, session balance snapshots, reserve enforcement, internal ledger settlement, authenticated API status estimates, and unit tests for the reward formula. Database migration and full CI/local PostgreSQL verification remain required.
+Implemented as internal-only code: deterministic 1% daily balance-reward arithmetic, session balance snapshots, mining-reserve reservation, and double-entry internal-ledger settlement. These components currently operate on PostgreSQL internal balances; they are not the approved verified TON-wallet-balance extraction system. The mining router exists for isolated tests but is not mounted on the public server. Public `/api/v1/mining` requests deliberately return HTTP 503. Unit tests are present, but successful execution and PostgreSQL integration have not yet been verified.
 
-Pending: approved 400-level rates/costs, local PostgreSQL verification, complete Telegram Mini App onboarding, additional abuse controls, wallet signature verification, and TON Jetton Testnet integration.
+Pending: verified TON wallet ownership proof and Jetton balance reader, immutable on-chain snapshots, payout and finality reconciliation, approved 400-level upgrade costs/rates, local PostgreSQL migration and integration verification, complete Telegram Mini App onboarding, additional abuse controls, and TON Testnet extraction rehearsal.
 
 The system is not production-ready. Internal mining credits are not on-chain tokens and do not authorize Mainnet deployment or public reward distribution.
 

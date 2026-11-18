@@ -40,3 +40,8 @@ The wallet owner personally approves each Testnet transaction. Never share seed 
 
 ## Mainnet gate
 No Mainnet deployment is authorized. Allocation destination addresses, founder vesting parameters, final metadata image URL, custody design, independent audit and separate explicit approval are still required.
+
+
+## Windows 10 development note
+
+Acton currently targets Linux and macOS. On Windows 10, use an Ubuntu WSL2 environment with Node.js 22+ and the official Acton installer. Run the build and test commands inside WSL from this folder. The Testnet deployment commands require a funded Testnet wallet and explicit wallet approval; do not put recovery phrases or private keys in shell commands or environment variables.

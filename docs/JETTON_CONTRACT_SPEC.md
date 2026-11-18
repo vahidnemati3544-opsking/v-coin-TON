@@ -2,7 +2,7 @@
 
 **Document ID:** VCT-JETTON-SPEC-001  
 **Version:** 1.0.0  
-**Status:** Contract design draft — implementation, compilation, audit and deployment pending  
+**Status:** VCOIN-specific Jetton implementation added on `feature/growth-dashboard-backend`; compilation, emulator tests, independent audit and Testnet deployment pending  
 **Network target for first rehearsal:** TON Testnet only  
 **Token standard:** TEP-74 (Jettons), with TEP-64 metadata  
 **Repository scope:** V-Coin-TON
@@ -120,7 +120,7 @@ Each destination and its controller must be owner-confirmed. Custody model, mult
 
 ## 10. Required tests
 
-The implementation is not acceptable until automated tests demonstrate:
+The implementation is not accepted for release until automated tests demonstrate:
 1. Exact initial supply and exact five-bucket allocation sum.
 2. Six-decimal/base-unit arithmetic with no floating-point conversions.
 3. One-time issuance succeeds only once.
@@ -166,4 +166,4 @@ Any change to supply, decimals, allocation, mint prohibition, wallet transfer se
 - TON Jetton payment/security guidance: https://docs.ton.org/applications/payments/jettons
 - TON Jetton implementation comparison: https://docs.ton.org/contracts/standard/tokens/jettons/comparison
 
-**Document status:** Technical contract specification drafted and attached to V COIN–TON. Smart-contract source implementation, compilation, tests, independent audit and deployment remain pending.
+**Document status:** Technical specification and initial VCOIN-specific Tolk implementation are present under `contracts/jetton/acton/`. The Master enforces a hard cap of 10,000,000,000 VCOIN, rejects admin-transfer/metadata-change/code-upgrade messages, and supports irreversible admin drop after issuance. Compilation, emulator tests, independent audit, Testnet deployment and on-chain verification remain pending. No Mainnet deployment is authorized.

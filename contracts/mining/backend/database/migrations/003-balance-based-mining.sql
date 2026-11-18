@@ -1,4 +1,7 @@
 -- V COIN–TON migration 003
+-- Apply atomically so a failed setup can be retried safely.
+BEGIN;
+
 -- Freeze the eligible balance at each mining interval boundary.
 ALTER TABLE mining_sessions
   ADD COLUMN IF NOT EXISTS rate_balance_base_units NUMERIC(38,0);
@@ -16,3 +19,5 @@ WHERE ms.status = 'active' AND ms.rate_balance_base_units IS NULL;
 ALTER TABLE mining_sessions
   ADD CONSTRAINT mining_sessions_rate_balance_nonnegative
   CHECK (rate_balance_base_units IS NULL OR rate_balance_base_units >= 0);
+
+COMMIT;

@@ -54,3 +54,26 @@ test('balance-based mining rejects negative inputs', () => {
   assert.throws(() => calculateBalanceReward(-1n, 1000), MiningError);
   assert.throws(() => calculateBalanceReward(1000n, -1), MiningError);
 });
+
+test('all 400 levels use exactly the same balance-based reward rule', () => {
+  const balance = 125000000n; // 125 VCOIN with six decimals
+  const expectedDaily = 1250000n; // 1.25 VCOIN
+  for (let level = 1; level <= 400; level += 1) {
+    assert.ok(level >= 1 && level <= 400);
+    assert.equal(
+      calculateBalanceReward(balance, 86400000).toString(),
+      expectedDaily.toString(),
+      'unexpected reward at level ' + level
+    );
+  }
+});
+
+test('balance reward handles exact boundaries and rejects malformed integer inputs', () => {
+  const balance = 100000000n;
+  assert.equal(calculateBalanceReward(balance, 0).toString(), '0');
+  assert.equal(calculateBalanceReward(balance, 43200000).toString(), '500000');
+  assert.equal(calculateBalanceReward(balance, 86400000).toString(), '1000000');
+  assert.equal(calculateBalanceReward(balance, 172800000).toString(), '2000000');
+  assert.throws(() => calculateBalanceReward('1.5', 1000), MiningError);
+  assert.throws(() => calculateBalanceReward(balance, '1.5'), MiningError);
+});

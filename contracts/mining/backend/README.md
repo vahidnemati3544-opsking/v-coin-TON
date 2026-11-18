@@ -63,6 +63,10 @@ Health endpoints:
 - `GET /health/live` — process liveness.
 - `GET /health/ready` — checks PostgreSQL connectivity.
 
+## API request limits
+
+The API applies an IP-based limit of 10 Telegram login attempts per 15 minutes and 30 mining API requests per minute. These are baseline single-process limits; a multi-instance production deployment must use a shared rate-limit store and trusted proxy configuration.
+
 ## Telegram authentication
 
 Set `TELEGRAM_BOT_TOKEN` in the private `.env` file. The API provides:

@@ -60,19 +60,20 @@ Development, TON Testnet, and TON Mainnet must use separate configuration and cr
 ## 8. Current implementation status
 
 Implemented in the repository:
-- PostgreSQL core schema and mining reserve migration.
-- Node.js backend health endpoints and database connectivity checks.
-- Mining session/reward calculation module.
-- Atomic reservation of newly accrued rewards against the approved mining reserve.
-- Local database setup command and automated Node.js CI checks.
+- PostgreSQL core schema, fixed mining reserve, and atomic reserve controls.
+- Node.js health endpoints and database connectivity checks.
+- Telegram Mini App HMAC verification, hashed/revocable application sessions, and authenticated account endpoints.
+- Authenticated mining status, start, claim, and end API routes.
+- Atomic mining reward reservation, confirmation, balanced double-entry ledger posting, and internal balance updates.
+- PostgreSQL 18 CI integration tests for reserve settlement and mining session/claim lifecycle.
+- Local database setup command applying the schema and both migrations.
 
-Not yet demonstrated:
-- A running local PostgreSQL integration test.
-- User authentication and user-facing mining API.
-- Approved level rate/cost configuration.
-- Posting mining rewards to the double-entry ledger and internal balances.
-- Telegram authentication/bot operation.
+Still pending or not yet demonstrated:
+- Approved rates and upgrade costs for all 400 levels.
+- Telegram bot token configuration and end-to-end Mini App login against the user's bot.
+- Local PostgreSQL setup and verification on the user's Windows laptop.
 - Tonkeeper/Gram Wallet signature verification.
-- TON Jetton contract implementation, Testnet deployment, or Mainnet deployment.
+- TON Jetton contract implementation and Testnet deployment.
+- Independent security review, operational monitoring, and Mainnet readiness.
 
 The project must not be described as production-ready or as performing real on-chain mining until these gates pass.

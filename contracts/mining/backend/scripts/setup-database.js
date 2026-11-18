@@ -36,6 +36,10 @@ const migrations = [
   {
     name: 'Mining reserve allocation and controls',
     file: path.resolve(__dirname, '../database/migrations/001-mining-reserve.sql')
+  },
+  {
+    name: 'Mining reward ledger settlement',
+    file: path.resolve(__dirname, '../database/migrations/002-mining-ledger-settlement.sql')
   }
 ];
 

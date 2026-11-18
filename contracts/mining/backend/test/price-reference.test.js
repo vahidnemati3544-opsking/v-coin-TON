@@ -12,15 +12,17 @@ test('initial reference price is exactly USD 0.004', () => {
   assert.equal(decimalPriceToScaled('0.004000000000').toString(), '4000000000');
 });
 
-test('72-hour increase compounds by exactly 0.2041 percent', () => {
+test('each 72-hour period adds exactly 1% of the initial USD 0.004 value', () => {
   const first = increasePriceScaled(decimalPriceToScaled('0.004000000000'));
-  assert.equal(scaledPriceToDecimal(first), '0.004008164000');
+  assert.equal(scaledPriceToDecimal(first), '0.004040000000');
+  const second = increasePriceScaled(first);
+  assert.equal(scaledPriceToDecimal(second), '0.004080000000');
 });
 
-test('price arithmetic remains integer-based across repeated periods', () => {
+test('linear price arithmetic remains integer-based across repeated periods', () => {
   let price = decimalPriceToScaled('0.004000000000');
   for (let i = 0; i < 1000; i += 1) price = increasePriceScaled(price);
-  assert.ok(price > decimalPriceToScaled('0.004000000000'));
+  assert.equal(scaledPriceToDecimal(price), '0.044000000000');
   assert.equal(scaledPriceToDecimal(price).split('.')[1].length, 12);
 });
 

@@ -34,7 +34,7 @@ npm run check
 npm test
 ```
 
-The PostgreSQL integration tests are skipped unless `TEST_DATABASE_URL` points to an isolated test database. A successful run with skipped database tests is not evidence that migrations, ledger settlement or mining lifecycle work on PostgreSQL.
+The PostgreSQL integration tests are skipped unless `TEST_DATABASE_URL` points to an isolated test database. A successful run with skipped database tests is not evidence that migrations, ledger settlement or mining lifecycle work on PostgreSQL. The existing GitHub Actions workflow has now completed against PostgreSQL 18.7 with 30 tests passed, 0 failed and 0 skipped; this verifies the current core schema, migrations 001–003, internal-ledger settlement, Telegram session integration and unit tests in CI. It does not yet verify the owner's local database setup runner, migration 004, TON wallet ownership proof, Jetton balance reading or on-chain payouts.
 
 ## Database setup — local development only
 

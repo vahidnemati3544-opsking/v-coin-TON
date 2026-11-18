@@ -15,6 +15,7 @@
 - Helmet security headers in the Express server.
 - Explicit CORS origin allowlist.
 - JSON request body size limit.
+- IP-based rate limiting on Telegram login and authenticated mining API routes.
 - x-powered-by header disabled.
 - Generic error responses for server failures.
 - PostgreSQL parameterized queries in the mining engine.
@@ -40,7 +41,7 @@ Still required:
 - Role-based authorization for administrative actions.
 - Separate authorization for treasury and reserve operations.
 - Secure Telegram webhook verification and end-to-end bot deployment testing.
-- Rate limiting and abuse monitoring on authentication and mining routes.
+- Monitoring and alerting for rate-limit events and suspicious account patterns.
 
 A Telegram username or user ID alone must never authenticate a request.
 

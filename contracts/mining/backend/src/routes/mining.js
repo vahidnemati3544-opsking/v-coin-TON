@@ -1,7 +1,7 @@
 'use strict';
 
 const express = require('express');
-const { createMiningEngine, MiningError, parseRate } = require('../../../engine');
+const { createMiningEngine, MiningError } = require('../../../engine');
 
 function sendMiningError(error, res, next) {
   if (!(error instanceof MiningError)) return next(error);
@@ -16,6 +16,7 @@ function sendMiningError(error, res, next) {
     USER_LEVEL_NOT_CONFIGURED: 409,
     CLAIM_INTERVAL_EXCEEDED: 409,
     REWARD_TOO_SMALL: 409,
+    INSUFFICIENT_MINING_BALANCE: 409,
     IDEMPOTENCY_CONFLICT: 409,
     MINING_RESERVE_RESERVATION_FAILED: 503,
     MINING_LEDGER_SETTLEMENT_FAILED: 503
@@ -31,12 +32,11 @@ function createMiningRouter({ pool }) {
   router.get('/status', async (req, res, next) => {
     try {
       const account = await pool.query(
-        'SELECT ul.current_level, l.mining_rate_base_units_per_second::text AS mining_rate_base_units_per_second, ' +
+        'SELECT ul.current_level, ' +
         "COALESCE(b.available_base_units, 0)::text AS available_base_units, " +
         "COALESCE(b.reserved_base_units, 0)::text AS reserved_base_units " +
         'FROM users u ' +
         'LEFT JOIN user_levels ul ON ul.user_id = u.id ' +
-        'LEFT JOIN levels l ON l.level = ul.current_level ' +
         "LEFT JOIN balances b ON b.user_id = u.id AND b.asset_code = 'VCOIN' " +
         'WHERE u.id = $1',
         [req.auth.user_id]
@@ -51,14 +51,19 @@ function createMiningRouter({ pool }) {
         [req.auth.user_id]
       );
       const data = account.rows[0];
+      const balanceBaseUnits = BigInt(data.available_base_units);
+      const dailyRewardBaseUnits = balanceBaseUnits / 100n;
+      const hourlyRewardBaseUnits = balanceBaseUnits / 2400n;
       const configured = data.current_level !== null &&
-        data.mining_rate_base_units_per_second !== null &&
-        parseRate(data.mining_rate_base_units_per_second) > 0n;
+        data.current_level >= 1 && data.current_level <= 400 &&
+        balanceBaseUnits > 0n;
 
       return res.status(200).json({
         mining_configured: configured,
         current_level: data.current_level,
-        mining_rate_base_units_per_second: data.mining_rate_base_units_per_second,
+        reward_rule: '1_percent_of_eligible_balance_per_24_hours',
+        daily_reward_base_units: dailyRewardBaseUnits.toString(),
+        hourly_reward_base_units: hourlyRewardBaseUnits.toString(),
         available_base_units: data.available_base_units,
         reserved_base_units: data.reserved_base_units,
         active_session: activeSession.rows[0] || null

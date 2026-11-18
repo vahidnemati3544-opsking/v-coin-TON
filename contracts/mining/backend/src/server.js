@@ -1,5 +1,7 @@
 require("dotenv").config();
 
+const path = require("node:path");
+
 const express = require("express");
 const helmet = require("helmet");
 const cors = require("cors");
@@ -73,6 +75,9 @@ app.use(
       : 86400
   })
 );
+// Public, read-only V COIN growth chart (served by the existing backend).
+app.use("/growth", express.static(path.join(__dirname, "../public/growth"), { index: "index.html" }));
+
 // Public modelled reference price and 72-hour candle history.
 app.use("/api/v1/price-reference", createPriceReferenceRouter({ pool }));
 

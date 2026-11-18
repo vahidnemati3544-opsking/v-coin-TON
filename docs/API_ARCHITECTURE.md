@@ -1,6 +1,6 @@
 # V COIN – TON API Architecture
 
-**Status:** Health endpoints and Telegram account authentication are implemented; mining, wallet, balance, referral, and level APIs remain pending.
+**Status:** Health endpoints, Telegram account authentication, and authenticated mining status/session endpoints are implemented. Wallet, balance history, referral, and level-upgrade APIs remain pending.
 
 ## 1. Current backend endpoints
 
@@ -13,7 +13,7 @@ The current Express server exposes only:
 | GET | /health/ready | PostgreSQL connectivity readiness |
 | GET | /health | Compatibility redirect to /health/live |
 
-The server also exposes the Telegram authentication endpoints listed below. Mining, wallet, balance, referral, and level routes are not yet implemented. Architecture plans below are not claims of implemented routes.
+The server also exposes the Telegram authentication endpoints and the mining routes listed below. Wallet, balance history, referral, and level-upgrade routes are not yet implemented. Architecture plans below are not claims of implemented routes.
 
 ## 2. Planned API groups
 
@@ -96,4 +96,4 @@ Use stable machine-readable error codes. Do not return SQL messages, credentials
 
 ## 6. Implementation gates
 
-Before exposing mining routes: complete Telegram authentication, session revocation, approved level configuration, reward ledger posting, reserve reconciliation, and PostgreSQL integration tests. Routes must not be exposed without these controls.
+The authenticated mining routes are present, but they cannot start sessions until the user's level and positive mining rate are configured. Before real-user operation, complete the approved 400-level schedule, PostgreSQL session/claim/end integration tests, rate limiting, monitoring, and full reserve/ledger reconciliation. A successful claim credits an internal application balance only; it does not transfer Jettons to a TON wallet.

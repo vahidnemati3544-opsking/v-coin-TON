@@ -180,11 +180,13 @@ function createMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
     return withTransaction(pool, async (client) => {
       await lockActiveUser(client, userId);
       const level = await client.query(
-        'SELECT 1 FROM user_levels ul JOIN levels l ON l.level = ul.current_level WHERE ul.user_id = $1',
+        'SELECT l.mining_rate_base_units_per_second ' +
+        'FROM user_levels ul JOIN levels l ON l.level = ul.current_level WHERE ul.user_id = $1',
         [userId]
       );
-      if (level.rowCount !== 1) {
-        throw new MiningError('USER_LEVEL_NOT_CONFIGURED', 'User level or mining rate is not configured.');
+      if (level.rowCount !== 1 ||
+          parseRate(String(level.rows[0].mining_rate_base_units_per_second)) <= 0n) {
+        throw new MiningError('USER_LEVEL_NOT_CONFIGURED', 'User level or positive mining rate is not configured.');
       }
 
       const existing = await client.query(

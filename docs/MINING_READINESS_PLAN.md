@@ -83,3 +83,41 @@ Until every mandatory gate is evidenced as passed, status remains **NOT READY FO
 - Fixed duplicate start-session responses to include the stored eligible-balance snapshot. Commit: `a746ebc7eb305c120b37a24c79138b3579e683ab`.
 - These changes are committed but have **not yet been executed** in GitHub Actions or against the owner's local PostgreSQL database. Do not mark test gates complete until CI reports success and local migration status is verified.
 - Remaining owner policy decision: should mined rewards be included in the eligible balance for the next interval (daily compounding), or should only purchased/referral/other qualifying credits count? Current engine snapshot includes post-claim available balance, so it compounds.
+
+
+## Owner-approved wallet-balance rule — supersedes earlier internal-balance policy (2026-11-18)
+
+The owner has explicitly confirmed that the **verified on-chain VCOIN Jetton balance in the user's linked Telegram TON wallet** is the source of truth for the next mining reward. The internal bot/database mining balance is not the next-period reward basis. The 1% per 24-hour rule remains identical across levels 1–400.
+
+The authoritative lifecycle and security requirements are specified in `docs/WALLET_BALANCE_MINING_SPEC.md`. This decision supersedes earlier statements in this plan and prior mining documentation that described the internal available balance as the eligible balance or allowed daily compounding of internal rewards.
+
+### Mandatory implementation correction
+
+The current engine and API still read `balances.available_base_units`, post each reward back into that internal balance, and reset the next session snapshot from the post-settlement internal balance. They do not verify wallet ownership, read a VCOIN Jetton balance on TON, transfer Jettons, or confirm payouts on-chain. This is a material business-rule mismatch, not a documentation-only issue.
+
+Accordingly:
+- Existing internal-balance mining must remain disabled for owner extraction.
+- Replace the internal balance source with a fresh, verified wallet Jetton-balance snapshot.
+- Keep earned rewards in a separate pending/withdrawable internal ledger until a controlled Jetton payout is confirmed.
+- Only after on-chain payout confirmation may a new wallet-balance snapshot become the next mining basis.
+- Never count a pending internal reward and the same on-chain reward simultaneously.
+- Fail closed on stale provider data, invalid ownership proof, wrong Jetton master/network, bounced or unconfirmed payout, reserve exhaustion, or ledger mismatch.
+- Do not guess the VCOIN Jetton master address, TON data provider, or payout signing architecture.
+
+### Revised readiness status
+
+**NOT READY FOR EXTRACTION TEST.** Wallet ownership proof, Jetton master/network configuration, on-chain balance reader, wallet-snapshot persistence, payout state machine, transaction reconciliation, and their PostgreSQL/TON Testnet tests are all pending. CI execution has not yet been evidenced. The owner’s local PostgreSQL migration status is also unverified.
+
+The earlier checklist item 16 (balance eligibility) is now defined by the wallet-balance specification, but implementation and tests remain pending. Checklist items 19–20 remain blocked until the wallet and payout gates pass.
+
+### Audit findings from 2026-11-18
+
+1. `contracts/mining/engine.js`: reward accrual reads internal `balances.available_base_units`; after settlement it stores the post-settlement internal balance as the next snapshot. This violates the newly approved wallet-balance source.
+2. `contracts/mining/backend/src/routes/mining.js`: `GET /status` estimates daily/hourly reward from internal available balance and does not expose verified wallet-balance provenance.
+3. `contracts/mining/backend/database/schema.sql`: wallet tables exist, but schema alone does not prove wallet ownership or a verified Jetton balance; blockchain transaction tables are not a payout state machine.
+4. `contracts/mining/backend/test/mining-engine.test.js`: current tests exercise arithmetic only; the 1–400 loop calls a level-agnostic function without actually passing or validating a level input.
+5. `contracts/mining/backend/test/mining-ledger.integration.test.js`: fixtures cover reserve/ledger and a local internal-balance mining lifecycle, not TON wallet balance, ownership proof, Jetton payout, bounced transfers, or on-chain reconciliation.
+6. `.github/workflows/ton-mining-ci.yml`: workflow exists, but no successful run evidence was returned for the latest recorded commit at audit time.
+7. Local PostgreSQL 18 migration execution and migration checksum status have not been verified in the owner's environment.
+
+No item is marked tested or production-ready based only on source presence or commit history.

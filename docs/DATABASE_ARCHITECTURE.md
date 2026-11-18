@@ -75,13 +75,13 @@ From contracts/mining/backend:
 4. Run npm install.
 5. Run npm run db:setup.
 
-The setup script applies the core schema and mining reserve migration in order and refuses to run with NODE_ENV=production. It is an explicit development setup command, not an automatic production migration system.
+The setup script applies the core schema and migrations 001/002 in order. It records versions and SHA-256 checksums in schema_migrations, uses a PostgreSQL advisory lock to prevent concurrent setup, skips unchanged migrations, and refuses checksum drift. It refuses to run with NODE_ENV=production. It is an explicit development setup command, not an automatic production migration system.
 
 ## 8. Outstanding database work
 
 - Add a formal migration history/version mechanism.
 - Seed approved levels and costs after economic approval.
-- Add formal migration history/version tracking.
+- Verify migration history and checksums on the user's local PostgreSQL installation.
 - Add full PostgreSQL integration tests for Telegram session lifecycle, mining session lifecycle, rollback, reserve exhaustion, and concurrent claims.
 - Implement balance reconciliation queries and tests.
 - Verify backup/restore and least-privilege database roles.

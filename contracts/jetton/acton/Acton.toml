@@ -1,0 +1,41 @@
+[package]
+name = "vcoin-jetton"
+description = "V COIN Jetton contracts and Testnet deployment project"
+version = "0.1.0"
+license = "MIT"
+
+[toolchain]
+acton = "1.2.0"
+
+[contracts.VcoinMinter]
+src = "contracts/VcoinMinter.tolk"
+
+[[contracts.VcoinMinter.depends]]
+name = "JettonWallet"
+kind = "embed_code"
+function = "jettonWalletCompiledCode"
+
+[contracts.JettonWallet]
+src = "contracts/JettonWallet.tolk"
+depends = []
+
+[test.mutation]
+minimum-percent = 75.0
+
+[lint]
+max-warnings = 0
+
+[lint.rules]
+dict-type-use = "allow"
+throw-requires-errors-enum = "allow"
+
+[import-mappings]
+acton = ".acton"
+contracts = "contracts"
+gen = "gen"
+tests = "tests"
+wrappers = "wrappers"
+
+[scripts]
+generate-wrappers = "acton wrapper VcoinMinter -o wrappers/VcoinMinter.gen.tolk && acton wrapper JettonWallet -o wrappers/JettonWallet.gen.tolk"
+test-vcoin-jetton = "acton test tests"

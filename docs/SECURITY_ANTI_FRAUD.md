@@ -94,3 +94,33 @@ Before staging or production:
 ## 8. Release restrictions
 
 No real-value transfer, token issuance, Mainnet deployment, or public mining launch is authorized by this document. Each requires a separate readiness review and explicit approval.
+
+## 9. Founder-only financial authority and explicit re-authorization gate
+
+**Policy status:** Owner-approved governance requirement. Technical enforcement, deployment, and independent verification remain pending.
+
+### 9.1 Exclusive financial authority
+
+- The project founder is the sole authority for treasury custody, financial approvals, token allocation, reserve release, payment destinations, and any transfer or withdrawal of TON or VCOIN.
+- Technical, advisory, marketing, maintenance, and operations personnel must not receive financial signing authority or independent permission to move, allocate, release, or withdraw project funds or tokens.
+- Team access must be limited to the minimum non-financial permissions required for their assigned duties. Backend, database, deployment, and administrative access must not by itself provide a path to sign or execute a treasury transfer.
+- Treasury signing keys must remain under the founder's exclusive control. If a 2-of-3 multisignature arrangement is selected, all three signing keys must be controlled by the founder and stored separately with strong device and backup security. No team member or external adviser may be a signer.
+- No seed phrase or private key may be requested, transmitted to the project team, stored in application servers, or committed to source control.
+
+### 9.2 Assistant access and consent boundary
+
+- Before the mining/extraction launch begins, the founder's current authorization permits the assistant to inspect and prepare changes to the project's financial-governance and treasury-related documentation and code, within the approved V COIN–TON repository and scope.
+- From the moment mining/extraction begins, the assistant must obtain fresh, explicit approval from the founder before each new access session or action that enters, inspects, changes, configures, or operates the protected financial domain.
+- The protected financial domain includes treasury and reserve configuration, signing and authorization policies, token allocations, payout and withdrawal flows, sale settlement destinations, financial ledgers, and code or settings that can initiate or authorize movement of TON or VCOIN.
+- A previous approval, standing project access, or general permission to continue development does not count as fresh approval after mining/extraction has begun.
+- Ordinary non-financial engineering work may continue without this additional financial-domain approval, provided it does not inspect, change, or affect protected financial controls, balances, destinations, or transfer capabilities.
+- If it is unclear whether a task enters or affects the protected financial domain, stop before accessing or changing that area and ask the founder for explicit approval.
+
+### 9.3 Transaction and deployment safeguards
+
+- Documentation approval is not authorization to sign or broadcast a blockchain transaction.
+- Every real-value transfer, token allocation, reserve release, treasury destination change, or production financial activation requires a separate explicit founder approval at the point of execution.
+- Smart contracts and backend services must enforce least privilege and fail closed: missing authorization, invalid configuration, or failed verification must prevent financial execution.
+- All privileged financial actions must be attributable to the founder's authorization and recorded in tamper-evident audit logs.
+- These requirements do not authorize mining activation, token issuance, Testnet/Mainnet deployment, or any real-value transfer. Those remain subject to separate readiness checks and explicit approval.
+

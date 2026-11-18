@@ -101,8 +101,8 @@ The owner has approved a professional Bitcoin/TradingView-inspired candlestick p
 - Specification file: recorded in this repository.
 - Chart visual direction: approved — TradingView/Bitcoin-inspired, dark background, gold branding, green growth candles, number-free chart canvas.
 - Candle semantics: approved — one model-derived candle per completed 72-hour period; no fabricated market activity or intraperiod volatility.
-- Frontend implementation: pending.
-- Backend/API/database implementation: partially prepared on feature branch; administrator lifecycle controls and complete integration remain pending.
+- Frontend implementation: first public read-only chart page committed under `contracts/mining/backend/public/growth/`; served by the backend at `/growth` when the backend is running. Runtime/browser verification and deployment remain pending.
+- Backend/API/database implementation: public read-only endpoints and database migration are prepared on the feature branch; administrator lifecycle controls, database migration execution, end-to-end verification, and production integration remain pending.
 - Automated runtime tests and security review: pending.
 - Hosting provider, domain/subdomain, and production deployment: not yet confirmed.
 - Public launch and search-engine indexing: pending.

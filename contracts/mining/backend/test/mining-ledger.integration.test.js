@@ -99,3 +99,75 @@ test('PostgreSQL mining reward is reserved, double-entry posted, and idempotentl
     await pool.end();
   }
 });
+
+
+test('mining engine claim settles internal balance and repeated start/claim are safe', {
+  skip: !databaseUrl
+}, async () => {
+  const pool = new Pool({ connectionString: databaseUrl, max: 4 });
+  try {
+    const databaseDir = path.resolve(__dirname, '../database');
+    await pool.query(await fs.readFile(path.join(databaseDir, 'schema.sql'), 'utf8'));
+    await pool.query(await fs.readFile(path.join(databaseDir, 'migrations/001-mining-reserve.sql'), 'utf8'));
+    await pool.query(await fs.readFile(path.join(databaseDir, 'migrations/002-mining-ledger-settlement.sql'), 'utf8'));
+
+    const { createMiningEngine } = require('../../engine');
+    await pool.query(
+      'INSERT INTO levels (level, upgrade_cost_base_units, mining_rate_base_units_per_second) ' +
+      'VALUES (1, 0, 1000) ON CONFLICT (level) DO UPDATE ' +
+      'SET mining_rate_base_units_per_second = EXCLUDED.mining_rate_base_units_per_second'
+    );
+
+    const telegramId = String(BigInt(Date.now()) * 10000n + BigInt(process.pid) + 1n);
+    const userResult = await pool.query(
+      "INSERT INTO users (telegram_user_id, username) VALUES ($1::bigint, 'ci_engine_test') RETURNING id",
+      [telegramId]
+    );
+    const userId = userResult.rows[0].id;
+    await pool.query(
+      'INSERT INTO user_levels (user_id, current_level) VALUES ($1, 1)',
+      [userId]
+    );
+
+    const engine = createMiningEngine({ pool });
+    const session = await engine.startSession({ userId });
+    const repeatedStart = await engine.startSession({ userId });
+    assert.equal(repeatedStart.id, session.id);
+    assert.equal(repeatedStart.duplicate, true);
+
+    await pool.query(
+      "UPDATE mining_sessions SET last_claim_at = clock_timestamp() - INTERVAL '5 seconds' WHERE id = $1",
+      [session.id]
+    );
+
+    const idempotencyKey = 'engine-claim:' + randomUUID();
+    const reward = await engine.claimReward({ userId, idempotencyKey });
+    assert.equal(reward.status, 'confirmed');
+    assert.equal(String(reward.amount_base_units), '5000');
+    assert.equal(String(reward.balance_available_base_units), '5000');
+
+    const repeatedClaim = await engine.claimReward({ userId, idempotencyKey });
+    assert.equal(repeatedClaim.duplicate, true);
+    assert.equal(repeatedClaim.status, 'confirmed');
+
+    const balance = await pool.query(
+      "SELECT available_base_units::text FROM balances WHERE user_id = $1 AND asset_code = 'VCOIN'",
+      [userId]
+    );
+    assert.equal(balance.rows[0].available_base_units, '5000');
+
+    await pool.query(
+      "UPDATE mining_sessions SET last_claim_at = clock_timestamp() - INTERVAL '5 seconds' WHERE id = $1",
+      [session.id]
+    );
+    const ended = await engine.endSession({
+      userId,
+      sessionId: session.id,
+      finalClaimIdempotencyKey: 'engine-end:' + randomUUID()
+    });
+    assert.equal(ended.session.status, 'completed');
+    assert.equal(ended.finalReward.status, 'confirmed');
+  } finally {
+    await pool.end();
+  }
+});

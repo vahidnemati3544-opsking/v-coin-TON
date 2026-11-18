@@ -34,6 +34,19 @@ The system must support:
 
 Mining calculations must be deterministic and auditable.
 
+### Approved balance-based reward rule
+
+For every account at every level from 1 through 400, the daily reward is 1% of the user's eligible available internal VCOIN balance. Level number does not multiply, reduce, or otherwise change the reward rate.
+
+With six token decimals, calculations use integer base units:
+- Daily reward: eligible balance / 100.
+- Hourly equivalent: eligible balance / 2,400.
+- General accrual: eligible balance × elapsed milliseconds / 8,640,000,000.
+
+The USD interpretation is 1% of the account's VCOIN value per day. Since the same VCOIN market price values both the balance and the reward, the price cancels when converting the rule back into VCOIN units. Therefore no hard-coded USD price or unverified price feed is used by the reward engine. If the VCOIN price changes, the user's USD balance value and the USD value of the reward change proportionally, while the token reward remains 1% of the eligible token balance per 24 hours.
+
+The engine snapshots eligible available balance at session start and after each successful claim. A later deposit is applied to the next accrual interval and is not retroactively rewarded. Reserved balances are excluded. Rewards are credited to the internal account and remain subject to the 5,000,000,000 VCOIN mining reserve. This rule is identical for levels 1–400.
+
 4. Level Progression System
 
 The level system is designed to support:
@@ -119,7 +132,7 @@ Before production:
 
 11. Development Status
 
-Implemented: deterministic mining calculations, session lifecycle engine, reserve enforcement, internal ledger settlement, authenticated API endpoints, and PostgreSQL integration tests in CI.
+Implemented in code: deterministic balance-based 1% daily reward calculation, session balance snapshots, reserve enforcement, internal ledger settlement, authenticated API status estimates, and unit tests for the reward formula. Database migration and full CI/local PostgreSQL verification remain required.
 
 Pending: approved 400-level rates/costs, local PostgreSQL verification, complete Telegram Mini App onboarding, additional abuse controls, wallet signature verification, and TON Jetton Testnet integration.
 

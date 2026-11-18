@@ -73,7 +73,7 @@ Set `TELEGRAM_BOT_TOKEN` in the private `.env` file. The API provides:
 
 Only a SHA-256 hash of each session token is stored in PostgreSQL. Telegram init data is checked for signature, timestamp age, duplicate fields, and a valid Telegram user ID. A Telegram username or raw user ID alone is never accepted as authentication. The bot token must never be committed to Git.
 
-The current automated tests cover HMAC validation, tampering, expiry, duplicate parameters, missing configuration, and session-token hashing. The PostgreSQL integration test exercises reward reserve and ledger settlement; Telegram session creation/revocation still needs a dedicated live-database integration test.
+The current automated tests cover HMAC validation, tampering, expiry, duplicate parameters, missing configuration, and session-token hashing. The PostgreSQL integration tests exercise reserve/ledger settlement, mining session and claim lifecycle, and Telegram login/session revocation. GitHub Actions runs these tests against a fresh PostgreSQL 18 service.
 
 ## Mining engine status
 

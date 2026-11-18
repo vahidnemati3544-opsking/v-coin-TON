@@ -153,3 +153,6 @@ The source of truth for the next mining interval is the user's **verified on-cha
 The current engine still uses the internal `balances.available_base_units` field and credits rewards back to that internal balance. It is therefore not yet compliant with the approved wallet-balance rule and must not be used for owner extraction. See `docs/WALLET_BALANCE_MINING_SPEC.md` for the required wallet proof, Jetton master validation, immutable balance snapshot, pending reward, confirmed payout, anti-double-counting, and fail-closed rules.
 
 Wallet balance reader, ownership proof, Jetton payout, and on-chain reconciliation are not implemented/verified by the current code. Keep extraction disabled until these components and their TON Testnet integration tests pass.
+
+
+**Safety gate:** The public `/api/v1/mining` endpoints currently return HTTP 503 (`WALLET_BALANCE_MINING_NOT_IMPLEMENTED`). The previous internal-balance engine is not exposed as an extraction API. This guard must remain until the verified TON wallet-balance implementation and payout reconciliation have passed tests.

@@ -113,3 +113,12 @@ Document status: Approved tokenomics design — implementation pending.
 
 13. Smart contract specification
 The technical specification for the VCOIN TON Jetton Master and Wallet contracts is maintained in docs/JETTON_CONTRACT_SPEC.md. This is a design specification, not compiled contract source code or deployment evidence. Implementation, compilation, tests, independent security review and Testnet deployment remain pending. The deployment parameter template is contracts/jetton/deployment.config.template.json. Null addresses and vesting parameters must be explicitly approved before deployment.
+
+
+14. Founder treasury proceeds destination
+
+All proceeds arising from VCOIN primary sales and other approved VCOIN sale transactions must settle to the founder-controlled TON wallet designated by the project owner. The destination address is confidential and must not be embedded in public source code, frontend bundles, public documentation, or committed environment files.
+
+The production backend must read the destination from the protected deployment secret/configuration store using FOUNDER_TREASURY_WALLET_ADDRESS. A distinct, independently verified Testnet destination must be configured for Testnet rehearsals. Mainnet and Testnet destinations must never be interchanged.
+
+Before accepting a sale, the settlement service must validate the configured network and address, verify the incoming payment on the correct TON network, prevent duplicate credit/delivery, and reconcile the payment with the internal ledger. Sale settlement must remain disabled until the VCOIN Jetton Master and delivery flow are deployed and verified. This policy does not authorize a Mainnet deployment or sale by itself.

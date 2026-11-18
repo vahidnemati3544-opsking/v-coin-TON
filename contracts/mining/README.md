@@ -62,18 +62,9 @@ Every reward operation must have a unique identifier and an auditable record.
 
 6. Mining Reserve
 
-The Mining Reserve component manages the allocation and distribution of tokens designated for mining rewards.
+The PostgreSQL reserve migration defines a fixed allocation of 5,000,000,000 VCOIN (5,000,000,000,000,000 base units at six decimals). New rewards are reserved in the same transaction as reward creation. The reserve is a hard cap and does not authorize token minting.
 
-Requirements:
-
-- Defined reserve allocation
-- Controlled reward distribution
-- Real-time reserve accounting
-- Protection against exceeding authorized allocations
-- Transparent distribution reports
-- Configurable distribution policies
-
-Final reserve size and distribution schedule require separate economic approval.
+The settlement migration confirms a reserved reward and posts balanced ledger entries to the mining expense and user's internal VCOIN liability accounts, then updates the user's internal balance in the same transaction. This is an application-accounting credit, not a TON wallet transfer.
 
 7. Anti-Fraud and Security
 
@@ -128,9 +119,11 @@ Before production:
 
 11. Development Status
 
-Architecture specification and development preparation.
+Implemented: deterministic mining calculations, session lifecycle engine, reserve enforcement, internal ledger settlement, authenticated API endpoints, and PostgreSQL integration tests in CI.
 
-No production mining or reward distribution is authorized at this stage.
+Pending: approved 400-level rates/costs, local PostgreSQL verification, complete Telegram Mini App onboarding, additional abuse controls, wallet signature verification, and TON Jetton Testnet integration.
+
+The system is not production-ready. Internal mining credits are not on-chain tokens and do not authorize Mainnet deployment or public reward distribution.
 
 ---
 

@@ -140,6 +140,27 @@ function createMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
       );
     }
 
+    // Move the reward from reserved mining allocation into the user's
+    // internal VCOIN balance using balanced ledger entries. This is not
+    // an on-chain transfer. All steps remain in this claim transaction.
+    const settlement = await client.query(
+      'SELECT result_status, result_reward_id, result_user_id, ' +
+      'result_amount_base_units, result_available_base_units, result_balance_base_units ' +
+      'FROM confirm_mining_reward_to_internal_balance($1, $2)',
+      [inserted.rows[0].id, 'confirm:' + idempotencyKey]
+    );
+
+    if (settlement.rowCount !== 1 ||
+        !['confirmed', 'duplicate'].includes(settlement.rows[0].result_status) ||
+        String(settlement.rows[0].result_reward_id).toLowerCase() !== String(inserted.rows[0].id).toLowerCase() ||
+        String(settlement.rows[0].result_user_id).toLowerCase() !== String(userId).toLowerCase() ||
+        BigInt(settlement.rows[0].result_amount_base_units) !== amount) {
+      throw new MiningError(
+        'MINING_LEDGER_SETTLEMENT_FAILED',
+        'Mining reward could not be posted to the internal VCOIN balance.'
+      );
+    }
+
     await client.query(
       'UPDATE mining_sessions SET last_claim_at = $2, updated_at = $2 ' +
       "WHERE id = $1 AND user_id = $3 AND status = 'active'",
@@ -148,7 +169,9 @@ function createMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
 
     return {
       ...inserted.rows[0],
-      reserve_available_base_units: reservation.rows[0].result_available_base_units
+      status: 'confirmed',
+      reserve_available_base_units: settlement.rows[0].result_available_base_units,
+      balance_available_base_units: settlement.rows[0].result_balance_base_units
     };
   }
 

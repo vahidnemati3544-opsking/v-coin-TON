@@ -6,6 +6,7 @@ const {
   MiningError,
   parseRate,
   calculateReward,
+  calculateBalanceReward,
   createMiningEngine
 } = require('../../engine.js');
 
@@ -40,4 +41,16 @@ test('engine rejects invalid claim interval', () => {
     () => createMiningEngine({ pool: { connect() {} }, maxClaimIntervalMs: 0 }),
     MiningError
   );
+});
+
+test('balance-based mining pays one percent per 24 hours', () => {
+  const balance = 25000n * 1000000n;
+  assert.equal(calculateBalanceReward(balance, 86400000).toString(), (250n * 1000000n).toString());
+  assert.equal(calculateBalanceReward(balance, 3600000).toString(), (balance / 2400n).toString());
+  assert.equal(calculateBalanceReward(37500n * 1000000n, 86400000).toString(), (375n * 1000000n).toString());
+});
+
+test('balance-based mining rejects negative inputs', () => {
+  assert.throws(() => calculateBalanceReward(-1n, 1000), MiningError);
+  assert.throws(() => calculateBalanceReward(1000n, -1), MiningError);
 });

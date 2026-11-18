@@ -9,6 +9,33 @@ const { Pool } = require('pg');
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
 
+async function applyTestMigrations(pool) {
+  const databaseDir = path.resolve(__dirname, '../database');
+  const schema = await fs.readFile(path.join(databaseDir, 'schema.sql'), 'utf8');
+  const reserveMigration = await fs.readFile(
+    path.join(databaseDir, 'migrations/001-mining-reserve.sql'), 'utf8'
+  );
+  const ledgerMigration = await fs.readFile(
+    path.join(databaseDir, 'migrations/002-mining-ledger-settlement.sql'), 'utf8'
+  );
+  const balanceMiningMigration = await fs.readFile(
+    path.join(databaseDir, 'migrations/003-balance-based-mining.sql'), 'utf8'
+  );
+
+  await pool.query(schema);
+  await pool.query(reserveMigration);
+  await pool.query(ledgerMigration);
+
+  // Migration 003 predates the checksum-based setup runner and its CHECK
+  // constraint is not idempotent. The integration suite reuses an isolated
+  // test database, so reset only this migration-owned constraint before
+  // replaying the migration. Production/development setup never does this.
+  await pool.query(
+    'ALTER TABLE mining_sessions DROP CONSTRAINT IF EXISTS mining_sessions_rate_balance_nonnegative'
+  );
+  await pool.query(balanceMiningMigration);
+}
+
 test('PostgreSQL mining reward is reserved, double-entry posted, and idempotently confirmed', {
   skip: !databaseUrl
 }, async () => {
@@ -16,22 +43,7 @@ test('PostgreSQL mining reward is reserved, double-entry posted, and idempotentl
   const client = await pool.connect();
 
   try {
-    const databaseDir = path.resolve(__dirname, '../database');
-    const schema = await fs.readFile(path.join(databaseDir, 'schema.sql'), 'utf8');
-    const reserveMigration = await fs.readFile(
-      path.join(databaseDir, 'migrations/001-mining-reserve.sql'), 'utf8'
-    );
-    const ledgerMigration = await fs.readFile(
-      path.join(databaseDir, 'migrations/002-mining-ledger-settlement.sql'), 'utf8'
-    );
-    const balanceMiningMigration = await fs.readFile(
-      path.join(databaseDir, 'migrations/003-balance-based-mining.sql'), 'utf8'
-    );
-
-    await client.query(schema);
-    await client.query(reserveMigration);
-    await client.query(ledgerMigration);
-    await client.query(balanceMiningMigration);
+    await applyTestMigrations(pool);
 
     await client.query('BEGIN');
 
@@ -110,11 +122,7 @@ test('mining engine claim settles internal balance and repeated start/claim are 
 }, async () => {
   const pool = new Pool({ connectionString: databaseUrl, max: 4 });
   try {
-    const databaseDir = path.resolve(__dirname, '../database');
-    await pool.query(await fs.readFile(path.join(databaseDir, 'schema.sql'), 'utf8'));
-    await pool.query(await fs.readFile(path.join(databaseDir, 'migrations/001-mining-reserve.sql'), 'utf8'));
-    await pool.query(await fs.readFile(path.join(databaseDir, 'migrations/002-mining-ledger-settlement.sql'), 'utf8'));
-    await pool.query(await fs.readFile(path.join(databaseDir, 'migrations/003-balance-based-mining.sql'), 'utf8'));
+    await applyTestMigrations(pool);
 
     const { createMiningEngine } = require('../../engine');
     await pool.query(
@@ -196,11 +204,7 @@ test('Telegram login creates a hashed session that can be read and revoked in Po
 
   let server;
   try {
-    const databaseDir = path.resolve(__dirname, '../database');
-    await pool.query(await fs.readFile(path.join(databaseDir, 'schema.sql'), 'utf8'));
-    await pool.query(await fs.readFile(path.join(databaseDir, 'migrations/001-mining-reserve.sql'), 'utf8'));
-    await pool.query(await fs.readFile(path.join(databaseDir, 'migrations/002-mining-ledger-settlement.sql'), 'utf8'));
-    await pool.query(await fs.readFile(path.join(databaseDir, 'migrations/003-balance-based-mining.sql'), 'utf8'));
+    await applyTestMigrations(pool);
 
     const values = {
       auth_date: String(authDate),

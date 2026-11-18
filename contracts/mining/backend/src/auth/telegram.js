@@ -89,6 +89,35 @@ function hashSessionToken(token) {
   return createHash('sha256').update(token).digest('hex');
 }
 
+function createSessionAuthMiddleware({ pool }) {
+  if (!pool || typeof pool.query !== 'function') {
+    throw new TypeError('A PostgreSQL pool is required for session authentication.');
+  }
+  return async (req, res, next) => {
+    const authorization = req.get('authorization') || '';
+    const match = /^Bearer ([A-Za-z0-9_-]{40,100})$/.exec(authorization);
+    if (!match) return res.status(401).json({ error: 'AUTHENTICATION_REQUIRED' });
+
+    try {
+      const tokenHash = hashSessionToken(match[1]);
+      const result = await pool.query(
+        'SELECT s.id AS session_id, u.id AS user_id, u.telegram_user_id, u.username ' +
+        'FROM user_sessions s JOIN users u ON u.id = s.user_id ' +
+        "WHERE s.token_hash = $1 AND s.revoked_at IS NULL AND s.expires_at > clock_timestamp() " +
+        "AND u.account_status = 'active'",
+        [tokenHash]
+      );
+      if (result.rowCount !== 1) {
+        return res.status(401).json({ error: 'INVALID_OR_EXPIRED_SESSION' });
+      }
+      req.auth = result.rows[0];
+      return next();
+    } catch (error) {
+      return next(error);
+    }
+  };
+}
+
 function createTelegramAuthRouter({ pool, botToken, maxAgeSeconds = DEFAULT_AUTH_MAX_AGE_SECONDS }) {
   if (!pool || typeof pool.connect !== 'function' || typeof pool.query !== 'function') {
     throw new TypeError('A PostgreSQL pool is required for Telegram authentication.');
@@ -159,29 +188,7 @@ function createTelegramAuthRouter({ pool, botToken, maxAgeSeconds = DEFAULT_AUTH
     }
   });
 
-  router.use(async (req, res, next) => {
-    const authorization = req.get('authorization') || '';
-    const match = /^Bearer ([A-Za-z0-9_-]{40,100})$/.exec(authorization);
-    if (!match) return res.status(401).json({ error: 'AUTHENTICATION_REQUIRED' });
-
-    try {
-      const tokenHash = hashSessionToken(match[1]);
-      const result = await pool.query(
-        'SELECT s.id AS session_id, u.id AS user_id, u.telegram_user_id, u.username ' +
-        'FROM user_sessions s JOIN users u ON u.id = s.user_id ' +
-        "WHERE s.token_hash = $1 AND s.revoked_at IS NULL AND s.expires_at > clock_timestamp() " +
-        "AND u.account_status = 'active'",
-        [tokenHash]
-      );
-      if (result.rowCount !== 1) {
-        return res.status(401).json({ error: 'INVALID_OR_EXPIRED_SESSION' });
-      }
-      req.auth = result.rows[0];
-      return next();
-    } catch (error) {
-      return next(error);
-    }
-  });
+  router.use(createSessionAuthMiddleware({ pool }));
 
   router.get('/me', (req, res) => {
     res.status(200).json({
@@ -213,5 +220,6 @@ module.exports = {
   TelegramAuthError,
   verifyTelegramInitData,
   hashSessionToken,
+  createSessionAuthMiddleware,
   createTelegramAuthRouter
 };

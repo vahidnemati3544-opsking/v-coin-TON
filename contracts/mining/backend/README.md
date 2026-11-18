@@ -11,21 +11,21 @@ This directory contains the Node.js backend core for the independent V COIN proj
 ## Local configuration
 
 1. Copy `.env.example` to `.env` in this directory.
-2. Set `DATABASE_URL` to the PostgreSQL database created for V COIN – TON.
+2. Set `DATABASE_URL` to the dedicated V COIN–TON development/test database.
 3. Keep `.env` private. Never commit database passwords, bot tokens, wallet secrets, or recovery phrases.
-4. Set `CORS_ORIGIN` to the exact origin of the client application when one is configured.
+4. Set `CORS_ORIGIN` to the exact client origin when one is configured.
 
-Example connection URL format:
+Example URL format:
 
 ```text
 postgresql://DATABASE_USER:DATABASE_PASSWORD@localhost:5432/VCOIN_TON
 ```
 
-Use the actual database name, role, and password configured on the local PostgreSQL server.
+Use the actual database name, role and password configured on the local PostgreSQL server.
 
 ## Install and verify
 
-Run these commands from this directory:
+Run from this directory:
 
 ```bash
 npm install
@@ -33,61 +33,43 @@ npm run check
 npm test
 ```
 
-- `npm run check` checks JavaScript syntax, including the mining engine and database setup script.
-- `npm test` runs Node.js unit tests and, when `TEST_DATABASE_URL` is set, a PostgreSQL integration test for reserve reservation, ledger settlement, balance posting, and idempotent confirmation. GitHub Actions runs this integration test against PostgreSQL 18.
+The PostgreSQL integration tests are skipped unless `TEST_DATABASE_URL` points to an isolated test database. A successful run with skipped database tests is not evidence that migrations, ledger settlement or mining lifecycle work on PostgreSQL.
 
-## Initialize the local database
+## Database setup
 
-After creating the target database and configuring `.env`, run:
+After creating and verifying a dedicated development database and configuring `.env`, the explicit development-only command is:
 
 ```bash
 npm run db:setup
 ```
 
-This explicit development-only command applies, in order:
+The setup runner applies the schema and migrations in order, tracks versions/checksums, and refuses to run with `NODE_ENV=production`. Do not run it against a production database. Back up the target database and verify its name and role before setup.
 
-1. `database/schema.sql` — core users, levels, mining, referral, ledger, balance, and audit tables.
-2. `database/migrations/001-mining-reserve.sql` — the fixed 5,000,000,000 VCOIN mining reserve and its reservation, confirmation, reversal, and integrity functions.
-3. `database/migrations/002-mining-ledger-settlement.sql` — atomic confirmation of a pending mining reward into a balanced double-entry ledger transaction and the user's internal VCOIN balance. This does not transfer tokens on-chain.
-4. `database/migrations/003-balance-based-mining.sql` — adds the per-session eligible-balance snapshot used by the 1% daily reward formula.
+## API and authentication
 
-The setup script refuses to run when `NODE_ENV=production`. It records migration versions and SHA-256 checksums in `schema_migrations`, takes a PostgreSQL advisory lock to prevent concurrent setup, skips unchanged applied migrations, and refuses to silently rerun a migration whose file has been edited. Review the target database name and role shown in its output before proceeding. Do not run it against a production database.
+- `GET /health/live` reports process liveness.
+- `GET /health/ready` checks PostgreSQL connectivity.
+- Telegram Mini App authentication is implemented in `src/auth/telegram.js`; configure `TELEGRAM_BOT_TOKEN` privately.
+- Telegram init data is HMAC-validated; a username or client-supplied Telegram ID alone is not authentication.
 
-## Start the API process
+## Mining status — intentionally disabled
 
-```bash
-npm start
-```
+The legacy internal-balance mining engine in `../engine.js` reads PostgreSQL `balances.available_base_units` and posts rewards to an internal ledger. It does **not** use a verified TON Jetton wallet balance, prove wallet ownership, send VCOIN Jettons, or reconcile on-chain payouts.
 
-Health endpoints:
+Accordingly, `src/server.js` deliberately returns HTTP 503 with `WALLET_BALANCE_MINING_NOT_IMPLEMENTED` for every public `/api/v1/mining` request. The internal-balance router is not mounted. Do not remove this block or enable the legacy routes as a workaround.
 
-- `GET /health/live` — process liveness.
-- `GET /health/ready` — checks PostgreSQL connectivity.
+The approved policy is documented in `../../../docs/WALLET_BALANCE_MINING_SPEC.md` and `../../../docs/MINING_READINESS_PLAN.md`: the next mining interval must be based only on a verified on-chain VCOIN Jetton balance in the user's linked TON wallet. Pending internal rewards do not count as wallet holdings.
 
-## API request limits
+## What remains before Testnet extraction rehearsal
 
-The API applies an IP-based limit of 10 Telegram login attempts per 15 minutes and 30 mining API requests per minute. These are baseline single-process limits; a multi-instance production deployment must use a shared rate-limit store and trusted proxy configuration.
+- Confirm the official VCOIN Jetton master address and Testnet/Mainnet identity from deployment evidence.
+- Implement TON wallet ownership proof and wallet-link lifecycle.
+- Implement a trusted Jetton balance reader with freshness and master/owner/network validation.
+- Persist immutable wallet snapshots and source context.
+- Refactor reward accrual to use only verified wallet snapshots.
+- Separate pending reward accounting from on-chain payout and finality reconciliation.
+- Add idempotent payout, bounce, replay, concurrency and reserve tests.
+- Run syntax/unit tests and non-skipped PostgreSQL 18 integration tests.
+- Verify the owner's Telegram Mini App and TON Testnet wallet flow.
 
-## Telegram authentication
-
-Set `TELEGRAM_BOT_TOKEN` in the private `.env` file. The API provides:
-
-- `POST /api/v1/auth/telegram` — validates Telegram Mini App init data using the bot-token HMAC scheme and issues a random bearer session token.
-- `GET /api/v1/auth/me` — returns the current authenticated account.
-- `POST /api/v1/auth/logout` — revokes the current session.
-
-Only a SHA-256 hash of each session token is stored in PostgreSQL. Telegram init data is checked for signature, timestamp age, duplicate fields, and a valid Telegram user ID. A Telegram username or raw user ID alone is never accepted as authentication. The bot token must never be committed to Git.
-
-The current automated tests cover HMAC validation, tampering, expiry, duplicate parameters, missing configuration, and session-token hashing. The PostgreSQL integration tests exercise reserve/ledger settlement, mining session and claim lifecycle, and Telegram login/session revocation. GitHub Actions runs these tests against a fresh PostgreSQL 18 service.
-
-## Mining engine status
-
-The mining engine is in `../engine.js`. It supports session start, reward claim, and session end operations. Reward accrual is 1% of the eligible available internal VCOIN balance per 24 hours for every level from 1 to 400; the level-specific fixed mining-rate field is no longer used for reward calculation. Each newly accrued reward is written and reserved against the approved mining allocation in the same PostgreSQL transaction. If the reserve migration is missing or the reserve is exhausted, the claim must roll back.
-
-The API server currently mounts authenticated mining routes at `/api/v1/mining` (`GET /status`, `POST /start`, `POST /claim`, and `POST /end`) behind database-backed Telegram session authentication. Route presence does not mean the feature is ready for users: controlled extraction remains blocked until the 400-level seed, balance-eligibility policy, migration 003, PostgreSQL lifecycle/concurrency tests, Telegram end-to-end flow, and security gates in `docs/MINING_READINESS_PLAN.md` are verified.
-
-## Deployment restrictions
-
-- Development and test databases must remain separate from production.
-- No TON Mainnet deployment, token issuance, private-key handling, or real-value transfer is performed by this backend setup.
-- Production use requires authentication, authorization, rate limiting, database migration controls, security review, backups, and end-to-end tests.
+Never request or store a user's seed phrase or private key. Wallet signing must remain in the wallet interface. Mainnet and real-value payouts require separate explicit approval and security review.

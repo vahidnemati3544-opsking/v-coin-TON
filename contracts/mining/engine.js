@@ -121,12 +121,35 @@ function createMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
       [randomUUID(), userId, session.id, amount.toString(), randomUUID(), idempotencyKey]
     );
 
+    // Reserve every reward against the approved 5B VCOIN mining allocation.
+    // This runs inside the same PostgreSQL transaction as reward creation;
+    // a missing migration or exhausted reserve therefore rolls back the claim.
+    const reservation = await client.query(
+      'SELECT result_status, result_reward_id, result_amount_base_units, result_available_base_units ' +
+      'FROM reserve_mining_reward($1, $2::numeric, $3)',
+      [inserted.rows[0].id, amount.toString(), idempotencyKey]
+    );
+
+    if (reservation.rowCount !== 1 ||
+        reservation.rows[0].result_status !== 'pending' ||
+        String(reservation.rows[0].result_reward_id).toLowerCase() !== String(inserted.rows[0].id).toLowerCase() ||
+        BigInt(reservation.rows[0].result_amount_base_units) !== amount) {
+      throw new MiningError(
+        'MINING_RESERVE_RESERVATION_FAILED',
+        'Mining reward could not be reserved against the approved allocation.'
+      );
+    }
+
     await client.query(
       'UPDATE mining_sessions SET last_claim_at = $2, updated_at = $2 ' +
       "WHERE id = $1 AND user_id = $3 AND status = 'active'",
       [session.id, now, userId]
     );
-    return inserted.rows[0];
+
+    return {
+      ...inserted.rows[0],
+      reserve_available_base_units: reservation.rows[0].result_available_base_units
+    };
   }
 
   async function startSession({ userId }) {

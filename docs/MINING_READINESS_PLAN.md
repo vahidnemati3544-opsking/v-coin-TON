@@ -72,3 +72,8 @@ Status values: **DONE** = implemented in repository; **PENDING** = not yet verif
 
 ## Release decision
 Until every mandatory gate is evidenced as passed, status remains **NOT READY FOR EXTRACTION TEST**. Passing this plan does not imply Mainnet readiness.
+## Change log
+- 2026-11-18: Created the numbered readiness register and explicit go/no-go gates.
+- 2026-11-18: Added a unit-test case iterating through levels 1–400 to prove the daily reward formula is level-invariant, plus elapsed-time/input boundary tests. Commit: 32c6c9edc39e21354c1fe0832e35e9af39f8694e. Tests have **not yet been executed**.
+- 2026-11-18: Corrected the backend README so it accurately states that authenticated mining routes are mounted, while readiness remains blocked. Commit: 183afc3bc5ac03e78c625518db64d932d8842535.
+- 2026-11-18: Readiness plan committed. Commit: 8b6c5e552534583dac80e5ea2d1349168acefc94.

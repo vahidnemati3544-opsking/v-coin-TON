@@ -1,7 +1,7 @@
 'use strict';
 
 const express = require('express');
-const { createMiningEngine, MiningError } = require('../../../engine');
+const { createMiningEngine, MiningError, parseRate } = require('../../../engine');
 
 function sendMiningError(error, res, next) {
   if (!(error instanceof MiningError)) return next(error);
@@ -53,7 +53,7 @@ function createMiningRouter({ pool }) {
       const data = account.rows[0];
       const configured = data.current_level !== null &&
         data.mining_rate_base_units_per_second !== null &&
-        BigInt(data.mining_rate_base_units_per_second) > 0n;
+        parseRate(data.mining_rate_base_units_per_second) > 0n;
 
       return res.status(200).json({
         mining_configured: configured,

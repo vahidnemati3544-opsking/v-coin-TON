@@ -137,7 +137,7 @@ fun onInternalMessage(in: InMessage) {
                 val toLeaveOnBalance = contract.getOriginalBalance() - in.valueCoins +
                     contract.getStorageDuePayment();
                 reserveGramsOnBalance(
-                    max(toLeaveOnBalance, calculateJettonWalletMinStorageFee()),
+                    max(toLeaveOnBalance, grams("0.1")),
                     RESERVE_MODE_AT_MOST,
                 );
                 val excessesMsg = createMessage({

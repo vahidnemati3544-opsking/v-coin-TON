@@ -85,7 +85,7 @@ From `contracts/mining/backend`:
 5. Run `npm install`, then `npm run check` and `npm test`.
 6. Run `npm run db:setup` only after confirming the target.
 
-The setup script applies the core schema and migrations 001–004 in order, records versions and SHA-256 checksums in `schema_migrations`, uses a PostgreSQL advisory lock to prevent concurrent setup, skips unchanged migrations, and refuses checksum drift. It refuses `NODE_ENV=production` and rejects non-local database hosts. It is a local development setup command, not a production migration system.
+The setup script applies the core schema and migrations 001–005 in order, records versions and SHA-256 checksums in `schema_migrations`, uses a PostgreSQL advisory lock to prevent concurrent setup, skips unchanged migrations, and refuses checksum drift. It refuses `NODE_ENV=production` and rejects non-local database hosts. It is a local development setup command, not a production migration system.
 
 The integration suite uses `TEST_DATABASE_URL` and must point to a separate, disposable test database — never the development database and never production.
 
@@ -103,4 +103,4 @@ A successful JavaScript CI run does not prove that SQL has been applied to the u
 
 ## 10. Modelled reference-price schedule
 
-The initial reference value is USD 0.004. Migration 005 changes the modelled series to 52 weekly compounding periods with a fixed-point multiplier of 1.007827884862, approximating 50% annual compounded growth. Historical candles are retained; only future schedule parameters change. This is a deterministic reference model, not a market quote, guaranteed value, or investment return.
+The initial reference value is USD 0.004. Migrations 004–005 initialize and then configure the modelled series to 52 weekly compounding periods with a fixed-point multiplier of 1.007827884862, approximating 50% annual compounded growth. Historical candles are retained; only future schedule parameters change. This is a deterministic reference model, not a market quote, guaranteed value, or investment return.

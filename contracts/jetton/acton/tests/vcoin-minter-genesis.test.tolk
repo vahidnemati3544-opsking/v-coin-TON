@@ -43,9 +43,7 @@ fun setupVcoinMinterTest(): VcoinMinterTestContext {
         build("VcoinGenesisCoordinator"),
         deployer.address,
     );
-    val coordinator = VcoinGenesisCoordinator {
-        address: coordinatorInit.calculateAddress(),
-    };
+    val coordinator = VcoinGenesisCoordinator { address: coordinatorInit.calculateAddress() };
     val coordinatorDeploy = net.send(
         deployer.address,
         createMessage({

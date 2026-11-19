@@ -19,6 +19,10 @@ function = "jettonWalletCompiledCode"
 src = "contracts/JettonWallet.tolk"
 depends = []
 
+[contracts.VcoinJettonWallet]
+src = "contracts/VcoinJettonWallet.tolk"
+depends = []
+
 [import-mappings]
 acton = ".acton"
 contracts = "contracts"

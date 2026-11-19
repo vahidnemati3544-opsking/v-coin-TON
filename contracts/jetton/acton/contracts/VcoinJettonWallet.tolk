@@ -24,7 +24,7 @@ type VcoinBounceOpToHandle =
 
 fun onBouncedMessage(in: InMessageBounced) {
     in.bouncedBody.skipBouncedPrefix();
-    val msg = lazy VcoinBounceOpToHandle.fromSlice(in.bouncedBody);
+    val msg = VcoinBounceOpToHandle.fromSlice(in.bouncedBody);
     val restoreAmount: coins = match (msg) {
         InternalTransferStep => msg.jettonAmount,
         BurnNotificationForMinter => msg.jettonAmount,

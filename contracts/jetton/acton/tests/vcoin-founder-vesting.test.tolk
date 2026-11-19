@@ -244,8 +244,8 @@ get fun `test VCOIN founder vesting recovers a bounced claim and releases the fu
     );
     expect(
         VcoinJettonWallet { address: ctx.vesting.getVestingWalletAddress()! }
-            .getWalletData()
-            .jettonBalance,
+        .getWalletData()
+        .jettonBalance,
     ).toEqual(VCOIN_FOUNDER_ALLOCATION_BASE_UNITS);
 
     val beneficiaryWallet = VcoinJettonWallet {
@@ -288,8 +288,8 @@ get fun `test VCOIN founder vesting recovers a bounced claim and releases the fu
         VCOIN_FOUNDER_ALLOCATION_BASE_UNITS,
     );
     expect(
-        VcoinJettonWallet {
-            address: ctx.vesting.getVestingWalletAddress()!,
-        }.getWalletData().jettonBalance,
+        VcoinJettonWallet { address: ctx.vesting.getVestingWalletAddress()! }
+        .getWalletData()
+        .jettonBalance,
     ).toEqual(0);
 }

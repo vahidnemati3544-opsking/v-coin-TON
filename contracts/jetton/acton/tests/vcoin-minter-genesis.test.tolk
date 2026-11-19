@@ -180,6 +180,7 @@ get fun `test VCOIN burn reduces circulating supply without replenishing genesis
             body: AskToBurn {
                 queryId: 9001,
                 jettonAmount: 1000000,
+                customPayload: null,
                 sendExcessesTo: null,
             },
         }),

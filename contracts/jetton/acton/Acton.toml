@@ -37,11 +37,7 @@ depends = []
 
 [contracts.VcoinFounderVesting]
 src = "contracts/VcoinFounderVesting.tolk"
-
-[[contracts.VcoinFounderVesting.depends]]
-name = "VcoinJettonWallet"
-kind = "embed_code"
-function = "vcoinJettonWalletCompiledCode"
+depends = []
 
 [import-mappings]
 acton = ".acton"

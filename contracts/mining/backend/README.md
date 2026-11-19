@@ -87,7 +87,7 @@ Never request or store a user's seed phrase or private key. Wallet signing must 
 
 ## Modelled 72-hour VCOIN reference price
 
-Migration `004-price-reference-candles.sql` initializes a **modelled reference price** at USD 0.004000000000. The backend advances it by 0.2041% every 72 hours using fixed-point integer arithmetic and stores OHLC candles. A scheduler checks for due periods every minute and catches up missed periods after a restart. PostgreSQL advisory locking and a transaction protect against duplicate concurrent updates.
+Migration `004-price-reference-candles.sql` initializes a **modelled reference price** at USD 0.004000000000. The backend advances it by approximately 0.7827884862% every 7 days using fixed-point integer arithmetic and stores OHLC candles. A scheduler checks for due periods every minute and catches up missed periods after a restart. PostgreSQL advisory locking and a transaction protect against duplicate concurrent updates.
 
 The series is explicitly **not a market quote, exchange price, guaranteed value, or promise of returns**. Since this calculation has no live trades, each candle is a deterministic modelled step (open/low at the prior reference price; close/high at the increased reference price), not observed market volatility.
 

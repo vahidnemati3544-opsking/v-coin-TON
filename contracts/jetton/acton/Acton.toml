@@ -53,3 +53,11 @@ max-warnings = 0
 [lint.rules]
 dict-type-use = "allow"
 throw-requires-errors-enum = "allow"
+
+[contracts.VcoinFounderVesting]
+src = "contracts/VcoinFounderVesting.tolk"
+
+[[contracts.VcoinFounderVesting.depends]]
+name = "VcoinJettonWallet"
+kind = "embed_code"
+function = "vcoinJettonWalletCompiledCode"

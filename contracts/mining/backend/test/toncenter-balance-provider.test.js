@@ -10,7 +10,7 @@ const {
 } = require('../src/services/toncenter-balance-provider');
 
 function rawAddress(fill) {
-  return '0:' + fill.repeat(64);
+  return '0:' + fill.repeat(32);
 }
 
 function friendlyAddress(fillByte) {

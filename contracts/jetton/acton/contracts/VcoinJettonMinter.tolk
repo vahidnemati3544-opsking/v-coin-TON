@@ -112,7 +112,9 @@ fun vcoinValidateGenesisConfig(storage: VcoinMinterStorage) {
     assert (treasury.amount == VCOIN_TREASURY_ALLOCATION_BASE_UNITS) throw ERROR_INVALID_MESSAGE;
     assert (liquidity.amount == VCOIN_LIQUIDITY_ALLOCATION_BASE_UNITS) throw ERROR_INVALID_MESSAGE;
     assert (ecosystem.amount == VCOIN_ECOSYSTEM_ALLOCATION_BASE_UNITS) throw ERROR_INVALID_MESSAGE;
-    assert (vcoinGenesisAllocationTotal() == VCOIN_TOTAL_SUPPLY_BASE_UNITS) throw ERROR_INVALID_MESSAGE;
+    assert (
+        vcoinGenesisAllocationTotal() == VCOIN_TOTAL_SUPPLY_BASE_UNITS
+    ) throw ERROR_INVALID_MESSAGE;
     assert (founder.recipient != mining.recipient) throw ERROR_INVALID_MESSAGE;
     assert (founder.recipient != treasury.recipient) throw ERROR_INVALID_MESSAGE;
     assert (founder.recipient != liquidity.recipient) throw ERROR_INVALID_MESSAGE;

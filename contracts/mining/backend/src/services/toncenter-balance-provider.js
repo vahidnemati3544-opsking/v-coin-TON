@@ -202,7 +202,7 @@ function createToncenterV3JettonBalanceProvider({
       lastTransactionLt: lastTransactionLt.toString(),
       indexerMasterchainSeqno: indexerBlockSeqno.toString(),
       indexerBlockUtime: indexerBlockTime,
-      indexerLagSeconds,
+      indexerLagSeconds: Math.max(0, indexerLagSeconds),
       observedAt: new Date(observedAtMs).toISOString(),
       source: 'toncenter-v3-indexer'
     });

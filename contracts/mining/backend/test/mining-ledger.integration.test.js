@@ -27,6 +27,9 @@ async function applyTestMigrations(pool) {
   const weeklyReferenceMigration = await fs.readFile(
     path.join(databaseDir, 'migrations/005-weekly-reference-growth.sql'), 'utf8'
   );
+  const tonWalletSnapshotsMigration = await fs.readFile(
+    path.join(databaseDir, 'migrations/006-ton-wallet-snapshots.sql'), 'utf8'
+  );
 
   await pool.query(schema);
   await pool.query(reserveMigration);
@@ -51,6 +54,7 @@ async function applyTestMigrations(pool) {
     await pool.query(priceReferenceMigration);
     await pool.query(weeklyReferenceMigration);
   }
+  await pool.query(tonWalletSnapshotsMigration);
 }
 
 test('PostgreSQL mining reward is reserved, double-entry posted, and idempotently confirmed', {
@@ -281,6 +285,72 @@ test('Telegram login creates a hashed session that can be read and revoked in Po
     assert.equal(revokedResponse.status, 401);
   } finally {
     if (server) await new Promise((resolve) => server.close(resolve));
+    await pool.end();
+  }
+});
+
+
+test('TON wallet snapshot migration is idempotent and enforces immutable snapshots', {
+  skip: !databaseUrl
+}, async () => {
+  const pool = new Pool({ connectionString: databaseUrl, max: 2 });
+  const client = await pool.connect();
+
+  try {
+    await applyTestMigrations(pool);
+    const telegramId = String(BigInt(Date.now()) * 10000n + BigInt(process.pid) + 9n);
+    await client.query('BEGIN');
+
+    const userResult = await client.query(
+      "INSERT INTO users (telegram_user_id, username) VALUES ($1::bigint, 'ci_wallet_snapshot_test') RETURNING id",
+      [telegramId]
+    );
+    const walletResult = await client.query(
+      "INSERT INTO wallets (user_id, network, wallet_address, is_verified, chain_network, proof_domain, proof_payload_hash, proof_timestamp, proof_expires_at, proof_verified_at) " +
+      "VALUES ($1, 'TON', $2, TRUE, 'testnet', 'vcoin.example', $3, $4, clock_timestamp() + INTERVAL '1 day', clock_timestamp()) RETURNING id",
+      [userResult.rows[0].id, '0:' + '11'.repeat(32), 'a'.repeat(64), Math.floor(Date.now() / 1000)]
+    );
+    const walletId = walletResult.rows[0].id;
+    const snapshotValues = [
+      walletId,
+      'testnet',
+      '0:' + '22'.repeat(32),
+      '0:' + '33'.repeat(32),
+      '5000000000000',
+      '123456',
+      '7890',
+      Math.floor(Date.now() / 1000),
+      3,
+      'toncenter-v3-indexer',
+      'b'.repeat(64),
+      new Date()
+    ];
+    const inserted = await client.query(
+      "INSERT INTO wallet_balance_snapshots (wallet_id, chain_network, master_address, jetton_wallet_address, balance_base_units, last_transaction_lt, indexer_masterchain_seqno, indexer_block_utime, indexer_lag_seconds, source, source_payload_hash, observed_at) " +
+      "VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING id",
+      snapshotValues
+    );
+    assert.ok(inserted.rows[0].id);
+
+    await assert.rejects(
+      client.query(
+        "UPDATE wallet_balance_snapshots SET balance_base_units = 0 WHERE id = $1",
+        [inserted.rows[0].id]
+      ),
+      /wallet_balance_snapshots are immutable/
+    );
+
+    // The migration can be safely replayed by the isolated CI setup.
+    const migration = await fs.readFile(
+      path.resolve(__dirname, '../database/migrations/006-ton-wallet-snapshots.sql'),
+      'utf8'
+    );
+    await client.query('ROLLBACK');
+    await pool.query(migration);
+    await pool.query(migration);
+  } finally {
+    try { await client.query('ROLLBACK'); } catch (_) { /* transaction may already be closed */ }
+    client.release();
     await pool.end();
   }
 });

@@ -1,0 +1,61 @@
+[package]
+name = "vcoin-ton-jetton"
+description = "V COIN TON fixed-supply Jetton implementation and reference baseline"
+version = "0.1.0"
+license = "UNLICENSED"
+
+[toolchain]
+acton = "1.2.1"
+
+[contracts.JettonMinter]
+src = "contracts/JettonMinter.tolk"
+
+[[contracts.JettonMinter.depends]]
+name = "JettonWallet"
+kind = "embed_code"
+function = "jettonWalletCompiledCode"
+
+[contracts.JettonWallet]
+src = "contracts/JettonWallet.tolk"
+depends = []
+
+[contracts.VcoinJettonWallet]
+src = "contracts/VcoinJettonWallet.tolk"
+depends = []
+
+[contracts.VcoinJettonMinter]
+src = "contracts/VcoinJettonMinter.tolk"
+
+[[contracts.VcoinJettonMinter.depends]]
+name = "VcoinJettonWallet"
+kind = "embed_code"
+function = "vcoinJettonWalletCompiledCode"
+
+[contracts.VcoinGenesisCoordinator]
+src = "contracts/VcoinGenesisCoordinator.tolk"
+depends = []
+
+[contracts.VcoinFounderVesting]
+src = "contracts/VcoinFounderVesting.tolk"
+depends = []
+
+[import-mappings]
+acton = ".acton"
+contracts = "contracts"
+gen = "gen"
+tests = "tests"
+wrappers = "wrappers"
+
+[fmt]
+width = 100
+ignore = []
+
+[lint]
+max-warnings = 0
+
+[lint.rules]
+dict-type-use = "allow"
+throw-requires-errors-enum = "allow"
+
+[lint.rules.VcoinFounderVesting]
+divide-before-multiply = "allow"

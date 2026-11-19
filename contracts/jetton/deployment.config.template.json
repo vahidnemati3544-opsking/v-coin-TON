@@ -27,9 +27,17 @@
   },
   "founder_vesting": {
     "duration_seconds": 126144000,
+    "duration_months": 48,
+    "start_event": "official_mining_activation",
     "start_timestamp": null,
-    "cliff_seconds": null,
-    "release_frequency_seconds": null
+    "cliff_seconds": 0,
+    "release_frequency": "monthly",
+    "tranche_count": 48,
+    "total_base_units": "2000000000000000",
+    "remainder_policy": "assign_integer_division_remainder_to_final_tranche",
+    "beneficiary_address": null,
+    "revocable": false,
+    "beneficiary_env": "VCOIN_FOUNDER_BENEFICIARY_ADDRESS"
   },
   "metadata": {
     "uri": null,
@@ -37,5 +45,24 @@
   },
   "deployment_authorized": false,
   "mainnet_authorized": false,
-  "notes": "Template only. Null values require owner approval and verification. Never commit secrets, seed phrases or private keys."
+  "notes": "Public template only. Owner-supplied addresses are validated for TON friendly-address checksum and workchain format, but must be re-entered into a private, untracked deployment manifest and independently confirmed in the wallet before any deployment. Founder allocation is sent to a separately audited vesting contract; the founder wallet is its fixed beneficiary. Mainnet is the intended production network; Testnet is rehearsal only. deployment_authorized and mainnet_authorized remain false. Mining activation and payouts remain disabled until a separate explicit owner command. Never commit secrets, seed phrases or private keys.",
+  "purchase_settlement": {
+    "enabled": false,
+    "network": "testnet",
+    "payment_recipient_env": "VCOIN_FOUNDER_TON_ADDRESS",
+    "reserve_signer_env": "VCOIN_RESERVE_SIGNER",
+    "exchange_rate_config_required": true,
+    "quote_expiry_seconds": null,
+    "on_chain_verification_required": true,
+    "transaction_replay_protection_required": true,
+    "payout_confirmation_required": true
+  },
+  "intended_production_network": "mainnet",
+  "allocation_destination_env": {
+    "founder_vesting_contract": "VCOIN_FOUNDER_VESTING_CONTRACT_ADDRESS",
+    "mining_reserve_wallet": "VCOIN_MINING_RESERVE_WALLET_ADDRESS",
+    "treasury_wallet": "VCOIN_TREASURY_WALLET_ADDRESS",
+    "liquidity_market_wallet": "VCOIN_LIQUIDITY_MARKET_WALLET_ADDRESS",
+    "ecosystem_marketing_wallet": "VCOIN_ECOSYSTEM_MARKETING_WALLET_ADDRESS"
+  }
 }

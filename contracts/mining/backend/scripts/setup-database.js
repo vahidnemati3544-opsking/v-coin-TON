@@ -60,6 +60,21 @@ const migrations = [
     version: '003_balance_based_mining',
     description: 'Legacy internal-balance mining snapshot fields; public mining remains disabled',
     file: path.resolve(__dirname, '../database/migrations/003-balance-based-mining.sql')
+  },
+  {
+    version: '004_price_reference_candles',
+    description: 'Modelled reference-price state and candle history',
+    file: path.resolve(__dirname, '../database/migrations/004-price-reference-candles.sql')
+  },
+  {
+    version: '005_weekly_reference_growth',
+    description: 'Weekly compounding model aligned to 50 percent annual reference growth',
+    file: path.resolve(__dirname, '../database/migrations/005-weekly-reference-growth.sql')
+  },
+  {
+    version: '006_ton_wallet_snapshots',
+    description: 'Network-aware TON wallet proof metadata and immutable Jetton balance snapshots',
+    file: path.resolve(__dirname, '../database/migrations/006-ton-wallet-snapshots.sql')
   }
 ];
 

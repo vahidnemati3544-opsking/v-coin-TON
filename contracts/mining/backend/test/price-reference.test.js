@@ -12,9 +12,14 @@ test('initial reference price is exactly USD 0.004', () => {
   assert.equal(decimalPriceToScaled('0.004000000000').toString(), '4000000000');
 });
 
-test('72-hour increase compounds by exactly 0.2041 percent', () => {
+test('weekly increase compounds at the approved 50 percent annual rate', () => {
   const first = increasePriceScaled(decimalPriceToScaled('0.004000000000'));
-  assert.equal(scaledPriceToDecimal(first), '0.004008164000');
+  assert.equal(scaledPriceToDecimal(first), '0.004031311539');
+});
+
+test('weekly schedule interval is exactly seven days', () => {
+  const { INTERVAL_MS } = require('../src/services/price-reference');
+  assert.equal(INTERVAL_MS, 7 * 24 * 60 * 60 * 1000);
 });
 
 test('price arithmetic remains integer-based across repeated periods', () => {

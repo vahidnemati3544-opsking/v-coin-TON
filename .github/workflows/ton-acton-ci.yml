@@ -1,0 +1,66 @@
+name: TON Acton CI
+
+on:
+  push:
+    branches:
+      - main
+      - "feature/**"
+    paths:
+      - "contracts/jetton/acton/**"
+      - ".github/workflows/ton-acton-ci.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "contracts/jetton/acton/**"
+      - ".github/workflows/ton-acton-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ton-acton-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  jetton-reference-build:
+    name: Build and test Jetton reference and VCOIN wallet
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: contracts/jetton/acton
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup Acton
+        uses: ton-blockchain/setup-acton@0f9f436843d740466cae2d7411ff59072dde942e # v1.2.0
+        with:
+          version: "1.2.1"
+
+      - name: Verify toolchain
+        run: acton --version
+
+      - name: Build Tolk contracts
+        run: acton build
+
+      - name: Generate typed wrappers
+        run: |
+          acton wrapper JettonMinter -o wrappers/JettonMinter.gen.tolk
+          acton wrapper JettonWallet -o wrappers/JettonWallet.gen.tolk
+          acton wrapper VcoinJettonWallet -o wrappers/VcoinJettonWallet.gen.tolk
+          acton wrapper VcoinJettonMinter -o wrappers/VcoinJettonMinter.gen.tolk
+          acton wrapper VcoinGenesisCoordinator -o wrappers/VcoinGenesisCoordinator.gen.tolk
+          acton wrapper VcoinFounderVesting -o wrappers/VcoinFounderVesting.gen.tolk
+
+      - name: Run Jetton protocol and VCOIN invariant tests
+        run: acton test tests
+
+      - name: Run static checks
+        run: acton check
+
+      - name: Check formatting
+        run: acton fmt --check

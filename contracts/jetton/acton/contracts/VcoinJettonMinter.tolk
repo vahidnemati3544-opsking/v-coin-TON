@@ -184,7 +184,7 @@ fun vcoinSendGenesisSlot(slot: VcoinGenesisSlot, slotId: uint8) {
             contract.getAddress(),
             walletCode,
         ),
-        value: 0,
+        value: grams("0.5"),
         body: InternalTransferStep {
             queryId: vcoinGenesisQueryId(slotId),
             jettonAmount: slot.amount,
@@ -194,9 +194,7 @@ fun vcoinSendGenesisSlot(slot: VcoinGenesisSlot, slotId: uint8) {
             forwardPayload: beginCell().endCell().beginParse(),
         },
     });
-    transfer.send(
-        SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE | SEND_MODE_BOUNCE_ON_ACTION_FAIL,
-    );
+    transfer.send(SEND_MODE_PAY_FEES_SEPARATELY | SEND_MODE_BOUNCE_ON_ACTION_FAIL);
 }
 
 fun onBouncedMessage(in: InMessageBounced) {

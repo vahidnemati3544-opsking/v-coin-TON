@@ -9,12 +9,12 @@ import "@acton/types/big_array"
 import "@acton/types/message"
 import "@acton/types/out_actions"
 import "@acton/types/transaction"
-import "../contracts/jetton-utils"
-import "../contracts/messages"
-import "../contracts/storage"
-import "../wrappers/JettonMinter.gen"
-import "../wrappers/JettonWallet.gen"
-import "../wrappers/utils"
+import "@contracts/jetton-utils"
+import "@contracts/messages"
+import "@contracts/storage"
+import "@wrappers/JettonMinter.gen"
+import "@wrappers/JettonWallet.gen"
+import "@wrappers/utils"
 
 fun buildTestMetadata(uri: string): cell {
     var metadata: OnchainMetadataReply = { contentDict: [] };

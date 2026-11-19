@@ -1,14 +1,17 @@
 import "errors"
+import "messages"
 import "vcoin-messages"
 
 const VCOIN_GENESIS_REQUEST_TON_VALUE = grams("0.5")
 const VCOIN_GENESIS_COORDINATOR_MIN_CALL_VALUE = grams("3")
 
+type VcoinCoordinatorMessages = StartVcoinGenesis | TopUpTons
+
 contract VcoinGenesisCoordinator {
     author: "V COIN"
     version: "1.0.0"
     description: "Stateless fixed-slot VCOIN genesis dispatcher"
-    incomingMessages: StartVcoinGenesis
+    incomingMessages: VcoinCoordinatorMessages
     storage: cell
 }
 
@@ -23,14 +26,20 @@ fun sendVcoinGenesisSlotRequest(masterAddress: address, slotId: uint8) {
 }
 
 fun onInternalMessage(in: InMessage) {
-    val msg = lazy StartVcoinGenesis.fromSlice(in.body);
-    assert (in.valueCoins >= VCOIN_GENESIS_COORDINATOR_MIN_CALL_VALUE) throw ERROR_NOT_ENOUGH_GAS;
-
-    sendVcoinGenesisSlotRequest(msg.masterAddress, 1);
-    sendVcoinGenesisSlotRequest(msg.masterAddress, 2);
-    sendVcoinGenesisSlotRequest(msg.masterAddress, 3);
-    sendVcoinGenesisSlotRequest(msg.masterAddress, 4);
-    sendVcoinGenesisSlotRequest(msg.masterAddress, 5);
+    val msg = lazy VcoinCoordinatorMessages.fromSlice(in.body);
+    match (msg) {
+        StartVcoinGenesis => {
+            assert (in.valueCoins >= VCOIN_GENESIS_COORDINATOR_MIN_CALL_VALUE) throw ERROR_NOT_ENOUGH_GAS;
+            sendVcoinGenesisSlotRequest(msg.masterAddress, 1);
+            sendVcoinGenesisSlotRequest(msg.masterAddress, 2);
+            sendVcoinGenesisSlotRequest(msg.masterAddress, 3);
+            sendVcoinGenesisSlotRequest(msg.masterAddress, 4);
+            sendVcoinGenesisSlotRequest(msg.masterAddress, 5);
+        }
+        TopUpTons => {
+            // Accept TON to activate the stateless dispatcher before genesis starts.
+        }
+    }
 }
 
 fun onBouncedMessage(_in: InMessageBounced) {

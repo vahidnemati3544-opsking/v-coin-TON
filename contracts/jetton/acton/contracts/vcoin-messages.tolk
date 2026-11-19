@@ -11,3 +11,9 @@ struct (0x56434752) VcoinGenesisSlotRequest {
 struct (0x56434753) StartVcoinGenesis {
     masterAddress: address
 }
+
+struct (0x56434641) VcoinTransferFailed {
+    queryId: uint64
+    jettonAmount: coins
+    walletOwner: address
+}

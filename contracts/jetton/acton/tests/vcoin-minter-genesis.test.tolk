@@ -7,6 +7,7 @@ import "@contracts/vcoin-genesis-config"
 import "@contracts/vcoin-messages"
 import "@contracts/vcoin-minter-storage"
 import "@contracts/vcoin-minter-utils"
+import "@wrappers/VcoinGenesisCoordinator.gen"
 import "@wrappers/VcoinJettonMinter.gen"
 import "@wrappers/VcoinJettonWallet.gen"
 import "test-utils"
@@ -21,7 +22,8 @@ struct VcoinMinterTestRecipients {
 
 struct VcoinMinterTestContext {
     minter: VcoinJettonMinter
-    coordinator: Treasury
+    coordinator: VcoinGenesisCoordinator
+    caller: Treasury
     recipients: VcoinMinterTestRecipients
 }
 
@@ -36,7 +38,25 @@ fun makeVcoinGenesisSlot(recipient: address, amount: coins): Cell<VcoinGenesisSl
 
 fun setupVcoinMinterTest(): VcoinMinterTestContext {
     val deployer = testing.treasury("vcoin-master-deployer");
-    val coordinator = testing.treasury("vcoin-genesis-coordinator");
+    val caller = testing.treasury("vcoin-genesis-caller");
+    val coordinatorInit = calcDeployedVcoinGenesisCoordinator(
+        build("VcoinGenesisCoordinator"),
+        deployer.address,
+    );
+    val coordinator = VcoinGenesisCoordinator {
+        address: coordinatorInit.calculateAddress(),
+    };
+    val coordinatorDeploy = net.send(
+        deployer.address,
+        createMessage({
+            bounce: false,
+            value: grams("1"),
+            dest: coordinatorInit,
+            body: TopUpTons {},
+        }),
+    );
+    expect(coordinatorDeploy).toHaveSuccessfulDeploy({ to: coordinator.address });
+
     val recipients = VcoinMinterTestRecipients {
         founder: testing.treasury("vcoin-founder-vesting"),
         mining: testing.treasury("vcoin-mining-reserve"),
@@ -99,65 +119,48 @@ fun setupVcoinMinterTest(): VcoinMinterTestContext {
     return {
         minter,
         coordinator,
+        caller,
         recipients,
     };
 }
 
-fun requestVcoinGenesisSlot(
-    ctx: VcoinMinterTestContext,
-    slotId: uint8,
-): SendResultList {
+fun startVcoinGenesis(ctx: VcoinMinterTestContext): SendResultList {
     return net.send(
-        ctx.coordinator.address,
+        ctx.caller.address,
         createMessage({
             bounce: true,
-            value: grams("1"),
-            dest: ctx.minter.address,
-            body: VcoinGenesisSlotRequest { slotId },
+            value: grams("8"),
+            dest: ctx.coordinator.address,
+            body: StartVcoinGenesis { masterAddress: ctx.minter.address },
         }),
     );
 }
 
-get fun `test VCOIN Master completes all five fixed genesis allocations exactly once`() {
+get fun `test VCOIN coordinator completes all five fixed genesis allocations exactly once`() {
     val ctx = setupVcoinMinterTest();
 
     expect(ctx.minter.getContractBalance() > grams("5")).toEqual(true);
-    val slot1 = requestVcoinGenesisSlot(ctx, 1);
-    expect(slot1).toHaveSuccessfulTx<VcoinGenesisSlotRequest>({
+    val genesis = startVcoinGenesis(ctx);
+    expect(genesis).toHaveSuccessfulTx<StartVcoinGenesis>({
+        from: ctx.caller.address,
+        to: ctx.coordinator.address,
+    });
+    expect(genesis).toHaveSuccessfulTx<VcoinGenesisSlotRequest>({
         from: ctx.coordinator.address,
         to: ctx.minter.address,
     });
+
     val founderWallet = VcoinJettonWallet {
         address: ctx.minter.getWalletAddress(ctx.recipients.founder.address),
     };
-    expect(slot1).toHaveSuccessfulTx<InternalTransferStep>({
+    expect(genesis).toHaveSuccessfulTx<InternalTransferStep>({
         from: ctx.minter.address,
         to: founderWallet.address,
     });
-    expect(slot1).toHaveSuccessfulTx<VcoinGenesisCreditAck>({
+    expect(genesis).toHaveSuccessfulTx<VcoinGenesisCreditAck>({
         from: founderWallet.address,
         to: ctx.minter.address,
     });
-    expect(ctx.minter.getJettonData().totalSupply).toEqual(VCOIN_FOUNDER_ALLOCATION_BASE_UNITS);
-    expect(ctx.minter.getGenesisStatus().completedSlots).toEqual(1);
-    expect(founderWallet.getWalletData().jettonBalance).toEqual(
-        VCOIN_FOUNDER_ALLOCATION_BASE_UNITS,
-    );
-
-    val duplicateSlot1 = requestVcoinGenesisSlot(ctx, 1);
-    expect(duplicateSlot1).toHaveSuccessfulTx<VcoinGenesisSlotRequest>({
-        from: ctx.coordinator.address,
-        to: ctx.minter.address,
-    });
-    expect(ctx.minter.getJettonData().totalSupply).toEqual(VCOIN_FOUNDER_ALLOCATION_BASE_UNITS);
-    expect(founderWallet.getWalletData().jettonBalance).toEqual(
-        VCOIN_FOUNDER_ALLOCATION_BASE_UNITS,
-    );
-
-    requestVcoinGenesisSlot(ctx, 2);
-    requestVcoinGenesisSlot(ctx, 3);
-    requestVcoinGenesisSlot(ctx, 4);
-    requestVcoinGenesisSlot(ctx, 5);
 
     val finalData = ctx.minter.getJettonData();
     val finalStatus = ctx.minter.getGenesisStatus();
@@ -166,15 +169,24 @@ get fun `test VCOIN Master completes all five fixed genesis allocations exactly 
     expect(finalStatus.genesisIssued).toEqual(VCOIN_TOTAL_SUPPLY_BASE_UNITS);
     expect(finalStatus.completedSlots).toEqual(5);
     expect(finalStatus.genesisComplete).toEqual(true);
+    expect(founderWallet.getWalletData().jettonBalance).toEqual(
+        VCOIN_FOUNDER_ALLOCATION_BASE_UNITS,
+    );
+
+    val duplicateGenesis = startVcoinGenesis(ctx);
+    expect(duplicateGenesis).toHaveSuccessfulTx<StartVcoinGenesis>({
+        from: ctx.caller.address,
+        to: ctx.coordinator.address,
+    });
+    expect(ctx.minter.getJettonData().totalSupply).toEqual(VCOIN_TOTAL_SUPPLY_BASE_UNITS);
+    expect(founderWallet.getWalletData().jettonBalance).toEqual(
+        VCOIN_FOUNDER_ALLOCATION_BASE_UNITS,
+    );
 }
 
 get fun `test VCOIN burn reduces circulating supply without replenishing genesis issuance`() {
     val ctx = setupVcoinMinterTest();
-    requestVcoinGenesisSlot(ctx, 1);
-    requestVcoinGenesisSlot(ctx, 2);
-    requestVcoinGenesisSlot(ctx, 3);
-    requestVcoinGenesisSlot(ctx, 4);
-    requestVcoinGenesisSlot(ctx, 5);
+    startVcoinGenesis(ctx);
 
     val founderWallet = VcoinJettonWallet {
         address: ctx.minter.getWalletAddress(ctx.recipients.founder.address),

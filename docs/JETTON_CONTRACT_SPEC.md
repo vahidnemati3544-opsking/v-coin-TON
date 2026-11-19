@@ -48,7 +48,7 @@ The initial issuance must equal exactly 10,000,000,000 VCOIN.
 | Ecosystem / marketing | 10% | 1,000,000,000 | 1,000,000,000,000,000 |
 | **Total** | **100%** | **10,000,000,000** | **10,000,000,000,000,000** |
 
-The contract/deployment process must reject any configuration whose allocations do not sum exactly to the approved total. Allocation recipient addresses are intentionally not supplied in this draft; they must be owner-confirmed and independently checked before deployment. Public documents must not expose confidential founder or treasury controller identities or addresses.
+The contract/deployment process must reject any configuration whose allocations do not sum exactly to the approved total. Five allocation destination addresses have now been supplied privately by the project owner and passed offline TON friendly-address checksum/workchain-format validation. This does not prove wallet ownership or on-chain account state. The actual addresses are intentionally excluded from this public specification; see `docs/ALLOCATION_DESTINATIONS.md` for the private-manifest process and remaining verification gates. The founder wallet is the vesting beneficiary; the founder allocation must be funded to a separately audited vesting contract, not sent unlocked directly to the beneficiary.
 
 ## 4. Supply and minting invariants
 
@@ -147,7 +147,7 @@ The exchange rate, quote lifetime, rounding policy, minimum/maximum purchase, re
 
 ## 12. Deployment and release gates
 
-**Current state: NO-GO. No deployment is authorized by this document.**
+**Current state: NO-GO. No deployment is authorized by this document.** Five destination address strings have been received and format-checked, but wallet control, final VCOIN contracts, Testnet rehearsal, and independent review remain outstanding.
 
 Before Testnet deployment:
 - Use TON's current Tolk toolchain for the Jetton implementation, based on the official Acton Jetton v2.1 Tolk sources; pin exact compiler/toolchain versions and upstream source commit in the implementation manifest. Do not use the archived Tact Jetton implementation as the project baseline.

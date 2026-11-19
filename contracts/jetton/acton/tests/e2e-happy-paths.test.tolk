@@ -3,10 +3,10 @@ import "@acton/emulation/testing"
 import "@acton/testing/expect"
 import "@acton/types/transaction"
 import "test-utils"
-import "../contracts/messages"
-import "../wrappers/JettonMinter.gen"
-import "../wrappers/JettonWallet.gen"
-import "../wrappers/utils"
+import "@contracts/messages"
+import "@wrappers/JettonMinter.gen"
+import "@wrappers/JettonWallet.gen"
+import "@wrappers/utils"
 
 const JETTON_E2E_NOW = 1000
 const JETTON_E2E_MINT_AMOUNT = grams("25")

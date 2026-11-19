@@ -1,9 +1,13 @@
-struct VcoinFounderVestingConfig {
-    beneficiary: address
-    activationController: address
+struct VcoinFounderVestingWalletConfig {
     masterAddress: address?
     ownWalletAddress: address?
     beneficiaryWalletAddress: address?
+}
+
+struct VcoinFounderVestingConfig {
+    beneficiary: address
+    activationController: address
+    wallets: Cell<VcoinFounderVestingWalletConfig>
 }
 
 struct VcoinFounderVestingState {

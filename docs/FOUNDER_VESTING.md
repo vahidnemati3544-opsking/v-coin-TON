@@ -1,8 +1,8 @@
 # V COIN — Founder Vesting Schedule
 
 **Document ID:** VCT-VEST-001  
-**Version:** 1.0.0  
-**Status:** Approved economic rules; on-chain implementation and tests pending  
+**Version:** 1.1.0  
+**Status:** Implemented and emulator-tested; independent audit and deployment pending  
 **Scope:** V-Coin-TON only
 
 ## 1. Approved parameters
@@ -14,48 +14,61 @@
 | Decimals | 6 |
 | Vesting duration | 48 months |
 | Release frequency | Monthly |
-| Start event | Official mining activation |
+| Start event | Explicit on-chain activation at official mining launch |
 | Cliff | None; first tranche is due after the first completed monthly interval |
 | Beneficiary | Founder TON wallet, supplied privately at deployment |
-| Revocation | Not permitted unless separately approved |
+| Revocation | No unilateral revocation or beneficiary-change method |
 
-## 2. Start-time rule
+## 2. Implemented on-chain flow
 
-The vesting clock MUST NOT start at repository creation, contract compilation, contract deployment, token issuance, or the first test transaction. It starts only when the owner formally activates mining on the intended production network and the activation timestamp is recorded in the reviewed activation transaction/state.
+The implementation is `contracts/jetton/acton/contracts/VcoinFounderVesting.tolk`.
 
-The activation timestamp is immutable once recorded. Testnet rehearsals must use a separate test configuration and must not establish the production vesting start.
+1. Deploy the vesting contract with a fixed beneficiary and activation-controller address. The Master address and Jetton wallet addresses are initially unset, so the vesting contract address can be fixed before the Master deployment without a circular address dependency.
+2. After the Master is deployed, the activation controller sets the Master exactly once.
+3. The vesting contract requests its own Jetton Wallet address and the beneficiary's Jetton Wallet address from the authenticated Master. The contract accepts only responses from that Master and stores the two derived addresses. The controller can retry wallet-address discovery if a request bounces.
+4. The founder allocation's genesis slot must target the vesting contract address, not the beneficiary's direct wallet.
+5. Only the activation controller can activate the vesting clock. The contract records the current on-chain Unix timestamp at the activation message; deployment and genesis issuance do not start the clock.
+6. Any caller may trigger a release after a monthly due date. The destination is fixed to the beneficiary. The contract sends a Jetton transfer from its own wallet and waits for a receipt from the beneficiary wallet before advancing the released-tranche counter.
+7. A bounced request or a VCOIN wallet transfer-failure notification clears the pending release without increasing the released counter. The same due tranche can then be retried.
+
+The vesting contract has no method to change the beneficiary, activation controller, start timestamp, allocation, or schedule after initialization. There is no admin withdrawal of unvested VCOIN.
 
 ## 3. Exact tranche arithmetic
 
-All calculations use integer base units only. The implementation must compute:
+All calculations use integer base units only.
 
-- base_tranche = total_base_units / 48
-- remainder = total_base_units % 48
-- Tranches 1–47 release base_tranche each.
-- Tranche 48 releases base_tranche + remainder.
+- `base_tranche = 2,000,000,000,000,000 / 48 = 41,666,666,666,666`
+- `remainder = 32` base units.
+- Tranches 1–47 release exactly 41,666,666,666,666 base units each.
+- Tranche 48 releases 41,666,666,666,698 base units.
 
-The sum of all 48 tranches must equal exactly 2,000,000,000,000,000 base units. No floating-point arithmetic is permitted.
+The sum of all 48 tranches is exactly 2,000,000,000,000,000 base units. No floating-point arithmetic is used.
 
-## 4. Release conditions
+## 4. Calendar semantics
 
-A release is permitted only when its monthly due time has passed and the requested tranche has not already been released. The contract must calculate due tranches from the immutable mining activation timestamp; prevent early release; prevent duplicate release and replay; release only to the fixed beneficiary; maintain a monotonically increasing released-tranche counter; reject attempts to change the beneficiary, start timestamp, total allocation, or schedule after activation; and expose getters sufficient to verify total allocation, start timestamp, released amount, next due tranche and beneficiary.
+Monthly due dates use UTC calendar arithmetic, not 30-day approximations. The corresponding day/time is preserved where possible; when a target month is shorter, the date is clamped to that month's final valid day. The original day is restored in later months where valid. Leap years and month-end boundaries are covered by unit tests.
 
-The implementation must define calendar-month semantics precisely. Recommended rule: due date is the corresponding UTC calendar date/time in each subsequent month, clamping to the last valid day of shorter months. This must be implemented and tested consistently; do not approximate a month as 30 days.
+## 5. TON transaction requirements
 
-## 5. Security boundary
+- Setting the Master requires at least 0.3 TON for the two wallet-address discovery requests.
+- Each release request requires at least 1.2 TON; the vesting contract forwards 1 TON to its Jetton Wallet for transfer execution.
+- The VCOIN wallet retains a bounded 0.1 TON native reserve when processing genesis acknowledgements and transfer receipts. Wallet balances and reserve levels must be monitored and topped up as needed; this is not a guarantee of five-year storage funding.
+- All TON amounts are network execution costs, not VCOIN rewards or founder allocation amounts.
 
-A backend timer, PostgreSQL row, or UI display is NOT a token lock. Founder tokens must be held by an on-chain vesting contract or another independently reviewed and demonstrably enforceable lock mechanism. The founder's TON purchase proceeds are a separate asset and are sent directly to the founder's TON wallet; they are not part of this VCOIN vesting allocation.
+## 6. Test evidence
 
-## 6. Required tests
+The Acton emulator suite currently verifies:
+1. A release request before the founder Jetton Wallet exists bounces and clears the pending state.
+2. The exact five-slot genesis process funds the vesting contract wallet with the approved 2B allocation.
+3. The first monthly tranche is transferred to the fixed beneficiary and acknowledged by the beneficiary wallet.
+4. The remaining 47 tranches can be released at the 48th monthly due date.
+5. The final tranche absorbs the 32-base-unit remainder, leaving the vesting wallet at zero and the beneficiary wallet at exactly 2B VCOIN.
+6. January 31, February, leap-year, 30-day month-end and UTC time-of-day calendar cases pass.
 
-1. No release before the first monthly due date.
-2. One tranche becomes releasable at each monthly due date.
-3. Multiple elapsed months can be released without skipping or duplication.
-4. Duplicate release requests do not release twice.
-5. February, leap years, 30/31-day month boundaries and UTC boundaries.
-6. Tranche arithmetic sums exactly to the approved base-unit allocation.
-7. Final tranche absorbs the integer remainder.
-8. Beneficiary and activation timestamp cannot be changed after initialization.
-9. Testnet start timestamp is isolated from production configuration.
+The overall TON Acton CI suite reports 19 passing tests, with build, static checks and formatting passing. This is emulator evidence only; it is not an independent security audit or a Mainnet deployment.
 
-**Release gate:** No founder allocation transfer or vesting deployment until source code is compiled, tests pass, the contract is independently reviewed, and the exact deployment transaction is separately approved.
+## 7. Security and release gate
+
+A backend timer, PostgreSQL row, or UI display is not a token lock. Founder tokens must remain in the on-chain vesting wallet until the contract releases them.
+
+**No Testnet or Mainnet deployment, founder allocation transfer, or activation transaction is authorized by this implementation work.** Deployment requires a reviewed manifest, exact state-init/address verification, independent security review, and separate explicit approval of the exact transaction.

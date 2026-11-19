@@ -3,9 +3,9 @@ import "@acton/emulation/network"
 import "@acton/emulation/testing"
 import "@acton/testing/expect"
 import "@contracts/messages"
+import "@contracts/vcoin-jetton-utils"
 import "@contracts/vcoin-messages"
 import "@contracts/vcoin-storage"
-import "@contracts/vcoin-jetton-utils"
 import "@wrappers/VcoinJettonWallet.gen"
 import "test-utils"
 
@@ -37,7 +37,11 @@ fun setupVcoinWalletTest(): VcoinWalletTestContext {
         }),
     );
     expect(deploy).toHaveSuccessfulDeploy({ to: wallet.address });
-    return { wallet, minter, owner };
+    return {
+        wallet,
+        minter,
+        owner,
+    };
 }
 
 fun sendVcoinGenesisCredit(ctx: VcoinWalletTestContext): SendResultList {

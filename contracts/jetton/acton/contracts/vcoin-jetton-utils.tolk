@@ -30,4 +30,3 @@ fun calcAddressOfVcoinJettonWallet(
     val wallet = calcDeployedVcoinJettonWallet(ownerAddress, minterAddress, jettonWalletCode);
     return wallet.calculateAddress();
 }
-

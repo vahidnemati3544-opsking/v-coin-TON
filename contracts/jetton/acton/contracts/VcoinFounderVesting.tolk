@@ -238,7 +238,7 @@ fun onInternalMessage(in: InMessage) {
                     sendExcessesTo: contract.getAddress(),
                     customPayload: null,
                     forwardTonAmount: 0,
-                    forwardPayload: PayloadInline { value: beginCell().endCell().beginParse() },
+                    forwardPayload: beginCell().storeUint(0, 1).endCell().beginParse(),
                 },
             });
             transfer.send(SEND_MODE_PAY_FEES_SEPARATELY | SEND_MODE_BOUNCE_ON_ACTION_FAIL);

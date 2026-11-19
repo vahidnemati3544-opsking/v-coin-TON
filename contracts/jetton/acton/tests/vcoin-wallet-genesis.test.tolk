@@ -1,9 +1,12 @@
+import "@acton/build"
 import "@acton/emulation/network"
+import "@acton/types/message"
 import "@acton/emulation/testing"
 import "@acton/testing/expect"
 import "@contracts/messages"
 import "@contracts/vcoin-messages"
 import "@contracts/vcoin-storage"
+import "@contracts/vcoin-jetton-utils"
 import "@wrappers/VcoinJettonWallet.gen"
 import "test-utils"
 
@@ -19,15 +22,21 @@ struct VcoinWalletTestContext {
 fun setupVcoinWalletTest(): VcoinWalletTestContext {
     val minter = testing.treasury("vcoin-genesis-minter");
     val owner = testing.treasury("vcoin-genesis-owner");
-    val wallet = VcoinJettonWallet.fromStorage(VcoinWalletStorage {
-        jettonBalance: 0,
-        ownerAddress: owner.address,
-        minterAddress: minter.address,
-        genesisCredited: false,
-        genesisQueryId: 0,
-        genesisAmount: 0,
-    });
-    val deploy = wallet.sendDeploy(minter.address, { value: grams("10") });
+    val walletInit = calcDeployedVcoinJettonWallet(
+        owner.address,
+        minter.address,
+        build("VcoinJettonWallet"),
+    );
+    val wallet = VcoinJettonWallet { address: walletInit.calculateAddress() };
+    val deploy = net.send(
+        minter.address,
+        createMessage({
+            bounce: false,
+            value: grams("10"),
+            dest: walletInit,
+            body: TopUpTons {},
+        }),
+    );
     expect(deploy).toHaveSuccessfulDeploy({ to: wallet.address });
     return { wallet, minter, owner };
 }

@@ -36,10 +36,7 @@ fun onBouncedMessage(in: InMessageBounced) {
 
     match (msg) {
         InternalTransferStep => {
-            if (
-                msg.sendExcessesTo != null &&
-                msg.sendExcessesTo == storage.ownerAddress
-            ) {
+            if (msg.sendExcessesTo != null && msg.sendExcessesTo == storage.ownerAddress) {
                 val failedMsg = createMessage({
                     bounce: BounceMode.NoBounce,
                     dest: storage.ownerAddress,

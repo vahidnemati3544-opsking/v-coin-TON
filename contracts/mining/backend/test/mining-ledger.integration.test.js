@@ -24,6 +24,9 @@ async function applyTestMigrations(pool) {
   const priceReferenceMigration = await fs.readFile(
     path.join(databaseDir, 'migrations/004-price-reference-candles.sql'), 'utf8'
   );
+  const weeklyReferenceMigration = await fs.readFile(
+    path.join(databaseDir, 'migrations/005-weekly-reference-growth.sql'), 'utf8'
+  );
 
   await pool.query(schema);
   await pool.query(reserveMigration);
@@ -38,6 +41,7 @@ async function applyTestMigrations(pool) {
   );
   await pool.query(balanceMiningMigration);
   await pool.query(priceReferenceMigration);
+  await pool.query(weeklyReferenceMigration);
 }
 
 test('PostgreSQL mining reward is reserved, double-entry posted, and idempotently confirmed', {

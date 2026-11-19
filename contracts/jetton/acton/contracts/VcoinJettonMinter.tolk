@@ -1,3 +1,4 @@
+import "@gen/VcoinJettonWallet.code"
 import "errors"
 import "messages"
 import "sharding"
@@ -179,7 +180,7 @@ fun vcoinValidateGenesisConfig(storage: VcoinMinterStorage) {
 }
 
 fun vcoinSendGenesisSlot(slot: VcoinGenesisSlot, slotId: uint8) {
-    val walletCode = getVcoinJettonWalletCode();
+    val walletCode = vcoinJettonWalletCompiledCode();
     val transfer = createMessage({
         bounce: BounceMode.Only256BitsOfBody,
         dest: calcDeployedVcoinJettonWallet(
@@ -253,7 +254,7 @@ fun onInternalMessage(in: InMessage) {
             val expectedWallet = calcAddressOfVcoinJettonWallet(
                 slot.recipient,
                 contract.getAddress(),
-                getVcoinJettonWalletCode(),
+                vcoinJettonWalletCompiledCode(),
             );
             assert (in.senderAddress == expectedWallet) throw ERROR_NOT_VALID_WALLET;
             assert (msg.ownerAddress == slot.recipient) throw ERROR_INVALID_MESSAGE;
@@ -278,7 +279,7 @@ fun onInternalMessage(in: InMessage) {
                 calcAddressOfVcoinJettonWallet(
                     msg.burnInitiator,
                     contract.getAddress(),
-                    getVcoinJettonWalletCode(),
+                    vcoinJettonWalletCompiledCode(),
                 )
             ) throw ERROR_NOT_VALID_WALLET;
             assert (storage.totalSupply >= msg.jettonAmount) throw ERROR_BALANCE_ERROR;
@@ -308,7 +309,7 @@ fun onInternalMessage(in: InMessage) {
                 walletAddress = calcAddressOfVcoinJettonWallet(
                     msg.ownerAddress,
                     contract.getAddress(),
-                    getVcoinJettonWalletCode(),
+                    vcoinJettonWalletCompiledCode(),
                 );
             }
             val respondMsg = createMessage({
@@ -341,7 +342,7 @@ get fun get_jetton_data(): VcoinJettonDataReply {
         mintable: storage.completedSlots < VCOIN_GENESIS_SLOT_COUNT,
         adminAddress: null,
         jettonContent: storage.metadata as Cell<OnchainMetadataReply>,
-        jettonWalletCode: getVcoinJettonWalletCode(),
+        jettonWalletCode: vcoinJettonWalletCompiledCode(),
     };
 }
 
@@ -349,7 +350,7 @@ get fun get_wallet_address(ownerAddress: address): address {
     return calcAddressOfVcoinJettonWallet(
         ownerAddress,
         contract.getAddress(),
-        getVcoinJettonWalletCode(),
+        vcoinJettonWalletCompiledCode(),
     );
 }
 

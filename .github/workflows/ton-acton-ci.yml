@@ -25,7 +25,7 @@ concurrency:
 
 jobs:
   jetton-reference-build:
-    name: Build and test pinned Jetton reference baseline
+    name: Build and test Jetton reference and VCOIN wallet
     runs-on: ubuntu-24.04
     defaults:
       run:
@@ -51,8 +51,9 @@ jobs:
         run: |
           acton wrapper JettonMinter -o wrappers/JettonMinter.gen.tolk
           acton wrapper JettonWallet -o wrappers/JettonWallet.gen.tolk
+          acton wrapper VcoinJettonWallet -o wrappers/VcoinJettonWallet.gen.tolk
 
-      - name: Run upstream Jetton protocol baseline tests
+      - name: Run Jetton protocol and VCOIN invariant tests
         run: acton test tests
 
       - name: Run static checks

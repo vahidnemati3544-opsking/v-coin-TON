@@ -2,9 +2,9 @@
 
 ## Current status
 
-This directory contains a pinned copy of the TON reference Jetton v2.1 implementation to establish a reproducible Tolk/Acton build and protocol baseline.
+This directory contains a pinned copy of the TON reference Jetton v2.1 implementation and a separate VCOIN-specific fixed-supply implementation.
 
-**It is not the final VCOIN contract and MUST NOT be deployed.** The upstream reference Master has administrator mint, metadata-change, and code-upgrade operations. Those capabilities conflict with VCOIN's approved fixed-supply and immutable-contract requirements until removed or replaced by a separately reviewed one-time genesis issuance design.
+**Do not deploy the upstream reference Master for VCOIN.** It retains administrator mint, metadata-change and code-upgrade operations. The VCOIN-specific contracts are separate files and have passed emulator tests, but still require adversarial testing, independent security review, a deployment manifest and explicit deployment approval.
 
 ## Upstream provenance
 
@@ -30,20 +30,25 @@ acton check
 acton fmt --check
 ```
 
-The upstream end-to-end suite remains a protocol baseline. Additional VCOIN tests now verify the approved allocation arithmetic and UTC calendar-month vesting date calculations; these tests do not yet prove a deployable VCOIN Master, genesis issuance, wallet acknowledgement, or on-chain vesting lock.
+The upstream end-to-end suite remains a protocol baseline. The VCOIN suite additionally tests the exact fixed supply and allocation sum, five-slot Master/coordinator genesis, one-time wallet credit and replay acknowledgement, burn accounting, founder vesting bounce recovery, 48-month tranche arithmetic, and UTC calendar boundaries. The latest pinned Acton CI run passed 19 tests, static checks and formatting.
 
-## VCOIN fixed-supply genesis decision
+## VCOIN fixed-supply implementation
 
-See [`docs/GENESIS_ISSUANCE_DESIGN.md`](../../../docs/GENESIS_ISSUANCE_DESIGN.md) for the one-time five-slot genesis issuance design. This is a design decision only; no VCOIN-specific Master, genesis coordinator, or founder vesting contract has been implemented or validated yet. The reference contracts below remain non-deployable for VCOIN.
+- `contracts/VcoinJettonMinter.tolk`: fixed-supply Master, five immutable genesis slots, acknowledgement-gated supply accounting, no admin mint/metadata mutation/code upgrade.
+- `contracts/VcoinJettonWallet.tolk`: TEP-74 transfer/burn, one-time genesis credit and replay-safe acknowledgement, bounded failure notification.
+- `contracts/VcoinGenesisCoordinator.tolk`: five-slot dispatcher with no arbitrary recipient/amount input.
+- `contracts/VcoinFounderVesting.tolk`: 48 UTC calendar-month founder vesting, authenticated wallet discovery through the Master, receipt-confirmed releases and bounce recovery.
+
+See [`docs/GENESIS_ISSUANCE_DESIGN.md`](../../../docs/GENESIS_ISSUANCE_DESIGN.md) and [`docs/FOUNDER_VESTING.md`](../../../docs/FOUNDER_VESTING.md) for implementation details and remaining security gates. These contracts are emulator-tested, not deployed or independently audited.
 
 ## Required VCOIN hardening before any deployment
 
 1. Replace the reference minter with a fixed-supply genesis design: exactly 10,000,000,000 VCOIN / 10^16 base units at six decimals, and no post-genesis mint path.
 2. Remove administrator metadata mutation and code-upgrade entry points; freeze metadata and contract code.
 3. Implement the five approved allocation destinations and prove their exact sum.
-4. Implement founder vesting in an enforceable on-chain lock, with activation time set only at the official mining launch; release 48 monthly tranches with exact integer arithmetic.
-5. Add VCOIN-specific adversarial tests for supply cap, one-time genesis, allocation sum, admin privilege removal, transfers, bounce handling, and vesting calendar boundaries.
-6. Compile, run all tests, inspect transaction traces, and obtain independent security review.
+4. Complete adversarial tests for bounced Master-to-wallet credit, acknowledgement loss/bounce, conflicting replay, wrong sender/amount and failed wallet deployment.
+5. Inspect and independently review Master, Wallet, coordinator and founder vesting code, including transfer-failure and retry paths.
+6. Prepare reproducible deployment scripts and a private deployment manifest; verify every derived address before any Testnet rehearsal.
 7. Keep purchase settlement and mining activation disabled until their own end-to-end tests and explicit owner approvals.
 
 No private wallet addresses, mnemonics, seed phrases, or private keys belong in this workspace.

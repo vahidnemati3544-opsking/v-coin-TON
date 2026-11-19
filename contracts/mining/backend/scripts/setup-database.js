@@ -60,6 +60,11 @@ const migrations = [
     version: '003_balance_based_mining',
     description: 'Legacy internal-balance mining snapshot fields; public mining remains disabled',
     file: path.resolve(__dirname, '../database/migrations/003-balance-based-mining.sql')
+  },
+  {
+    version: '004_price_reference_candles',
+    description: 'Modelled 72-hour reference-price state and candle history',
+    file: path.resolve(__dirname, '../database/migrations/004-price-reference-candles.sql')
   }
 ];
 

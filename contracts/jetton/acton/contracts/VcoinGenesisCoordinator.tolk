@@ -1,3 +1,4 @@
+import "errors"
 import "vcoin-messages"
 
 const VCOIN_GENESIS_REQUEST_TON_VALUE = grams("0.5")

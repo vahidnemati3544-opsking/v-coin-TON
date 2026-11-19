@@ -2,8 +2,8 @@ import "errors"
 import "messages"
 import "vcoin-messages"
 
-const VCOIN_GENESIS_REQUEST_TON_VALUE = grams("0.5")
-const VCOIN_GENESIS_COORDINATOR_MIN_CALL_VALUE = grams("3")
+const VCOIN_GENESIS_REQUEST_TON_VALUE = grams("1.5")
+const VCOIN_GENESIS_COORDINATOR_MIN_CALL_VALUE = grams("8")
 
 type VcoinCoordinatorMessages = StartVcoinGenesis | TopUpTons
 

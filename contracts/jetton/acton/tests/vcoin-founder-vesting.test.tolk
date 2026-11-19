@@ -250,17 +250,31 @@ get fun `test VCOIN founder vesting recovers a bounced claim and releases the fu
         }.getWalletData().jettonBalance,
     ).toEqual(VCOIN_FOUNDER_ALLOCATION_BASE_UNITS);
 
+    val beneficiaryWallet = VcoinJettonWallet {
+        address: ctx.vesting.getBeneficiaryWalletAddress()!,
+    };
+    val ownWallet = VcoinJettonWallet {
+        address: ctx.vesting.getVestingWalletAddress()!,
+    };
     val firstRelease = releaseVcoinFounderVesting(ctx);
     expect(firstRelease).toHaveSuccessfulTx<ReleaseVcoinVesting>({
         from: ctx.caller.address,
         to: ctx.vesting.address,
     });
+    expect(firstRelease).toHaveSuccessfulTx<AskToTransfer>({
+        from: ctx.vesting.address,
+        to: ownWallet.address,
+    });
+    expect(firstRelease).toHaveSuccessfulTx<InternalTransferStep>({
+        from: ownWallet.address,
+        to: beneficiaryWallet.address,
+    });
+    expect(firstRelease).toHaveSuccessfulTx<ReturnExcessesBack>({
+        from: beneficiaryWallet.address,
+        to: ctx.vesting.address,
+    });
     expect(ctx.vesting.getVestingStatus().releasedTranches).toEqual(1);
     expect(ctx.vesting.getVestingStatus().pendingTranches).toEqual(0);
-
-    val beneficiaryWallet = VcoinJettonWallet {
-        address: ctx.vesting.getBeneficiaryWalletAddress()!,
-    };
     expect(beneficiaryWallet.getWalletData().jettonBalance).toEqual(
         vcoinFounderTrancheBaseUnits(),
     );

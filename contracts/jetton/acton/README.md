@@ -30,7 +30,7 @@ acton check
 acton fmt --check
 ```
 
-The checked-in end-to-end test is an upstream protocol baseline test, not yet a VCOIN-specific fixed-supply or vesting test.
+The upstream end-to-end suite remains a protocol baseline. Additional VCOIN tests now verify the approved allocation arithmetic and UTC calendar-month vesting date calculations; these tests do not yet prove a deployable VCOIN Master, genesis issuance, wallet acknowledgement, or on-chain vesting lock.
 
 ## VCOIN fixed-supply genesis decision
 

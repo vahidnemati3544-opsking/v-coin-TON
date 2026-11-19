@@ -1,3 +1,5 @@
+import "storage"
+
 struct VcoinGenesisSlot {
     recipient: address
     amount: coins

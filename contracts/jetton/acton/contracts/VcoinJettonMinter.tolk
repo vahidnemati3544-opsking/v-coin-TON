@@ -167,7 +167,7 @@ fun onInternalMessage(in: InMessage) {
 
     match (msg) {
         VcoinGenesisSlotRequest => {
-            var storage = lazy VcoinMinterStorage.load();
+            val storage = lazy VcoinMinterStorage.load();
             assert (in.senderAddress == storage.genesisCoordinator) throw ERROR_NOT_OWNER;
             vcoinValidateGenesisConfig(storage);
             assert (msg.slotId >= 1 && msg.slotId <= VCOIN_GENESIS_SLOT_COUNT) throw ERROR_INVALID_MESSAGE;

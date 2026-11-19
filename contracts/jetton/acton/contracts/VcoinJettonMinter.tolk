@@ -54,19 +54,19 @@ fun vcoinSlotIdFromQueryId(queryId: uint64): uint8 {
 fun vcoinLoadGenesisSlot(storage: VcoinMinterStorage, slotId: uint8): VcoinGenesisSlot {
     match (slotId) {
         1 => {
-            return storage.founderSlot;
+            return storage.founderSlot.load();
         }
         2 => {
-            return storage.miningSlot;
+            return storage.miningSlot.load();
         }
         3 => {
-            return storage.treasurySlot;
+            return storage.treasurySlot.load();
         }
         4 => {
-            return storage.liquiditySlot;
+            return storage.liquiditySlot.load();
         }
         5 => {
-            return storage.ecosystemSlot;
+            return storage.ecosystemSlot.load();
         }
         else => throw ERROR_INVALID_MESSAGE,
     }
@@ -75,41 +75,47 @@ fun vcoinLoadGenesisSlot(storage: VcoinMinterStorage, slotId: uint8): VcoinGenes
 fun vcoinStoreGenesisSlot(storage: VcoinMinterStorage, slotId: uint8, slot: VcoinGenesisSlot) {
     match (slotId) {
         1 => {
-            storage.founderSlot = slot;
+            storage.founderSlot = slot.toCell();
         }
         2 => {
-            storage.miningSlot = slot;
+            storage.miningSlot = slot.toCell();
         }
         3 => {
-            storage.treasurySlot = slot;
+            storage.treasurySlot = slot.toCell();
         }
         4 => {
-            storage.liquiditySlot = slot;
+            storage.liquiditySlot = slot.toCell();
         }
         5 => {
-            storage.ecosystemSlot = slot;
+            storage.ecosystemSlot = slot.toCell();
         }
         else => throw ERROR_INVALID_MESSAGE,
     }
 }
 
 fun vcoinValidateGenesisConfig(storage: VcoinMinterStorage) {
-    assert (storage.founderSlot.amount == VCOIN_FOUNDER_ALLOCATION_BASE_UNITS) throw ERROR_INVALID_MESSAGE;
-    assert (storage.miningSlot.amount == VCOIN_MINING_RESERVE_BASE_UNITS) throw ERROR_INVALID_MESSAGE;
-    assert (storage.treasurySlot.amount == VCOIN_TREASURY_ALLOCATION_BASE_UNITS) throw ERROR_INVALID_MESSAGE;
-    assert (storage.liquiditySlot.amount == VCOIN_LIQUIDITY_ALLOCATION_BASE_UNITS) throw ERROR_INVALID_MESSAGE;
-    assert (storage.ecosystemSlot.amount == VCOIN_ECOSYSTEM_ALLOCATION_BASE_UNITS) throw ERROR_INVALID_MESSAGE;
+    val founder = storage.founderSlot.load();
+    val mining = storage.miningSlot.load();
+    val treasury = storage.treasurySlot.load();
+    val liquidity = storage.liquiditySlot.load();
+    val ecosystem = storage.ecosystemSlot.load();
+
+    assert (founder.amount == VCOIN_FOUNDER_ALLOCATION_BASE_UNITS) throw ERROR_INVALID_MESSAGE;
+    assert (mining.amount == VCOIN_MINING_RESERVE_BASE_UNITS) throw ERROR_INVALID_MESSAGE;
+    assert (treasury.amount == VCOIN_TREASURY_ALLOCATION_BASE_UNITS) throw ERROR_INVALID_MESSAGE;
+    assert (liquidity.amount == VCOIN_LIQUIDITY_ALLOCATION_BASE_UNITS) throw ERROR_INVALID_MESSAGE;
+    assert (ecosystem.amount == VCOIN_ECOSYSTEM_ALLOCATION_BASE_UNITS) throw ERROR_INVALID_MESSAGE;
     assert (vcoinGenesisAllocationTotal() == VCOIN_TOTAL_SUPPLY_BASE_UNITS) throw ERROR_INVALID_MESSAGE;
-    assert (storage.founderSlot.recipient != storage.miningSlot.recipient) throw ERROR_INVALID_MESSAGE;
-    assert (storage.founderSlot.recipient != storage.treasurySlot.recipient) throw ERROR_INVALID_MESSAGE;
-    assert (storage.founderSlot.recipient != storage.liquiditySlot.recipient) throw ERROR_INVALID_MESSAGE;
-    assert (storage.founderSlot.recipient != storage.ecosystemSlot.recipient) throw ERROR_INVALID_MESSAGE;
-    assert (storage.miningSlot.recipient != storage.treasurySlot.recipient) throw ERROR_INVALID_MESSAGE;
-    assert (storage.miningSlot.recipient != storage.liquiditySlot.recipient) throw ERROR_INVALID_MESSAGE;
-    assert (storage.miningSlot.recipient != storage.ecosystemSlot.recipient) throw ERROR_INVALID_MESSAGE;
-    assert (storage.treasurySlot.recipient != storage.liquiditySlot.recipient) throw ERROR_INVALID_MESSAGE;
-    assert (storage.treasurySlot.recipient != storage.ecosystemSlot.recipient) throw ERROR_INVALID_MESSAGE;
-    assert (storage.liquiditySlot.recipient != storage.ecosystemSlot.recipient) throw ERROR_INVALID_MESSAGE;
+    assert (founder.recipient != mining.recipient) throw ERROR_INVALID_MESSAGE;
+    assert (founder.recipient != treasury.recipient) throw ERROR_INVALID_MESSAGE;
+    assert (founder.recipient != liquidity.recipient) throw ERROR_INVALID_MESSAGE;
+    assert (founder.recipient != ecosystem.recipient) throw ERROR_INVALID_MESSAGE;
+    assert (mining.recipient != treasury.recipient) throw ERROR_INVALID_MESSAGE;
+    assert (mining.recipient != liquidity.recipient) throw ERROR_INVALID_MESSAGE;
+    assert (mining.recipient != ecosystem.recipient) throw ERROR_INVALID_MESSAGE;
+    assert (treasury.recipient != liquidity.recipient) throw ERROR_INVALID_MESSAGE;
+    assert (treasury.recipient != ecosystem.recipient) throw ERROR_INVALID_MESSAGE;
+    assert (liquidity.recipient != ecosystem.recipient) throw ERROR_INVALID_MESSAGE;
 }
 
 fun vcoinSendGenesisSlot(slot: VcoinGenesisSlot, slotId: uint8) {

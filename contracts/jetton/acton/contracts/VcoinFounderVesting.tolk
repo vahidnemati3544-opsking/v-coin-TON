@@ -131,9 +131,11 @@ fun onInternalMessage(in: InMessage) {
             var storage = lazy VcoinFounderVestingStorage.load();
             var config = storage.config.load();
             assert (in.senderAddress == config.activationController) throw ERROR_NOT_OWNER;
-            assert (config.masterAddress == null) throw ERROR_INVALID_MESSAGE;
+            var wallets = config.wallets.load();
+            assert (wallets.masterAddress == null) throw ERROR_INVALID_MESSAGE;
             assert (in.valueCoins >= grams("0.3")) throw ERROR_NOT_ENOUGH_GAS;
-            config.masterAddress = msg.masterAddress;
+            wallets.masterAddress = msg.masterAddress;
+            config.wallets = wallets.toCell();
             storage.config = config.toCell();
             storage.save();
             sendVcoinVestingWalletAddressRequests(msg.masterAddress, config.beneficiary);
@@ -143,36 +145,39 @@ fun onInternalMessage(in: InMessage) {
             val storage = lazy VcoinFounderVestingStorage.load();
             val config = storage.config.load();
             assert (in.senderAddress == config.activationController) throw ERROR_NOT_OWNER;
-            assert (config.masterAddress != null) throw ERROR_INVALID_MESSAGE;
+            val wallets = config.wallets.load();
+            assert (wallets.masterAddress != null) throw ERROR_INVALID_MESSAGE;
             assert (in.valueCoins >= grams("0.3")) throw ERROR_NOT_ENOUGH_GAS;
-            sendVcoinVestingWalletAddressRequests(config.masterAddress!, config.beneficiary);
+            sendVcoinVestingWalletAddressRequests(wallets.masterAddress!, config.beneficiary);
         }
 
         ResponseWalletAddress => {
             var storage = lazy VcoinFounderVestingStorage.load();
             var config = storage.config.load();
-            assert (config.masterAddress != null) throw ERROR_INVALID_MESSAGE;
-            assert (in.senderAddress == config.masterAddress!) throw ERROR_NOT_OWNER;
+            var wallets = config.wallets.load();
+            assert (wallets.masterAddress != null) throw ERROR_INVALID_MESSAGE;
+            assert (in.senderAddress == wallets.masterAddress!) throw ERROR_NOT_OWNER;
             assert (msg.jettonWalletAddress != null) throw ERROR_INVALID_MESSAGE;
 
             if (msg.queryId == VCOIN_VESTING_OWN_WALLET_QUERY_ID) {
-                if (config.ownWalletAddress != null) {
-                    assert (config.ownWalletAddress == msg.jettonWalletAddress!) throw ERROR_INVALID_MESSAGE;
+                if (wallets.ownWalletAddress != null) {
+                    assert (wallets.ownWalletAddress == msg.jettonWalletAddress!) throw ERROR_INVALID_MESSAGE;
                 } else {
-                    config.ownWalletAddress = msg.jettonWalletAddress;
+                    wallets.ownWalletAddress = msg.jettonWalletAddress;
                 }
             } else if (msg.queryId == VCOIN_VESTING_BENEFICIARY_WALLET_QUERY_ID) {
-                if (config.beneficiaryWalletAddress != null) {
+                if (wallets.beneficiaryWalletAddress != null) {
                     assert (
-                        config.beneficiaryWalletAddress == msg.jettonWalletAddress!
+                        wallets.beneficiaryWalletAddress == msg.jettonWalletAddress!
                     ) throw ERROR_INVALID_MESSAGE;
                 } else {
-                    config.beneficiaryWalletAddress = msg.jettonWalletAddress;
+                    wallets.beneficiaryWalletAddress = msg.jettonWalletAddress;
                 }
             } else {
                 throw ERROR_INVALID_MESSAGE;
             }
 
+            config.wallets = wallets.toCell();
             storage.config = config.toCell();
             storage.save();
         }
@@ -182,9 +187,10 @@ fun onInternalMessage(in: InMessage) {
             val config = storage.config.load();
             var state = storage.state.load();
             assert (in.senderAddress == config.activationController) throw ERROR_NOT_OWNER;
-            assert (config.masterAddress != null) throw ERROR_INVALID_MESSAGE;
-            assert (config.ownWalletAddress != null) throw ERROR_INVALID_MESSAGE;
-            assert (config.beneficiaryWalletAddress != null) throw ERROR_INVALID_MESSAGE;
+            val wallets = config.wallets.load();
+            assert (wallets.masterAddress != null) throw ERROR_INVALID_MESSAGE;
+            assert (wallets.ownWalletAddress != null) throw ERROR_INVALID_MESSAGE;
+            assert (wallets.beneficiaryWalletAddress != null) throw ERROR_INVALID_MESSAGE;
             assert (state.startTimestamp == 0) throw ERROR_INVALID_MESSAGE;
             state.startTimestamp = blockchain.now() as uint64;
             storage.state = state.toCell();
@@ -195,7 +201,9 @@ fun onInternalMessage(in: InMessage) {
             var storage = lazy VcoinFounderVestingStorage.load();
             val config = storage.config.load();
             var state = storage.state.load();
-            assert (config.masterAddress != null) throw ERROR_INVALID_MESSAGE;
+            val wallets = config.wallets.load();
+            assert (wallets.masterAddress != null) throw ERROR_INVALID_MESSAGE;
+            assert (wallets.ownWalletAddress != null) throw ERROR_INVALID_MESSAGE;
             assert (state.startTimestamp > 0) throw ERROR_INVALID_MESSAGE;
             assert (state.pendingTranches == 0) throw ERROR_INVALID_MESSAGE;
             assert (in.valueCoins >= VCOIN_VESTING_RELEASE_MIN_CALL_VALUE) throw ERROR_NOT_ENOUGH_GAS;
@@ -213,11 +221,11 @@ fun onInternalMessage(in: InMessage) {
             state.pendingTranches = dueTranches - state.releasedTranches;
             state.pendingQueryId = queryId;
             state.pendingAmount = amount;
-            state.nextQueryId = queryId + 1;
+            state.nextQueryId = queryId + (1 as uint64);
             storage.state = state.toCell();
             storage.save();
 
-            val walletAddress = config.ownWalletAddress!;
+            val walletAddress = wallets.ownWalletAddress!;
             val transfer = createMessage({
                 bounce: BounceMode.Only256BitsOfBody,
                 dest: walletAddress,
@@ -239,11 +247,13 @@ fun onInternalMessage(in: InMessage) {
             var storage = lazy VcoinFounderVestingStorage.load();
             val config = storage.config.load();
             var state = storage.state.load();
-            assert (config.masterAddress != null) throw ERROR_INVALID_MESSAGE;
+            val wallets = config.wallets.load();
+            assert (wallets.masterAddress != null) throw ERROR_INVALID_MESSAGE;
+            assert (wallets.beneficiaryWalletAddress != null) throw ERROR_INVALID_MESSAGE;
             assert (state.pendingTranches > 0) throw ERROR_INVALID_MESSAGE;
             assert (msg.queryId == state.pendingQueryId) throw ERROR_INVALID_MESSAGE;
             assert (
-                in.senderAddress == config.beneficiaryWalletAddress!
+                in.senderAddress == wallets.beneficiaryWalletAddress!
             ) throw ERROR_NOT_VALID_WALLET;
 
             state.releasedTranches += state.pendingTranches;
@@ -257,13 +267,15 @@ fun onInternalMessage(in: InMessage) {
             var storage = lazy VcoinFounderVestingStorage.load();
             val config = storage.config.load();
             var state = storage.state.load();
-            assert (config.masterAddress != null) throw ERROR_INVALID_MESSAGE;
+            val wallets = config.wallets.load();
+            assert (wallets.masterAddress != null) throw ERROR_INVALID_MESSAGE;
+            assert (wallets.ownWalletAddress != null) throw ERROR_INVALID_MESSAGE;
             assert (state.pendingTranches > 0) throw ERROR_INVALID_MESSAGE;
             assert (msg.queryId == state.pendingQueryId) throw ERROR_INVALID_MESSAGE;
             assert (msg.jettonAmount == state.pendingAmount) throw ERROR_INVALID_MESSAGE;
             assert (msg.walletOwner == contract.getAddress()) throw ERROR_INVALID_MESSAGE;
             assert (
-                in.senderAddress == config.ownWalletAddress!
+                in.senderAddress == wallets.ownWalletAddress!
             ) throw ERROR_NOT_VALID_WALLET;
 
             state = vcoinClearPendingVesting(state);
@@ -282,13 +294,14 @@ fun onInternalMessage(in: InMessage) {
 get fun get_vesting_status(): VcoinFounderVestingStatusReply {
     val storage = lazy VcoinFounderVestingStorage.load();
     val config = storage.config.load();
+    val wallets = config.wallets.load();
     val state = storage.state.load();
     val dueTranches = state.startTimestamp == 0
         ? state.releasedTranches
         : vcoinFounderDueTrancheCount(
             state.startTimestamp,
             state.releasedTranches,
-            blockchain.now,
+            blockchain.now(),
         );
     val claimableTranches = state.pendingTranches > 0
         ? 0
@@ -302,7 +315,7 @@ get fun get_vesting_status(): VcoinFounderVestingStatusReply {
     return {
         beneficiary: config.beneficiary,
         activationController: config.activationController,
-        masterAddress: config.masterAddress,
+        masterAddress: wallets.masterAddress,
         startTimestamp: state.startTimestamp,
         releasedTranches: state.releasedTranches,
         pendingTranches: state.pendingTranches,
@@ -314,9 +327,11 @@ get fun get_vesting_status(): VcoinFounderVestingStatusReply {
 }
 
 get fun get_vesting_wallet_address(): address? {
-    return lazy VcoinFounderVestingStorage.load().config.load().ownWalletAddress;
+    val config = lazy VcoinFounderVestingStorage.load().config.load();
+    return config.wallets.load().ownWalletAddress;
 }
 
 get fun get_beneficiary_wallet_address(): address? {
-    return lazy VcoinFounderVestingStorage.load().config.load().beneficiaryWalletAddress;
+    val config = lazy VcoinFounderVestingStorage.load().config.load();
+    return config.wallets.load().beneficiaryWalletAddress;
 }

@@ -29,20 +29,20 @@ fun vcoinCivilDateFromUnixDays(unixDays: int): VcoinCivilDate {
     val z = unixDays + VCOIN_UNIX_EPOCH_CIVIL_OFFSET;
     val era = z / 146097;
     val dayOfEra = z - era * 146097;
-    val yearOfEra = (
-        dayOfEra - dayOfEra / 1460 + dayOfEra / 36524 - dayOfEra / 146096
-    ) / 365;
+    val yearOfEra = (dayOfEra - dayOfEra / 1460 + dayOfEra / 36524 - dayOfEra / 146096) / 365;
     var year = yearOfEra + era * 400;
-    val dayOfYear = dayOfEra - (
-        365 * yearOfEra + yearOfEra / 4 - yearOfEra / 100
-    );
+    val dayOfYear = dayOfEra - (365 * yearOfEra + yearOfEra / 4 - yearOfEra / 100);
     val monthPrime = (5 * dayOfYear + 2) / 153;
     val day = dayOfYear - (153 * monthPrime + 2) / 5 + 1;
     val month = monthPrime < 10 ? monthPrime + 3 : monthPrime - 9;
     if (month <= 2) {
         year += 1;
     }
-    return { year, month, day };
+    return {
+        year,
+        month,
+        day,
+    };
 }
 
 fun vcoinUnixDaysFromCivilDate(yearInput: int, month: int, day: int): int {
@@ -64,6 +64,6 @@ fun vcoinMonthlyVestingDueTimestamp(startTimestamp: int, monthOffset: int): int 
     val dueMonth = absoluteMonth % 12 + 1;
     val lastDay = vcoinDaysInMonth(dueYear, dueMonth);
     val dueDay = startDate.day > lastDay ? lastDay : startDate.day;
-    return vcoinUnixDaysFromCivilDate(dueYear, dueMonth, dueDay) *
-        VCOIN_SECONDS_PER_DAY + secondsOfDay;
+    return vcoinUnixDaysFromCivilDate(dueYear, dueMonth, dueDay) * VCOIN_SECONDS_PER_DAY +
+        secondsOfDay;
 }

@@ -1,7 +1,7 @@
+import "@gen/VcoinJettonWallet.code"
 import "errors"
 import "messages"
 import "vcoin-genesis-config"
-import "vcoin-jetton-code"
 import "vcoin-messages"
 import "vcoin-vesting-calendar"
 import "vcoin-vesting-messages"

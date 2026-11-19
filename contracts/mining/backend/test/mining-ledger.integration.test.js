@@ -40,8 +40,17 @@ async function applyTestMigrations(pool) {
     'ALTER TABLE mining_sessions DROP CONSTRAINT IF EXISTS mining_sessions_rate_balance_nonnegative'
   );
   await pool.query(balanceMiningMigration);
-  await pool.query(priceReferenceMigration);
-  await pool.query(weeklyReferenceMigration);
+
+  // Price-reference migrations are applied once per isolated test database.
+  // Replaying migration 004 after 005 would try to insert its legacy 72-hour
+  // seed row into the now-weekly table and violate the weekly interval check.
+  const priceReferenceExists = await pool.query(
+    "SELECT to_regclass('public.price_reference_state') IS NOT NULL AS present"
+  );
+  if (!priceReferenceExists.rows[0].present) {
+    await pool.query(priceReferenceMigration);
+    await pool.query(weeklyReferenceMigration);
+  }
 }
 
 test('PostgreSQL mining reward is reserved, double-entry posted, and idempotently confirmed', {

@@ -1,4 +1,3 @@
-import "@gen/VcoinJettonWallet.code"
 import "errors"
 import "messages"
 import "vcoin-genesis-config"

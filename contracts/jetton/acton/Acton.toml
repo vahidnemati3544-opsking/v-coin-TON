@@ -31,6 +31,14 @@ name = "VcoinJettonWallet"
 kind = "embed_code"
 function = "vcoinJettonWalletCompiledCode"
 
+[contracts.VcoinJettonMinter]
+src = "contracts/VcoinJettonMinter.tolk"
+
+[[contracts.VcoinJettonMinter.depends]]
+name = "VcoinJettonWallet"
+kind = "embed_code"
+function = "vcoinJettonWalletCompiledCode"
+
 [contracts.VcoinGenesisCoordinator]
 src = "contracts/VcoinGenesisCoordinator.tolk"
 depends = []

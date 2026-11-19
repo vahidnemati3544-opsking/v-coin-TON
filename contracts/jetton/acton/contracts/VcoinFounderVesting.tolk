@@ -280,9 +280,7 @@ fun onInternalMessage(in: InMessage) {
             assert (msg.queryId == state.pendingQueryId) throw ERROR_INVALID_MESSAGE;
             assert (msg.jettonAmount == state.pendingAmount) throw ERROR_INVALID_MESSAGE;
             assert (msg.walletOwner == contract.getAddress()) throw ERROR_INVALID_MESSAGE;
-            assert (
-                in.senderAddress == wallets.ownWalletAddress
-            ) throw ERROR_NOT_VALID_WALLET;
+            assert (in.senderAddress == wallets.ownWalletAddress) throw ERROR_NOT_VALID_WALLET;
 
             state = vcoinClearPendingVesting(state);
             storage.state = state.toCell();
@@ -309,9 +307,7 @@ get fun get_vesting_status(): VcoinFounderVestingStatusReply {
             state.releasedTranches,
             blockchain.now(),
         );
-    val claimableTranches = state.pendingTranches > 0
-        ? 0
-        : dueTranches - state.releasedTranches;
+    val claimableTranches = state.pendingTranches > 0 ? 0 : dueTranches - state.releasedTranches;
     val claimableAmount = claimableTranches == 0
         ? grams("0")
         : vcoinFounderReleaseAmount(

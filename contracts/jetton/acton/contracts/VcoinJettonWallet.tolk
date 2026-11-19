@@ -23,10 +23,10 @@ type VcoinBounceOpToHandle = InternalTransferStep | BurnNotificationForMinter | 
 fun onBouncedMessage(in: InMessageBounced) {
     in.bouncedBody.skipBouncedPrefix();
     val msg = lazy VcoinBounceOpToHandle.fromSlice(in.bouncedBody);
-    val restoreAmount = match (msg) {
+    val restoreAmount: coins = match (msg) {
         InternalTransferStep => msg.jettonAmount,
         BurnNotificationForMinter => msg.jettonAmount,
-        VcoinGenesisCreditAck => 0,
+        VcoinGenesisCreditAck => grams("0"),
     };
     var storage = lazy VcoinWalletStorage.load();
     storage.jettonBalance += restoreAmount;

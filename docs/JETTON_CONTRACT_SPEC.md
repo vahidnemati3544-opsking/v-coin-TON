@@ -150,7 +150,7 @@ The exchange rate, quote lifetime, rounding policy, minimum/maximum purchase, re
 **Current state: NO-GO. No deployment is authorized by this document.**
 
 Before Testnet deployment:
-- Select and pin the contract language/compiler and a maintained TEP-74 implementation.
+- Use TON's current Tolk toolchain for the Jetton implementation, based on the official Acton Jetton v2.1 Tolk sources; pin exact compiler/toolchain versions and upstream source commit in the implementation manifest. Do not use the archived Tact Jetton implementation as the project baseline.
 - Complete Master and Wallet source code, build configuration, deployment scripts and automated tests.
 - Obtain owner approval for all five destination addresses and any distribution vault.
 - Resolve founder vesting start, release schedule and beneficiary.

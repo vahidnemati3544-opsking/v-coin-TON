@@ -239,7 +239,6 @@ fun onInternalMessage(in: InMessage) {
                 storage.save();
             }
 
-            reserveGramsOnBalance(grams("0.01"), RESERVE_MODE_EXACT_AMOUNT);
             vcoinSendGenesisSlot(slot, msg.slotId);
         }
 
@@ -364,4 +363,8 @@ get fun get_genesis_status(): VcoinGenesisStatusReply {
 get fun get_genesis_slot(slotId: uint8): VcoinGenesisSlot {
     val storage = lazy VcoinMinterStorage.load();
     return vcoinLoadGenesisSlot(storage, slotId);
+}
+
+get fun get_contract_balance(): coins {
+    return contract.getOriginalBalance();
 }

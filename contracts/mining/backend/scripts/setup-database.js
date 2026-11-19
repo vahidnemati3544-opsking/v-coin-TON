@@ -63,8 +63,13 @@ const migrations = [
   },
   {
     version: '004_price_reference_candles',
-    description: 'Modelled 72-hour reference-price state and candle history',
+    description: 'Modelled reference-price state and candle history',
     file: path.resolve(__dirname, '../database/migrations/004-price-reference-candles.sql')
+  },
+  {
+    version: '005_weekly_reference_growth',
+    description: 'Weekly compounding model aligned to 50 percent annual reference growth',
+    file: path.resolve(__dirname, '../database/migrations/005-weekly-reference-growth.sql')
   }
 ];
 

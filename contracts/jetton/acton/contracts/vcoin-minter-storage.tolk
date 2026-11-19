@@ -12,11 +12,11 @@ struct VcoinMinterStorage {
     metadata: cell
     genesisCoordinator: address
     completedSlots: uint8
-    founderSlot: VcoinGenesisSlot
-    miningSlot: VcoinGenesisSlot
-    treasurySlot: VcoinGenesisSlot
-    liquiditySlot: VcoinGenesisSlot
-    ecosystemSlot: VcoinGenesisSlot
+    founderSlot: Cell<VcoinGenesisSlot>
+    miningSlot: Cell<VcoinGenesisSlot>
+    treasurySlot: Cell<VcoinGenesisSlot>
+    liquiditySlot: Cell<VcoinGenesisSlot>
+    ecosystemSlot: Cell<VcoinGenesisSlot>
 }
 
 fun VcoinMinterStorage.load(): VcoinMinterStorage {

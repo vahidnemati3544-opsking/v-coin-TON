@@ -5,3 +5,5 @@ struct (0x5643534d) SetVcoinVestingMaster {
 struct (0x56434156) ActivateVcoinVesting {}
 
 struct (0x56435256) ReleaseVcoinVesting {}
+
+struct (0x56435246) RefreshVcoinVestingWalletAddresses {}

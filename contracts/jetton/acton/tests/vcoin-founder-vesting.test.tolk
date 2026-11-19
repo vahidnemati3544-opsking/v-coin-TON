@@ -49,9 +49,11 @@ fun setupVcoinFounderVestingTest(): VcoinFounderVestingTestContext {
         config: VcoinFounderVestingConfig {
             beneficiary: beneficiary.address,
             activationController: activationController.address,
-            masterAddress: null,
-            ownWalletAddress: null,
-            beneficiaryWalletAddress: null,
+            wallets: VcoinFounderVestingWalletConfig {
+                masterAddress: null,
+                ownWalletAddress: null,
+                beneficiaryWalletAddress: null,
+            }.toCell(),
         }.toCell(),
         state: VcoinFounderVestingState {
             startTimestamp: 0,

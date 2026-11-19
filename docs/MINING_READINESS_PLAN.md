@@ -2,7 +2,7 @@
 
 **Document ID:** VCT-MINING-READY-001  
 **Revision:** 1.1.0  
-**Updated:** 2026-11-18  
+**Updated:** 2026-11-20  
 **Scope:** This repository only. The legacy BNB Smart Chain project is out of scope.
 
 ## Release decision
@@ -72,3 +72,13 @@ Status is based on repository evidence, not on the existence of documentation or
 - The repository evidence reviewed so far does not establish a deployed VCOIN Jetton master address or a completed Jetton deployment. See `docs/JETTON_DEPLOYMENT_INVENTORY.md`.
 - The 24-hour hard claim limit is not changed by this plan.
 - Mainnet, real-value payouts and public extraction remain disabled pending separate approval and independent security review.
+
+## 2026-11-20 repository execution update
+
+- The public mining API remains fail-closed (HTTP 503); no mining or payout route was enabled.
+- `docs/GENESIS_ISSUANCE_DESIGN.md` now specifies the one-time, five-slot fixed-supply genesis pattern. This is a design only; the VCOIN-specific Master, genesis coordinator, and founder vesting contracts are not yet implemented.
+- `docs/API_ARCHITECTURE.md` now accurately distinguishes implemented Telegram authentication from the disabled public mining API and unimplemented wallet/payout routes.
+- The local PostgreSQL setup runner now includes migrations 004 and 005 in order; the PostgreSQL integration setup also applies both migrations.
+- Migration 005 changes the modelled reference-price series to 52 weekly compounding periods using a fixed-point weekly multiplier of 1.007827884862, approximately 50% annual compounded growth. Existing historical candles are preserved. This remains a modelled reference series, not a market price or return promise.
+- GitHub Actions checks for the updated backend and mining branch are running; do not mark them passed until completed successfully.
+- The owner’s local PostgreSQL 18 instance, Telegram bot, TON Connect wallet proof, trusted Jetton balance provider, deployed VCOIN Master, and on-chain payout path have not been verified by this repository audit.

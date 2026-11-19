@@ -36,21 +36,18 @@ fun onBouncedMessage(in: InMessageBounced) {
 }
 
 fun sendGenesisCreditAck(storage: VcoinWalletStorage, queryId: uint64, amount: coins) {
-    reserveGramsOnBalance(
-        calculateJettonWalletMinStorageFee(),
-        RESERVE_MODE_AT_MOST,
-    );
+    reserveGramsOnBalance(grams("0.1"), RESERVE_MODE_AT_MOST);
     val ack = createMessage({
         bounce: BounceMode.Only256BitsOfBody,
         dest: storage.minterAddress,
-        value: 0,
+        value: grams("0.1"),
         body: VcoinGenesisCreditAck {
             queryId,
             jettonAmount: amount,
             ownerAddress: storage.ownerAddress,
         },
     });
-    ack.send(SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE | SEND_MODE_BOUNCE_ON_ACTION_FAIL);
+    ack.send(SEND_MODE_PAY_FEES_SEPARATELY | SEND_MODE_BOUNCE_ON_ACTION_FAIL);
 }
 
 fun onInternalMessage(in: InMessage) {

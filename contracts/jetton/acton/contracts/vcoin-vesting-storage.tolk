@@ -2,6 +2,8 @@ struct VcoinFounderVestingConfig {
     beneficiary: address
     activationController: address
     masterAddress: address?
+    ownWalletAddress: address?
+    beneficiaryWalletAddress: address?
 }
 
 struct VcoinFounderVestingState {

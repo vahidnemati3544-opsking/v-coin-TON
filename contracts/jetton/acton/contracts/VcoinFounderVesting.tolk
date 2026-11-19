@@ -149,7 +149,7 @@ fun onInternalMessage(in: InMessage) {
             val wallets = config.wallets.load();
             assert (wallets.masterAddress != null) throw ERROR_INVALID_MESSAGE;
             assert (in.valueCoins >= grams("0.3")) throw ERROR_NOT_ENOUGH_GAS;
-            sendVcoinVestingWalletAddressRequests(wallets.masterAddress!, config.beneficiary);
+            sendVcoinVestingWalletAddressRequests(wallets.masterAddress, config.beneficiary);
         }
 
         ResponseWalletAddress => {
@@ -157,19 +157,19 @@ fun onInternalMessage(in: InMessage) {
             var config = storage.config.load();
             var wallets = config.wallets.load();
             assert (wallets.masterAddress != null) throw ERROR_INVALID_MESSAGE;
-            assert (in.senderAddress == wallets.masterAddress!) throw ERROR_NOT_OWNER;
+            assert (in.senderAddress == wallets.masterAddress) throw ERROR_NOT_OWNER;
             assert (msg.jettonWalletAddress != null) throw ERROR_INVALID_MESSAGE;
 
             if (msg.queryId == VCOIN_VESTING_OWN_WALLET_QUERY_ID) {
                 if (wallets.ownWalletAddress != null) {
-                    assert (wallets.ownWalletAddress == msg.jettonWalletAddress!) throw ERROR_INVALID_MESSAGE;
+                    assert (wallets.ownWalletAddress == msg.jettonWalletAddress) throw ERROR_INVALID_MESSAGE;
                 } else {
                     wallets.ownWalletAddress = msg.jettonWalletAddress;
                 }
             } else if (msg.queryId == VCOIN_VESTING_BENEFICIARY_WALLET_QUERY_ID) {
                 if (wallets.beneficiaryWalletAddress != null) {
                     assert (
-                        wallets.beneficiaryWalletAddress == msg.jettonWalletAddress!
+                        wallets.beneficiaryWalletAddress == msg.jettonWalletAddress
                     ) throw ERROR_INVALID_MESSAGE;
                 } else {
                     wallets.beneficiaryWalletAddress = msg.jettonWalletAddress;
@@ -226,7 +226,7 @@ fun onInternalMessage(in: InMessage) {
             storage.state = state.toCell();
             storage.save();
 
-            val walletAddress = wallets.ownWalletAddress!;
+            val walletAddress = wallets.ownWalletAddress;
             val transfer = createMessage({
                 bounce: BounceMode.Only256BitsOfBody,
                 dest: walletAddress,
@@ -254,7 +254,7 @@ fun onInternalMessage(in: InMessage) {
             assert (state.pendingTranches > 0) throw ERROR_INVALID_MESSAGE;
             assert (msg.queryId == state.pendingQueryId) throw ERROR_INVALID_MESSAGE;
             assert (
-                in.senderAddress == wallets.beneficiaryWalletAddress!
+                in.senderAddress == wallets.beneficiaryWalletAddress
             ) throw ERROR_NOT_VALID_WALLET;
 
             state.releasedTranches += state.pendingTranches;
@@ -276,7 +276,7 @@ fun onInternalMessage(in: InMessage) {
             assert (msg.jettonAmount == state.pendingAmount) throw ERROR_INVALID_MESSAGE;
             assert (msg.walletOwner == contract.getAddress()) throw ERROR_INVALID_MESSAGE;
             assert (
-                in.senderAddress == wallets.ownWalletAddress!
+                in.senderAddress == wallets.ownWalletAddress
             ) throw ERROR_NOT_VALID_WALLET;
 
             state = vcoinClearPendingVesting(state);

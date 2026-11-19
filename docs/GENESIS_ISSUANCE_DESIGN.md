@@ -1,8 +1,8 @@
 # V COIN — One-Time Genesis Issuance Design
 
 **Document ID:** VCT-GEN-001  
-**Version:** 1.1.0  
-**Status:** Implementation design; Master, wallet handshake and emulator tests still required  
+**Version:** 1.2.0  
+**Status:** VCOIN Master, five-slot coordinator, wallet acknowledgement and founder vesting implemented; 19 emulator tests pass; adversarial review and deployment pending  
 **Scope:** V-Coin-TON only
 
 ## 1. Non-negotiable invariants
@@ -28,16 +28,16 @@ A Jetton wallet address is derived from its code and initial data. Its standard 
 
 ## 3. One-time five-slot genesis controller
 
-The VCOIN Master must be built from the pinned Tolk/Acton Jetton baseline but must not retain the reference admin interface.
+The VCOIN-specific implementation is in `contracts/jetton/acton/contracts/VcoinJettonMinter.tolk`, with the coordinator in `VcoinGenesisCoordinator.tolk` and the wallet in `VcoinJettonWallet.tolk`. The Master is compiled from the pinned Tolk/Acton baseline but does not expose the reference admin mint, metadata mutation, or code-upgrade interface.
 
-Its deployment state must contain:
+The deployment state contains:
 - The immutable metadata cell and VCOIN Jetton Wallet code.
 - The exact 10^16 base-unit supply cap.
 - Five immutable allocation records, each containing a fixed recipient address, exact base-unit amount, a unique query ID and an initially-unclaimed state.
 - A fixed genesis coordinator address (not a general-purpose admin).
 - A genesis-completion state and completed-supply counter.
 
-The only issuance operation is a dedicated genesis-slot request. The Master must accept it only when:
+The only issuance operation is the dedicated five-slot genesis request. The Master accepts it only when:
 1. The sender is exactly the fixed genesis coordinator.
 2. The slot identifier is one of the five defined slots.
 3. The requested slot maps to its immutable recipient and amount; callers cannot supply or override either.
@@ -45,7 +45,7 @@ The only issuance operation is a dedicated genesis-slot request. The Master must
 5. The completed and pending allocation totals cannot exceed the fixed supply cap.
 6. The slot query ID is unique to that Master deployment and allocation slot.
 
-The Master deploys or addresses the recipient's canonical zero-balance Jetton Wallet and sends the exact allocation as an authenticated Master-originated internal transfer. It must not mark the slot completed or increase totalSupply until it receives a valid wallet acknowledgement.
+The Master derives the recipient's canonical zero-balance Jetton Wallet and sends the exact allocation as an authenticated Master-originated internal transfer. It does not mark the slot completed or increase totalSupply until it receives a valid wallet acknowledgement. The coordinator dispatches only the five fixed slot requests and has no arbitrary-recipient or arbitrary-amount parameter.
 
 After all five slots are completed:
 - The sum of the five completed amounts must equal exactly 10^16 base units.
@@ -58,7 +58,7 @@ The coordinator is a narrowly scoped one-time dispatcher, not an owner wallet wi
 
 ## 4. Acknowledgement, retry and accounting protocol
 
-The ordinary TEP-74 wallet transfer flow is asynchronous. A Master must not assume that sending an internal-transfer message proves that the recipient wallet credited the Jettons. The VCOIN wallet therefore needs a narrowly scoped genesis acknowledgement extension while retaining ordinary TEP-74 transfer and burn behavior.
+The ordinary TEP-74 wallet transfer flow is asynchronous. A Master must not assume that sending an internal-transfer message proves that the recipient wallet credited the Jettons. The VCOIN wallet implements a narrowly scoped genesis acknowledgement extension while retaining ordinary TEP-74 transfer and burn behavior.
 
 - Each VCOIN Jetton Wallet stores a one-time genesis marker: genesis_credited, genesis_query_id, and genesis_amount.
 - A genesis credit is accepted only from its configured Master, with transferInitiator = null, a nonzero slot-specific query ID, and a positive amount.
@@ -71,7 +71,7 @@ The ordinary TEP-74 wallet transfer flow is asynchronous. A Master must not assu
 - If the acknowledgement bounces or is lost, the Master/coordinator may resend the exact same slot request. The wallet's stored marker prevents a duplicate credit and causes the acknowledgement to be sent again.
 - Query IDs, slot status transitions and all acknowledgement fields must be replay-resistant and covered by emulator transaction-trace tests.
 
-The implementation must explicitly test the ambiguous asynchronous cases: successful credit with a lost/bounced acknowledgement, repeated request while pending, duplicate acknowledgement, conflicting replay, and failed wallet deployment. If the acknowledgement protocol cannot be proven correct under transaction emulation, genesis issuance is not deployable.
+Current emulator coverage proves the complete five-slot flow, duplicate coordinator request idempotency, one-time genesis wallet credit/re-acknowledgement, and burn accounting. Still-required adversarial tests include bounced Master-to-wallet credit, acknowledgement loss/bounce, conflicting query-ID replay, wrong sender, wrong amount, and failed wallet deployment. These remain pre-Testnet gates.
 
 ## 5. Failure and accounting model
 
@@ -86,7 +86,7 @@ The implementation must explicitly test the ambiguous asynchronous cases: succes
 
 ## 6. Founder allocation
 
-The founder slot recipient is the separately audited founder vesting contract, not the founder beneficiary wallet. The founder beneficiary wallet supplied privately by the owner is stored only as the fixed beneficiary inside the vesting contract. The vesting contract must hold the full 2,000,000,000 VCOIN allocation and enforce 48 monthly calendar-based tranches. Its clock must remain unset until the official Mainnet mining-activation transaction is separately authorized and recorded. Testnet rehearsal timestamps must never be reusable as Mainnet activation state.
+The founder slot recipient is the VCOIN founder vesting contract, not the founder beneficiary wallet. The vesting contract stores the fixed beneficiary and activation-controller addresses; it discovers its own and the beneficiary's Jetton Wallet addresses through authenticated Master responses. It holds the full 2,000,000,000 VCOIN allocation and enforces 48 UTC calendar-month tranches. Its clock remains unset until the activation controller sends `ActivateVcoinVesting`. That message must only be issued at the official production mining activation; the emulator test uses a test timestamp and does not authorize production activation.
 
 Because the vesting contract address is derived from its code and initial state, it must be built and independently reviewed before the final five-slot Master deployment configuration is generated. Do not substitute the founder beneficiary wallet as the founder allocation recipient.
 
@@ -105,4 +105,4 @@ Because the vesting contract address is derived from its code and initial state,
 
 ## 8. Current gate
 
-This document is an implementation design, not a completed contract. The vendored reference minter remains unsafe for VCOIN deployment until the VCOIN-specific Master, wallet acknowledgement extension, genesis coordinator, founder vesting contract, adversarial tests and independent review are complete. Do not deploy the reference minter. Mining and payout activation remain OFF.
+The VCOIN-specific Master, five-slot coordinator, wallet acknowledgement extension and founder vesting contract are implemented. The pinned Acton CI run passes 19 emulator tests, static checks and formatting; Backend CI and Mining CI also pass. The tests do not replace an independent security audit and do not prove live Testnet/Mainnet behavior. The vendored upstream reference minter remains unsafe for VCOIN deployment and must not be deployed. Testnet rehearsal, adversarial failure-mode tests, independent review, purchase settlement, wallet ownership proof, mining API and payouts remain incomplete. Mining and payout activation remain OFF.

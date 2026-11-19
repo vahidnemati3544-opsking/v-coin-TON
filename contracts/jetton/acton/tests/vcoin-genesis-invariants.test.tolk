@@ -1,5 +1,6 @@
 import "@acton/testing/expect"
 import "@contracts/vcoin-genesis-config"
+import "@contracts/vcoin-vesting-calendar"
 
 get fun `test VCOIN genesis allocations sum to exact fixed supply`() {
     expect(vcoinGenesisAllocationTotal()).toEqual(VCOIN_TOTAL_SUPPLY_BASE_UNITS);
@@ -25,4 +26,24 @@ get fun `test founder vesting integer tranches total exactly 48 months`() {
     expect(vcoinFounderFinalTrancheBaseUnits()).toEqual(
         vcoinFounderTrancheBaseUnits() + VCOIN_FOUNDER_ALLOCATION_BASE_UNITS % 48,
     );
+}
+
+get fun `test monthly vesting clamps January 31 to leap-day February`() {
+    expect(vcoinMonthlyVestingDueTimestamp(1706704496, 1)).toEqual(1709210096);
+}
+
+get fun `test monthly vesting restores January 31 after February clamp`() {
+    expect(vcoinMonthlyVestingDueTimestamp(1706704496, 2)).toEqual(1711888496);
+}
+
+get fun `test monthly vesting clamps January 31 to non-leap February`() {
+    expect(vcoinMonthlyVestingDueTimestamp(1675168496, 1)).toEqual(1677587696);
+}
+
+get fun `test monthly vesting clamps March 31 to April 30`() {
+    expect(vcoinMonthlyVestingDueTimestamp(1711843200, 1)).toEqual(1714435200);
+}
+
+get fun `test monthly vesting preserves UTC time of day`() {
+    expect(vcoinMonthlyVestingDueTimestamp(1706704496, 1) % 86400).toEqual(45296);
 }

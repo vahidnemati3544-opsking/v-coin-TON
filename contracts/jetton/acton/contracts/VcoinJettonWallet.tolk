@@ -1,7 +1,6 @@
 import "@stdlib/gas-payments"
 import "errors"
 import "fees-management"
-import "jetton-utils"
 import "messages"
 import "sharding"
 import "vcoin-jetton-utils"
@@ -82,7 +81,7 @@ fun onInternalMessage(in: InMessage) {
             assert (msg.transferInitiator != null) throw ERROR_NOT_VALID_WALLET;
             assert (
                 in.senderAddress == calcAddressOfVcoinJettonWallet(
-                    msg.transferInitiator!,
+                    msg.transferInitiator,
                     storage.minterAddress,
                     contract.getCode(),
                 )
@@ -121,6 +120,8 @@ fun onInternalMessage(in: InMessage) {
                     value: 0,
                     body: ReturnExcessesBack { queryId: msg.queryId },
                 });
+                // SAFETY: reserveGramsOnBalance above preserves the calculated wallet storage floor;
+                // only the remaining TON balance is returned as optional transfer excess.
                 excessesMsg.send(SEND_MODE_CARRY_ALL_BALANCE | SEND_MODE_IGNORE_ERRORS);
             }
         }

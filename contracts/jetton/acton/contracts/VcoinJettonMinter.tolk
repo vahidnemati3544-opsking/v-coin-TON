@@ -72,32 +72,38 @@ fun vcoinLoadGenesisSlot(storage: VcoinMinterStorage, slotId: uint8): VcoinGenes
     }
 }
 
-fun vcoinStoreGenesisSlot(storage: VcoinMinterStorage, slotId: uint8, slot: VcoinGenesisSlot) {
-    var core = storage.coreSlots.load();
-    var extra = storage.extraSlots.load();
+fun vcoinStoreGenesisSlot(
+    storage: VcoinMinterStorage,
+    slotId: uint8,
+    slot: VcoinGenesisSlot,
+): VcoinMinterStorage {
+    var updated = storage;
+    var core = updated.coreSlots.load();
+    var extra = updated.extraSlots.load();
     match (slotId) {
         1 => {
             core.founderSlot = slot.toCell();
-            storage.coreSlots = core.toCell();
+            updated.coreSlots = core.toCell();
         }
         2 => {
             core.miningSlot = slot.toCell();
-            storage.coreSlots = core.toCell();
+            updated.coreSlots = core.toCell();
         }
         3 => {
             core.treasurySlot = slot.toCell();
-            storage.coreSlots = core.toCell();
+            updated.coreSlots = core.toCell();
         }
         4 => {
             extra.liquiditySlot = slot.toCell();
-            storage.extraSlots = extra.toCell();
+            updated.extraSlots = extra.toCell();
         }
         5 => {
             extra.ecosystemSlot = slot.toCell();
-            storage.extraSlots = extra.toCell();
+            updated.extraSlots = extra.toCell();
         }
         else => throw ERROR_INVALID_MESSAGE,
     }
+    return updated;
 }
 
 fun vcoinCompletedAmount(slot: VcoinGenesisSlot): coins {
@@ -200,12 +206,12 @@ fun vcoinSendGenesisSlot(slot: VcoinGenesisSlot, slotId: uint8) {
 fun onBouncedMessage(in: InMessageBounced) {
     in.bouncedBody.skipBouncedPrefix();
     val msg = lazy InternalTransferStep.fromSlice(in.bouncedBody);
-    val storage = lazy VcoinMinterStorage.load();
+    var storage = lazy VcoinMinterStorage.load();
     val slotId = vcoinSlotIdFromQueryId(msg.queryId);
     var slot = vcoinLoadGenesisSlot(storage, slotId);
     if (slot.status == 1 && slot.amount == msg.jettonAmount) {
         slot.status = 0;
-        vcoinStoreGenesisSlot(storage, slotId, slot);
+        storage = vcoinStoreGenesisSlot(storage, slotId, slot);
         storage.save();
     }
 }
@@ -215,7 +221,7 @@ fun onInternalMessage(in: InMessage) {
 
     match (msg) {
         VcoinGenesisSlotRequest => {
-            val storage = lazy VcoinMinterStorage.load();
+            var storage = lazy VcoinMinterStorage.load();
             assert (in.senderAddress == storage.genesisCoordinator) throw ERROR_NOT_OWNER;
             vcoinValidateGenesisConfig(storage);
             assert (
@@ -235,7 +241,7 @@ fun onInternalMessage(in: InMessage) {
             } else {
                 slot.status = 1;
                 slot.queryId = expectedQueryId;
-                vcoinStoreGenesisSlot(storage, msg.slotId, slot);
+                storage = vcoinStoreGenesisSlot(storage, msg.slotId, slot);
                 storage.save();
             }
 
@@ -261,7 +267,7 @@ fun onInternalMessage(in: InMessage) {
             }
             assert (slot.status == 1) throw ERROR_INVALID_MESSAGE;
             slot.status = 2;
-            vcoinStoreGenesisSlot(storage, slotId, slot);
+            storage = vcoinStoreGenesisSlot(storage, slotId, slot);
             storage.totalSupply += slot.amount;
             storage.genesisIssued += slot.amount;
             storage.completedSlots += 1;

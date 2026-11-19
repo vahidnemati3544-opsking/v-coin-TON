@@ -172,7 +172,9 @@ fun onInternalMessage(in: InMessage) {
             val storage = lazy VcoinMinterStorage.load();
             assert (in.senderAddress == storage.genesisCoordinator) throw ERROR_NOT_OWNER;
             vcoinValidateGenesisConfig(storage);
-            assert (msg.slotId >= 1 && msg.slotId <= VCOIN_GENESIS_SLOT_COUNT) throw ERROR_INVALID_MESSAGE;
+            assert (
+                msg.slotId >= 1 && msg.slotId <= VCOIN_GENESIS_SLOT_COUNT
+            ) throw ERROR_INVALID_MESSAGE;
 
             var slot = vcoinLoadGenesisSlot(storage, msg.slotId);
             if (slot.status == 2) {
@@ -222,7 +224,8 @@ fun onInternalMessage(in: InMessage) {
         BurnNotificationForMinter => {
             var storage = lazy VcoinMinterStorage.load();
             assert (
-                in.senderAddress == calcAddressOfVcoinJettonWallet(
+                in.senderAddress ==
+                calcAddressOfVcoinJettonWallet(
                     msg.burnInitiator,
                     contract.getAddress(),
                     vcoinJettonWalletCompiledCode(),

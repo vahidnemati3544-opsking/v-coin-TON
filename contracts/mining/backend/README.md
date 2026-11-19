@@ -95,4 +95,4 @@ The schedule marks itself completed only when the `USER_MINING` reserve's confir
 - `GET /api/v1/price-reference/current`
 - `GET /api/v1/price-reference/candles?limit=100`
 
-The database migration must be applied before starting the backend. No front-end dashboard was present in the inspected repository, so rendering these API candles on the public home page remains a separate client-side task.
+The migration is included in the local `npm run db:setup` sequence; apply and verify the database setup before starting the backend. No front-end dashboard was present in the inspected repository, so rendering these API candles on the public home page remains a separate client-side task.

@@ -55,7 +55,8 @@ fun onBouncedMessage(in: InMessageBounced) {
                 );
             }
         }
-        else => {}
+        BurnNotificationForMinter => {}
+        VcoinGenesisCreditAck => {}
     }
 }
 

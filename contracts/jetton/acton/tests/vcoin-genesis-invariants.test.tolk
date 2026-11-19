@@ -20,11 +20,9 @@ get fun `test VCOIN decimals and supply cap remain fixed`() {
 
 get fun `test founder vesting integer tranches total exactly 48 months`() {
     expect(
-        vcoinFounderTrancheBaseUnits() * 47 +
-        vcoinFounderFinalTrancheBaseUnits(),
+        vcoinFounderTrancheBaseUnits() * 47 + vcoinFounderFinalTrancheBaseUnits(),
     ).toEqual(VCOIN_FOUNDER_ALLOCATION_BASE_UNITS);
     expect(vcoinFounderFinalTrancheBaseUnits()).toEqual(
-        vcoinFounderTrancheBaseUnits() +
-        VCOIN_FOUNDER_ALLOCATION_BASE_UNITS % 48,
+        vcoinFounderTrancheBaseUnits() + VCOIN_FOUNDER_ALLOCATION_BASE_UNITS % 48,
     );
 }

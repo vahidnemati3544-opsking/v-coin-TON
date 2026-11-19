@@ -25,6 +25,9 @@ fun vcoinDaysInMonth(year: int, month: int): int {
     return 31;
 }
 
+// SAFETY: These quotient/remainder steps intentionally multiply a truncated
+// integer quotient to recover the exact Gregorian 400-year era remainder.
+// The E019 exception is scoped to VcoinFounderVesting in Acton.toml.
 fun vcoinCivilDateFromUnixDays(unixDays: int): VcoinCivilDate {
     val z = unixDays + VCOIN_UNIX_EPOCH_CIVIL_OFFSET;
     val era = z / 146097;

@@ -1,6 +1,6 @@
 # V COIN – TON API Architecture
 
-**Status:** Health endpoints, Telegram account authentication, and authenticated mining status/session endpoints are implemented. Wallet, balance history, referral, and level-upgrade APIs remain pending.
+**Status (repository audit):** Health endpoints and Telegram account authentication are implemented in code. Public `/api/v1/mining/*` requests are deliberately blocked with HTTP 503 (`WALLET_BALANCE_MINING_NOT_IMPLEMENTED`). The internal-balance mining router exists for isolated tests but is not mounted. Wallet-link/proof, verified Jetton balance, payout, level-upgrade, referral, and user balance APIs are not complete.
 
 ## 1. Current backend endpoints
 
@@ -13,7 +13,7 @@ The current Express server exposes only:
 | GET | /health/ready | PostgreSQL connectivity readiness |
 | GET | /health | Compatibility redirect to /health/live |
 
-The server also exposes the Telegram authentication endpoints and the mining routes listed below. Wallet, balance history, referral, and level-upgrade routes are not yet implemented. Architecture plans below are not claims of implemented routes.
+The server exposes Telegram authentication and modelled price-reference endpoints. It does **not** expose operational mining routes: all `/api/v1/mining/*` requests return HTTP 503 until verified TON Jetton wallet-balance eligibility and on-chain payout are implemented. The internal-balance router is not mounted. Wallet, balance history, referral, and level-upgrade routes are not yet implemented. Architecture plans below are not claims of implemented routes.
 
 ## 2. Planned API groups
 
@@ -96,4 +96,4 @@ Use stable machine-readable error codes. Do not return SQL messages, credentials
 
 ## 6. Implementation gates
 
-The authenticated mining routes are present, but they cannot start sessions until the user's level and positive mining rate are configured. Before real-user operation, complete the approved 400-level schedule, PostgreSQL session/claim/end integration tests, rate limiting, monitoring, and full reserve/ledger reconciliation. A successful claim credits an internal application balance only; it does not transfer Jettons to a TON wallet.
+The internal-balance mining router and engine exist for isolated tests, but are not mounted on the public server. Every public mining request is currently rejected with HTTP 503. Do not interpret internal engine tests or ledger credits as wallet-based extraction. Before enabling any mining endpoint, implement and test wallet ownership proof, verified on-chain Jetton balance snapshots, payout transfer/finality reconciliation, and the approved 400-level configuration. Mining activation still requires a separate explicit owner instruction.

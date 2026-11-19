@@ -100,6 +100,17 @@ fun vcoinStoreGenesisSlot(storage: VcoinMinterStorage, slotId: uint8, slot: Vcoi
     }
 }
 
+fun vcoinCompletedAmount(slot: VcoinGenesisSlot): coins {
+    if (slot.status == 2) {
+        return slot.amount;
+    }
+    return grams("0");
+}
+
+fun vcoinCompletedCount(slot: VcoinGenesisSlot): int {
+    return slot.status == 2 ? 1 : 0;
+}
+
 fun vcoinValidateGenesisConfig(storage: VcoinMinterStorage) {
     val founder = vcoinLoadGenesisSlot(storage, 1);
     val mining = vcoinLoadGenesisSlot(storage, 2);
@@ -115,6 +126,43 @@ fun vcoinValidateGenesisConfig(storage: VcoinMinterStorage) {
     assert (
         vcoinGenesisAllocationTotal() == VCOIN_TOTAL_SUPPLY_BASE_UNITS
     ) throw ERROR_INVALID_MESSAGE;
+
+    assert (founder.status <= 2) throw ERROR_INVALID_MESSAGE;
+    assert (mining.status <= 2) throw ERROR_INVALID_MESSAGE;
+    assert (treasury.status <= 2) throw ERROR_INVALID_MESSAGE;
+    assert (liquidity.status <= 2) throw ERROR_INVALID_MESSAGE;
+    assert (ecosystem.status <= 2) throw ERROR_INVALID_MESSAGE;
+    assert (
+        founder.status == 0 || founder.queryId == vcoinGenesisQueryId(1)
+    ) throw ERROR_INVALID_MESSAGE;
+    assert (
+        mining.status == 0 || mining.queryId == vcoinGenesisQueryId(2)
+    ) throw ERROR_INVALID_MESSAGE;
+    assert (
+        treasury.status == 0 || treasury.queryId == vcoinGenesisQueryId(3)
+    ) throw ERROR_INVALID_MESSAGE;
+    assert (
+        liquidity.status == 0 || liquidity.queryId == vcoinGenesisQueryId(4)
+    ) throw ERROR_INVALID_MESSAGE;
+    assert (
+        ecosystem.status == 0 || ecosystem.queryId == vcoinGenesisQueryId(5)
+    ) throw ERROR_INVALID_MESSAGE;
+
+    val completedAmount: coins = vcoinCompletedAmount(founder) +
+        vcoinCompletedAmount(mining) +
+        vcoinCompletedAmount(treasury) +
+        vcoinCompletedAmount(liquidity) +
+        vcoinCompletedAmount(ecosystem);
+    val completedCount = vcoinCompletedCount(founder) +
+        vcoinCompletedCount(mining) +
+        vcoinCompletedCount(treasury) +
+        vcoinCompletedCount(liquidity) +
+        vcoinCompletedCount(ecosystem);
+    assert (storage.genesisIssued == completedAmount) throw ERROR_INVALID_MESSAGE;
+    assert (storage.completedSlots == completedCount) throw ERROR_INVALID_MESSAGE;
+    assert (storage.totalSupply <= storage.genesisIssued) throw ERROR_INVALID_MESSAGE;
+    assert (storage.genesisIssued <= VCOIN_TOTAL_SUPPLY_BASE_UNITS) throw ERROR_INVALID_MESSAGE;
+
     assert (founder.recipient != mining.recipient) throw ERROR_INVALID_MESSAGE;
     assert (founder.recipient != treasury.recipient) throw ERROR_INVALID_MESSAGE;
     assert (founder.recipient != liquidity.recipient) throw ERROR_INVALID_MESSAGE;
@@ -199,6 +247,7 @@ fun onInternalMessage(in: InMessage) {
 
         VcoinGenesisCreditAck => {
             var storage = lazy VcoinMinterStorage.load();
+            vcoinValidateGenesisConfig(storage);
             val slotId = vcoinSlotIdFromQueryId(msg.queryId);
             var slot = vcoinLoadGenesisSlot(storage, slotId);
             val expectedWallet = calcAddressOfVcoinJettonWallet(
@@ -217,6 +266,7 @@ fun onInternalMessage(in: InMessage) {
             slot.status = 2;
             vcoinStoreGenesisSlot(storage, slotId, slot);
             storage.totalSupply += slot.amount;
+            storage.genesisIssued += slot.amount;
             storage.completedSlots += 1;
             storage.save();
         }
@@ -307,6 +357,7 @@ get fun get_genesis_status(): VcoinGenesisStatusReply {
     val storage = lazy VcoinMinterStorage.load();
     return {
         totalSupply: storage.totalSupply,
+        genesisIssued: storage.genesisIssued,
         completedSlots: storage.completedSlots,
         genesisComplete: storage.completedSlots == VCOIN_GENESIS_SLOT_COUNT,
     };

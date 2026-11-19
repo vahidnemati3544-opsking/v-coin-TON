@@ -53,7 +53,6 @@ jobs:
           acton wrapper JettonWallet -o wrappers/JettonWallet.gen.tolk
           acton wrapper VcoinJettonWallet -o wrappers/VcoinJettonWallet.gen.tolk
           acton wrapper VcoinJettonMinter -o wrappers/VcoinJettonMinter.gen.tolk
-          acton wrapper VcoinJettonMinter -o wrappers/VcoinJettonMinter.gen.tolk
           acton wrapper VcoinGenesisCoordinator -o wrappers/VcoinGenesisCoordinator.gen.tolk
 
       - name: Run Jetton protocol and VCOIN invariant tests

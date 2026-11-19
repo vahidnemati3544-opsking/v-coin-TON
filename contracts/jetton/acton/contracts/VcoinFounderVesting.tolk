@@ -97,13 +97,15 @@ fun sendVcoinVestingWalletAddressRequests(masterAddress: address, beneficiary: a
     );
 }
 
-type VcoinVestingBounceMessages = AskToTransfer | RequestWalletAddress
+type VcoinVestingBounceMessages =
+    | VcoinVestingAskToTransferBounce
+    | VcoinVestingRequestWalletAddressBounce
 
 fun onBouncedMessage(in: InMessageBounced) {
     in.bouncedBody.skipBouncedPrefix();
     val msg = lazy VcoinVestingBounceMessages.fromSlice(in.bouncedBody);
     match (msg) {
-        AskToTransfer => {
+        VcoinVestingAskToTransferBounce => {
             var storage = lazy VcoinFounderVestingStorage.load();
             var state = storage.state.load();
             if (
@@ -116,7 +118,7 @@ fun onBouncedMessage(in: InMessageBounced) {
                 storage.save();
             }
         }
-        RequestWalletAddress => {
+        VcoinVestingRequestWalletAddressBounce => {
             // The activation controller can retry wallet-address discovery.
         }
     }

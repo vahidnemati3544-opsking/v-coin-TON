@@ -121,6 +121,7 @@ fun requestVcoinGenesisSlot(
 get fun `test VCOIN Master completes all five fixed genesis allocations exactly once`() {
     val ctx = setupVcoinMinterTest();
 
+    expect(ctx.minter.getContractBalance() > grams("5")).toEqual(true);
     val slot1 = requestVcoinGenesisSlot(ctx, 1);
     expect(slot1).toHaveSuccessfulTx<VcoinGenesisSlotRequest>({
         from: ctx.coordinator.address,

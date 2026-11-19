@@ -33,6 +33,30 @@ fun onBouncedMessage(in: InMessageBounced) {
     var storage = lazy VcoinWalletStorage.load();
     storage.jettonBalance += restoreAmount;
     storage.save();
+
+    match (msg) {
+        InternalTransferStep => {
+            if (
+                msg.sendExcessesTo != null &&
+                msg.sendExcessesTo == storage.ownerAddress
+            ) {
+                val failedMsg = createMessage({
+                    bounce: BounceMode.NoBounce,
+                    dest: storage.ownerAddress,
+                    value: 0,
+                    body: VcoinTransferFailed {
+                        queryId: msg.queryId,
+                        jettonAmount: msg.jettonAmount,
+                        walletOwner: storage.ownerAddress,
+                    },
+                });
+                failedMsg.send(
+                    SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE | SEND_MODE_IGNORE_ERRORS,
+                );
+            }
+        }
+        else => {}
+    }
 }
 
 fun sendGenesisCreditAck(storage: VcoinWalletStorage, queryId: uint64, amount: coins) {

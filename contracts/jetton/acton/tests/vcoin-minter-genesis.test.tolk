@@ -1,3 +1,4 @@
+import "@acton/build"
 import "@acton/emulation/network"
 import "@acton/emulation/testing"
 import "@acton/testing/expect"
@@ -5,6 +6,7 @@ import "@contracts/messages"
 import "@contracts/vcoin-genesis-config"
 import "@contracts/vcoin-messages"
 import "@contracts/vcoin-minter-storage"
+import "@contracts/vcoin-minter-utils"
 import "@wrappers/VcoinJettonMinter.gen"
 import "@wrappers/VcoinJettonWallet.gen"
 import "test-utils"
@@ -68,7 +70,7 @@ fun setupVcoinMinterTest(): VcoinMinterTestContext {
         ),
     }.toCell();
 
-    val minter = VcoinJettonMinter.fromStorage(VcoinMinterStorage {
+    val minterStorage = VcoinMinterStorage {
         totalSupply: 0,
         genesisIssued: 0,
         metadata: buildTestMetadata("vcoin-ton-test"),
@@ -76,8 +78,22 @@ fun setupVcoinMinterTest(): VcoinMinterTestContext {
         completedSlots: 0,
         coreSlots,
         extraSlots,
-    });
-    val deploy = minter.sendDeploy(deployer.address, { value: grams("10") });
+    };
+    val minterInit = calcDeployedVcoinJettonMinter(
+        minterStorage,
+        build("VcoinJettonMinter"),
+        coordinator.address,
+    );
+    val minter = VcoinJettonMinter { address: minterInit.calculateAddress() };
+    val deploy = net.send(
+        deployer.address,
+        createMessage({
+            bounce: false,
+            value: grams("10"),
+            dest: minterInit,
+            body: TopUpTons {},
+        }),
+    );
     expect(deploy).toHaveSuccessfulDeploy({ to: minter.address });
 
     return {

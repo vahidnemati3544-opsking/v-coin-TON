@@ -1,3 +1,4 @@
+import "@gen/VcoinJettonWallet.code"
 import "errors"
 import "messages"
 import "vcoin-genesis-config"
@@ -69,7 +70,7 @@ fun vcoinFounderWalletAddress(masterAddress: address): address {
     return calcAddressOfVcoinJettonWallet(
         contract.getAddress(),
         masterAddress,
-        getVcoinJettonWalletCode(),
+        vcoinJettonWalletCompiledCode(),
     );
 }
 
@@ -80,7 +81,7 @@ fun vcoinBeneficiaryWalletAddress(
     return calcAddressOfVcoinJettonWallet(
         beneficiary,
         masterAddress,
-        getVcoinJettonWalletCode(),
+        vcoinJettonWalletCompiledCode(),
     );
 }
 

@@ -21,6 +21,9 @@ async function applyTestMigrations(pool) {
   const balanceMiningMigration = await fs.readFile(
     path.join(databaseDir, 'migrations/003-balance-based-mining.sql'), 'utf8'
   );
+  const priceReferenceMigration = await fs.readFile(
+    path.join(databaseDir, 'migrations/004-price-reference-candles.sql'), 'utf8'
+  );
 
   await pool.query(schema);
   await pool.query(reserveMigration);
@@ -34,6 +37,7 @@ async function applyTestMigrations(pool) {
     'ALTER TABLE mining_sessions DROP CONSTRAINT IF EXISTS mining_sessions_rate_balance_nonnegative'
   );
   await pool.query(balanceMiningMigration);
+  await pool.query(priceReferenceMigration);
 }
 
 test('PostgreSQL mining reward is reserved, double-entry posted, and idempotently confirmed', {

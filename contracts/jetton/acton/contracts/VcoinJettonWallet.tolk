@@ -17,7 +17,10 @@ contract VcoinJettonWallet {
 
 type VcoinAllowedMessageToWallet = AskToTransfer | AskToBurn | InternalTransferStep | TopUpTons
 
-type VcoinBounceOpToHandle = InternalTransferStep | BurnNotificationForMinter | VcoinGenesisCreditAck
+type VcoinBounceOpToHandle =
+    | InternalTransferStep
+    | BurnNotificationForMinter
+    | VcoinGenesisCreditAck
 
 fun onBouncedMessage(in: InMessageBounced) {
     in.bouncedBody.skipBouncedPrefix();
@@ -80,7 +83,8 @@ fun onInternalMessage(in: InMessage) {
 
             assert (msg.transferInitiator != null) throw ERROR_NOT_VALID_WALLET;
             assert (
-                in.senderAddress == calcAddressOfVcoinJettonWallet(
+                in.senderAddress ==
+                calcAddressOfVcoinJettonWallet(
                     msg.transferInitiator,
                     storage.minterAddress,
                     contract.getCode(),
@@ -128,7 +132,9 @@ fun onInternalMessage(in: InMessage) {
 
         AskToTransfer => {
             msg.forwardPayload.checkIsCorrectTlbEither();
-            assert (msg.transferRecipient.getWorkchain() == MY_WORKCHAIN) throw ERROR_WRONG_WORKCHAIN;
+            assert (
+                msg.transferRecipient.getWorkchain() == MY_WORKCHAIN
+            ) throw ERROR_WRONG_WORKCHAIN;
             checkAmountIsEnoughToTransfer(
                 in.valueCoins,
                 msg.forwardTonAmount,

@@ -155,10 +155,12 @@ fun vcoinValidateGenesisConfig(storage: VcoinMinterStorage) {
     ) throw ERROR_INVALID_MESSAGE;
 
     val completedAmount: coins = vcoinCompletedAmount(founder) + vcoinCompletedAmount(mining) +
-        vcoinCompletedAmount(treasury) + vcoinCompletedAmount(liquidity) +
+        vcoinCompletedAmount(treasury) +
+        vcoinCompletedAmount(liquidity) +
         vcoinCompletedAmount(ecosystem);
     val completedCount = vcoinCompletedCount(founder) + vcoinCompletedCount(mining) +
-        vcoinCompletedCount(treasury) + vcoinCompletedCount(liquidity) +
+        vcoinCompletedCount(treasury) +
+        vcoinCompletedCount(liquidity) +
         vcoinCompletedCount(ecosystem);
     assert (storage.genesisIssued == completedAmount) throw ERROR_INVALID_MESSAGE;
     assert (storage.completedSlots == completedCount) throw ERROR_INVALID_MESSAGE;

@@ -1,9 +1,9 @@
 'use strict';
 
-const INTERVAL_MS = 72 * 60 * 60 * 1000;
+const INTERVAL_MS = 7 * 24 * 60 * 60 * 1000;
 const PRICE_SCALE = 1_000_000_000_000n;
-const INCREASE_NUMERATOR = 1_002_041n;
-const INCREASE_DENOMINATOR = 1_000_000n;
+const INCREASE_NUMERATOR = 1_007_827_884_862n;
+const INCREASE_DENOMINATOR = 1_000_000_000_000n;
 const MINING_RESERVE_CODE = 'USER_MINING';
 
 function increasePriceScaled(currentScaled) {
@@ -85,7 +85,7 @@ async function advancePriceReference({ pool, now = new Date() }) {
       await client.query(
         'INSERT INTO price_reference_candles ' +
         '(period_start, period_end, open_usd, high_usd, low_usd, close_usd, increase_rate_percent) ' +
-        'VALUES ($1, $2, $3, $4, $5, $6, 0.20410000) ' +
+        'VALUES ($1, $2, $3, $4, $5, $6, 0.782788486200) ' +
         'ON CONFLICT (period_start) DO NOTHING',
         [
           periodStart.toISOString(),
@@ -141,7 +141,7 @@ function createPriceReferenceRouter({ pool }) {
         ...result.rows[0],
         price_type: 'modelled_reference_not_market_price',
         currency: 'USD',
-        interval_hours: 72
+        interval_hours: 168
       });
     } catch (error) {
       return next(error);

@@ -109,8 +109,7 @@ fun onBouncedMessage(in: InMessageBounced) {
             var storage = lazy VcoinFounderVestingStorage.load();
             var state = storage.state.load();
             if (
-                state.pendingTranches > 0 &&
-                msg.queryId == state.pendingQueryId &&
+                state.pendingTranches > 0 && msg.queryId == state.pendingQueryId &&
                 msg.jettonAmount == state.pendingAmount
             ) {
                 state = vcoinClearPendingVesting(state);
@@ -162,7 +161,9 @@ fun onInternalMessage(in: InMessage) {
 
             if (msg.queryId == VCOIN_VESTING_OWN_WALLET_QUERY_ID) {
                 if (wallets.ownWalletAddress != null) {
-                    assert (wallets.ownWalletAddress == msg.jettonWalletAddress) throw ERROR_INVALID_MESSAGE;
+                    assert (
+                        wallets.ownWalletAddress == msg.jettonWalletAddress
+                    ) throw ERROR_INVALID_MESSAGE;
                 } else {
                     wallets.ownWalletAddress = msg.jettonWalletAddress;
                 }
@@ -207,7 +208,9 @@ fun onInternalMessage(in: InMessage) {
             assert (wallets.ownWalletAddress != null) throw ERROR_INVALID_MESSAGE;
             assert (state.startTimestamp > 0) throw ERROR_INVALID_MESSAGE;
             assert (state.pendingTranches == 0) throw ERROR_INVALID_MESSAGE;
-            assert (in.valueCoins >= VCOIN_VESTING_RELEASE_MIN_CALL_VALUE) throw ERROR_NOT_ENOUGH_GAS;
+            assert (
+                in.valueCoins >= VCOIN_VESTING_RELEASE_MIN_CALL_VALUE
+            ) throw ERROR_NOT_ENOUGH_GAS;
 
             val dueTranches = vcoinFounderDueTrancheCount(
                 state.startTimestamp,
@@ -258,7 +261,9 @@ fun onInternalMessage(in: InMessage) {
             ) throw ERROR_NOT_VALID_WALLET;
 
             state.releasedTranches += state.pendingTranches;
-            assert (state.releasedTranches <= VCOIN_FOUNDER_VESTING_TRANCHE_COUNT) throw ERROR_INVALID_MESSAGE;
+            assert (
+                state.releasedTranches <= VCOIN_FOUNDER_VESTING_TRANCHE_COUNT
+            ) throw ERROR_INVALID_MESSAGE;
             state = vcoinClearPendingVesting(state);
             storage.state = state.toCell();
             storage.save();

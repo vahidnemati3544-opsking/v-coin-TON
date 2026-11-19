@@ -32,3 +32,8 @@ fun onInternalMessage(in: InMessage) {
     sendVcoinGenesisSlotRequest(msg.masterAddress, 4);
     sendVcoinGenesisSlotRequest(msg.masterAddress, 5);
 }
+
+fun onBouncedMessage(in: InMessageBounced) {
+    // The coordinator is stateless. A bounced slot request is safely retried
+    // by submitting StartVcoinGenesis again; the Master handles slot replay.
+}

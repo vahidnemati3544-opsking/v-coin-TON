@@ -1,0 +1,56 @@
+{
+  "project": "V COIN – TON",
+  "status": "template_only_not_authorized",
+  "network": "testnet",
+  "jetton_master_address": null,
+  "decimals": 6,
+  "total_supply_base_units": "10000000000000000",
+  "founder_wallet_candidate": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
+  "transfers": [
+    {
+      "allocation": "founder_vesting",
+      "tokens": "2000000000",
+      "base_units": "2000000000000000",
+      "destination": null,
+      "requires_founder_signature": true
+    },
+    {
+      "allocation": "mining_reserve",
+      "tokens": "5000000000",
+      "base_units": "5000000000000000",
+      "destination": null,
+      "requires_founder_signature": true
+    },
+    {
+      "allocation": "treasury",
+      "tokens": "1000000000",
+      "base_units": "1000000000000000",
+      "destination": null,
+      "requires_founder_signature": true
+    },
+    {
+      "allocation": "liquidity_market",
+      "tokens": "1000000000",
+      "base_units": "1000000000000000",
+      "destination": null,
+      "requires_founder_signature": true
+    },
+    {
+      "allocation": "ecosystem_marketing",
+      "tokens": "1000000000",
+      "base_units": "1000000000000000",
+      "destination": null,
+      "requires_founder_signature": true
+    }
+  ],
+  "safeguards": [
+    "verify_network",
+    "verify_recipient",
+    "verify_jetton_master",
+    "check_allocation_cap",
+    "unique_idempotency_key",
+    "founder_wallet_signature",
+    "on_chain_finality_check"
+  ],
+  "secrets_must_never_be_committed": true
+}

@@ -52,53 +52,62 @@ fun vcoinSlotIdFromQueryId(queryId: uint64): uint8 {
 }
 
 fun vcoinLoadGenesisSlot(storage: VcoinMinterStorage, slotId: uint8): VcoinGenesisSlot {
+    val core = storage.coreSlots.load();
+    val extra = storage.extraSlots.load();
     match (slotId) {
         1 => {
-            return storage.founderSlot.load();
+            return core.founderSlot.load();
         }
         2 => {
-            return storage.miningSlot.load();
+            return core.miningSlot.load();
         }
         3 => {
-            return storage.treasurySlot.load();
+            return core.treasurySlot.load();
         }
         4 => {
-            return storage.liquiditySlot.load();
+            return extra.liquiditySlot.load();
         }
         5 => {
-            return storage.ecosystemSlot.load();
+            return extra.ecosystemSlot.load();
         }
         else => throw ERROR_INVALID_MESSAGE,
     }
 }
 
 fun vcoinStoreGenesisSlot(storage: VcoinMinterStorage, slotId: uint8, slot: VcoinGenesisSlot) {
+    var core = storage.coreSlots.load();
+    var extra = storage.extraSlots.load();
     match (slotId) {
         1 => {
-            storage.founderSlot = slot.toCell();
+            core.founderSlot = slot.toCell();
+            storage.coreSlots = core.toCell();
         }
         2 => {
-            storage.miningSlot = slot.toCell();
+            core.miningSlot = slot.toCell();
+            storage.coreSlots = core.toCell();
         }
         3 => {
-            storage.treasurySlot = slot.toCell();
+            core.treasurySlot = slot.toCell();
+            storage.coreSlots = core.toCell();
         }
         4 => {
-            storage.liquiditySlot = slot.toCell();
+            extra.liquiditySlot = slot.toCell();
+            storage.extraSlots = extra.toCell();
         }
         5 => {
-            storage.ecosystemSlot = slot.toCell();
+            extra.ecosystemSlot = slot.toCell();
+            storage.extraSlots = extra.toCell();
         }
         else => throw ERROR_INVALID_MESSAGE,
     }
 }
 
 fun vcoinValidateGenesisConfig(storage: VcoinMinterStorage) {
-    val founder = storage.founderSlot.load();
-    val mining = storage.miningSlot.load();
-    val treasury = storage.treasurySlot.load();
-    val liquidity = storage.liquiditySlot.load();
-    val ecosystem = storage.ecosystemSlot.load();
+    val founder = vcoinLoadGenesisSlot(storage, 1);
+    val mining = vcoinLoadGenesisSlot(storage, 2);
+    val treasury = vcoinLoadGenesisSlot(storage, 3);
+    val liquidity = vcoinLoadGenesisSlot(storage, 4);
+    val ecosystem = vcoinLoadGenesisSlot(storage, 5);
 
     assert (founder.amount == VCOIN_FOUNDER_ALLOCATION_BASE_UNITS) throw ERROR_INVALID_MESSAGE;
     assert (mining.amount == VCOIN_MINING_RESERVE_BASE_UNITS) throw ERROR_INVALID_MESSAGE;

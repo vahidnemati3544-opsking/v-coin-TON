@@ -1,7 +1,7 @@
 # V COIN–TON — Mining Readiness Plan
 
 **Document ID:** VCT-MINING-READY-001  
-**Revision:** 1.1.0  
+**Revision:** 1.2.0  
 **Updated:** 2026-11-20  
 **Scope:** This repository only. The legacy BNB Smart Chain project is out of scope.
 
@@ -82,3 +82,15 @@ Status is based on repository evidence, not on the existence of documentation or
 - Migration 005 changes the modelled reference-price series to 52 weekly compounding periods using a fixed-point weekly multiplier of 1.007827884862, approximately 50% annual compounded growth. Existing historical candles are preserved. This remains a modelled reference series, not a market price or return promise.
 - GitHub Actions on commit `06f97ab71d239c9234523d8ee953f7d8329d9fed`: Backend CI passed (PostgreSQL 18 migration setup, idempotent setup replay, integration tests); Mining CI passed (unit/integration tests); TON Acton CI passed (pinned upstream reference build, protocol baseline tests, static checks and formatting). These checks validate the backend and upstream reference baseline only—not a final VCOIN contract or live mining.
 - The owner’s local PostgreSQL 18 instance, Telegram bot, TON Connect wallet proof, trusted Jetton balance provider, deployed VCOIN Master, and on-chain payout path have not been verified by this repository audit.
+
+## 2026-11-20 implementation checkpoint — fixed-supply preparation
+
+- Added `contracts/jetton/acton/contracts/vcoin-genesis-config.tolk` with the approved six-decimal supply cap and five exact base-unit allocation constants. This is a shared compile-time specification/test module only; it does not issue tokens and is not a deployed Master.
+- Added `contracts/jetton/acton/tests/vcoin-genesis-invariants.test.tolk` covering the exact 10^16 base-unit allocation sum, all five allocation buckets, six decimals, and 48-tranche integer arithmetic.
+- Added `contracts/jetton/acton/contracts/vcoin-vesting-calendar.tolk` with UTC calendar-month due-date calculations. Emulator tests cover Jan 31 to leap-day February, restoration to March 31, non-leap February clamping, March 31 to April 30, and preservation of UTC time of day.
+- Acton CI on commit `ae766fd47ace6d09985013eebc85a79ec21718bb` passed: reproducible build, wrapper generation, static checks, formatting, five upstream protocol tests and nine VCOIN arithmetic/calendar tests (14 total).
+- Backend CI and Mining CI on commit `a84e728921e4c85edac5168fd3c31fc6c8243355` both passed. Those workflows were not changed by the calendar-only source additions.
+- The VCOIN-specific fixed-supply Master, genesis coordinator, acknowledgement-enabled Jetton Wallet, and on-chain founder vesting contract are still not implemented. The vendored reference Master still contains privileged mint/admin/metadata/upgrade functions and remains non-deployable for VCOIN.
+- The public mining API remains fail-closed (HTTP 503); no extraction, reward payout, purchase settlement, Testnet deployment, Mainnet deployment, or real token transfer was activated.
+- The founder allocation recipient must be the separately deployed vesting contract address, not the founder beneficiary wallet. The vesting contract address must be derived only after its reviewed code and initial state are finalized.
+- Laptop-only work remains for the final stage: verify the owner's local PostgreSQL, configure the private environment, complete Telegram/TON Connect wallet proof and perform the controlled Testnet rehearsal after all contract gates pass.

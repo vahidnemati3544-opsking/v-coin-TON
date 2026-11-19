@@ -70,7 +70,7 @@ fun vcoinClearPendingVesting(state: VcoinFounderVestingState): VcoinFounderVesti
     return updated;
 }
 
-fun sendVcoinVestingWalletAddressRequests(masterAddress: address) {
+fun sendVcoinVestingWalletAddressRequests(masterAddress: address, beneficiary: address) {
     val ownWalletRequest = createMessage({
         bounce: BounceMode.Only256BitsOfBody,
         dest: masterAddress,
@@ -89,7 +89,7 @@ fun sendVcoinVestingWalletAddressRequests(masterAddress: address) {
         value: VCOIN_VESTING_WALLET_QUERY_TON_VALUE,
         body: RequestWalletAddress {
             queryId: VCOIN_VESTING_BENEFICIARY_WALLET_QUERY_ID,
-            ownerAddress: VcoinFounderVestingStorage.load().config.load().beneficiary,
+            ownerAddress: beneficiary,
             includeOwnerAddress: false,
         },
     });
@@ -136,7 +136,7 @@ fun onInternalMessage(in: InMessage) {
             config.masterAddress = msg.masterAddress;
             storage.config = config.toCell();
             storage.save();
-            sendVcoinVestingWalletAddressRequests(msg.masterAddress);
+            sendVcoinVestingWalletAddressRequests(msg.masterAddress, config.beneficiary);
         }
 
         RefreshVcoinVestingWalletAddresses => {
@@ -144,7 +144,8 @@ fun onInternalMessage(in: InMessage) {
             val config = storage.config.load();
             assert (in.senderAddress == config.activationController) throw ERROR_NOT_OWNER;
             assert (config.masterAddress != null) throw ERROR_INVALID_MESSAGE;
-            sendVcoinVestingWalletAddressRequests(config.masterAddress!);
+            assert (in.valueCoins >= grams("0.3")) throw ERROR_NOT_ENOUGH_GAS;
+            sendVcoinVestingWalletAddressRequests(config.masterAddress!, config.beneficiary);
         }
 
         ResponseWalletAddress => {

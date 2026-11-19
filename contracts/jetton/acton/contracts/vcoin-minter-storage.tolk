@@ -7,16 +7,24 @@ struct VcoinGenesisSlot {
     queryId: uint64
 }
 
+struct VcoinGenesisCoreSlots {
+    founderSlot: Cell<VcoinGenesisSlot>
+    miningSlot: Cell<VcoinGenesisSlot>
+    treasurySlot: Cell<VcoinGenesisSlot>
+}
+
+struct VcoinGenesisExtraSlots {
+    liquiditySlot: Cell<VcoinGenesisSlot>
+    ecosystemSlot: Cell<VcoinGenesisSlot>
+}
+
 struct VcoinMinterStorage {
     totalSupply: coins
     metadata: cell
     genesisCoordinator: address
     completedSlots: uint8
-    founderSlot: Cell<VcoinGenesisSlot>
-    miningSlot: Cell<VcoinGenesisSlot>
-    treasurySlot: Cell<VcoinGenesisSlot>
-    liquiditySlot: Cell<VcoinGenesisSlot>
-    ecosystemSlot: Cell<VcoinGenesisSlot>
+    coreSlots: Cell<VcoinGenesisCoreSlots>
+    extraSlots: Cell<VcoinGenesisExtraSlots>
 }
 
 fun VcoinMinterStorage.load(): VcoinMinterStorage {

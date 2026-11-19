@@ -85,9 +85,9 @@ The approved policy is documented in `../../../docs/WALLET_BALANCE_MINING_SPEC.m
 Never request or store a user's seed phrase or private key. Wallet signing must remain in the wallet interface. Mainnet and real-value payouts require separate explicit approval and security review.
 
 
-## Modelled 72-hour VCOIN reference price
+## Modelled weekly VCOIN reference price
 
-Migration `004-price-reference-candles.sql` initializes a **modelled reference price** at USD 0.004000000000. The backend advances it by approximately 0.7827884862% every 7 days using fixed-point integer arithmetic and stores OHLC candles. A scheduler checks for due periods every minute and catches up missed periods after a restart. PostgreSQL advisory locking and a transaction protect against duplicate concurrent updates.
+Migrations `004-price-reference-candles.sql` and `005-weekly-reference-growth.sql` initialize and configure a **modelled reference price** at USD 0.004000000000 with 52 weekly compounding periods (approximately 0.7827884862% per week). The backend advances it by approximately 0.7827884862% every 7 days using fixed-point integer arithmetic and stores OHLC candles. A scheduler checks for due periods every minute and catches up missed periods after a restart. PostgreSQL advisory locking and a transaction protect against duplicate concurrent updates.
 
 The series is explicitly **not a market quote, exchange price, guaranteed value, or promise of returns**. Since this calculation has no live trades, each candle is a deterministic modelled step (open/low at the prior reference price; close/high at the increased reference price), not observed market volatility.
 

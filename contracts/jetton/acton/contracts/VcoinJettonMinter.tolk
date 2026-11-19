@@ -184,7 +184,7 @@ fun vcoinSendGenesisSlot(slot: VcoinGenesisSlot, slotId: uint8) {
             contract.getAddress(),
             walletCode,
         ),
-        value: grams("0.3"),
+        value: grams("1"),
         body: InternalTransferStep {
             queryId: vcoinGenesisQueryId(slotId),
             jettonAmount: slot.amount,

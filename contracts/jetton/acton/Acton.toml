@@ -1,0 +1,39 @@
+[package]
+name = "vcoin-ton-jetton"
+description = "V COIN TON Jetton reference baseline; not deployable until VCOIN hardening is complete"
+version = "0.1.0"
+license = "UNLICENSED"
+
+[toolchain]
+acton = "1.2.1"
+
+[contracts.JettonMinter]
+src = "contracts/JettonMinter.tolk"
+depends = []
+
+[[contracts.JettonMinter.depends]]
+name = "JettonWallet"
+kind = "embed_code"
+function = "jettonWalletCompiledCode"
+
+[contracts.JettonWallet]
+src = "contracts/JettonWallet.tolk"
+depends = []
+
+[import-mappings]
+acton = ".acton"
+contracts = "contracts"
+gen = "gen"
+tests = "tests"
+wrappers = "wrappers"
+
+[fmt]
+width = 100
+ignore = []
+
+[lint]
+max-warnings = 0
+
+[lint.rules]
+dict-type-use = "allow"
+throw-requires-errors-enum = "allow"

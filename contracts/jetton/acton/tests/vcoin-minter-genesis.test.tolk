@@ -126,12 +126,19 @@ get fun `test VCOIN Master completes all five fixed genesis allocations exactly 
         from: ctx.coordinator.address,
         to: ctx.minter.address,
     });
-    expect(ctx.minter.getJettonData().totalSupply).toEqual(VCOIN_FOUNDER_ALLOCATION_BASE_UNITS);
-    expect(ctx.minter.getGenesisStatus().completedSlots).toEqual(1);
-
     val founderWallet = VcoinJettonWallet {
         address: ctx.minter.getWalletAddress(ctx.recipients.founder.address),
     };
+    expect(slot1).toHaveSuccessfulTx<InternalTransferStep>({
+        from: ctx.minter.address,
+        to: founderWallet.address,
+    });
+    expect(slot1).toHaveSuccessfulTx<VcoinGenesisCreditAck>({
+        from: founderWallet.address,
+        to: ctx.minter.address,
+    });
+    expect(ctx.minter.getJettonData().totalSupply).toEqual(VCOIN_FOUNDER_ALLOCATION_BASE_UNITS);
+    expect(ctx.minter.getGenesisStatus().completedSlots).toEqual(1);
     expect(founderWallet.getWalletData().jettonBalance).toEqual(
         VCOIN_FOUNDER_ALLOCATION_BASE_UNITS,
     );

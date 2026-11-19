@@ -161,7 +161,7 @@ function createPriceReferenceRouter({ pool }) {
       );
       return res.status(200).json({
         price_type: 'modelled_reference_not_market_price',
-        interval_hours: 72,
+        interval_hours: 168,
         candles: result.rows.reverse()
       });
     } catch (error) {

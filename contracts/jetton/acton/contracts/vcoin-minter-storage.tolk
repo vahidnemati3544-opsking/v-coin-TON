@@ -20,6 +20,7 @@ struct VcoinGenesisExtraSlots {
 
 struct VcoinMinterStorage {
     totalSupply: coins
+    genesisIssued: coins
     metadata: cell
     genesisCoordinator: address
     completedSlots: uint8
@@ -45,6 +46,7 @@ struct VcoinJettonDataReply {
 
 struct VcoinGenesisStatusReply {
     totalSupply: coins
+    genesisIssued: coins
     completedSlots: uint8
     genesisComplete: bool
 }

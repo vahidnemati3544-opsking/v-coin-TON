@@ -11,6 +11,12 @@ ALTER TABLE price_reference_state
     ADD CONSTRAINT price_reference_state_interval_seconds_check
     CHECK (interval_seconds = 604800);
 
+ALTER TABLE price_reference_state
+    ALTER COLUMN increase_rate_percent TYPE NUMERIC(14,12);
+
+ALTER TABLE price_reference_candles
+    ALTER COLUMN increase_rate_percent TYPE NUMERIC(14,12);
+
 UPDATE price_reference_state
    SET increase_rate_percent = 0.782788486200,
        interval_seconds = 604800,

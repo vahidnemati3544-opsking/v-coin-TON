@@ -85,9 +85,7 @@ fun setupVcoinFounderVestingTest(): VcoinFounderVestingTestContext {
         build("VcoinGenesisCoordinator"),
         deployer.address,
     );
-    val coordinator = VcoinGenesisCoordinator {
-        address: coordinatorInit.calculateAddress(),
-    };
+    val coordinator = VcoinGenesisCoordinator { address: coordinatorInit.calculateAddress() };
     val coordinatorDeploy = net.send(
         deployer.address,
         createMessage({
@@ -245,17 +243,15 @@ get fun `test VCOIN founder vesting recovers a bounced claim and releases the fu
         VCOIN_TOTAL_SUPPLY_BASE_UNITS,
     );
     expect(
-        VcoinJettonWallet {
-            address: ctx.vesting.getVestingWalletAddress()!,
-        }.getWalletData().jettonBalance,
+        VcoinJettonWallet { address: ctx.vesting.getVestingWalletAddress()! }
+            .getWalletData()
+            .jettonBalance,
     ).toEqual(VCOIN_FOUNDER_ALLOCATION_BASE_UNITS);
 
     val beneficiaryWallet = VcoinJettonWallet {
         address: ctx.vesting.getBeneficiaryWalletAddress()!,
     };
-    val ownWallet = VcoinJettonWallet {
-        address: ctx.vesting.getVestingWalletAddress()!,
-    };
+    val ownWallet = VcoinJettonWallet { address: ctx.vesting.getVestingWalletAddress()! };
     val firstRelease = releaseVcoinFounderVesting(ctx);
     expect(firstRelease).toHaveSuccessfulTx<ReleaseVcoinVesting>({
         from: ctx.caller.address,

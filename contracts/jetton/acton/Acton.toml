@@ -9,7 +9,6 @@ acton = "1.2.1"
 
 [contracts.JettonMinter]
 src = "contracts/JettonMinter.tolk"
-depends = []
 
 [[contracts.JettonMinter.depends]]
 name = "JettonWallet"

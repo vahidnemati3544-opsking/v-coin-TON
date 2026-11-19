@@ -1,6 +1,6 @@
 [package]
 name = "vcoin-ton-jetton"
-description = "V COIN TON Jetton reference baseline; not deployable until VCOIN hardening is complete"
+description = "V COIN TON fixed-supply Jetton implementation and reference baseline"
 version = "0.1.0"
 license = "UNLICENSED"
 
@@ -31,9 +31,12 @@ name = "VcoinJettonWallet"
 kind = "embed_code"
 function = "vcoinJettonWalletCompiledCode"
 
-
 [contracts.VcoinGenesisCoordinator]
 src = "contracts/VcoinGenesisCoordinator.tolk"
+depends = []
+
+[contracts.VcoinFounderVesting]
+src = "contracts/VcoinFounderVesting.tolk"
 depends = []
 
 [import-mappings]
@@ -53,11 +56,3 @@ max-warnings = 0
 [lint.rules]
 dict-type-use = "allow"
 throw-requires-errors-enum = "allow"
-
-[contracts.VcoinFounderVesting]
-src = "contracts/VcoinFounderVesting.tolk"
-
-[[contracts.VcoinFounderVesting.depends]]
-name = "VcoinJettonWallet"
-kind = "embed_code"
-function = "vcoinJettonWalletCompiledCode"

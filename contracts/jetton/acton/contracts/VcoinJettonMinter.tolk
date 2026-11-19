@@ -1,7 +1,5 @@
 import "@gen/VcoinJettonWallet.code"
 import "errors"
-import "fees-management"
-import "jetton-utils"
 import "messages"
 import "sharding"
 import "storage"
@@ -154,7 +152,7 @@ fun vcoinSendGenesisSlot(slot: VcoinGenesisSlot, slotId: uint8) {
 fun onBouncedMessage(in: InMessageBounced) {
     in.bouncedBody.skipBouncedPrefix();
     val msg = lazy InternalTransferStep.fromSlice(in.bouncedBody);
-    var storage = lazy VcoinMinterStorage.load();
+    val storage = lazy VcoinMinterStorage.load();
     val slotId = vcoinSlotIdFromQueryId(msg.queryId);
     var slot = vcoinLoadGenesisSlot(storage, slotId);
     if (slot.status == 1 && slot.amount == msg.jettonAmount) {

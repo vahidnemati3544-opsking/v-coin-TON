@@ -50,3 +50,6 @@ Development, Testnet and Mainnet configurations must be separate. Testnet deploy
 - PostgreSQL execution, non-skipped integration tests, CI success, Telegram end-to-end login, TON wallet proof, Testnet deployment and on-chain payout have not been demonstrated by the evidence currently available.
 
 The project must not be described as performing real on-chain mining or as extraction-ready until all release gates pass.
+## 8. Founder authority and allocation controls
+
+Founder authority over distribution approvals, custody operations and transaction signing is specified in `docs/FOUNDER_CONTROL_AND_ALLOCATION.md`. The founder's proposed public wallet address is not considered verified until a TON Connect proof/signature challenge succeeds. Founder authority does not override TON consensus or reverse confirmed transfers from independently controlled recipient wallets. Initial supply remains fixed and additional minting is prohibited.

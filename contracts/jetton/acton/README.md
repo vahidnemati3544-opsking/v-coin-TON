@@ -32,6 +32,10 @@ acton fmt --check
 
 The checked-in end-to-end test is an upstream protocol baseline test, not yet a VCOIN-specific fixed-supply or vesting test.
 
+## VCOIN fixed-supply genesis decision
+
+See [`docs/GENESIS_ISSUANCE_DESIGN.md`](../../../docs/GENESIS_ISSUANCE_DESIGN.md) for the one-time five-slot genesis issuance design. This is a design decision only; no VCOIN-specific Master, genesis coordinator, or founder vesting contract has been implemented or validated yet. The reference contracts below remain non-deployable for VCOIN.
+
 ## Required VCOIN hardening before any deployment
 
 1. Replace the reference minter with a fixed-supply genesis design: exactly 10,000,000,000 VCOIN / 10^16 base units at six decimals, and no post-genesis mint path.

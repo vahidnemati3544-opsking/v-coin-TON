@@ -29,7 +29,9 @@ fun onInternalMessage(in: InMessage) {
     val msg = lazy VcoinCoordinatorMessages.fromSlice(in.body);
     match (msg) {
         StartVcoinGenesis => {
-            assert (in.valueCoins >= VCOIN_GENESIS_COORDINATOR_MIN_CALL_VALUE) throw ERROR_NOT_ENOUGH_GAS;
+            assert (
+                in.valueCoins >= VCOIN_GENESIS_COORDINATOR_MIN_CALL_VALUE
+            ) throw ERROR_NOT_ENOUGH_GAS;
             sendVcoinGenesisSlotRequest(msg.masterAddress, 1);
             sendVcoinGenesisSlotRequest(msg.masterAddress, 2);
             sendVcoinGenesisSlotRequest(msg.masterAddress, 3);

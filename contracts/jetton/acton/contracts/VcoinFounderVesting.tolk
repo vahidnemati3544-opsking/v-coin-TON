@@ -186,7 +186,7 @@ fun onInternalMessage(in: InMessage) {
             assert (config.ownWalletAddress != null) throw ERROR_INVALID_MESSAGE;
             assert (config.beneficiaryWalletAddress != null) throw ERROR_INVALID_MESSAGE;
             assert (state.startTimestamp == 0) throw ERROR_INVALID_MESSAGE;
-            state.startTimestamp = blockchain.now as uint64;
+            state.startTimestamp = blockchain.now() as uint64;
             storage.state = state.toCell();
             storage.save();
         }
@@ -203,13 +203,13 @@ fun onInternalMessage(in: InMessage) {
             val dueTranches = vcoinFounderDueTrancheCount(
                 state.startTimestamp,
                 state.releasedTranches,
-                blockchain.now,
+                blockchain.now(),
             );
             assert (dueTranches > state.releasedTranches) throw ERROR_INVALID_MESSAGE;
 
             val amount = vcoinFounderReleaseAmount(state.releasedTranches, dueTranches);
             assert (amount > 0) throw ERROR_INVALID_MESSAGE;
-            val queryId = state.nextQueryId == 0 ? 1 : state.nextQueryId;
+            val queryId = state.nextQueryId == 0 ? (1 as uint64) : state.nextQueryId;
             state.pendingTranches = dueTranches - state.releasedTranches;
             state.pendingQueryId = queryId;
             state.pendingAmount = amount;

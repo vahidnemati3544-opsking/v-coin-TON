@@ -1,7 +1,7 @@
 # V COIN (VCOIN) — TON Jetton Smart Contract Specification
 
 **Document ID:** VCT-JETTON-SPEC-001  
-**Version:** 1.0.0  
+**Version:** 1.1.0  
 **Status:** Contract design draft — implementation, compilation, audit and deployment pending  
 **Network target for first rehearsal:** TON Testnet only  
 **Token standard:** TEP-74 (Jettons), with TEP-64 metadata  
@@ -97,7 +97,7 @@ Metadata mutability must be explicitly decided before implementation. Recommende
 
 ### 8.1 Founder allocation — 2 billion VCOIN
 
-The approved economic rule is four-year vesting. The exact start timestamp, cliff (if any), release frequency, beneficiary wallet and revocation policy have not been supplied. No vesting contract may be deployed until these parameters are explicitly approved and independently reviewed. No founder identity or confidential address should be placed in public documentation.
+The owner-approved economic rule is four-year vesting in 48 monthly tranches. The vesting clock starts at the official mining activation timestamp, not at Jetton deployment. The beneficiary is the founder wallet supplied privately by the owner; it must not be committed to this public repository. The deployment/activation procedure must record one immutable `mining_start_timestamp` and initialize the vesting schedule from that exact value. No tranche may be released before its monthly due time. The 48 tranche amounts must sum exactly to 2,000,000,000,000,000 base units; any integer-division remainder must be assigned deterministically to the final tranche. No revocation or beneficiary substitution is permitted unless separately approved and audited. The vesting implementation must be a separately reviewed contract or a proven, audited lock mechanism; a database timer is not an on-chain lock. No founder identity or confidential address should be placed in public documentation.
 
 ### 8.2 Mining reserve — 5 billion VCOIN
 
@@ -137,7 +137,15 @@ The implementation is not acceptable until automated tests demonstrate:
 
 Tests must include adversarial cases and must not be reported as passing unless actually executed.
 
-## 11. Deployment and release gates
+## 11. TON purchase settlement requirements
+
+A TON purchase is a payment to the founder's externally controlled TON wallet, not a deposit into the VCOIN Jetton Master or a contract-controlled treasury. The founder may withdraw or use received TON at any time. This immediate TON access is separate from the founder's VCOIN allocation, which remains subject to its 48-month vesting lock.
+
+The purchase service must not issue or promise VCOIN based solely on a client callback, screenshot, wallet connection, or unverified transaction hash. It must verify the transaction against a trusted TON data provider and validate the exact receiving founder address, network, amount in nanotons, transaction success/finality policy, sender wallet where applicable, quote/order identifier, expiry, and unique transaction identity. It must persist the transaction hash and logical transaction identity under a database uniqueness constraint, bind each accepted payment to exactly one order, and process settlement idempotently. Replayed, underpaid, overpaid, expired, wrong-network, wrong-recipient, failed, or already-consumed transactions must not trigger a second payout. The payout worker may instruct the separately controlled mining-reserve Jetton wallet/distributor to transfer the purchased VCOIN only after verified payment; it must reconcile the Jetton transfer transaction and mark the order complete only after confirmation. Never store seed phrases or private keys in the backend; reserve transfers must be signed by an explicitly approved secure signer or wallet.
+
+The exchange rate, quote lifetime, rounding policy, minimum/maximum purchase, refund/overpayment handling, confirmation policy, and reserve signer custody must be configured and reviewed before enabling purchases. Do not hard-code an assumed market price or infer a conversion rate from the modelled reference-price chart.
+
+## 12. Deployment and release gates
 
 **Current state: NO-GO. No deployment is authorized by this document.**
 
@@ -155,15 +163,15 @@ Before Testnet deployment:
 
 Mainnet deployment, initial issuance on Mainnet, liquidity provision, irreversible admin changes and real-value transfers require separate explicit approval after independent security review.
 
-## 12. Change control
+## 13. Change control
 
 Any change to supply, decimals, allocation, mint prohibition, wallet transfer semantics, admin powers, metadata mutability, vesting or mining reserve controls requires a documented change request, impact analysis, tests and explicit project-owner approval.
 
-## 13. Official standards and technical references
+## 14. Official standards and technical references
 
 - TEP-74 Jettons Standard: https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md
 - TON Jetton architecture: https://docs.ton.org/contracts/standard/tokens/jettons/how-it-works
 - TON Jetton payment/security guidance: https://docs.ton.org/applications/payments/jettons
 - TON Jetton implementation comparison: https://docs.ton.org/contracts/standard/tokens/jettons/comparison
 
-**Document status:** Technical contract specification drafted and attached to V COIN–TON. Smart-contract source implementation, compilation, tests, independent audit and deployment remain pending.
+**Document status:** Technical specification updated with owner-approved mining-start vesting and TON purchase settlement rules. Smart-contract source implementation, compilation, tests, independent audit and deployment remain pending.

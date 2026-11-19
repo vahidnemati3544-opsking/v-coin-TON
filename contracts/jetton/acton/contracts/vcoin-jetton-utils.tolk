@@ -1,4 +1,3 @@
-import "@gen/VcoinJettonWallet.code"
 import "sharding"
 import "vcoin-storage"
 
@@ -32,6 +31,3 @@ fun calcAddressOfVcoinJettonWallet(
     return wallet.calculateAddress();
 }
 
-fun getVcoinJettonWalletCode(): cell {
-    return vcoinJettonWalletCompiledCode();
-}

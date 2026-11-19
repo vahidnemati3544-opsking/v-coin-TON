@@ -1,3 +1,4 @@
+import "@gen/VcoinJettonWallet.code"
 import "sharding"
 import "vcoin-storage"
 
@@ -29,4 +30,8 @@ fun calcAddressOfVcoinJettonWallet(
 ): address {
     val wallet = calcDeployedVcoinJettonWallet(ownerAddress, minterAddress, jettonWalletCode);
     return wallet.calculateAddress();
+}
+
+fun getVcoinJettonWalletCode(): cell {
+    return vcoinJettonWalletCompiledCode();
 }

@@ -1,0 +1,39 @@
+name: TON Acton CI
+
+on:
+  push:
+    branches:
+      - main
+      - "feature/**"
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  jetton-reference-build:
+    name: Build and test pinned Jetton reference baseline
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: contracts/jetton/acton
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Verify Acton toolchain
+        run: docker run --rm ghcr.io/ton-blockchain/acton:1.2.1 --version
+      - name: Build Tolk contracts
+        run: docker run --rm -v "$GITHUB_WORKSPACE/contracts/jetton/acton:/workspace" -w /workspace ghcr.io/ton-blockchain/acton:1.2.1 build
+      - name: Generate typed wrappers
+        run: |
+          docker run --rm -v "$GITHUB_WORKSPACE/contracts/jetton/acton:/workspace" -w /workspace ghcr.io/ton-blockchain/acton:1.2.1 wrapper JettonMinter -o wrappers/JettonMinter.gen.tolk
+          docker run --rm -v "$GITHUB_WORKSPACE/contracts/jetton/acton:/workspace" -w /workspace ghcr.io/ton-blockchain/acton:1.2.1 wrapper JettonWallet -o wrappers/JettonWallet.gen.tolk
+      - name: Run upstream Jetton protocol baseline tests
+        run: docker run --rm -v "$GITHUB_WORKSPACE/contracts/jetton/acton:/workspace" -w /workspace ghcr.io/ton-blockchain/acton:1.2.1 test tests
+      - name: Run static checks
+        run: docker run --rm -v "$GITHUB_WORKSPACE/contracts/jetton/acton:/workspace" -w /workspace ghcr.io/ton-blockchain/acton:1.2.1 check
+      - name: Check formatting
+        run: docker run --rm -v "$GITHUB_WORKSPACE/contracts/jetton/acton:/workspace" -w /workspace ghcr.io/ton-blockchain/acton:1.2.1 fmt --check

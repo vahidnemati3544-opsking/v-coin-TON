@@ -18,13 +18,16 @@ function = "jettonWalletCompiledCode"
 [contracts.JettonWallet]
 src = "jetton-v2.1/contracts/JettonWallet.tolk"
 
+[contracts.VcoinJettonWallet]
+src = "jetton-v2.1/contracts/VcoinJettonWallet.tolk"
+
 [contracts.VcoinMinter]
 src = "jetton-v2.1/contracts/VcoinMinter.tolk"
 
 [[contracts.VcoinMinter.depends]]
-name = "JettonWallet"
+name = "VcoinJettonWallet"
 kind = "embed_code"
-function = "jettonWalletCompiledCode"
+function = "vcoinJettonWalletCompiledCode"
 
 [scripts]
 test-jetton-v2 = "acton test jetton-v2.1/tests"

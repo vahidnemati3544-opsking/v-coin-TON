@@ -3,7 +3,7 @@
 **Document ID:** VCT-JETTON-INV-001  
 **Reviewed:** 2026-11-20  
 **Scope:** `vahidnemati3544-opsking/v-coin-TON` only  
-**Result:** **ACTON/TOLK REFERENCE CORE MIGRATED; AUTOMATED TEST RUN PENDING; NOT YET VCOIN-PRODUCTION-DEPLOYABLE.**
+**Result:** **ACTON/TOLK REFERENCE CORE AND VCOIN POLICY TEST KERNEL ADDED; CI RESULT UNCONFIRMED; POLICY NOT YET INTEGRATED INTO THE JETTON MINTER. NOT PRODUCTION-DEPLOYABLE.**
 
 ## Migration completed in repository
 
@@ -29,6 +29,13 @@ The upstream Jetton v2.1 test sources include:
 - Malformed protocol payload rejection and gas checks.
 
 **Important:** These are vendored test sources. The newly added GitHub Actions run must complete successfully before tests can be called passing in this repository.
+
+## VCOIN policy work added (not yet on-chain)
+
+- `docs/VCOIN_ONCHAIN_POLICY_SPEC.md` records the five previously assigned owner addresses, exact allocation amounts and required invariants.
+- `contracts/acton/vcoin-policy/contracts/VcoinIssuancePolicy.tolk` implements a pure issuance-policy kernel.
+- `contracts/acton/vcoin-policy/tests/VcoinIssuancePolicy.test.tolk` exercises allowed/unknown owners, allocation ceilings, global cap, invalid amounts, burn accounting, exact finalization and mint rejection after finalization.
+- These are runtime test sources for a pure policy module. They do **not** prove the deployed JettonMinter enforces these rules because the module is not yet integrated into the master contract.
 
 ## Remaining VCOIN-specific production blockers
 

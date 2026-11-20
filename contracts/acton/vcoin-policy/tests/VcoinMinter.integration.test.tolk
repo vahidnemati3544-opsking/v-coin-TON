@@ -456,7 +456,6 @@ get fun `test founder vesting release completes through actual VCOIN jetton wall
     );
 }
 
-
 get fun `test VCOIN wallet RichBounce restores escrow balance and delivers failure acknowledgement`() {
     testing.setNow(2000);
     val (minter, admin, _, _) = setupVcoinMinter(false);

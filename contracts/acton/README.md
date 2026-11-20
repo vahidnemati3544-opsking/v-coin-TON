@@ -23,10 +23,10 @@ acton check
 acton fmt --check
 ```
 
-The current draft branch passes the Acton build, 85 emulator tests across 9 files, static checks, and formatting. This verifies the current CI suite only; independent audit and Testnet verification are still required before merge or deployment:
+The last fully successful verification on the previous code revision passed 85 emulator tests across 9 files, build, static checks, and formatting. The current revision adds mining start/end rounding boundary tests; its CI run is pending. This verifies the current CI suite only; independent audit and Testnet verification are still required before merge or deployment:
 https://github.com/vahidnemati3544-opsking/v-coin-TON/actions
 
-The suite includes the pinned Jetton protocol tests, VCOIN issuance policy tests, exact one-time allocation tests, deterministic deployment/readiness tests for both escrow instances, founder and mining reserve deposit acknowledgements, unauthorized/premature release rejection, monotonic release query replay rejection, and linear vesting/rounding boundary tests.
+The suite includes the pinned Jetton protocol tests, VCOIN issuance policy tests, exact one-time allocation tests, deterministic deployment/readiness tests for both escrow instances, founder and mining reserve deposit acknowledgements, unauthorized release rejection, and linear vesting/rounding boundary tests. The contract enforces monotonically increasing release query IDs and bounce/failure rollback paths, but dedicated end-to-end tests for successful release, replay, and both bounce paths remain a pre-deployment requirement.
 
 ## VCOIN-specific contract design in the draft security branch
 

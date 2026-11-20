@@ -31,4 +31,15 @@ contract VCoinMaster with JettonMaster {
             self.mintable = false;
         }
     }
+
+    // A wallet deployment/credit failure must not leave the master supply overstated.
+    // The master is the only sender of mint-originated TokenTransferInternal messages.
+    bounced(msg: bounced<TokenTransferInternal>) {
+        require(self.total_supply >= msg.amount, "Bounced mint exceeds recorded supply");
+        self.total_supply = self.total_supply - msg.amount;
+        // If the cap was reached only by the failed mint, allow the owner to retry.
+        if (self.total_supply < VCOIN_MAX_SUPPLY) {
+            self.mintable = true;
+        }
+    }
 }

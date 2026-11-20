@@ -9,9 +9,9 @@
 
 - Active review branch: `audit/issuance-readiness-2026-11-21`.
 - Draft PR #5 remains open and unmerged: https://github.com/vahidnemati3544-opsking/v-coin-TON/pull/5
-- GitHub Actions run #173 completed successfully: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44836046070
-- Run #173 compiled both `VCoinMaster` and `VCoinJettonWallet`, passed 18 Jest/Sandbox tests, passed `npm ci`, and passed `npm audit --audit-level=high` with zero known vulnerabilities.
-- A committed `contracts/jetton/package-lock.json` was added immediately after run #173 by the workflow. A new CI run against the commit containing the lockfile is required to confirm the committed-file path.
+- GitHub Actions run #177 completed successfully on the current reviewed branch state: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44836195642
+- Run #177 compiled both `VCoinMaster` and `VCoinJettonWallet`, passed 18 Jest/Sandbox tests, passed `npm ci`, and passed `npm audit --audit-level=high` with zero known vulnerabilities.
+- The committed `contracts/jetton/package-lock.json` was used successfully by `npm ci` in runs #175, #176 and #177; the lockfile path is verified.
 - The TEP-74 response destination fields were corrected from optional to required addresses in transfer, internal-transfer, burn and burn-notification message layouts. The master and wallet now route excesses to those required destinations.
 - TEP-89 `take_wallet_address.owner_address` uses the optional referenced-cell representation; tests cover `include_address=false` and `true`.
 - Four additional adversarial tests cover insufficient Jetton balance, insufficient TON, forged internal transfer sender and forged burn notification sender.
@@ -73,13 +73,13 @@ These recorded addresses are candidates only. Recording an address does not prov
 | Evidence | Status |
 |---|---|
 | Fixed supply and allocation arithmetic | Passed |
-| Contract build | Passed in CI #173 |
-| 18 Sandbox/policy tests | Passed in CI #173 |
+| Contract build | Passed in CI #177 |
+| 18 Sandbox/policy tests | Passed in CI #177 |
 | `npm ci` | Passed in CI #173 |
-| npm audit | 0 vulnerabilities in CI #173 |
+| npm audit | 0 vulnerabilities in CI #177 |
 | TEP-74 required response-destination correction | Implemented; build and tests passed |
 | TEP-89 optional owner-address behavior | Implemented and tested |
-| Committed package lockfile | Committed after CI #173; rerun on commit pending |
+| Committed package lockfile | Committed and verified by subsequent `npm ci` runs #175–#177 |
 | Bounce/replay recovery tests | Pending |
 | Full TEP-74 / TEP-64 conformance audit | Pending |
 | Metadata URI/content draft | Committed; logo approval pending |

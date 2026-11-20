@@ -249,6 +249,43 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
     expect((await master.getGetJettonData()).total_supply).toBe(MAX_SUPPLY);
   });
 
+  test("implements TEP-89 include_address as an optional referenced owner address", async () => {
+    for (const includeAddress of [false, true]) {
+      const queryId = includeAddress ? 22n : 21n;
+      const request: any = {
+        ["$" + "$" + "type"]: "ProvideWalletAddress",
+        query_id: queryId,
+        owner_address: recipient.address,
+        include_address: includeAddress,
+      };
+      const result = await master.send(
+        owner.getSender(),
+        { value: toNano("0.1") },
+        request,
+      );
+
+      const responseTransaction: any = result.transactions.find((tx: any) => {
+        const info = tx.inMessage?.info;
+        return info?.type === "internal"
+          && info.src.equals(master.address)
+          && info.dest.equals(owner.address);
+      });
+      expect(responseTransaction).toBeDefined();
+
+      const body = responseTransaction.inMessage.body.beginParse();
+      expect(body.loadUint(32)).toBe(0xd1735400);
+      body.loadUintBig(64);
+      expect(body.loadAddress()).toEqualAddress(
+        await master.getGetWalletAddress(recipient.address),
+      );
+      expect(body.loadBit()).toBe(includeAddress);
+      if (includeAddress) {
+        const includedOwner = body.loadRef().beginParse().loadAddress();
+        expect(includedOwner).toEqualAddress(recipient.address);
+      }
+    }
+  });
+
   test("rejects a Jetton transfer signed by a non-owner", async () => {
     await issueFullSupply();
     const founderWallet = await walletFor(owner.address);

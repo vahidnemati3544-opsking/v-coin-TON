@@ -69,11 +69,7 @@ fun calcVcoinVestingEscrowDeployment(
     val escrowStorage: VcoinVestingEscrowStorage = {
         vestingKind,
         minterAddress: contract.getAddress(),
-        beneficiaryAddress,
-        controllerAddress: VCOIN_FOUNDER_OWNER,
-        allocationAmount,
         startTime,
-        duration,
         configQueryId: queryId,
         deposited: false,
         releasedAmount: 0,

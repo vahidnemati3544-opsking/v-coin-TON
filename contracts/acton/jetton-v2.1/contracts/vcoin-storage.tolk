@@ -18,11 +18,6 @@ struct VcoinMinterStorage {
     treasuryStatus: uint8
     liquidityStatus: uint8
     ecosystemStatus: uint8
-    founderQueryId: uint64
-    miningQueryId: uint64
-    treasuryQueryId: uint64
-    liquidityQueryId: uint64
-    ecosystemQueryId: uint64
     finalized: bool
 }
 

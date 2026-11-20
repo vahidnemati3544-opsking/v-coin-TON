@@ -2,7 +2,6 @@ import "@gen/VcoinJettonWallet.code"
 import "errors"
 import "jetton-utils"
 import "messages"
-import "vcoin-storage"
 
 const VCOIN_FOUNDER_BENEFICIARY = address("UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy")
 const VCOIN_MINING_BENEFICIARY = address("UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0")
@@ -25,6 +24,10 @@ struct VcoinVestingEscrowStorage {
     duration: uint32
     deposited: bool
     releasedAmount: coins
+}
+
+fun VcoinVestingEscrowStorage.save(self) {
+    contract.setData(self.toCell());
 }
 
 struct (0x5643524c) ReleaseVestedVcoin {

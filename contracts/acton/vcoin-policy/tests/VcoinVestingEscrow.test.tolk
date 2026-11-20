@@ -65,7 +65,6 @@ get fun `test mining reserve vests linearly over twenty four months`() {
     );
 }
 
-
 get fun `test vesting uses integer floor rounding before final completion`() {
     val founder = founderVestingConfig();
     expect(vcoinVestedAmount(founder, TEST_START + 1)).toEqual(15844043);

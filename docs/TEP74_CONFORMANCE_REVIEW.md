@@ -18,14 +18,17 @@
 
 ## Current test evidence
 
-GitHub Actions run #177 completed successfully on the current reviewed branch state:
-- Tact build: passed.
-- Jest/Sandbox: 18 tests passed.
-- Dependency audit: 0 known vulnerabilities.
-- `npm ci`: passed using the generated lockfile.
-- Run: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44836195642
+Latest PR-head CI evidence (2026-11-21):
+- GitHub Actions run #196 on commit `aa0391a09bc03f690367a53e7cae43f9030528ef`: build-and-test completed successfully.
+- The committed `contracts/jetton/package-lock.json` is present on the PR branch; the successful PR-head workflow includes the repository's install/build/test/audit pipeline.
+- Earlier full test evidence: run #191 passed 25 tests, build, `npm ci`, and npm audit with zero known vulnerabilities.
+- Run #196: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44837742976
 
-The committed `contracts/jetton/package-lock.json` was added immediately after that run. A subsequent CI run against the commit containing the lockfile is still required.
+CI success is evidence for the checked commit and configured tests only. It is not an independent security audit, complete protocol certification, or deployment verification.
+
+## Vesting-specific security limitation
+
+The founder vesting contract restores its `released` counter if the outgoing message to the escrow Jetton wallet itself bounces. A later failure in delivery from that Jetton wallet to the founder's Jetton wallet is different: the standard Jetton wallet restores its own token balance, but the vesting contract receives no authenticated downstream-bounce acknowledgement. Its `released` counter can therefore remain advanced while the tokens have returned to escrow. This recovery/accounting path is unresolved and is a hard deployment blocker. Do not fund or deploy the vesting contract until an independently reviewed recovery design and Sandbox tests prove the accounting invariant.
 
 ## Remaining review and release gates
 

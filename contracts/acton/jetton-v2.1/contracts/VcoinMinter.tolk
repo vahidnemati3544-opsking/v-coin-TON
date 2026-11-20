@@ -159,7 +159,7 @@ fun vcoinAllAllocationsConfirmed(storage: VcoinMinterStorage): bool {
         storage.treasuryStatus == VCOIN_MINT_CONFIRMED &&
         storage.liquidityStatus == VCOIN_MINT_CONFIRMED &&
         storage.ecosystemStatus == VCOIN_MINT_CONFIRMED &&
-                                                storage.lifetimeIssued == VCOIN_MAX_SUPPLY;
+        storage.lifetimeIssued == VCOIN_MAX_SUPPLY;
 }
 
 fun onBouncedMessage(in: InMessageBounced) {
@@ -170,24 +170,25 @@ fun onBouncedMessage(in: InMessageBounced) {
     var matchedAllocation = VCOIN_ALLOCATION_NONE;
     var matchedOwner: address? = null;
 
-    if (storage.founderStatus == VCOIN_MINT_PENDING &&
-        msg.jettonAmount == VCOIN_FOUNDER_CAP) {
+    if (storage.founderStatus == VCOIN_MINT_PENDING && msg.jettonAmount == VCOIN_FOUNDER_CAP) {
         matchedAllocation = VCOIN_ALLOCATION_FOUNDER;
         matchedOwner = VCOIN_FOUNDER_OWNER;
-    } else if (storage.miningStatus == VCOIN_MINT_PENDING &&
-        msg.jettonAmount == VCOIN_MINING_CAP) {
+    } else if (storage.miningStatus == VCOIN_MINT_PENDING && msg.jettonAmount == VCOIN_MINING_CAP) {
         matchedAllocation = VCOIN_ALLOCATION_MINING;
         matchedOwner = VCOIN_MINING_OWNER;
-    } else if (storage.treasuryStatus == VCOIN_MINT_PENDING &&
-        msg.jettonAmount == VCOIN_TREASURY_CAP) {
+    } else if (
+        storage.treasuryStatus == VCOIN_MINT_PENDING && msg.jettonAmount == VCOIN_TREASURY_CAP
+    ) {
         matchedAllocation = VCOIN_ALLOCATION_TREASURY;
         matchedOwner = storage.treasuryOwner;
-    } else if (storage.liquidityStatus == VCOIN_MINT_PENDING &&
-        msg.jettonAmount == VCOIN_LIQUIDITY_CAP) {
+    } else if (
+        storage.liquidityStatus == VCOIN_MINT_PENDING && msg.jettonAmount == VCOIN_LIQUIDITY_CAP
+    ) {
         matchedAllocation = VCOIN_ALLOCATION_LIQUIDITY;
         matchedOwner = VCOIN_LIQUIDITY_OWNER;
-    } else if (storage.ecosystemStatus == VCOIN_MINT_PENDING &&
-        msg.jettonAmount == VCOIN_ECOSYSTEM_CAP) {
+    } else if (
+        storage.ecosystemStatus == VCOIN_MINT_PENDING && msg.jettonAmount == VCOIN_ECOSYSTEM_CAP
+    ) {
         matchedAllocation = VCOIN_ALLOCATION_ECOSYSTEM;
         matchedOwner = VCOIN_ECOSYSTEM_OWNER;
     }
@@ -219,13 +220,17 @@ fun onInternalMessage(in: InMessage) {
     match (msg) {
         MintNewJettons => {
             var storage = lazy VcoinMinterStorage.load();
-            assert (storage.adminAddress != null && in.senderAddress == storage.adminAddress!) throw ERROR_NOT_OWNER;
+            assert (
+                storage.adminAddress != null && in.senderAddress == storage.adminAddress!
+            ) throw ERROR_NOT_OWNER;
             assert (!storage.finalized) throw ERROR_NOT_OWNER;
             assert (msg.mintRecipient.getWorkchain() == MY_WORKCHAIN) throw ERROR_WRONG_WORKCHAIN;
 
-            val internalTransferMsg = lazy msg.internalTransferMsg.load({
-                throwIfOpcodeDoesNotMatch: ERROR_INVALID_OP,
-            });
+            val internalTransferMsg = lazy msg
+                .internalTransferMsg
+                .load({
+                    throwIfOpcodeDoesNotMatch: ERROR_INVALID_OP,
+                });
             assert (internalTransferMsg.transferInitiator == null) throw ERROR_INVALID_OP;
             assert (internalTransferMsg.jettonAmount > 0) throw ERROR_INVALID_OP;
             assert (msg.queryId != 0) throw ERROR_INVALID_OP;
@@ -235,10 +240,18 @@ fun onInternalMessage(in: InMessage) {
             assert (allocationId != VCOIN_ALLOCATION_NONE) throw ERROR_INVALID_OP;
             val cap = vcoinAllocationCap(allocationId);
             assert (internalTransferMsg.jettonAmount == cap) throw ERROR_INVALID_OP;
-            assert (vcoinStatus(storage, allocationId) == VCOIN_MINT_NOT_ISSUED) throw ERROR_INVALID_OP;
-            assert (storage.lifetimeIssued + internalTransferMsg.jettonAmount <= VCOIN_MAX_SUPPLY) throw ERROR_INVALID_OP;
+            assert (
+                vcoinStatus(storage, allocationId) == VCOIN_MINT_NOT_ISSUED
+            ) throw ERROR_INVALID_OP;
+            assert (
+                storage.lifetimeIssued + internalTransferMsg.jettonAmount <= VCOIN_MAX_SUPPLY
+            ) throw ERROR_INVALID_OP;
 
-            checkAmountIsEnoughToTransfer(msg.tonAmount, internalTransferMsg.forwardTonAmount, in.originalForwardFee);
+            checkAmountIsEnoughToTransfer(
+                msg.tonAmount,
+                internalTransferMsg.forwardTonAmount,
+                in.originalForwardFee,
+            );
 
             setVcoinPending(mutate storage, allocationId);
             storage.totalSupply += internalTransferMsg.jettonAmount;
@@ -263,9 +276,12 @@ fun onInternalMessage(in: InMessage) {
             val allocationId = vcoinAllocationId(storage, msg.ownerAddress);
             assert (allocationId != VCOIN_ALLOCATION_NONE) throw ERROR_INVALID_OP;
             assert (msg.jettonAmount == vcoinAllocationCap(allocationId)) throw ERROR_INVALID_OP;
-            assert (vcoinStatus(storage, allocationId) == VCOIN_MINT_PENDING) throw ERROR_INVALID_OP;
             assert (
-                in.senderAddress == calcAddressOfJettonWallet(
+                vcoinStatus(storage, allocationId) == VCOIN_MINT_PENDING
+            ) throw ERROR_INVALID_OP;
+            assert (
+                in.senderAddress ==
+                calcAddressOfJettonWallet(
                     msg.ownerAddress,
                     contract.getAddress(),
                     vcoinJettonWalletCompiledCode(),
@@ -280,7 +296,8 @@ fun onInternalMessage(in: InMessage) {
             var storage = lazy VcoinMinterStorage.load();
             val jettonWalletCode = vcoinJettonWalletCompiledCode();
             assert (
-                in.senderAddress == calcAddressOfJettonWallet(
+                in.senderAddress ==
+                calcAddressOfJettonWallet(
                     msg.burnInitiator,
                     contract.getAddress(),
                     jettonWalletCode,
@@ -324,7 +341,9 @@ fun onInternalMessage(in: InMessage) {
                     ownerAddress,
                 },
             });
-            respondMsg.send(SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE | SEND_MODE_BOUNCE_ON_ACTION_FAIL);
+            respondMsg.send(
+                SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE | SEND_MODE_BOUNCE_ON_ACTION_FAIL,
+            );
         }
 
         ChangeMinterMetadata => {
@@ -363,7 +382,11 @@ get fun get_jetton_data(): JettonDataReply {
 }
 
 get fun get_wallet_address(ownerAddress: address): address {
-    return calcAddressOfJettonWallet(ownerAddress, contract.getAddress(), vcoinJettonWalletCompiledCode());
+    return calcAddressOfJettonWallet(
+        ownerAddress,
+        contract.getAddress(),
+        vcoinJettonWalletCompiledCode(),
+    );
 }
 
 get fun get_vcoin_issuance_state(): tuple {

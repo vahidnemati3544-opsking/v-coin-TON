@@ -5,10 +5,12 @@ on:
     paths:
       - "contracts/jetton/**"
       - ".github/workflows/vcoin-jetton.yml"
+      - "docs/JETTON_DEPLOYMENT_INVENTORY.md"
   pull_request:
     paths:
       - "contracts/jetton/**"
       - ".github/workflows/vcoin-jetton.yml"
+      - "docs/JETTON_DEPLOYMENT_INVENTORY.md"
   workflow_dispatch:
 jobs:
   build-and-test:

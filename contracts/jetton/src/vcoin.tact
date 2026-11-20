@@ -1,6 +1,6 @@
 import "./jetton";
 
-const VCOIN_MAX_SUPPLY: Int = 10000000000000000; // 10,000,000,000 tokens * 10^6
+const VCOIN_MAX_SUPPLY: Int = 10000000000000000; // 10,000,000,000 VCOIN * 10^6
 
 message VCoinMint {
     receiver: Address;
@@ -20,25 +20,25 @@ contract VCoinMaster with JettonMaster {
         self.content = content;
     }
 
+    // One-time issuance: exactly the full fixed supply, to the founder-controlled
+    // initial custody wallet. The founder distributes allocations by ordinary
+    // signed Jetton transfers after verifying all five destination wallets.
     receive(msg: VCoinMint) {
         let ctx: Context = context();
-        require(ctx.sender == self.owner, "Unauthorized mint authority");
-        require(self.mintable, "Minting permanently disabled");
-        require(msg.amount > 0, "Mint amount must be positive");
-        require(self.total_supply + msg.amount <= VCOIN_MAX_SUPPLY, "VCOIN maximum supply exceeded");
+        require(ctx.sender == self.owner, "Unauthorized issuance authority");
+        require(self.mintable, "Initial issuance already completed");
+        require(self.total_supply == 0, "Initial supply already issued");
+        require(msg.amount == VCOIN_MAX_SUPPLY, "Must issue exact fixed supply");
         self.mintTo(msg.receiver, msg.amount, self.owner);
-        if (self.total_supply == VCOIN_MAX_SUPPLY) {
-            self.mintable = false;
-        }
+        self.mintable = false;
     }
 
-    // A wallet deployment/credit failure must not leave the master supply overstated.
-    // The master is the only sender of mint-originated TokenTransferInternal messages.
+    // If the initial wallet-credit message bounces, roll back the recorded
+    // supply and permit the founder to retry the same one-time issuance.
     bounced(msg: bounced<TokenTransferInternal>) {
-        require(self.total_supply >= msg.amount, "Bounced mint exceeds recorded supply");
+        require(self.total_supply >= msg.amount, "Bounced issuance exceeds recorded supply");
         self.total_supply = self.total_supply - msg.amount;
-        // If the cap was reached only by the failed mint, allow the owner to retry.
-        if (self.total_supply < VCOIN_MAX_SUPPLY) {
+        if (self.total_supply == 0) {
             self.mintable = true;
         }
     }

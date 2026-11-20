@@ -127,7 +127,9 @@ Stop if any of the following is true:
 - Deployment transaction: none.
 - Initial mint transaction: none.
 - Mainnet allocation transfers: none.
-- Founder four-year vesting/escrow implementation: pending.
+- Founder four-year vesting/escrow source: implemented in `contracts/jetton/src/founder-vesting.tact` with dedicated Sandbox tests. Approved schedule is 1,460 daily linear accrual steps over four 365-day years, zero cliff; clock starts only after the exact 2B VCOIN allocation is received from the founder through the configured authentic Jetton wallet.
+- Escrow Jetton wallet address is configured once after vesting-contract deployment using the master `get_wallet_address` getter and a founder-signed message. It cannot be replaced after configuration.
+- Vesting contract deployment, funding, final CI verification, independent security audit and Testnet verification: pending.
 - Recipient wallet-control proofs on the intended network: pending.
 - Independent smart-contract audit: pending.
 - Deterministic deploy/transaction builder: pending.

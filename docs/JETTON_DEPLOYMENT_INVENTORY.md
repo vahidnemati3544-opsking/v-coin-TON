@@ -3,7 +3,7 @@
 **Document ID:** VCT-JETTON-INV-001  
 **Reviewed:** 2026-11-20  
 **Scope:** `vahidnemati3544-opsking/v-coin-TON` only  
-**Result:** **ACTON/TOLK REFERENCE CORE BUILDS; 75 TESTS PASS IN CI; VCOIN POLICY KERNEL TESTED BUT NOT YET INTEGRATED INTO THE JETTON MINTER. NOT PRODUCTION-DEPLOYABLE.**
+**Result:** **ACTON/TOLK JETTON v2.1 CORE BUILDS; 80 TESTS PASS IN CI; VCOIN MINTER ENFORCES FIVE ONE-TIME FIXED ALLOCATIONS. NOT PRODUCTION-DEPLOYABLE.**
 
 ## Migration completed in repository
 
@@ -33,9 +33,11 @@ The upstream Jetton v2.1 test sources include:
 ## VCOIN policy work added (not yet on-chain)
 
 - `docs/VCOIN_ONCHAIN_POLICY_SPEC.md` records the five previously assigned owner addresses, exact allocation amounts and required invariants.
-- `contracts/acton/vcoin-policy/contracts/VcoinIssuancePolicy.tolk` implements a pure issuance-policy kernel.
-- `contracts/acton/vcoin-policy/tests/VcoinIssuancePolicy.test.tolk` exercises allowed/unknown owners, allocation ceilings, global cap, invalid amounts, burn accounting, exact finalization and mint rejection after finalization.
-- These are runtime test sources for a pure policy module. They do **not** prove the deployed JettonMinter enforces these rules because the module is not yet integrated into the master contract.
+- `contracts/acton/jetton-v2.1/contracts/VcoinMinter.tolk` and `VcoinJettonWallet.tolk` integrate VCOIN issuance controls with the Jetton v2.1 message and wallet flow.
+- Each of the five allocations can be credited once for its exact approved amount; unapproved destinations, partial/over-allocation, concurrent pending mints, and unauthorized minters are rejected.
+- Wallet credit acknowledgements are checked against the derived Jetton wallet, allocation, amount, and pending query ID. Mint-bounce recovery is bound to the pending allocation and destination wallet.
+- Lifetime issuance and allocation status do not reopen after burns. Admin finalization is one-way and only allowed after all five allocations are credited.
+- CI runs the upstream Jetton protocol suite, VCOIN policy tests, and VCOIN minter emulator integration tests. Passing CI is not an independent audit or Testnet evidence.
 
 ## Remaining VCOIN-specific production blockers
 

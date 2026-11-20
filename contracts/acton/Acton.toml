@@ -29,6 +29,14 @@ name = "VcoinJettonWallet"
 kind = "embed_code"
 function = "vcoinJettonWalletCompiledCode"
 
+[contracts.VcoinVestingEscrow]
+src = "jetton-v2.1/contracts/VcoinVestingEscrow.tolk"
+
+[[contracts.VcoinVestingEscrow.depends]]
+name = "VcoinJettonWallet"
+kind = "embed_code"
+function = "vcoinJettonWalletCompiledCode"
+
 [scripts]
 test-jetton-v2 = "acton test jetton-v2.1/tests"
 

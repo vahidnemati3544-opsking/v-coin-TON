@@ -12,6 +12,10 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
   let owner: SandboxContract<TreasuryContract>;
   let attacker: SandboxContract<TreasuryContract>;
   let recipient: SandboxContract<TreasuryContract>;
+  let miningReserve: SandboxContract<TreasuryContract>;
+  let treasury: SandboxContract<TreasuryContract>;
+  let liquidity: SandboxContract<TreasuryContract>;
+  let ecosystem: SandboxContract<TreasuryContract>;
   let master: SandboxContract<VCoinMaster>;
 
   beforeEach(async () => {
@@ -19,6 +23,10 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
     owner = await blockchain.treasury("vcoin-owner");
     attacker = await blockchain.treasury("unauthorized-caller");
     recipient = await blockchain.treasury("vcoin-recipient");
+    miningReserve = await blockchain.treasury("vcoin-mining-reserve");
+    treasury = await blockchain.treasury("vcoin-treasury");
+    liquidity = await blockchain.treasury("vcoin-liquidity");
+    ecosystem = await blockchain.treasury("vcoin-ecosystem");
     master = blockchain.openContract(
       await VCoinMaster.fromInit(owner.address, beginCell().endCell()),
     );
@@ -194,6 +202,49 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
 
     expect((await founderWallet.getGetWalletData()).balance).toBe(MAX_SUPPLY - 25n * ONE_TOKEN);
     expect((await recipientWallet.getGetWalletData()).balance).toBe(25n * ONE_TOKEN);
+    expect((await master.getGetJettonData()).total_supply).toBe(MAX_SUPPLY);
+  });
+
+  test("distributes the approved five-wallet allocation schedule exactly", async () => {
+    await issueFullSupply();
+    const founderWallet = await walletFor(owner.address);
+    const allocations = [
+      { destination: miningReserve, amount: 5_000_000_000n * ONE_TOKEN },
+      { destination: treasury, amount: 1_000_000_000n * ONE_TOKEN },
+      { destination: liquidity, amount: 1_000_000_000n * ONE_TOKEN },
+      { destination: ecosystem, amount: 1_000_000_000n * ONE_TOKEN },
+    ];
+
+    let queryId = 10n;
+    for (const allocation of allocations) {
+      const recipientWallet = await walletFor(allocation.destination.address);
+      const result = await founderWallet.send(
+        owner.getSender(),
+        { value: toNano("0.2") },
+        {
+          $type: "TokenTransfer",
+          query_id: queryId,
+          amount: allocation.amount,
+          destination: allocation.destination.address,
+          response_destination: owner.address,
+          custom_payload: null,
+          forward_ton_amount: 0n,
+          forward_payload: beginCell().endCell().asSlice(),
+        },
+      );
+      expect(result.transactions).toHaveTransaction({
+        from: founderWallet.address,
+        to: recipientWallet.address,
+        success: true,
+      });
+      queryId += 1n;
+    }
+
+    expect((await founderWallet.getGetWalletData()).balance).toBe(2_000_000_000n * ONE_TOKEN);
+    expect((await (await walletFor(miningReserve.address)).getGetWalletData()).balance).toBe(5_000_000_000n * ONE_TOKEN);
+    expect((await (await walletFor(treasury.address)).getGetWalletData()).balance).toBe(1_000_000_000n * ONE_TOKEN);
+    expect((await (await walletFor(liquidity.address)).getGetWalletData()).balance).toBe(1_000_000_000n * ONE_TOKEN);
+    expect((await (await walletFor(ecosystem.address)).getGetWalletData()).balance).toBe(1_000_000_000n * ONE_TOKEN);
     expect((await master.getGetJettonData()).total_supply).toBe(MAX_SUPPLY);
   });
 

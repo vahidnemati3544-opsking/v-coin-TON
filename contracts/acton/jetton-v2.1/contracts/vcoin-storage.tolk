@@ -44,6 +44,7 @@ struct VcoinVestingEscrowStorage {
     allocationAmount: coins
     startTime: uint32
     duration: uint32
+    configQueryId: uint64
     deposited: bool
     releasedAmount: coins
 }

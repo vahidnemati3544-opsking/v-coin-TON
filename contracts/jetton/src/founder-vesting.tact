@@ -9,6 +9,10 @@ message ClaimFounderVesting {
     query_id: Int as uint64;
 }
 
+message ConfigureFounderVestingWallet {
+    wallet: Address;
+}
+
 struct FounderVestingData {
     owner: Address;
     master: Address;
@@ -23,6 +27,8 @@ contract VCoinFounderVesting {
     owner: Address;
     master: Address;
     beneficiary: Address;
+    vesting_wallet: Address;
+    wallet_configured: Bool = false;
     funded: Bool = false;
     start_time: Int = 0;
     released: Int = 0;
@@ -31,6 +37,8 @@ contract VCoinFounderVesting {
         self.owner = owner;
         self.master = master;
         self.beneficiary = beneficiary;
+        self.vesting_wallet = owner;
+        self.wallet_configured = false;
         self.funded = false;
         self.start_time = 0;
         self.released = 0;
@@ -38,15 +46,21 @@ contract VCoinFounderVesting {
 
     receive() {}
 
-    fun vestingWalletAddress(): Address {
-        let walletInit: StateInit = initOf VCoinJettonWallet(myAddress(), self.master);
-        return contractAddress(walletInit);
+    // The wallet address is configured once after deployment using the
+    // master contract's get_wallet_address(owner=vesting-contract) getter.
+    // This avoids embedding a second independently compiled wallet code hash.
+    receive(msg: ConfigureFounderVestingWallet) {
+        require(context().sender == self.owner, "Only founder may configure wallet");
+        require(!self.wallet_configured, "Vesting wallet already configured");
+        self.vesting_wallet = msg.wallet;
+        self.wallet_configured = true;
     }
 
     // The vesting clock starts only after the exact allocation has arrived
     // through the authentic Jetton wallet notification.
     receive(msg: TokenNotification) {
-        require(context().sender == self.vestingWalletAddress(), "Untrusted Jetton wallet");
+        require(self.wallet_configured, "Vesting wallet is not configured");
+        require(context().sender == self.vesting_wallet, "Untrusted Jetton wallet");
         require(msg.from == self.owner, "Only founder may fund vesting");
         require(msg.amount == FOUNDER_VESTING_TOTAL, "Incorrect founder allocation");
         require(!self.funded, "Vesting already funded");
@@ -70,7 +84,7 @@ contract VCoinFounderVesting {
         self.released = vestedAmount;
 
         send(SendParameters{
-            to: self.vestingWalletAddress(),
+            to: self.vesting_wallet,
             value: ton("0.1"),
             bounce: true,
             body: TokenTransfer{
@@ -93,7 +107,7 @@ contract VCoinFounderVesting {
     }
 
     get fun get_vesting_wallet_address(): Address {
-        return self.vestingWalletAddress();
+        return self.vesting_wallet;
     }
 
     get fun get_vesting_data(): FounderVestingData {

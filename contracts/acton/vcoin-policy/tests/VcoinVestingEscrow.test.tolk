@@ -2,9 +2,6 @@ import "@acton/emulation/testing"
 import "@acton/testing/expect"
 import "../../jetton-v2.1/contracts/VcoinVestingEscrow"
 
-const FOUNDER_BENEFICIARY = address("UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy")
-const MINING_BENEFICIARY = address("UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0")
-const FOUNDER_CONTROLLER = address("UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy")
 const TEST_START = 1700000000
 
 fun founderVestingConfig(): VcoinVestingEscrowStorage {
@@ -12,16 +9,10 @@ fun founderVestingConfig(): VcoinVestingEscrowStorage {
     return {
         vestingKind: VCOIN_VESTING_FOUNDER,
         minterAddress: minter.address,
-        beneficiaryAddress: FOUNDER_BENEFICIARY,
-        controllerAddress: FOUNDER_CONTROLLER,
-        allocationAmount: VCOIN_FOUNDER_AMOUNT,
         startTime: TEST_START,
-        duration: VCOIN_FOUNDER_DURATION,
         configQueryId: 1,
         deposited: false,
         releasedAmount: 0,
-        pendingReleaseAmount: 0,
-        pendingReleaseQueryId: 0,
         pendingReleaseAmount: 0,
         pendingReleaseQueryId: 0,
     };
@@ -32,14 +23,12 @@ fun miningVestingConfig(): VcoinVestingEscrowStorage {
     return {
         vestingKind: VCOIN_VESTING_MINING,
         minterAddress: minter.address,
-        beneficiaryAddress: MINING_BENEFICIARY,
-        controllerAddress: FOUNDER_CONTROLLER,
-        allocationAmount: VCOIN_MINING_AMOUNT,
         startTime: TEST_START,
-        duration: VCOIN_MINING_DURATION,
         configQueryId: 2,
         deposited: false,
         releasedAmount: 0,
+        pendingReleaseAmount: 0,
+        pendingReleaseQueryId: 0,
     };
 }
 

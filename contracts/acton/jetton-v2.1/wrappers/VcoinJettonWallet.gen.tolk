@@ -135,7 +135,12 @@ fun VcoinJettonWallet.sendTopUpTons(self, from: address, config: SendParams = {}
 }
 
 /// Send message to the contract with a custom body cell
-fun VcoinJettonWallet.sendAny(self, from: address, body: cell, config: SendParams = {}): SendResultList {
+fun VcoinJettonWallet.sendAny(
+    self,
+    from: address,
+    body: cell,
+    config: SendParams = {},
+): SendResultList {
     val genericMsg = createMessage({
         bounce: config.bounce,
         value: config.value,

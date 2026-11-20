@@ -5,6 +5,7 @@ import "jetton-utils"
 import "messages"
 import "sharding"
 import "storage"
+import "vcoin-messages"
 
 contract JettonMinter {
     author: "The Tolk Team"
@@ -24,6 +25,7 @@ type AllowedMessageToMinter =
     | ChangeMinterMetadata
     | UpgradeMinterCode
     | TopUpTons
+    | VcoinMintAccepted
 
 fun onBouncedMessage(in: InMessageBounced) {
     in.bouncedBody.skipBouncedPrefix();
@@ -182,6 +184,10 @@ fun onInternalMessage(in: InMessage) {
 
         TopUpTons => {
             // just accept tons
+        }
+
+        VcoinMintAccepted => {
+            // Acknowledgement is meaningful only to VcoinMinter; ignore it here.
         }
 
         else => throw 0xFFFF,

@@ -20,6 +20,8 @@ fun founderVestingConfig(): VcoinVestingEscrowStorage {
         configQueryId: 1,
         deposited: false,
         releasedAmount: 0,
+        pendingReleaseAmount: 0,
+        pendingReleaseQueryId: 0,
     };
 }
 

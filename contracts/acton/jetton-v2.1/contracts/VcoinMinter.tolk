@@ -1,4 +1,5 @@
 import "@gen/VcoinJettonWallet.code"
+import "@gen/VcoinVestingEscrow.code"
 import "errors"
 import "fees-management"
 import "jetton-utils"
@@ -47,7 +48,42 @@ type AllowedVcoinMinterMessage =
     | DropMinterAdmin
     | VcoinMintAccepted
     | ConfigureVcoinEscrows
+    | VcoinVestingEscrowReady
     | TopUpTons
+
+
+fun calcVcoinVestingEscrowDeployment(
+    vestingKind: uint8,
+    startTime: uint32,
+): AutoDeployAddress {
+    var beneficiaryAddress = VCOIN_FOUNDER_OWNER;
+    var allocationAmount: coins = VCOIN_FOUNDER_CAP;
+    var duration: uint32 = 126230400;
+    if (vestingKind == 2) {
+        beneficiaryAddress = VCOIN_MINING_OWNER;
+        allocationAmount = VCOIN_MINING_CAP;
+        duration = 63072000;
+    }
+    val escrowStorage: VcoinVestingEscrowStorage = {
+        vestingKind,
+        minterAddress: contract.getAddress(),
+        beneficiaryAddress,
+        controllerAddress: VCOIN_FOUNDER_OWNER,
+        allocationAmount,
+        startTime,
+        duration,
+        deposited: false,
+        releasedAmount: 0,
+    };
+    return {
+        workchain: MY_WORKCHAIN,
+        stateInit: {
+            code: vcoinVestingEscrowCompiledCode(),
+            data: escrowStorage.toCell(),
+        },
+        toShard: { fixedPrefixLength: SHARD_DEPTH, closeTo: beneficiaryAddress },
+    };
+}
 
 fun vcoinAllocationId(storage: VcoinMinterStorage, recipient: address): int {
     if (storage.founderEscrowOwner != null && recipient == storage.founderEscrowOwner!) {
@@ -267,6 +303,7 @@ fun onInternalMessage(in: InMessage) {
 
             assert (storage.founderEscrowOwner != null) throw ERROR_INVALID_OP;
             assert (storage.miningEscrowOwner != null) throw ERROR_INVALID_OP;
+            assert (storage.founderEscrowReady && storage.miningEscrowReady) throw ERROR_INVALID_OP;
             val allocationId = vcoinAllocationId(storage, msg.mintRecipient);
             assert (allocationId != VCOIN_ALLOCATION_NONE) throw ERROR_INVALID_OP;
             val cap = vcoinAllocationCap(allocationId);
@@ -313,13 +350,53 @@ fun onInternalMessage(in: InMessage) {
             assert (storage.miningStatus == VCOIN_MINT_NOT_ISSUED) throw ERROR_INVALID_OP;
             assert (storage.founderEscrowOwner == null) throw ERROR_INVALID_OP;
             assert (storage.miningEscrowOwner == null) throw ERROR_INVALID_OP;
-            assert (msg.founderEscrowOwner != msg.miningEscrowOwner) throw ERROR_INVALID_OP;
-            assert (msg.founderEscrowOwner != VCOIN_FOUNDER_OWNER) throw ERROR_INVALID_OP;
-            assert (msg.miningEscrowOwner != VCOIN_MINING_OWNER) throw ERROR_INVALID_OP;
-            assert (msg.founderEscrowOwner.getWorkchain() == MY_WORKCHAIN) throw ERROR_WRONG_WORKCHAIN;
-            assert (msg.miningEscrowOwner.getWorkchain() == MY_WORKCHAIN) throw ERROR_WRONG_WORKCHAIN;
-            storage.founderEscrowOwner = msg.founderEscrowOwner;
-            storage.miningEscrowOwner = msg.miningEscrowOwner;
+            assert (msg.queryId != 0) throw ERROR_INVALID_OP;
+            assert (msg.startTime >= blockchain.now()) throw ERROR_INVALID_OP;
+            assert (in.valueCoins >= grams("1.2")) throw ERROR_NOT_ENOUGH_GAS;
+
+            val founderEscrowInit = calcVcoinVestingEscrowDeployment(1, msg.startTime);
+            val miningEscrowInit = calcVcoinVestingEscrowDeployment(2, msg.startTime);
+            storage.founderEscrowOwner = founderEscrowInit.calculateAddress();
+            storage.miningEscrowOwner = miningEscrowInit.calculateAddress();
+            storage.founderEscrowReady = false;
+            storage.miningEscrowReady = false;
+            storage.escrowConfigQueryId = msg.queryId;
+            storage.save();
+
+            val deployFounder = createMessage({
+                bounce: BounceMode.NoBounce,
+                dest: founderEscrowInit,
+                value: grams("0.5"),
+                body: TopUpTons {},
+            });
+            deployFounder.send(SEND_MODE_PAY_FEES_SEPARATELY | SEND_MODE_BOUNCE_ON_ACTION_FAIL);
+
+            val deployMining = createMessage({
+                bounce: BounceMode.NoBounce,
+                dest: miningEscrowInit,
+                value: grams("0.5"),
+                body: TopUpTons {},
+            });
+            deployMining.send(SEND_MODE_PAY_FEES_SEPARATELY | SEND_MODE_BOUNCE_ON_ACTION_FAIL);
+        }
+
+        VcoinVestingEscrowReady => {
+            var storage = lazy VcoinMinterStorage.load();
+            assert (msg.queryId == storage.escrowConfigQueryId) throw ERROR_INVALID_OP;
+            assert (msg.escrowAddress == in.senderAddress) throw ERROR_INVALID_OP;
+            if (msg.vestingKind == 1) {
+                assert (storage.founderEscrowOwner != null) throw ERROR_INVALID_OP;
+                assert (in.senderAddress == storage.founderEscrowOwner!) throw ERROR_NOT_VALID_WALLET;
+                assert (!storage.founderEscrowReady) throw ERROR_INVALID_OP;
+                storage.founderEscrowReady = true;
+            } else if (msg.vestingKind == 2) {
+                assert (storage.miningEscrowOwner != null) throw ERROR_INVALID_OP;
+                assert (in.senderAddress == storage.miningEscrowOwner!) throw ERROR_NOT_VALID_WALLET;
+                assert (!storage.miningEscrowReady) throw ERROR_INVALID_OP;
+                storage.miningEscrowReady = true;
+            } else {
+                throw ERROR_INVALID_OP;
+            }
             storage.save();
         }
 

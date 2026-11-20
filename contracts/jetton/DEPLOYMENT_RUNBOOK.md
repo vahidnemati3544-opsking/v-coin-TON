@@ -118,7 +118,7 @@ Stop if any of the following is true:
 - TEP-64 metadata draft: `contracts/jetton/metadata.json`; URI pinned in `deployment.config.template.json` to immutable commit `49c462124a082ef6c850079b35c6f77c5bda6ea2`. The JSON contains name, symbol, description and six decimals; no image is included until the approved logo asset is committed.
 - TEP-74 required response-destination fields were corrected to mandatory addresses for transfer, internal transfer, burn and burn notification. Excesses are routed to the required response destination.
 - TEP-89 `include_address` behavior remains covered for both values.
-- GitHub Actions run #177 passed build, 18 Sandbox/policy tests, `npm ci` using the committed lockfile, and npm audit with zero known vulnerabilities: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44836195642
+- GitHub Actions run #191 passed build, 25 Sandbox/policy tests, `npm ci` using the committed lockfile, and npm audit with zero known vulnerabilities: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44837612965
 - The committed `contracts/jetton/package-lock.json` was used successfully by `npm ci` in runs #175, #176 and #177.
 - Source-level TEP-74 notes: `docs/TEP74_CONFORMANCE_REVIEW.md`. This is not an independent audit or full certification.
 - Wallet bounce handlers exist in source, but explicit bounce/recovery tests remain outstanding.

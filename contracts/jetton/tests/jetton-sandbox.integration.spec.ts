@@ -302,7 +302,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
         custom_payload: null,
         forward_ton_amount: 0n,
         forward_payload: beginCell().endCell().asSlice(),
-      } as any as any as any,
+      } as any,
     );
 
     expect(result.transactions).toHaveTransaction({
@@ -332,7 +332,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       } as any,
     );
     expect(result.transactions).toHaveTransaction({
-      from: founderWallet.address,
+      from: owner.address,
       to: founderWallet.address,
       aborted: true,
     });
@@ -345,7 +345,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
     const founderWallet = await walletFor(owner.address);
     const result = await founderWallet.send(
       owner.getSender(),
-      { value: toNano("0.001") },
+      { value: toNano("0.02") },
       {
         ["$" + "$" + "type"]: "TokenTransfer",
         query_id: 41n,
@@ -368,7 +368,8 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
   test("rejects forged internal transfers from an untrusted wallet address", async () => {
     await issueFullSupply();
     const founderWallet = await walletFor(owner.address);
-    await founderWallet.send(
+    const recipientWallet = await walletFor(recipient.address);
+    const initialTransfer = await founderWallet.send(
       owner.getSender(),
       { value: toNano("0.2") },
       {
@@ -382,7 +383,12 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
         forward_payload: beginCell().endCell().asSlice(),
       } as any,
     );
-    const recipientWallet = await walletFor(recipient.address);
+    expect(initialTransfer.transactions).toHaveTransaction({
+      from: founderWallet.address,
+      to: recipientWallet.address,
+      deploy: true,
+      success: true,
+    });
     const result = await recipientWallet.send(
       attacker.getSender(),
       { value: toNano("0.1") },

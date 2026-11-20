@@ -213,7 +213,7 @@ fun onInternalMessage(in: InMessage) {
 get fun get_vcoin_vesting_state(): tuple {
     val storage = lazy VcoinVestingEscrowStorage.fromCell(contract.getData());
     val vested = vcoinVestedAmount(storage, blockchain.now());
-    val claimable = vested > storage.releasedAmount ? vested - storage.releasedAmount : 0;
+    val claimable: coins = vested > storage.releasedAmount ? vested - storage.releasedAmount : 0 as coins;
     return [
         storage.vestingKind,
         storage.minterAddress,

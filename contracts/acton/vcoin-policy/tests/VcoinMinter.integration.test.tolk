@@ -95,7 +95,7 @@ get fun `test VCOIN minter mints exact founder allocation and rejects a second m
     val first = mintAllocation(minter, admin, FOUNDER, FOUNDER_AMOUNT, 11);
     expect(first).toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });
     val founderWallet = VcoinJettonWallet { address: minter.getWalletAddress(FOUNDER) };
-    expect(founderWallet.getJettonBalance()).toEqual(FOUNDER_AMOUNT);
+    expect(founderWallet.getWalletData().jettonBalance).toEqual(FOUNDER_AMOUNT);
     expect(minter.getJettonData().totalSupply).toEqual(FOUNDER_AMOUNT);
 
     val second = mintAllocation(minter, admin, FOUNDER, FOUNDER_AMOUNT, 12);

@@ -3,7 +3,6 @@ import "errors"
 import "fees-management"
 import "jetton-utils"
 import "messages"
-import "vcoin-messages"
 import "sharding"
 import "storage"
 
@@ -85,20 +84,6 @@ fun onInternalMessage(in: InMessage) {
                 });
                 // SAFETY: mode SEND_MODE_CARRY_ALL_BALANCE is used after reserveGramsOnBalance()
                 excessesMsg.send(SEND_MODE_CARRY_ALL_BALANCE | SEND_MODE_IGNORE_ERRORS);
-            }
-
-            if (msg.transferInitiator == null) {
-                val mintAck = createMessage({
-                    bounce: BounceMode.NoBounce,
-                    dest: storage.minterAddress,
-                    value: 0,
-                    body: VcoinMintAccepted {
-                        queryId: msg.queryId,
-                        jettonAmount: msg.jettonAmount,
-                        ownerAddress: storage.ownerAddress,
-                    },
-                });
-                mintAck.send(SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE | SEND_MODE_BOUNCE_ON_ACTION_FAIL);
             }
         }
 

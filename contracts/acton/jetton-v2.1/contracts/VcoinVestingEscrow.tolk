@@ -179,12 +179,12 @@ fun onInternalMessage(in: InMessage) {
             var storage = lazy VcoinVestingEscrowStorage.fromCell(contract.getData());
             assert (storage.pendingReleaseAmount > 0) throw ERROR_INVALID_OP;
             assert (msg.queryId == storage.pendingReleaseQueryId) throw ERROR_INVALID_OP;
-            val beneficiaryWallet = calcAddressOfJettonWallet(
-                vcoinVestingBeneficiary(storage),
+            val escrowWallet = calcAddressOfJettonWallet(
+                contract.getAddress(),
                 storage.minterAddress,
                 vcoinJettonWalletCompiledCode(),
             );
-            assert (in.senderAddress == beneficiaryWallet) throw ERROR_NOT_VALID_WALLET;
+            assert (in.senderAddress == escrowWallet) throw ERROR_NOT_VALID_WALLET;
             storage.releasedAmount += storage.pendingReleaseAmount;
             storage.pendingReleaseAmount = 0;
             storage.pendingReleaseQueryId = 0;

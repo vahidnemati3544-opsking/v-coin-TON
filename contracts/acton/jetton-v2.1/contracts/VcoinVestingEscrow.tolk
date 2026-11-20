@@ -250,3 +250,14 @@ get fun get_vcoin_vesting_state(): tuple {
         claimable,
     ];
 }
+
+get fun get_vcoin_vesting_deposited(): bool {
+    val storage = lazy VcoinVestingEscrowStorage.fromCell(contract.getData());
+    return storage.deposited;
+}
+
+get fun get_vcoin_vesting_released_amount(): coins {
+    val storage = lazy VcoinVestingEscrowStorage.fromCell(contract.getData());
+    return storage.releasedAmount;
+}
+

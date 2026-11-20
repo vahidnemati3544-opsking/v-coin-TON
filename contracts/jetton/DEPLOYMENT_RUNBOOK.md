@@ -119,7 +119,8 @@ Stop if any of the following is true:
 - Deployment transaction: none.
 - Initial mint transaction: none.
 - Mainnet allocation transfers: none.
-- GitHub Actions run #155: build passed; 13 Sandbox/policy tests passed; dependency audit reported zero vulnerabilities after pinned transitive overrides. Run: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44826842894
+- GitHub Actions run #157: build passed; 13 Sandbox/policy tests passed, including five-wallet allocation transfer accounting and TEP-89 optional owner-address response; dependency audit reported zero vulnerabilities after transitive overrides. Run: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44827055497
+- TEP-89 `include_address` response encoding was corrected to use `Maybe ^Cell` and both flag values are covered by Sandbox tests.
 - Test evidence is limited to the current CI Sandbox suite; it is not a full TEP-74/TEP-64 conformance audit or independent smart-contract audit.
 - Dependency versions are constrained by package.json overrides, but a committed package-lock.json is still outstanding for fully reproducible installs.
 - Independent smart-contract audit: pending.

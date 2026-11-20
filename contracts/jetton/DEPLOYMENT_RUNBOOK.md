@@ -148,8 +148,9 @@ Stop if any of the following is true:
 - Deployment transaction: none.
 - Initial mint transaction: none.
 - Mainnet allocation transfers: none.
-- Draft escrow implementation: present in PR #4 security branch; deterministic dual escrow deployment and founder/mining deposit acknowledgement covered by emulator tests. The guarded minter deployment script has passed local emulation. Dedicated end-to-end successful-release, replay, and bounce/retry tests, independent audit, and Testnet verification remain pending.
-- Latest verified Acton CI before the latest payer-guard adjustment: 87 tests passed in 9 files; build, wrapper generation, local deployment-script exercise, static checks, and formatting passed. The payer-guard adjustment is undergoing CI now. The first-stage Testnet deployment script is ready for an owner-approved TON Connect run; no Testnet broadcast has been made.
+- Draft escrow implementation: present in PR #4 security branch; deterministic dual escrow deployment and founder/mining deposit acknowledgement covered by emulator tests. A release emulator test now covers simulated success acknowledgement, failure rollback, retry, duplicate query rejection, and escrow-side bounced-message rollback. Full Jetton-wallet-to-beneficiary transfer/bounce semantics remain unproven and block deployment.
+- Latest verified Acton CI on commit `5faae092c5b20b9b6b2baa076767980dd75f9e3d`: 87 tests passed in 9 files; build, wrapper generation, local deployment-script exercise, static checks, and formatting passed. The separate GAS & OPERATIONS wallet payer guard also passed CI; minter admin remains the Founder wallet.
+- The first-stage Testnet deployment script is ready for an owner-approved TON Connect run. No Testnet broadcast has been made.
 - Independent audit: not yet completed.
 
 This runbook is an execution control document, not evidence that any token has been deployed or transferred.

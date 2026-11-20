@@ -29,21 +29,14 @@ fun onBouncedMessage(in: InMessageBounced) {
             storage.jettonBalance += msg.jettonAmount;
             storage.save();
             if (msg.transferInitiator != null) {
-                // Vesting escrow transfers set sendExcessesTo to the escrow owner.
-                // Route the failure acknowledgement there so its pending release can
-                // be rolled back. Ordinary transfers retain the owner notification.
-                var failureRecipient = storage.ownerAddress;
-                if (msg.sendExcessesTo != null) {
-                    failureRecipient = msg.sendExcessesTo;
-                }
                 val failed = createMessage({
                     bounce: BounceMode.NoBounce,
-                    dest: failureRecipient,
+                    dest: storage.ownerAddress,
                     value: 0,
                     body: VcoinTransferFailed {
                         queryId: msg.queryId,
                         jettonAmount: msg.jettonAmount,
-                        ownerAddress: failureRecipient,
+                        ownerAddress: storage.ownerAddress,
                     },
                 });
                 failed.send(SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE | SEND_MODE_IGNORE_ERRORS);

@@ -302,6 +302,7 @@ fun onInternalMessage(in: InMessage) {
             val allocationId = vcoinAllocationId(storage, msg.ownerAddress);
             assert (allocationId != VCOIN_ALLOCATION_NONE) throw ERROR_INVALID_OP;
             assert (msg.jettonAmount == vcoinAllocationCap(allocationId)) throw ERROR_INVALID_OP;
+            assert (msg.queryId == storage.pendingQueryId) throw ERROR_INVALID_OP;
             assert (
                 vcoinStatus(storage, allocationId) == VCOIN_MINT_PENDING
             ) throw ERROR_INVALID_OP;

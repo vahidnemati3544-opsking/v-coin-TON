@@ -43,30 +43,36 @@ get fun `test founder vesting has no release before its start time`() {
 
 get fun `test founder vesting accrues linearly and fully vests at four years`() {
     val storage = founderVestingConfig();
-    expect(vcoinVestedAmount(storage, TEST_START + VCOIN_FOUNDER_DURATION / 2))
-        .toEqual(VCOIN_FOUNDER_AMOUNT / 2);
-    expect(vcoinVestedAmount(storage, TEST_START + VCOIN_FOUNDER_DURATION))
-        .toEqual(VCOIN_FOUNDER_AMOUNT);
-    expect(vcoinVestedAmount(storage, TEST_START + VCOIN_FOUNDER_DURATION + 1))
-        .toEqual(VCOIN_FOUNDER_AMOUNT);
+    expect(vcoinVestedAmount(storage, TEST_START + VCOIN_FOUNDER_DURATION / 2)).toEqual(
+        VCOIN_FOUNDER_AMOUNT / 2,
+    );
+    expect(vcoinVestedAmount(storage, TEST_START + VCOIN_FOUNDER_DURATION)).toEqual(
+        VCOIN_FOUNDER_AMOUNT,
+    );
+    expect(vcoinVestedAmount(storage, TEST_START + VCOIN_FOUNDER_DURATION + 1)).toEqual(
+        VCOIN_FOUNDER_AMOUNT,
+    );
 }
 
 get fun `test mining reserve vests linearly over twenty four months`() {
     val storage = miningVestingConfig();
-    expect(vcoinVestedAmount(storage, TEST_START + VCOIN_MINING_DURATION / 2))
-        .toEqual(VCOIN_MINING_AMOUNT / 2);
-    expect(vcoinVestedAmount(storage, TEST_START + VCOIN_MINING_DURATION))
-        .toEqual(VCOIN_MINING_AMOUNT);
+    expect(vcoinVestedAmount(storage, TEST_START + VCOIN_MINING_DURATION / 2)).toEqual(
+        VCOIN_MINING_AMOUNT / 2,
+    );
+    expect(vcoinVestedAmount(storage, TEST_START + VCOIN_MINING_DURATION)).toEqual(
+        VCOIN_MINING_AMOUNT,
+    );
 }
-
 
 get fun `test vesting uses integer floor rounding before final completion`() {
     val founder = founderVestingConfig();
     expect(vcoinVestedAmount(founder, TEST_START + 1)).toEqual(15844043);
-    expect(vcoinVestedAmount(founder, TEST_START + VCOIN_FOUNDER_DURATION - 1))
-        .toEqual(1999999984155956);
+    expect(
+        vcoinVestedAmount(founder, TEST_START + VCOIN_FOUNDER_DURATION - 1),
+    ).toEqual(1999999984155956);
 
     val mining = miningVestingConfig();
-    expect(vcoinVestedAmount(mining, TEST_START + VCOIN_MINING_DURATION - 1))
-        .toEqual(4999999920725520);
+    expect(
+        vcoinVestedAmount(mining, TEST_START + VCOIN_MINING_DURATION - 1),
+    ).toEqual(4999999920725520);
 }

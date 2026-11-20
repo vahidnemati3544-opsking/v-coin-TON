@@ -26,6 +26,8 @@ jobs:
           cache: npm
           cache-dependency-path: contracts/jetton/package.json
       - run: npm install
+      - name: Apply non-breaking dependency security fixes
+        run: npm audit fix
       - name: Report dependency audit findings
         shell: bash
         run: |

@@ -27,3 +27,7 @@ struct (0x56434450) VcoinEscrowDepositAccepted {
     jettonAmount: coins
     escrowAddress: address
 }
+
+struct (0x5643524c) ReleaseVestedVcoin {
+    queryId: uint64
+}

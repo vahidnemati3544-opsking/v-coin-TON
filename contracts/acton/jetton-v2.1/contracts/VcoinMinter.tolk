@@ -264,6 +264,12 @@ fun onInternalMessage(in: InMessage) {
 
             val allocationId = vcoinAllocationId(storage, msg.mintRecipient);
             assert (allocationId != VCOIN_ALLOCATION_NONE) throw ERROR_INVALID_OP;
+            // Founder and mining allocations must remain blocked until their
+            // audited vesting escrows are implemented and wired into mint routing.
+            assert (
+                allocationId != VCOIN_ALLOCATION_FOUNDER &&
+                allocationId != VCOIN_ALLOCATION_MINING
+            ) throw ERROR_INVALID_OP;
             val cap = vcoinAllocationCap(allocationId);
             assert (internalTransferMsg.jettonAmount == cap) throw ERROR_INVALID_OP;
             assert (

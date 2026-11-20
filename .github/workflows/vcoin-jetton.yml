@@ -1,4 +1,6 @@
 name: VCOIN TON Jetton
+permissions:
+  contents: write
 on:
   push:
     branches: [main]
@@ -40,6 +42,20 @@ jobs:
       - run: npm test
       - name: Enforce dependency security gate
         run: npm audit --audit-level=high
+      - name: Commit generated lockfile on the pull request branch
+        if: success() && github.event_name == 'pull_request'
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          if git diff --cached --quiet; then
+            echo "package-lock.json is already committed"
+            exit 0
+          fi
+          git commit -m "build(jetton): commit npm lockfile"
+          git push origin "HEAD:${HEAD_REF}"
       - name: Upload dependency lockfile for repository commit
         if: always() && hashFiles('contracts/jetton/package-lock.json') != ''
         uses: actions/upload-artifact@v4

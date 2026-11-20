@@ -47,6 +47,8 @@ struct VcoinVestingEscrowStorage {
     configQueryId: uint64
     deposited: bool
     releasedAmount: coins
+    pendingReleaseAmount: coins
+    pendingReleaseQueryId: uint64
 }
 
 fun VcoinVestingEscrowStorage.save(self) {

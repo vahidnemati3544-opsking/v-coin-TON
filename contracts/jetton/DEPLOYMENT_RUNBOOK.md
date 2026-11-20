@@ -119,7 +119,13 @@ Stop if any of the following is true:
 - Deployment transaction: none.
 - Initial mint transaction: none.
 - Mainnet allocation transfers: none.
-- Test evidence: not yet attached.
-- Independent audit: not yet completed.
+- GitHub Actions run #155: build passed; 13 Sandbox/policy tests passed; dependency audit reported zero vulnerabilities after pinned transitive overrides. Run: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44826842894
+- Test evidence is limited to the current CI Sandbox suite; it is not a full TEP-74/TEP-64 conformance audit or independent smart-contract audit.
+- Dependency versions are constrained by package.json overrides, but a committed package-lock.json is still outstanding for fully reproducible installs.
+- Independent smart-contract audit: pending.
+- Testnet deployment and on-chain verification: pending.
+- TEP-64 metadata URI/content: not finalized; deployment config still has metadata URI unset.
+- Founder four-year vesting/escrow implementation: pending.
+- Recipient wallet-control proofs on the intended network: pending.
 
 This runbook is an execution control document, not evidence that any token has been deployed or transferred.

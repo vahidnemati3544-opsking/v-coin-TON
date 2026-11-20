@@ -187,11 +187,11 @@ get fun `test VCOIN deploys both vesting escrows and confirms founder mint only 
         return;
     }
 
-    val founderEscrow = VcoinVestingEscrow.fromAddress(founderEscrowAddress);
+    val founderEscrow = VcoinVestingEscrow.fromAddress(founderEscrowAddress!);
     val mint = mintAllocation(
         minter,
         admin,
-        founderEscrowAddress,
+        founderEscrowAddress!,
         FOUNDER_AMOUNT,
         78,
         grams("0.05"),

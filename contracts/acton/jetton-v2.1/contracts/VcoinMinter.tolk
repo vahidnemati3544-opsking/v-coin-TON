@@ -5,8 +5,8 @@ import "jetton-utils"
 import "messages"
 import "sharding"
 import "storage"
-import "vcoin-storage"
 import "vcoin-messages"
+import "vcoin-storage"
 
 const VCOIN_MAX_SUPPLY = 10000000000000000
 const VCOIN_FOUNDER_CAP = 2000000000000000
@@ -348,7 +348,9 @@ fun onInternalMessage(in: InMessage) {
 
         ChangeMinterMetadata => {
             var storage = lazy VcoinMinterStorage.load();
-            assert (storage.adminAddress != null && in.senderAddress == storage.adminAddress!) throw ERROR_NOT_OWNER;
+            assert (
+                storage.adminAddress != null && in.senderAddress == storage.adminAddress!
+            ) throw ERROR_NOT_OWNER;
             assert (!storage.finalized) throw ERROR_NOT_OWNER;
             storage.metadata = msg.newMetadata;
             storage.save();
@@ -356,7 +358,9 @@ fun onInternalMessage(in: InMessage) {
 
         DropMinterAdmin => {
             var storage = lazy VcoinMinterStorage.load();
-            assert (storage.adminAddress != null && in.senderAddress == storage.adminAddress!) throw ERROR_NOT_OWNER;
+            assert (
+                storage.adminAddress != null && in.senderAddress == storage.adminAddress!
+            ) throw ERROR_NOT_OWNER;
             assert (!storage.finalized) throw ERROR_NOT_OWNER;
             assert (vcoinAllAllocationsConfirmed(storage)) throw ERROR_INVALID_OP;
             storage.finalized = true;

@@ -164,35 +164,14 @@ fun setVcoinConfirmed(mutate storage: VcoinMinterStorage, allocationId: int) {
 fun setVcoinRolledBack(mutate storage: VcoinMinterStorage, allocationId: int, amount: coins) {
     if (allocationId == VCOIN_ALLOCATION_FOUNDER) {
         storage.founderStatus = VCOIN_MINT_NOT_ISSUED;
-        storage.founderIssued -= amount;
     } else if (allocationId == VCOIN_ALLOCATION_MINING) {
         storage.miningStatus = VCOIN_MINT_NOT_ISSUED;
-        storage.miningIssued -= amount;
     } else if (allocationId == VCOIN_ALLOCATION_TREASURY) {
         storage.treasuryStatus = VCOIN_MINT_NOT_ISSUED;
-        storage.treasuryIssued -= amount;
     } else if (allocationId == VCOIN_ALLOCATION_LIQUIDITY) {
         storage.liquidityStatus = VCOIN_MINT_NOT_ISSUED;
-        storage.liquidityIssued -= amount;
     } else if (allocationId == VCOIN_ALLOCATION_ECOSYSTEM) {
         storage.ecosystemStatus = VCOIN_MINT_NOT_ISSUED;
-        storage.ecosystemIssued -= amount;
-    } else {
-        throw ERROR_INVALID_OP;
-    }
-}
-
-fun addVcoinAllocation(mutate storage: VcoinMinterStorage, allocationId: int, amount: coins) {
-    if (allocationId == VCOIN_ALLOCATION_FOUNDER) {
-        storage.founderIssued += amount;
-    } else if (allocationId == VCOIN_ALLOCATION_MINING) {
-        storage.miningIssued += amount;
-    } else if (allocationId == VCOIN_ALLOCATION_TREASURY) {
-        storage.treasuryIssued += amount;
-    } else if (allocationId == VCOIN_ALLOCATION_LIQUIDITY) {
-        storage.liquidityIssued += amount;
-    } else if (allocationId == VCOIN_ALLOCATION_ECOSYSTEM) {
-        storage.ecosystemIssued += amount;
     } else {
         throw ERROR_INVALID_OP;
     }
@@ -204,12 +183,7 @@ fun vcoinAllAllocationsConfirmed(storage: VcoinMinterStorage): bool {
         storage.treasuryStatus == VCOIN_MINT_CONFIRMED &&
         storage.liquidityStatus == VCOIN_MINT_CONFIRMED &&
         storage.ecosystemStatus == VCOIN_MINT_CONFIRMED &&
-        storage.founderIssued == VCOIN_FOUNDER_CAP &&
-        storage.miningIssued == VCOIN_MINING_CAP &&
-        storage.treasuryIssued == VCOIN_TREASURY_CAP &&
-        storage.liquidityIssued == VCOIN_LIQUIDITY_CAP &&
-        storage.ecosystemIssued == VCOIN_ECOSYSTEM_CAP &&
-        storage.lifetimeIssued == VCOIN_MAX_SUPPLY;
+                                                storage.lifetimeIssued == VCOIN_MAX_SUPPLY;
 }
 
 fun onBouncedMessage(in: InMessageBounced) {
@@ -222,27 +196,27 @@ fun onBouncedMessage(in: InMessageBounced) {
 
     if (storage.founderStatus == VCOIN_MINT_PENDING &&
         storage.founderQueryId == msg.queryId &&
-        storage.founderIssued == msg.jettonAmount) {
+        msg.jettonAmount == VCOIN_FOUNDER_CAP) {
         matchedAllocation = VCOIN_ALLOCATION_FOUNDER;
         matchedOwner = VCOIN_FOUNDER_OWNER;
     } else if (storage.miningStatus == VCOIN_MINT_PENDING &&
         storage.miningQueryId == msg.queryId &&
-        storage.miningIssued == msg.jettonAmount) {
+        msg.jettonAmount == VCOIN_MINING_CAP) {
         matchedAllocation = VCOIN_ALLOCATION_MINING;
         matchedOwner = VCOIN_MINING_OWNER;
     } else if (storage.treasuryStatus == VCOIN_MINT_PENDING &&
         storage.treasuryQueryId == msg.queryId &&
-        storage.treasuryIssued == msg.jettonAmount) {
+        msg.jettonAmount == VCOIN_TREASURY_CAP) {
         matchedAllocation = VCOIN_ALLOCATION_TREASURY;
         matchedOwner = storage.treasuryOwner;
     } else if (storage.liquidityStatus == VCOIN_MINT_PENDING &&
         storage.liquidityQueryId == msg.queryId &&
-        storage.liquidityIssued == msg.jettonAmount) {
+        msg.jettonAmount == VCOIN_LIQUIDITY_CAP) {
         matchedAllocation = VCOIN_ALLOCATION_LIQUIDITY;
         matchedOwner = VCOIN_LIQUIDITY_OWNER;
     } else if (storage.ecosystemStatus == VCOIN_MINT_PENDING &&
         storage.ecosystemQueryId == msg.queryId &&
-        storage.ecosystemIssued == msg.jettonAmount) {
+        msg.jettonAmount == VCOIN_ECOSYSTEM_CAP) {
         matchedAllocation = VCOIN_ALLOCATION_ECOSYSTEM;
         matchedOwner = VCOIN_ECOSYSTEM_OWNER;
     }
@@ -294,7 +268,6 @@ fun onInternalMessage(in: InMessage) {
             checkAmountIsEnoughToTransfer(msg.tonAmount, internalTransferMsg.forwardTonAmount, in.originalForwardFee);
 
             setVcoinPending(mutate storage, allocationId, msg.queryId);
-            addVcoinAllocation(mutate storage, allocationId, internalTransferMsg.jettonAmount);
             storage.totalSupply += internalTransferMsg.jettonAmount;
             storage.save();
 

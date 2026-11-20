@@ -6,6 +6,7 @@ import "messages"
 import "sharding"
 import "storage"
 import "vcoin-storage"
+import "vcoin-messages"
 
 const VCOIN_MAX_SUPPLY = 10000000000000000
 const VCOIN_FOUNDER_CAP = 2000000000000000
@@ -30,12 +31,6 @@ const VCOIN_ALLOCATION_ECOSYSTEM = 5
 const VCOIN_MINT_NOT_ISSUED = 0
 const VCOIN_MINT_PENDING = 1
 const VCOIN_MINT_CONFIRMED = 2
-
-struct (0x56434d41) VcoinMintAccepted {
-    queryId: uint64
-    jettonAmount: coins
-    ownerAddress: address
-}
 
 contract VcoinMinter {
     author: "V COIN"
@@ -192,10 +187,6 @@ fun onBouncedMessage(in: InMessageBounced) {
     val msg = lazy InternalTransferStep.fromSlice(in.bouncedBody);
     var storage = lazy VcoinMinterStorage.load();
 
-    val allocationId = vcoinAllocationId(
-        // The owner is resolved by matching the pending query ID below.
-        VCOIN_FOUNDER_OWNER,
-    );
     var matchedAllocation = VCOIN_ALLOCATION_NONE;
     var matchedOwner: address? = null;
 
@@ -242,6 +233,10 @@ fun onBouncedMessage(in: InMessageBounced) {
     storage.totalSupply -= msg.jettonAmount;
     storage.lifetimeIssued -= msg.jettonAmount;
     setVcoinRolledBack(mutate storage, matchedAllocation, msg.jettonAmount);
+    val pendingLookup = storage.pendingMints.get(msg.queryId);
+    if (!pendingLookup.isFound) return;
+    val pending = VcoinPendingMint.fromCell(pendingLookup.loadValue());
+    if (pending.allocationId != matchedAllocation || pending.amount != msg.jettonAmount || pending.recipient != matchedOwner!) return;
     storage.pendingMints.delete(msg.queryId);
     storage.save();
 }
@@ -271,7 +266,7 @@ fun onInternalMessage(in: InMessage) {
             assert (vcoinStatus(storage, allocationId) == VCOIN_MINT_NOT_ISSUED) throw ERROR_INVALID_OP;
             assert (vcoinQueryId(storage, allocationId) != msg.queryId) throw ERROR_INVALID_OP;
             assert (storage.lifetimeIssued + internalTransferMsg.jettonAmount <= VCOIN_MAX_SUPPLY) throw ERROR_INVALID_OP;
-            assert (storage.lifetimeIssued + internalTransferMsg.jettonAmount <= VCOIN_MAX_SUPPLY) throw ERROR_INVALID_OP;
+            assert (!storage.pendingMints.exists(msg.queryId)) throw ERROR_INVALID_OP;
 
             checkAmountIsEnoughToTransfer(msg.tonAmount, internalTransferMsg.forwardTonAmount, in.originalForwardFee);
 
@@ -308,6 +303,12 @@ fun onInternalMessage(in: InMessage) {
             var storage = lazy VcoinMinterStorage.load();
             val allocationId = vcoinAllocationId(msg.ownerAddress);
             assert (allocationId != VCOIN_ALLOCATION_NONE) throw ERROR_INVALID_OP;
+            val pendingLookup = storage.pendingMints.get(msg.queryId);
+            assert (pendingLookup.isFound) throw ERROR_INVALID_OP;
+            val pending = VcoinPendingMint.fromCell(pendingLookup.loadValue());
+            assert (pending.allocationId == allocationId) throw ERROR_INVALID_OP;
+            assert (pending.recipient == msg.ownerAddress) throw ERROR_INVALID_OP;
+            assert (pending.amount == msg.jettonAmount) throw ERROR_INVALID_OP;
             assert (msg.jettonAmount == vcoinAllocationCap(allocationId)) throw ERROR_INVALID_OP;
             assert (vcoinStatus(storage, allocationId) == VCOIN_MINT_PENDING) throw ERROR_INVALID_OP;
             assert (vcoinQueryId(storage, allocationId) == msg.queryId) throw ERROR_INVALID_OP;

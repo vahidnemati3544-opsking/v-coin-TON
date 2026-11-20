@@ -25,7 +25,6 @@ fun miningVestingConfig(): VcoinVestingEscrowStorage {
     return {
         vestingKind: VCOIN_VESTING_MINING,
         minterAddress: minter.address,
-        controllerAddress: minter.address,
         startTime: TEST_START,
         configQueryId: 2,
         deposited: false,

@@ -2,8 +2,8 @@ import "@gen/VcoinJettonWallet.code"
 import "errors"
 import "jetton-utils"
 import "messages"
-import "vcoin-storage"
 import "vcoin-messages"
+import "vcoin-storage"
 
 const VCOIN_FOUNDER_BENEFICIARY = address("UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy")
 const VCOIN_MINING_BENEFICIARY = address("UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0")
@@ -20,7 +20,12 @@ struct (0x5643524c) ReleaseVestedVcoin {
     queryId: uint64
 }
 
-type AllowedVestingEscrowMessage = TransferNotificationForRecipient | ReleaseVestedVcoin | ReturnExcessesBack | VcoinTransferFailed | TopUpTons
+type AllowedVestingEscrowMessage =
+    | TransferNotificationForRecipient
+    | ReleaseVestedVcoin
+    | ReturnExcessesBack
+    | VcoinTransferFailed
+    | TopUpTons
 
 contract VcoinVestingEscrow {
     author: "V COIN"
@@ -222,7 +227,9 @@ fun onInternalMessage(in: InMessage) {
                     escrowAddress: contract.getAddress(),
                 },
             });
-            ready.send(SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE | SEND_MODE_BOUNCE_ON_ACTION_FAIL);
+            ready.send(
+                SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE | SEND_MODE_BOUNCE_ON_ACTION_FAIL,
+            );
         }
 
         else => throw 0xFFFF,
@@ -232,7 +239,9 @@ fun onInternalMessage(in: InMessage) {
 get fun get_vcoin_vesting_state(): tuple {
     val storage = lazy VcoinVestingEscrowStorage.fromCell(contract.getData());
     val vested = vcoinVestedAmount(storage, blockchain.now());
-    val claimable: coins = vested > storage.releasedAmount ? vested - storage.releasedAmount : 0 as coins;
+    val claimable: coins = vested > storage.releasedAmount
+        ? vested - storage.releasedAmount
+        : 0 as coins;
     return [
         storage.vestingKind,
         storage.minterAddress,
@@ -260,4 +269,3 @@ get fun get_vcoin_vesting_released_amount(): coins {
     val storage = lazy VcoinVestingEscrowStorage.fromCell(contract.getData());
     return storage.releasedAmount;
 }
-

@@ -14,6 +14,9 @@ struct VcoinMinterStorage {
     treasuryOwner: address
     founderEscrowOwner: address?
     miningEscrowOwner: address?
+    founderEscrowReady: bool
+    miningEscrowReady: bool
+    escrowConfigQueryId: uint64
     lifetimeIssued: coins
     founderStatus: uint8
     miningStatus: uint8

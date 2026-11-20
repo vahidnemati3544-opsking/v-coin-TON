@@ -12,11 +12,7 @@ struct VcoinMinterStorage {
     adminAddress: address?
     metadata: cell
     treasuryOwner: address
-    founderEscrowOwner: address?
-    miningEscrowOwner: address?
-    founderEscrowReady: bool
-    miningEscrowReady: bool
-    escrowConfigQueryId: uint64
+    escrowState: cell
     lifetimeIssued: coins
     founderStatus: uint8
     miningStatus: uint8
@@ -48,4 +44,12 @@ struct VcoinVestingEscrowStorage {
 }
 fun VcoinVestingEscrowStorage.save(self) {
     contract.setData(self.toCell());
+}
+
+struct VcoinMinterEscrowState {
+    founderEscrowOwner: address?
+    miningEscrowOwner: address?
+    founderEscrowReady: bool
+    miningEscrowReady: bool
+    escrowConfigQueryId: uint64
 }

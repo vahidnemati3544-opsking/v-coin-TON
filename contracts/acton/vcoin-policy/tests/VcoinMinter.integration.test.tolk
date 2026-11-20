@@ -4,6 +4,8 @@ import "@acton/testing/expect"
 import "../../jetton-v2.1/contracts/messages"
 import "../../jetton-v2.1/contracts/storage"
 import "../../jetton-v2.1/contracts/vcoin-storage"
+import "../../jetton-v2.1/contracts/vcoin-messages"
+import "../../jetton-v2.1/wrappers/VcoinVestingEscrow.gen"
 import "../../jetton-v2.1/wrappers/VcoinJettonWallet.gen"
 import "../../jetton-v2.1/wrappers/VcoinMinter.gen"
 
@@ -28,7 +30,7 @@ fun testMetadata(): cell {
     return metadata.toCell();
 }
 
-fun setupVcoinMinter(): (VcoinMinter, Treasury, Treasury, Treasury) {
+fun setupVcoinMinter(configureEscrows: bool = true): (VcoinMinter, Treasury, Treasury, Treasury) {
     val admin = testing.treasury("vcoin-admin");
     val outsider = testing.treasury("vcoin-outsider");
     val treasury = testing.treasury("vcoin-treasury");
@@ -40,11 +42,11 @@ fun setupVcoinMinter(): (VcoinMinter, Treasury, Treasury, Treasury) {
         metadata: testMetadata(),
         treasuryOwner: treasury.address,
         escrowState: VcoinMinterEscrowState {
-            founderEscrowOwner: founderEscrow.address,
-            miningEscrowOwner: miningEscrow.address,
-            founderEscrowReady: true,
-            miningEscrowReady: true,
-            escrowConfigQueryId: 1,
+            founderEscrowOwner: configureEscrows ? founderEscrow.address : null,
+            miningEscrowOwner: configureEscrows ? miningEscrow.address : null,
+            founderEscrowReady: configureEscrows,
+            miningEscrowReady: configureEscrows,
+            escrowConfigQueryId: configureEscrows ? 1 : 0,
         }.toCell(),
         lifetimeIssued: 0,
         founderStatus: 0,
@@ -67,6 +69,7 @@ fun mintAllocation(
     recipient: address,
     amount: coins,
     queryId: uint64,
+    forwardTonAmount: coins = 0,
 ): SendResultList {
     val forwardPayload = beginCell().storeUint(0, 1).toSlice();
     return minter.sendMintNewJettons(
@@ -79,7 +82,7 @@ fun mintAllocation(
             jettonAmount: amount,
             transferInitiator: null,
             sendExcessesTo: null,
-            forwardTonAmount: 0,
+            forwardTonAmount,
             forwardPayload,
         },
         { value: grams("2"), bounce: true },
@@ -160,4 +163,43 @@ get fun `test VCOIN minter blocks founder and mining and cannot finalize incompl
         finalize,
     ).toHaveFailedTx<DropMinterAdmin>({ from: admin.address, to: minter.address, exitCode: 72 });
     expect(minter.getJettonData().mintable).toEqual(true);
+}
+
+get fun `test VCOIN deploys both vesting escrows and confirms founder mint only after deposit`() {
+    testing.setNow(1000);
+    val (minter, admin, _, _) = setupVcoinMinter(false);
+
+    val configure = minter.sendConfigureVcoinEscrows(
+        admin.address,
+        77,
+        1000,
+        { value: grams("1.5"), bounce: true },
+    );
+    expect(configure).toHaveSuccessfulTx<ConfigureVcoinEscrows>({
+        from: admin.address,
+        to: minter.address,
+    });
+    expect(minter.getVcoinEscrowsReady()).toEqual(true);
+
+    val founderEscrowAddress = minter.getVcoinFounderEscrowAddress();
+    expect(founderEscrowAddress).toBeNotNull();
+    if (founderEscrowAddress == null) {
+        return;
+    }
+
+    val founderEscrow = VcoinVestingEscrow.fromAddress(founderEscrowAddress);
+    val mint = mintAllocation(
+        minter,
+        admin,
+        founderEscrowAddress,
+        FOUNDER_AMOUNT,
+        78,
+        grams("0.05"),
+    );
+    expect(mint).toHaveSuccessfulTx<MintNewJettons>({
+        from: admin.address,
+        to: minter.address,
+    });
+    expect(founderEscrow.getVcoinVestingDeposited()).toEqual(true);
+    expect(minter.getVcoinFounderAllocationStatus()).toEqual(2);
 }

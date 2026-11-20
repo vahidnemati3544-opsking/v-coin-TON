@@ -51,7 +51,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       owner.getSender(),
       { value: toNano("0.2") },
       {
-        $$type: "VCoinMint",
+        $["$type"]: "VCoinMint",
         receiver: owner.address,
         amount: MAX_SUPPLY,
       },
@@ -88,7 +88,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       attacker.getSender(),
       { value: toNano("0.2") },
       {
-        $$type: "VCoinMint",
+        $["$type"]: "VCoinMint",
         receiver: owner.address,
         amount: MAX_SUPPLY,
       },
@@ -110,7 +110,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       owner.getSender(),
       { value: toNano("0.2") },
       {
-        $$type: "VCoinMint",
+        $["$type"]: "VCoinMint",
         receiver: owner.address,
         amount: MAX_SUPPLY - 1n,
       },
@@ -132,7 +132,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       owner.getSender(),
       { value: toNano("0.2") },
       {
-        $$type: "VCoinMint",
+        $["$type"]: "VCoinMint",
         receiver: attacker.address,
         amount: MAX_SUPPLY,
       },
@@ -156,7 +156,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       owner.getSender(),
       { value: toNano("0.2") },
       {
-        $$type: "VCoinMint",
+        $["$type"]: "VCoinMint",
         receiver: owner.address,
         amount: MAX_SUPPLY,
       },
@@ -183,7 +183,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       owner.getSender(),
       { value: toNano("0.2") },
       {
-        $$type: "TokenTransfer",
+        $["$type"]: "TokenTransfer",
         query_id: 1n,
         amount: 25n * ONE_TOKEN,
         destination: recipient.address,
@@ -294,7 +294,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       attacker.getSender(),
       { value: toNano("0.2") },
       {
-        $$type: "TokenTransfer",
+        $["$type"]: "TokenTransfer",
         query_id: 2n,
         amount: ONE_TOKEN,
         destination: recipient.address,
@@ -321,7 +321,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       owner.getSender(),
       { value: toNano("0.2") },
       {
-        $type: "TokenTransfer",
+        ["$type"]: "TokenTransfer",
         query_id: 40n,
         amount: MAX_SUPPLY + 1n,
         destination: recipient.address,
@@ -347,7 +347,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       owner.getSender(),
       { value: toNano("0.001") },
       {
-        $type: "TokenTransfer",
+        ["$type"]: "TokenTransfer",
         query_id: 41n,
         amount: ONE_TOKEN,
         destination: recipient.address,
@@ -372,7 +372,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       attacker.getSender(),
       { value: toNano("0.1") },
       {
-        $type: "TokenTransferInternal",
+        ["$type"]: "TokenTransferInternal",
         query_id: 42n,
         amount: ONE_TOKEN,
         from: owner.address,
@@ -395,7 +395,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       attacker.getSender(),
       { value: toNano("0.1") },
       {
-        $type: "TokenBurnNotification",
+        ["$type"]: "TokenBurnNotification",
         query_id: 43n,
         amount: ONE_TOKEN,
         sender: owner.address,
@@ -419,7 +419,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       owner.getSender(),
       { value: toNano("0.2") },
       {
-        $$type: "TokenBurn",
+        $["$type"]: "TokenBurn",
         query_id: 3n,
         amount: burnAmount,
         response_destination: owner.address,

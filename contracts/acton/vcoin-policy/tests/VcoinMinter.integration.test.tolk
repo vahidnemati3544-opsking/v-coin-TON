@@ -1,11 +1,11 @@
 import "@acton/emulation/network"
 import "@acton/emulation/testing"
 import "@acton/testing/expect"
-import "../jetton-v2.1/contracts/messages"
-import "../jetton-v2.1/contracts/storage"
-import "../jetton-v2.1/contracts/vcoin-storage"
-import "../jetton-v2.1/wrappers/VcoinMinter.gen"
-import "../jetton-v2.1/wrappers/VcoinJettonWallet.gen"
+import "../../jetton-v2.1/contracts/messages"
+import "../../jetton-v2.1/contracts/storage"
+import "../../jetton-v2.1/contracts/vcoin-storage"
+import "../../jetton-v2.1/wrappers/VcoinMinter.gen"
+import "../../jetton-v2.1/wrappers/VcoinJettonWallet.gen"
 
 const FOUNDER = address("UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy")
 const MINING = address("UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0")

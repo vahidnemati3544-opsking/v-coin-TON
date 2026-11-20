@@ -18,6 +18,13 @@
     "liquidity_market": "1000000000000000",
     "ecosystem_marketing": "1000000000000000"
   },
+  "allocation_wallets": {
+    "founder": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
+    "treasury": "UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ",
+    "liquidity_market": "UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn",
+    "ecosystem_marketing": "UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE",
+    "mining_reserve": "UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0"
+  },
   "allocation_destinations": {
     "founder_vesting_contract": null,
     "mining_reserve_wallet": null,
@@ -37,5 +44,5 @@
   },
   "deployment_authorized": false,
   "mainnet_authorized": false,
-  "notes": "Template only. Null values require owner approval and verification. Never commit secrets, seed phrases or private keys."
+  "notes": "Template only. Allocation owner addresses are recorded separately from derived Jetton wallet addresses and vesting contract addresses. Null contract/deployment fields require owner approval and verification. Never commit secrets, seed phrases or private keys. No deployment or transfer is authorized by this template."
 }

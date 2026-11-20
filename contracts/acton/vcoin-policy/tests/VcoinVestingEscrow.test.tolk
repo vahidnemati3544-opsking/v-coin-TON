@@ -1,6 +1,7 @@
 import "@acton/emulation/testing"
 import "@acton/testing/expect"
 import "../../jetton-v2.1/contracts/VcoinVestingEscrow"
+import "../../jetton-v2.1/contracts/vcoin-storage"
 
 const TEST_START = 1700000000
 

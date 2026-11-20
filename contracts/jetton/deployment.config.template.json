@@ -11,6 +11,15 @@
   "target_network": "testnet",
   "master_address": null,
   "deployment_transaction": null,
+  "operational_fee_wallet": {
+    "purpose": "TON network fees and authorized operational transaction costs only",
+    "wallet_type": "Tonkeeper",
+    "owner_provided_address": "UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB",
+    "is_vcoin_allocation_wallet": false,
+    "owner_deposit_instruction": "Owner deposits TON intended for network fees into this wallet only.",
+    "network_verification_required_before_funding": true,
+    "address_control_verification_status": "pending"
+  },
   "allocation_base_units": {
     "founder": "2000000000000000",
     "mining_reserve": "5000000000000000",
@@ -44,5 +53,5 @@
   },
   "deployment_authorized": false,
   "mainnet_authorized": false,
-  "notes": "Template only. Allocation owner addresses are recorded separately from derived Jetton wallet addresses and vesting contract addresses. Null contract/deployment fields require owner approval and verification. Never commit secrets, seed phrases or private keys. No deployment or transfer is authorized by this template."
+  "notes": "Template only. Allocation owner addresses are recorded separately from derived Jetton wallet addresses and vesting contract addresses. The operational fee wallet is a separate TON-only funding address and is not part of VCOIN allocation. Verify network and wallet control before funding. Null contract/deployment fields require owner approval and verification. Never commit secrets, seed phrases or private keys. No deployment or transfer is authorized by this template."
 }

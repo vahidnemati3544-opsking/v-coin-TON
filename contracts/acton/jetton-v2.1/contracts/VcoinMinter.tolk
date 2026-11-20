@@ -399,11 +399,6 @@ get fun get_vcoin_issuance_state(): tuple {
     return [
         storage.totalSupply,
         storage.lifetimeIssued,
-        storage.founderIssued,
-        storage.miningIssued,
-        storage.treasuryIssued,
-        storage.liquidityIssued,
-        storage.ecosystemIssued,
         storage.founderStatus,
         storage.miningStatus,
         storage.treasuryStatus,

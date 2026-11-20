@@ -41,7 +41,19 @@ The rate is exactly 1% per 24 hours at every level 1–400. Use integer base uni
 
 Development, Testnet and Mainnet configurations must be separate. Testnet deployment and wallet-based extraction require completed local tests, verified contract identity, wallet proof, chain reader, payout reconciliation and owner approval. Mainnet deployment, initial issuance and real-value transfers require separate explicit approval and independent security review.
 
-## 7. Current evidence-based status
+## 7. Operational TON network-fee wallet
+
+The project owner has approved the separate Tonkeeper address below as the sole designated wallet for depositing TON intended for network fees and authorized operational transaction costs:
+
+`UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB`
+
+The owner has explicitly instructed that TON deposits for network fees be made to this wallet. It is separate from the five VCOIN allocation wallets and is not a VCOIN allocation destination. Do not instruct the owner to distribute routine fee deposits across the five allocation wallets.
+
+Technical limitation: Jetton transfers and contract calls have transaction-specific TON requirements. Depending on the transaction flow, the signing/initiating wallet may itself need TON. The architecture must establish and test a supported fee-funding or transaction-sponsorship flow. If a specific signing wallet requires a TON top-up, record the exact need and obtain owner approval before any transfer from the designated fee wallet. Never assume the separate wallet can sponsor every transaction type.
+
+Before the owner deposits TON, verify the address in Tonkeeper and confirm the intended network. Never request or store recovery phrases or private keys.
+
+## 8. Current evidence-based status
 
 - PostgreSQL schema, internal reserve/ledger code and Telegram HMAC authentication code exist in the repository.
 - The current mining engine still uses internal PostgreSQL balances; it is not compliant with the approved wallet-balance policy.
@@ -50,6 +62,7 @@ Development, Testnet and Mainnet configurations must be separate. Testnet deploy
 - PostgreSQL execution, non-skipped integration tests, CI success, Telegram end-to-end login, TON wallet proof, Testnet deployment and on-chain payout have not been demonstrated by the evidence currently available.
 
 The project must not be described as performing real on-chain mining or as extraction-ready until all release gates pass.
-## 8. Founder authority and allocation controls
 
-Founder authority over distribution approvals, custody operations and transaction signing is specified in `docs/FOUNDER_CONTROL_AND_ALLOCATION.md`. The founder's proposed public wallet address is not considered verified until a TON Connect proof/signature challenge succeeds. Founder authority does not override TON consensus or reverse confirmed transfers from independently controlled recipient wallets. Initial supply remains fixed and additional minting is prohibited.
+## 9. Founder authority and allocation controls
+
+Founder authority over distribution approvals, custody operations and transaction signing is specified in `docs/FOUNDER_CONTROL_AND_ALLOCATION.md`. The founder allocation destination and operational fee wallet are distinct addresses. Founder authority does not override TON consensus or reverse confirmed transfers from independently controlled recipient wallets. Initial supply remains fixed and additional minting is prohibited.

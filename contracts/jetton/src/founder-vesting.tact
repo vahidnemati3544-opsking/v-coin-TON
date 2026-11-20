@@ -46,7 +46,7 @@ contract VCoinFounderVesting {
     // The vesting clock starts only after the exact allocation has arrived
     // through the authentic Jetton wallet notification.
     receive(msg: TokenNotification) {
-        require(sender() == self.vestingWalletAddress(), "Untrusted Jetton wallet");
+        require(context().sender == self.vestingWalletAddress(), "Untrusted Jetton wallet");
         require(msg.from == self.owner, "Only founder may fund vesting");
         require(msg.amount == FOUNDER_VESTING_TOTAL, "Incorrect founder allocation");
         require(!self.funded, "Vesting already funded");

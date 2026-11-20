@@ -6,6 +6,11 @@ struct (0x56434d41) VcoinMintAccepted {
 
 struct (0x56434553) ConfigureVcoinEscrows {
     queryId: uint64
-    founderEscrowOwner: address
-    miningEscrowOwner: address
+    startTime: uint32
+}
+
+struct (0x56435244) VcoinVestingEscrowReady {
+    queryId: uint64
+    vestingKind: uint8
+    escrowAddress: address
 }

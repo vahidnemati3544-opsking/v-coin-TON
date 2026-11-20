@@ -62,6 +62,18 @@ get fun `test mining reserve vests linearly over twenty four months`() {
     expect(vcoinVestedAmount(storage, TEST_START + VCOIN_MINING_DURATION)).toEqual(
         VCOIN_MINING_AMOUNT,
     );
+    expect(
+        vcoinVestedAmount(storage, TEST_START + VCOIN_MINING_DURATION + 1),
+    ).toEqual(VCOIN_MINING_AMOUNT);
+}
+
+get fun `test mining vesting integer rounding at the first and final incomplete seconds`() {
+    val storage = miningVestingConfig();
+    expect(vcoinVestedAmount(storage, TEST_START)).toEqual(0);
+    expect(vcoinVestedAmount(storage, TEST_START + 1)).toEqual(79274479);
+    expect(
+        vcoinVestedAmount(storage, TEST_START + VCOIN_MINING_DURATION - 1),
+    ).toEqual(4999999920725520);
 }
 
 get fun `test vesting uses integer floor rounding before final completion`() {

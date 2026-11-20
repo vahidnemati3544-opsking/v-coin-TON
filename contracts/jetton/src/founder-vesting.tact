@@ -92,6 +92,10 @@ contract VCoinFounderVesting {
         self.released = self.released - msg.amount;
     }
 
+    get fun get_vesting_wallet_address(): Address {
+        return self.vestingWalletAddress();
+    }
+
     get fun get_vesting_data(): FounderVestingData {
         return FounderVestingData{
             owner: self.owner,

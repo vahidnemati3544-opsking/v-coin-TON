@@ -5,7 +5,7 @@ import "../jetton-v2.1/contracts/messages"
 import "../jetton-v2.1/contracts/storage"
 import "../jetton-v2.1/contracts/vcoin-storage"
 import "../jetton-v2.1/wrappers/VcoinMinter.gen"
-import "../jetton-v2.1/wrappers/JettonWallet.gen"
+import "../jetton-v2.1/wrappers/VcoinJettonWallet.gen"
 
 const FOUNDER = address("UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy")
 const MINING = address("UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0")
@@ -93,7 +93,7 @@ get fun `test VCOIN minter mints exact founder allocation and rejects a second m
     val (minter, admin, _) = setupVcoinMinter();
     val first = mintAllocation(minter, admin, FOUNDER, FOUNDER_AMOUNT, 11);
     expect(first).toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });
-    val founderWallet = JettonWallet { address: minter.getWalletAddress(FOUNDER) };
+    val founderWallet = VcoinJettonWallet { address: minter.getWalletAddress(FOUNDER) };
     expect(founderWallet.getJettonBalance()).toEqual(FOUNDER_AMOUNT);
     expect(minter.getJettonData().totalSupply).toEqual(FOUNDER_AMOUNT);
 

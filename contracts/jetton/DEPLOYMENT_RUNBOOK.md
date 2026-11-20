@@ -81,6 +81,10 @@ Required custody behavior:
 - Generate and inspect current VCOIN minter and vesting escrow wrappers from the pinned Acton toolchain.
 
 ### Gate B — Testnet
+- The guarded first-stage deployment script is `contracts/acton/scripts/deploy-vcoin-minter.tolk`. It constructs the VCOIN minter with zero initial supply, the recorded allocation wallets, six-decimal metadata, and the Founder wallet as immutable initial admin. In broadcast mode it stops unless the connected wallet equals the recorded Founder address.
+- First run locally from `contracts/acton`: `acton script scripts/deploy-vcoin-minter.tolk`. This must complete without broadcasting.
+- After the Founder has reviewed the exact script revision and approved Testnet gas spending, connect the Founder Tonkeeper wallet and run: `acton script scripts/deploy-vcoin-minter.tolk --net testnet --tonconnect`. This sends a real Testnet deployment transaction and spends Testnet TON; it is not a Mainnet deployment.
+- Record the confirmed master address and transaction hash from the script output, then verify the deployed getter state and code on a Testnet explorer.
 - Verify founder wallet proof on Testnet.
 - Deploy master and verify get_jetton_data.
 - Verify wallet address derivation and wallet code.
@@ -145,7 +149,7 @@ Stop if any of the following is true:
 - Initial mint transaction: none.
 - Mainnet allocation transfers: none.
 - Draft escrow implementation: present in PR #4 security branch; deterministic dual escrow deployment and founder/mining deposit acknowledgement covered by emulator tests. The guarded minter deployment script has passed local emulation. Dedicated end-to-end successful-release, replay, and bounce/retry tests, independent audit, and Testnet verification remain pending.
-- Latest verified Acton CI: 86 tests passed in 9 files; build, wrapper generation, local deployment-script exercise, static checks, and formatting passed.
+- Latest verified Acton CI: 86 tests passed in 9 files; build, wrapper generation, local deployment-script exercise, static checks, and formatting passed. The first-stage Testnet deployment script is ready for an owner-approved TON Connect run; no Testnet broadcast has been made.
 - Independent audit: not yet completed.
 
 This runbook is an execution control document, not evidence that any token has been deployed or transferred.

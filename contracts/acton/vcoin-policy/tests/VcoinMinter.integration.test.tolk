@@ -160,6 +160,104 @@ get fun `test VCOIN minter blocks founder and mining and cannot finalize incompl
     expect(minter.getJettonData().mintable).toEqual(true);
 }
 
+get fun `test founder vesting release success failure rollback and retry`() {
+    testing.setNow(1000);
+    val (minter, admin, _, _) = setupVcoinMinter(false);
+
+    val configure = minter.sendConfigureVcoinEscrows(
+        admin.address,
+        77,
+        1000,
+        { value: grams("1.5"), bounce: true },
+    );
+    expect(configure).toHaveSuccessfulTx<ConfigureVcoinEscrows>({
+        from: admin.address,
+        to: minter.address,
+    });
+
+    val founderEscrowAddress = minter.getVcoinFounderEscrowAddress();
+    if (founderEscrowAddress == null) {
+        return;
+    }
+    val founderEscrow = VcoinVestingEscrow.fromAddress(founderEscrowAddress!);
+    val founderMint = mintAllocation(
+        minter,
+        admin,
+        founderEscrowAddress!,
+        FOUNDER_AMOUNT,
+        78,
+        grams("0.05"),
+    );
+    expect(founderMint).toHaveSuccessfulTx<MintNewJettons>({
+        from: admin.address,
+        to: minter.address,
+    });
+    expect(founderEscrow.getVcoinVestingDeposited()).toEqual(true);
+
+    val beneficiaryWallet = minter.getWalletAddress(FOUNDER);
+    val escrowJettonWallet = minter.getWalletAddress(founderEscrowAddress!);
+
+    testing.setNow(1000 + 126230400 / 2);
+    val firstRelease = createMessage({
+        bounce: true,
+        value: grams("0.6"),
+        dest: founderEscrowAddress!,
+        body: ReleaseVestedVcoin { queryId: 80 },
+    });
+    testing.processSingleTraceStep(FOUNDER, firstRelease);
+    expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(0);
+
+    val firstSuccessAck = createMessage({
+        bounce: false,
+        value: grams("0.1"),
+        dest: founderEscrowAddress!,
+        body: ReturnExcessesBack { queryId: 80 },
+    });
+    testing.processSingleTraceStep(beneficiaryWallet, firstSuccessAck);
+    expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(FOUNDER_AMOUNT / 2);
+
+    testing.setNow(1000 + 126230400 * 3 / 4);
+    val secondRelease = createMessage({
+        bounce: true,
+        value: grams("0.6"),
+        dest: founderEscrowAddress!,
+        body: ReleaseVestedVcoin { queryId: 81 },
+    });
+    testing.processSingleTraceStep(FOUNDER, secondRelease);
+
+    val failedTransferAck = createMessage({
+        bounce: false,
+        value: grams("0.1"),
+        dest: founderEscrowAddress!,
+        body: VcoinTransferFailed {
+            queryId: 81,
+            jettonAmount: FOUNDER_AMOUNT / 4,
+            ownerAddress: founderEscrowAddress!,
+        },
+    });
+    testing.processSingleTraceStep(escrowJettonWallet, failedTransferAck);
+    expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(FOUNDER_AMOUNT / 2);
+
+    val retryRelease = createMessage({
+        bounce: true,
+        value: grams("0.6"),
+        dest: founderEscrowAddress!,
+        body: ReleaseVestedVcoin { queryId: 82 },
+    });
+    testing.processSingleTraceStep(FOUNDER, retryRelease);
+
+    val retrySuccessAck = createMessage({
+        bounce: false,
+        value: grams("0.1"),
+        dest: founderEscrowAddress!,
+        body: ReturnExcessesBack { queryId: 82 },
+    });
+    testing.processSingleTraceStep(beneficiaryWallet, retrySuccessAck);
+    expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(
+        FOUNDER_AMOUNT * 3 / 4,
+    );
+}
+
 get fun `test VCOIN deploys both vesting escrows and confirms founder mint only after deposit`() {
     testing.setNow(1000);
     val (minter, admin, outsider, _) = setupVcoinMinter(false);

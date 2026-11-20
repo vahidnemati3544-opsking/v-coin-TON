@@ -1,7 +1,7 @@
 import { beginCell, toNano } from "@ton/core";
 import { Blockchain, SandboxContract, TreasuryContract } from "@ton/sandbox";
 import { VCoinMaster } from "../build/VCoinMaster_VCoinMaster";
-import { VCoinJettonWallet } from "../build/VCoinJettonWallet_VCoinJettonWallet";
+import { VCoinJettonWallet } from "../build/VCoinMaster_VCoinJettonWallet";
 import "@ton/test-utils";
 
 const MAX_SUPPLY = 10_000_000_000_000_000n;

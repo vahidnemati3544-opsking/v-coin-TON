@@ -83,10 +83,11 @@ fun calcVcoinVestingEscrowDeployment(
 }
 
 fun vcoinAllocationId(storage: VcoinMinterStorage, recipient: address): int {
-    if (storage.founderEscrowOwner != null && recipient == storage.founderEscrowOwner!) {
+    val escrowState = VcoinMinterEscrowState.fromCell(storage.escrowState);
+    if (escrowState.founderEscrowOwner != null && recipient == escrowState.founderEscrowOwner!) {
         return VCOIN_ALLOCATION_FOUNDER;
     }
-    if (storage.miningEscrowOwner != null && recipient == storage.miningEscrowOwner!) {
+    if (escrowState.miningEscrowOwner != null && recipient == escrowState.miningEscrowOwner!) {
         return VCOIN_ALLOCATION_MINING;
     }
     if (recipient == storage.treasuryOwner) {
@@ -206,6 +207,7 @@ fun onBouncedMessage(in: InMessageBounced) {
     in.bouncedBody.skipBouncedPrefix();
     val msg = lazy InternalTransferStep.fromSlice(in.bouncedBody);
     var storage = lazy VcoinMinterStorage.load();
+    val escrowState = VcoinMinterEscrowState.fromCell(storage.escrowState);
 
     var matchedAllocation = VCOIN_ALLOCATION_NONE;
     var matchedOwner: address? = null;
@@ -213,7 +215,7 @@ fun onBouncedMessage(in: InMessageBounced) {
     if (
         storage.pendingAllocation == VCOIN_ALLOCATION_FOUNDER &&
         storage.pendingQueryId == msg.queryId &&
-        storage.founderEscrowOwner != null &&
+        escrowState.founderEscrowOwner != null &&
         storage.founderStatus == VCOIN_MINT_PENDING &&
         msg.jettonAmount == VCOIN_FOUNDER_CAP
     ) {
@@ -222,7 +224,7 @@ fun onBouncedMessage(in: InMessageBounced) {
     } else if (
         storage.pendingAllocation == VCOIN_ALLOCATION_MINING &&
         storage.pendingQueryId == msg.queryId &&
-        storage.miningEscrowOwner != null &&
+        escrowState.miningEscrowOwner != null &&
         storage.miningStatus == VCOIN_MINT_PENDING &&
         msg.jettonAmount == VCOIN_MINING_CAP
     ) {
@@ -300,7 +302,7 @@ fun onInternalMessage(in: InMessage) {
 
             assert (storage.founderEscrowOwner != null) throw ERROR_INVALID_OP;
             assert (storage.miningEscrowOwner != null) throw ERROR_INVALID_OP;
-            assert (storage.founderEscrowReady && storage.miningEscrowReady) throw ERROR_INVALID_OP;
+            assert (escrowState.founderEscrowReady && escrowState.miningEscrowReady) throw ERROR_INVALID_OP;
             val allocationId = vcoinAllocationId(storage, msg.mintRecipient);
             assert (allocationId != VCOIN_ALLOCATION_NONE) throw ERROR_INVALID_OP;
             val cap = vcoinAllocationCap(allocationId);
@@ -344,6 +346,7 @@ fun onInternalMessage(in: InMessage) {
 
         ConfigureVcoinEscrows => {
             var storage = lazy VcoinMinterStorage.load();
+            var escrowState = VcoinMinterEscrowState.fromCell(storage.escrowState);
             assert (
                 storage.adminAddress != null && in.senderAddress == storage.adminAddress!
             ) throw ERROR_NOT_OWNER;
@@ -364,6 +367,7 @@ fun onInternalMessage(in: InMessage) {
             storage.founderEscrowReady = false;
             storage.miningEscrowReady = false;
             storage.escrowConfigQueryId = msg.queryId;
+            storage.escrowState = escrowState.toCell();
             storage.save();
 
             val deployFounder = createMessage({
@@ -385,6 +389,7 @@ fun onInternalMessage(in: InMessage) {
 
         VcoinVestingEscrowReady => {
             var storage = lazy VcoinMinterStorage.load();
+            var escrowState = VcoinMinterEscrowState.fromCell(storage.escrowState);
             assert (msg.queryId == storage.escrowConfigQueryId) throw ERROR_INVALID_OP;
             assert (msg.escrowAddress == in.senderAddress) throw ERROR_INVALID_OP;
             if (msg.vestingKind == 1) {
@@ -400,11 +405,13 @@ fun onInternalMessage(in: InMessage) {
             } else {
                 throw ERROR_INVALID_OP;
             }
+            storage.escrowState = escrowState.toCell();
             storage.save();
         }
 
         VcoinEscrowDepositAccepted => {
             var storage = lazy VcoinMinterStorage.load();
+            val escrowState = VcoinMinterEscrowState.fromCell(storage.escrowState);
             assert (msg.queryId == storage.pendingQueryId) throw ERROR_INVALID_OP;
             assert (msg.escrowAddress == in.senderAddress) throw ERROR_INVALID_OP;
             var allocationId = VCOIN_ALLOCATION_NONE;
@@ -558,6 +565,7 @@ get fun get_wallet_address(ownerAddress: address): address {
 
 get fun get_vcoin_issuance_state(): tuple {
     val storage = lazy VcoinMinterStorage.load();
+    val escrowState = VcoinMinterEscrowState.fromCell(storage.escrowState);
     return [
         storage.totalSupply,
         storage.lifetimeIssued,

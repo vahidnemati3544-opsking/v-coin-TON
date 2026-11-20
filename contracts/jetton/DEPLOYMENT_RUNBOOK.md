@@ -48,7 +48,7 @@ Allocation sums must be checked in base units before every batch. No category ma
 
 ## 3A. Approved vesting requirements (implementation gate)
 
-The founder has approved these linear vesting schedules. Approval records the policy; it does not mean vesting code exists or that any tokens are currently locked.
+The founder has approved these linear vesting schedules. Approval records the policy. The escrow implementation has now been added to the draft security branch, but it is not yet merged, audited, deployed, or evidence that any tokens are currently locked.
 
 | Allocation | Amount | Duration | Cliff | Accrual |
 |---|---:|---:|---:|---|
@@ -60,14 +60,15 @@ Vested amount at time t is calculated in integer base units:
 All arithmetic must use checked integer operations; rounding remainder is released only at full vest completion.
 
 Required custody behavior:
-- Mint founder and mining allocations to separate audited vesting escrow contracts, never directly to their candidate destination wallets.
+- Mint founder and mining allocations only to two separate deterministic `VcoinVestingEscrow` instances created by the minter. The draft implementation derives each escrow address from the minter address, escrow code, vesting kind, and approved start time; direct minting to either beneficiary wallet is rejected.
+- The minter must be deployed with `adminAddress` equal to the recorded Founder wallet. That immutable original minter administrator becomes the release controller for both escrow instances; the deployment template records this requirement.
 - The founder is the sole authorized signer/controller for release transactions, but the escrow contract must enforce the time-based vested ceiling. Founder authorization must not bypass the lock.
 - The mining reserve escrow may release only vested amounts to the recorded mining-reserve destination; any subsequent movement remains subject to founder-controlled wallet keys.
 - No admin backdoor, arbitrary unlock, beneficiary substitution, or emergency withdrawal may bypass the schedule.
-- Escrow code, master integration, start-time initialization, replay protection, rounding, bounce handling, and all boundary cases require dedicated tests and independent review.
+- The draft escrow implements one-time deployment readiness acknowledgements, one-time exact deposits, integer linear vesting, monotonic release query IDs, beneficiary-wallet success acknowledgement, failed-transfer recovery, and no admin unlock or beneficiary substitution. Build and emulator integration tests are being run; deeper adversarial tests and independent review remain mandatory.
 - Start timestamps and escrow addresses remain unset until explicitly approved and verified on-chain.
 
-**Hard stop:** the current VcoinMinter mints directly to the five allocation owners and does not implement either vesting escrow. Therefore founder and mining allocations MUST NOT be minted on the current build. Mainnet deployment and initial issuance remain blocked until escrow contracts are implemented, integrated, tested, independently reviewed, and deployed as part of the reviewed release.
+**Hard stop:** the escrow code and minter integration exist only on the unmerged Draft security branch. Do not merge, deploy, or mint until the final CI suite (including formatting) passes, the exact deployment configuration is reviewed, an independent smart-contract audit is complete, and Testnet deployment plus end-to-end wallet verification succeeds. Founder and mining allocations must never be minted directly to beneficiary wallets. Mainnet remains unauthorized.
 
 ## 4. Deployment sequence
 
@@ -76,7 +77,8 @@ Required custody behavior:
 - Apply the fixed-supply and one-time-issuance constraints.
 - Review Jetton master and wallet behavior against TEP-74 and metadata against TEP-64.
 - Build reproducibly; record compiler/toolchain versions and code hashes.
-- Run unit, sandbox, negative, replay, authorization, transfer, burn, and supply-cap tests.
+- Run unit, sandbox, negative, replay, authorization, transfer, burn, supply-cap, escrow deployment, exact deposit, and vesting-release tests.
+- Generate and inspect current VCOIN minter and vesting escrow wrappers from the pinned Acton toolchain.
 
 ### Gate B — Testnet
 - Verify founder wallet proof on Testnet.
@@ -142,7 +144,7 @@ Stop if any of the following is true:
 - Deployment transaction: none.
 - Initial mint transaction: none.
 - Mainnet allocation transfers: none.
-- Test evidence: not yet attached.
+- Draft escrow implementation: present in PR #4 security branch; deterministic dual escrow deployment and founder/mining deposit acknowledgement covered by emulator tests; final CI, adversarial bounce/retry coverage, and audit still pending.
 - Independent audit: not yet completed.
 
 This runbook is an execution control document, not evidence that any token has been deployed or transferred.

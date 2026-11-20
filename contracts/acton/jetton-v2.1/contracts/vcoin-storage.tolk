@@ -28,7 +28,6 @@ struct VcoinMinterStorage {
     treasuryQueryId: uint64
     liquidityQueryId: uint64
     ecosystemQueryId: uint64
-    pendingMints: map<uint64, cell>
     finalized: bool
 }
 

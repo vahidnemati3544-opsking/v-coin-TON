@@ -18,6 +18,8 @@ struct VcoinMinterStorage {
     treasuryStatus: uint8
     liquidityStatus: uint8
     ecosystemStatus: uint8
+    pendingAllocation: uint8
+    pendingQueryId: uint64
     finalized: bool
 }
 

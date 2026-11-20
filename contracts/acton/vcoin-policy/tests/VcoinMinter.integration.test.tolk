@@ -388,3 +388,72 @@ get fun `test VCOIN deploys both vesting escrows and confirms founder mint only 
         exitCode: 73,
     });
 }
+
+
+get fun `test founder vesting release completes through actual VCOIN jetton wallets`() {
+    testing.setNow(1000);
+    val (minter, admin, _, _) = setupVcoinMinter(false);
+
+    val configure = minter.sendConfigureVcoinEscrows(
+        admin.address,
+        90,
+        1000,
+        { value: grams("1.5"), bounce: true },
+    );
+    expect(configure).toHaveSuccessfulTx<ConfigureVcoinEscrows>({
+        from: admin.address,
+        to: minter.address,
+    });
+
+    val founderEscrowAddress = minter.getVcoinFounderEscrowAddress();
+    expect(founderEscrowAddress).toBeNotNull();
+    if (founderEscrowAddress == null) {
+        return;
+    }
+
+    val founderEscrow = VcoinVestingEscrow.fromAddress(founderEscrowAddress!);
+    val founderMint = mintAllocation(
+        minter,
+        admin,
+        founderEscrowAddress!,
+        FOUNDER_AMOUNT,
+        91,
+        grams("0.05"),
+    );
+    expect(founderMint).toHaveSuccessfulTx<MintNewJettons>({
+        from: admin.address,
+        to: minter.address,
+    });
+    expect(founderEscrow.getVcoinVestingDeposited()).toEqual(true);
+
+    val escrowJettonWallet = VcoinJettonWallet.fromAddress(
+        minter.getWalletAddress(founderEscrowAddress!),
+    );
+    val beneficiaryJettonWallet = VcoinJettonWallet.fromAddress(
+        minter.getWalletAddress(FOUNDER),
+    );
+
+    testing.setNow(1000 + 126230400 / 2);
+    val release = createMessage({
+        bounce: true,
+        value: grams("0.6"),
+        dest: founderEscrowAddress!,
+        body: ReleaseVestedVcoin { queryId: 92 },
+    });
+
+    // net.send executes the complete message chain:
+    // Founder -> Escrow -> escrow Jetton wallet -> beneficiary Jetton wallet
+    // -> ReturnExcessesBack -> Escrow.
+    val trace = net.send(FOUNDER, release);
+
+    expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(
+        FOUNDER_AMOUNT / 2,
+    );
+    expect(escrowJettonWallet.getWalletData().jettonBalance).toEqual(
+        FOUNDER_AMOUNT / 2,
+    );
+    expect(beneficiaryJettonWallet.getWalletData().jettonBalance).toEqual(
+        FOUNDER_AMOUNT / 2,
+    );
+    expect(trace.size()).toBeGreaterThan(0);
+}

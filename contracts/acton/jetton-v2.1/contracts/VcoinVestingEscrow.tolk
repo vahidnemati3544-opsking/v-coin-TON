@@ -34,11 +34,13 @@ struct (0x5643524c) ReleaseVestedVcoin {
     queryId: uint64
 }
 
+type AllowedVestingEscrowMessage = TransferNotificationForRecipient | ReleaseVestedVcoin
+
 contract VcoinVestingEscrow {
     author: "V COIN"
     version: "1.0.0"
     description: "Time-locked VCOIN linear vesting escrow"
-    incomingMessages: TransferNotificationForRecipient | ReleaseVestedVcoin
+    incomingMessages: AllowedVestingEscrowMessage
     storage: VcoinVestingEscrowStorage
 }
 
@@ -72,7 +74,7 @@ fun vcoinVestedAmount(storage: VcoinVestingEscrowStorage, timestamp: int): coins
 }
 
 fun onInternalMessage(in: InMessage) {
-    val msg = lazy (TransferNotificationForRecipient | ReleaseVestedVcoin).fromSlice(in.body);
+    val msg = lazy AllowedVestingEscrowMessage.fromSlice(in.body);
 
     match (msg) {
         TransferNotificationForRecipient => {

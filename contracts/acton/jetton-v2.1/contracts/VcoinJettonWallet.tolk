@@ -83,7 +83,8 @@ fun onInternalMessage(in: InMessage) {
                     mintAck.send(SEND_MODE_PAY_FEES_SEPARATELY | SEND_MODE_BOUNCE_ON_ACTION_FAIL);
                 } else {
                     mintAck.send(
-                        SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE | SEND_MODE_BOUNCE_ON_ACTION_FAIL,
+                        SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE |
+                            SEND_MODE_BOUNCE_ON_ACTION_FAIL,
                     );
                 }
             }

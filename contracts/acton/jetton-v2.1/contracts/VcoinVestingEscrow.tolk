@@ -7,6 +7,7 @@ import "vcoin-storage"
 
 const VCOIN_FOUNDER_BENEFICIARY = address("UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy")
 const VCOIN_MINING_BENEFICIARY = address("UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0")
+const VCOIN_RELEASE_CONTROLLER = address("UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy")
 
 const VCOIN_VESTING_FOUNDER = 1
 const VCOIN_VESTING_MINING = 2
@@ -137,7 +138,7 @@ fun onInternalMessage(in: InMessage) {
         ReleaseVestedVcoin => {
             var storage = lazy VcoinVestingEscrowStorage.fromCell(contract.getData());
             validateVcoinVestingConfig(storage);
-            assert (in.senderAddress == storage.controllerAddress) throw ERROR_NOT_OWNER;
+            assert (in.senderAddress == VCOIN_RELEASE_CONTROLLER) throw ERROR_NOT_OWNER;
             assert (storage.deposited) throw ERROR_INVALID_OP;
             assert (storage.pendingReleaseAmount == 0) throw ERROR_INVALID_OP;
             assert (msg.queryId > storage.lastReleaseQueryId) throw ERROR_INVALID_OP;
@@ -241,7 +242,7 @@ get fun get_vcoin_vesting_state(): tuple {
         storage.vestingKind,
         storage.minterAddress,
         vcoinVestingBeneficiary(storage),
-        storage.controllerAddress,
+        VCOIN_RELEASE_CONTROLLER,
         vcoinVestingAllocation(storage),
         storage.startTime,
         vcoinVestingDuration(storage),

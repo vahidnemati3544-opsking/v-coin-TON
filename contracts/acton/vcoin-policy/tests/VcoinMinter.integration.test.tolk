@@ -47,7 +47,6 @@ fun setupVcoinMinter(): (VcoinMinter, Treasury, Treasury) {
         treasuryQueryId: 0,
         liquidityQueryId: 0,
         ecosystemQueryId: 0,
-        pendingMints: [],
         finalized: false,
     });
     val deploy = minter.deploy(admin.address, { value: grams("10"), bounce: false });

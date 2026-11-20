@@ -62,7 +62,6 @@ fun vcoinVestingDuration(storage: VcoinVestingEscrowStorage): uint32 {
 
 fun validateVcoinVestingConfig(storage: VcoinVestingEscrowStorage) {
     assert (storage.startTime > 0) throw ERROR_INVALID_OP;
-    assert (storage.controllerAddress == VCOIN_FOUNDER_BENEFICIARY) throw ERROR_INVALID_OP;
     assert (storage.releasedAmount <= vcoinVestingAllocation(storage)) throw ERROR_INVALID_OP;
     assert (storage.pendingReleaseAmount <= vcoinVestingAllocation(storage)) throw ERROR_INVALID_OP;
 }

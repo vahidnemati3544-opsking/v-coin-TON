@@ -65,7 +65,7 @@ Required custody behavior:
 - The founder is the sole authorized signer/controller for release transactions, but the escrow contract must enforce the time-based vested ceiling. Founder authorization must not bypass the lock.
 - The mining reserve escrow may release only vested amounts to the recorded mining-reserve destination; any subsequent movement remains subject to founder-controlled wallet keys.
 - No admin backdoor, arbitrary unlock, beneficiary substitution, or emergency withdrawal may bypass the schedule.
-- The draft escrow implements one-time deployment readiness acknowledgements, one-time exact deposits, integer linear vesting, monotonic release query IDs, beneficiary-wallet success acknowledgement, failed-transfer recovery, and no admin unlock or beneficiary substitution. The current verified draft revision passes Acton build, 86 emulator tests across 9 files, static checks, formatting, and a local-emulated run of the guarded minter deployment script. Deeper adversarial tests and independent review remain mandatory.
+- The draft escrow implements one-time deployment readiness acknowledgements, one-time exact deposits, integer linear vesting, monotonic release query IDs, beneficiary-wallet success acknowledgement, failed-transfer recovery, and no admin unlock or beneficiary substitution. The current verified draft revision passes Acton build, 87 emulator tests across 9 files, static checks, formatting, and a local-emulated run of the guarded minter deployment script. Deeper adversarial tests and independent review remain mandatory.
 - Start timestamps and escrow addresses remain unset until explicitly approved and verified on-chain.
 
 **Hard stop:** the escrow code and minter integration exist only on the unmerged Draft security branch. The current CI suite passes, but do not merge, deploy, or mint until the exact deployment configuration is reviewed, an independent smart-contract audit is complete, and Testnet deployment plus end-to-end wallet verification succeeds. Founder and mining allocations must never be minted directly to beneficiary wallets. Mainnet remains unauthorized.
@@ -83,9 +83,9 @@ Required custody behavior:
 ### Gate B — Testnet
 - The guarded first-stage deployment script is `contracts/acton/scripts/deploy-vcoin-minter.tolk`. It constructs the VCOIN minter with zero initial supply, the recorded allocation wallets, six-decimal metadata, and the Founder wallet as immutable initial admin. In broadcast mode it stops unless the connected wallet equals the recorded Founder address.
 - First run locally from `contracts/acton`: `acton script scripts/deploy-vcoin-minter.tolk`. This must complete without broadcasting.
-- After the Founder has reviewed the exact script revision and approved Testnet gas spending, connect the Founder Tonkeeper wallet and run: `acton script scripts/deploy-vcoin-minter.tolk --net testnet --tonconnect`. This sends a real Testnet deployment transaction and spends Testnet TON; it is not a Mainnet deployment.
+- After the Founder has reviewed the exact script revision and approved Testnet gas spending, connect either the Founder Tonkeeper wallet or the separate GAS & OPERATIONS wallet through TON Connect and run: `acton script scripts/deploy-vcoin-minter.tolk --net testnet --tonconnect`. This sends a real Testnet deployment transaction and spends Testnet TON; it is not a Mainnet deployment.
 - Record the confirmed master address and transaction hash from the script output, then verify the deployed getter state and code on a Testnet explorer.
-- Verify founder wallet proof on Testnet.
+- Verify control of the chosen Testnet payer wallet and verify the recorded Founder admin address independently. A successful deployment does not prove control of all five allocation wallets.
 - Deploy master and verify get_jetton_data.
 - Verify wallet address derivation and wallet code.
 - Mint exactly the approved initial supply once.
@@ -149,7 +149,7 @@ Stop if any of the following is true:
 - Initial mint transaction: none.
 - Mainnet allocation transfers: none.
 - Draft escrow implementation: present in PR #4 security branch; deterministic dual escrow deployment and founder/mining deposit acknowledgement covered by emulator tests. The guarded minter deployment script has passed local emulation. Dedicated end-to-end successful-release, replay, and bounce/retry tests, independent audit, and Testnet verification remain pending.
-- Latest verified Acton CI: 86 tests passed in 9 files; build, wrapper generation, local deployment-script exercise, static checks, and formatting passed. The first-stage Testnet deployment script is ready for an owner-approved TON Connect run; no Testnet broadcast has been made.
+- Latest verified Acton CI before the latest payer-guard adjustment: 87 tests passed in 9 files; build, wrapper generation, local deployment-script exercise, static checks, and formatting passed. The payer-guard adjustment is undergoing CI now. The first-stage Testnet deployment script is ready for an owner-approved TON Connect run; no Testnet broadcast has been made.
 - Independent audit: not yet completed.
 
 This runbook is an execution control document, not evidence that any token has been deployed or transferred.

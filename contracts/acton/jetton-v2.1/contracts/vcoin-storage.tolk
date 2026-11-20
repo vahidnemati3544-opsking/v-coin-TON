@@ -32,3 +32,15 @@ fun VcoinMinterStorage.load(): VcoinMinterStorage {
 fun VcoinMinterStorage.save(self) {
     contract.setData(self.toCell());
 }
+
+struct VcoinVestingEscrowStorage {
+    vestingKind: uint8
+    minterAddress: address
+    beneficiaryAddress: address
+    controllerAddress: address
+    allocationAmount: coins
+    startTime: uint32
+    duration: uint32
+    deposited: bool
+    releasedAmount: coins
+}

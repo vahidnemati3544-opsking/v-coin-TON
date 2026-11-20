@@ -1,0 +1,14 @@
+{
+  "projects": [
+    {
+      "name": "VCoinMaster",
+      "path": "./src/vcoin.tact",
+      "output": "./build",
+      "options": {
+        "debug": false,
+        "external": false,
+        "ipfsAbiGetter": true
+      }
+    }
+  ]
+}

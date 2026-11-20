@@ -107,6 +107,38 @@ describe("VCOIN founder four-year daily linear vesting", () => {
     expect((await vestingWallet.getGetWalletData()).balance).toBe(FOUNDER_ALLOCATION);
   }
 
+  test("rejects any attempt to replace the configured vesting wallet", async () => {
+    const originalWallet = await vesting.getGetVestingWalletAddress();
+    const unauthorized = await vesting.send(
+      attacker.getSender(),
+      { value: toNano("0.05") },
+      {
+        ["$" + "$" + "type"]: "ConfigureFounderVestingWallet",
+        wallet: attacker.address,
+      } as any,
+    );
+    expect(unauthorized.transactions).toHaveTransaction({
+      from: attacker.address,
+      to: vesting.address,
+      aborted: true,
+    });
+
+    const duplicate = await vesting.send(
+      owner.getSender(),
+      { value: toNano("0.05") },
+      {
+        ["$" + "$" + "type"]: "ConfigureFounderVestingWallet",
+        wallet: attacker.address,
+      } as any,
+    );
+    expect(duplicate.transactions).toHaveTransaction({
+      from: owner.address,
+      to: vesting.address,
+      aborted: true,
+    });
+    expect(await vesting.getGetVestingWalletAddress()).toEqualAddress(originalWallet);
+  });
+
   test("starts the clock only after the exact founder allocation is received", async () => {
     expect(await vesting.getGetVestingWalletAddress()).toEqualAddress(vestingWallet.address);
     const before = await vesting.getGetVestingData();

@@ -3,56 +3,69 @@
 **Document ID:** VCT-JETTON-INV-001  
 **Reviewed:** 2026-11-20  
 **Scope:** `vahidnemati3544-opsking/v-coin-TON` only  
-**Result:** **LEGACY TACT BUILD PASSED; LIMITED ARITHMETIC TESTS PASSED; NOT DEPLOYABLE.**
+**Result:** **ACTON/TOLK REFERENCE CORE MIGRATED; AUTOMATED TEST RUN PENDING; NOT YET VCOIN-PRODUCTION-DEPLOYABLE.**
 
-## Verified CI result
+## Migration completed in repository
 
-- Commit `ad54496b45cac115285a21ce0ef9be4147da6f02` — [GitHub Actions run 44716041416](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44716041416) completed successfully.
-- `npm run build`: passed; both `VCoinJettonWallet` and `VCoinMaster` compiled and packaged.
-- `npm test`: passed; 1 suite, 4 tests. These validate arithmetic supply policy only; they do not execute contracts in TON Sandbox.
-- Dependency installation reported **5 high-severity vulnerabilities** and deprecated packages, including `@tact-lang/compiler@1.6.13`. Audit remediation and a committed lockfile remain outstanding.
+- Isolated Acton project: `contracts/acton/`.
+- Upstream baseline: `ton-blockchain/acton-contracts`, pinned to commit `d721c3179696b453a9490fcfd2f30770f8c234b4`, Jetton v2.1.
+- Toolchain pinned in `contracts/acton/Acton.toml` to Acton `1.2.0`.
+- Migrated reference minter and wallet contracts to `contracts/acton/jetton-v2.1/contracts/`.
+- Vendored upstream Tolk integration/regression test sources and wrappers: end-to-end flow, bounce handling, admin/governance, protocol validation, mutation regressions, gas tests.
+- Added GitHub Actions workflow `.github/workflows/acton-jetton.yml` to run Acton build, Jetton integration tests, static checks, and formatting on PR/push.
+- The legacy Tact project under `contracts/jetton/` remains untouched and is not the new reference core.
 
-## Current repository state
+## What the imported upstream suite covers
 
-1. First-pass Tact source exists under `contracts/jetton/src/`: `messages.tact`, `jetton.tact`, and `vcoin.tact`.
-2. The master source encodes a global cap of 10,000,000,000 VCOIN at six decimals (10^16 base units), owner-authorized minting, and mint disablement when the cap is reached.
-3. Build configuration, npm manifest, Jest configuration, TypeScript configuration, arithmetic tests, and GitHub Actions workflow are present.
-4. No VCOIN master address, deployment transaction, Testnet issuance, or Mainnet issuance exists in the evidence reviewed here.
+The upstream Jetton v2.1 test sources include:
+- Minter deployment and initial state.
+- Minting and total-supply accounting.
+- Jetton wallet deployment and address derivation.
+- Transfers, recipient notifications, burns and supply decrement.
+- TEP-89 wallet discovery.
+- Admin handoff and authorization.
+- Mint bounce: total supply is restored after the internal-transfer message bounces.
+- Wallet transfer/burn bounce recovery.
+- Malformed protocol payload rejection and gas checks.
 
-## Blocking security and implementation findings
+**Important:** These are vendored test sources. The newly added GitHub Actions run must complete successfully before tests can be called passing in this repository.
 
-- **Mint bounce accounting:** `mintTo` increments master `total_supply` before recipient Jetton-wallet credit is confirmed. The master has no corresponding bounced-mint recovery/acknowledgement flow. A bounced mint can leave master supply inconsistent with holder balances.
-- **No allocation-specific on-chain controls:** only the global cap is enforced. The five approved destination addresses and individual allocation ceilings are not enforced by the contract.
-- **No founder vesting enforcement:** the four-year founder vesting arrangement is not implemented in an audited vesting/escrow contract.
-- **No TON Sandbox integration suite:** tests do not exercise deployment, minting, wallet derivation, transfers, burns, invalid senders, gas/fees, bounce recovery, or post-cap mint rejection against contract instances.
-- **TEP compatibility and wallet behavior:** source compilation is not proof of TEP-74/TEP-64 conformance or safe contract behavior.
-- **Dependency risk:** CI reported five high-severity dependency findings; dependency pinning/lockfile and audit remediation are incomplete.
-- **Toolchain lifecycle:** the previously referenced `tact-lang/jetton` repository now identifies itself as deprecated and directs users to the Jetton implementation in Tolk. The old Tact implementation must not be treated as the current reference baseline.
+## Remaining VCOIN-specific production blockers
 
-## Required gates before any Testnet or Mainnet issuance
+The upstream Jetton reference is not a finished VCOIN contract. In particular, the reference minter has an administrator capable of minting, changing metadata, handing off administration, and upgrading code. Do not deploy it unchanged.
 
-1. Migrate the Jetton core to the maintained TON Acton/Tolk Jetton v2.1 reference baseline, preserving TEP-74/TEP-64 message and getter compatibility. Review and remove/disable unsafe upgrade and mutable-metadata capabilities for the fixed-supply VCOIN deployment.
-2. Add a VCOIN policy layer that enforces the five allocation ceilings and approved owner destinations on-chain. A global cap alone is insufficient.
-3. Implement founder vesting with an explicit, tested escrow/vesting contract and define custody for the mining, treasury, liquidity, and ecosystem reserves.
-4. Verify mint bounce accounting: the reference Tolk minter includes bounced mint supply rollback; test this behavior against real contract traces in Acton/Tolk tests.
-5. Run contract-level tests for deployment, minting, wallet derivation, transfers, burns, invalid senders, gas/fees, bounce recovery, replay/duplicate messages, per-allocation caps, vesting cliffs/releases, and post-cap mint rejection.
-6. Pin the Acton toolchain and all dependencies; commit reproducible dependency state and resolve or explicitly disposition all high-severity advisories.
-7. Obtain independent smart-contract security review and verify metadata, decimals, total supply, destination addresses, and code hashes.
-8. Deploy to Testnet using an owner-controlled wallet signature; verify master state, holder Jetton wallet addresses and transaction finality.
-9. Mainnet deployment and issuance require separate explicit final approval after Testnet verification and review of the exact transaction.
+1. Implement VCOIN-specific fixed global cap of 10,000,000,000 VCOIN (6 decimals; 10^16 base units).
+2. Enforce exactly five immutable allocation destinations and ceilings:
+   - Founder: 2,000,000,000,000,000 base units.
+   - Mining: 5,000,000,000,000,000 base units.
+   - Treasury: 1,000,000,000,000,000 base units.
+   - Liquidity/market: 1,000,000,000,000,000 base units.
+   - Ecosystem/marketing: 1,000,000,000,000,000 base units.
+3. Implement and test the founder's four-year vesting escrow. The exact cliff/start/release policy must be specified before implementation; duration alone does not determine those terms.
+4. Remove or irreversibly disable code upgrade, mutable metadata and unrestricted mint/admin controls at finalization. Confirm metadata strategy before lock.
+5. Add VCOIN-specific Acton tests for all allocation caps/destinations, aggregate cap, duplicate/replayed issuance, one-time finalization, vesting boundaries, and permanent mint disablement.
+6. Pin reproducible dependencies/toolchain, review advisories, and obtain an independent smart-contract security audit.
+7. Deploy and verify on Testnet before any Mainnet transaction.
+
+## Prior Tact build (legacy only)
+
+- Commit `ad54496b45cac115285a21ce0ef9be4147da6f02` — [GitHub Actions run 44716041416](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44716041416) passed.
+- `npm run build`: passed; legacy `VCoinJettonWallet` and `VCoinMaster` compiled.
+- `npm test`: passed; 1 suite, 4 arithmetic-only tests. These are not contract integration tests.
+- Dependency installation reported five high-severity vulnerabilities and deprecated packages, including `@tact-lang/compiler@1.6.13`.
 
 ## Custody and execution boundaries
 
 - The five recorded allocation addresses are candidate TON owner-wallet addresses; recording them does not prove control. Their Jetton wallet addresses are separate contracts derived from the deployed master.
 - The GAS & OPERATIONS Tonkeeper address is for TON fees only. It does not automatically pay fees for transactions signed by other wallets.
 - Wallet signatures and irreversible on-chain approvals must occur in the owner's Tonkeeper/TON Connect interface. Never request or store a seed phrase/private key.
-- Do not issue, transfer real-value assets, or activate mining until the gates above are complete.
+- Do not issue, transfer real-value assets, or activate mining until all VCOIN-specific controls, tests, audit and Testnet gates are complete.
 
-## Current technical references
+## References
 
 - [TON TEP-74 Jetton standard](https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md)
-- [TON reference contracts in Tolk/Acton, including Jetton v2.1](https://github.com/ton-blockchain/acton-contracts)
-- [Acton Jetton creation and Testnet-first deployment guide](https://docs.ton.org/contracts/standard/tokens/jettons/create)
+- [Pinned TON Acton/Tolk Jetton v2.1 upstream](https://github.com/ton-blockchain/acton-contracts/tree/d721c3179696b453a9490fcfd2f30770f8c234b4/jetton-v2.1)
+- [TON smart-contract toolchain guidance](https://docs.ton.org/contracts/overview)
 - [Acton toolchain](https://github.com/ton-blockchain/acton)
 
-This inventory records verified evidence and blockers; it is not a deployment authorization or evidence that VCOIN has been issued.
+This inventory records repository evidence. It is not a deployment authorization and does not claim VCOIN has been issued.

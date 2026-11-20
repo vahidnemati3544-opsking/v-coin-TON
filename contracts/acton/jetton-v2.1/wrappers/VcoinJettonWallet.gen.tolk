@@ -145,6 +145,6 @@ fun VcoinJettonWallet.sendAny(self, from: address, body: cell, config: SendParam
     return net.send(from, genericMsg);
 }
 
-fun VcoinJettonWallet.getWalletData(self): VcoinJettonWalletDataReply {
+fun VcoinJettonWallet.getWalletData(self): JettonWalletDataReply {
     return net.runGetMethod(self.address, "get_wallet_data");
 }

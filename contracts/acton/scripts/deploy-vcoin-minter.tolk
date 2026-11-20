@@ -1,9 +1,9 @@
 import "@acton/io"
 import "@acton/emulation/network"
 import "@acton/emulation/scripts"
-import "../jetton-v2.1/wrappers/VcoinMinter.gen"
 import "../jetton-v2.1/contracts/storage"
 import "../jetton-v2.1/contracts/vcoin-storage"
+import "../jetton-v2.1/wrappers/VcoinMinter.gen"
 
 const VCOIN_FOUNDER = address("UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy")
 const VCOIN_TREASURY = address("UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ")
@@ -13,22 +13,30 @@ const VCOIN_MINING = address("UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0")
 
 fun initialMetadata(): cell {
     var metadata: OnchainMetadataReply = { contentDict: [] };
-    metadata.contentDict.set(
-        "name".sha256(),
-        SnakeDataReply { string: "V COIN" }.toCell(),
-    );
-    metadata.contentDict.set(
-        "symbol".sha256(),
-        SnakeDataReply { string: "VCOIN" }.toCell(),
-    );
-    metadata.contentDict.set(
-        "decimals".sha256(),
-        SnakeDataReply { string: "6" }.toCell(),
-    );
-    metadata.contentDict.set(
-        "description".sha256(),
-        SnakeDataReply { string: "V COIN digital asset on TON" }.toCell(),
-    );
+    metadata
+        .contentDict
+        .set(
+            "name".sha256(),
+            SnakeDataReply { string: "V COIN" }.toCell(),
+        );
+    metadata
+        .contentDict
+        .set(
+            "symbol".sha256(),
+            SnakeDataReply { string: "VCOIN" }.toCell(),
+        );
+    metadata
+        .contentDict
+        .set(
+            "decimals".sha256(),
+            SnakeDataReply { string: "6" }.toCell(),
+        );
+    metadata
+        .contentDict
+        .set(
+            "description".sha256(),
+            SnakeDataReply { string: "V COIN digital asset on TON" }.toCell(),
+        );
     return metadata.toCell();
 }
 

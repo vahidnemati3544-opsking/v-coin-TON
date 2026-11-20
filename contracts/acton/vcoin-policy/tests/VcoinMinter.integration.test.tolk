@@ -32,11 +32,18 @@ fun setupVcoinMinter(): (VcoinMinter, Treasury, Treasury, Treasury) {
     val admin = testing.treasury("vcoin-admin");
     val outsider = testing.treasury("vcoin-outsider");
     val treasury = testing.treasury("vcoin-treasury");
+    val founderEscrow = testing.treasury("vcoin-founder-escrow");
+    val miningEscrow = testing.treasury("vcoin-mining-escrow");
     val minter = VcoinMinter.fromStorage(VcoinMinterStorage {
         totalSupply: 0,
         adminAddress: admin.address,
         metadata: testMetadata(),
         treasuryOwner: treasury.address,
+        founderEscrowOwner: founderEscrow.address,
+        miningEscrowOwner: miningEscrow.address,
+        founderEscrowReady: true,
+        miningEscrowReady: true,
+        escrowConfigQueryId: 1,
         lifetimeIssued: 0,
         founderStatus: 0,
         miningStatus: 0,

@@ -1,7 +1,7 @@
 # V COIN – TON Official Wallet Allocation Register
 
 **Document ID:** VCT-WALLET-ALLOC-001  
-**Version:** 1.0  
+**Version:** 1.1  
 **Status:** Owner-designated allocation destinations; on-chain verification pending  
 **Network:** TON Blockchain  
 **Token:** VCOIN Jetton (TEP-74)  
@@ -25,16 +25,28 @@ This register records owner-provided addresses and intended allocations. It does
 | 5 | Mining reserve and extraction | `UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0` | 50% | 5,000,000,000 VCOIN |
 | | **Total** | **Five designated addresses** | **100%** | **10,000,000,000 VCOIN** |
 
-## 3. Wallet separation rules
+## 3. Separate operational network-fee wallet
+
+The project owner explicitly designated the following separate Tonkeeper address as the **V COIN – TON GAS & OPERATIONS wallet**:
+
+`UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB`
+
+**Owner instruction:** The owner will deposit TON into this Tonkeeper wallet only for TON network fees and related authorized operational transaction costs. This wallet is not a VCOIN allocation wallet and is not a sixth allocation destination. It must not receive or hold any portion of the 10,000,000,000 VCOIN allocation by virtue of this designation.
+
+The five allocation addresses remain unchanged. Do not ask the owner to fund all five allocation wallets with TON merely because they are VCOIN recipients. The operational fee wallet is the designated TON funding source. If a specific Jetton transfer or contract operation technically requires TON in another signing wallet, document the exact requirement and obtain the owner's approval before any top-up. Do not assume that a separate fee wallet can sponsor every transaction type without a supported transaction flow.
+
+The separate fee wallet address is owner-provided; control and network format must be verified before funding. Never request or store its seed phrase or private key.
+
+## 4. Wallet separation rules
 
 - Each allocation category must remain associated with its designated address.
 - The mining reserve address is the destination designated for the 5,000,000,000 VCOIN mining allocation.
 - The five allocations must not be consolidated into a single wallet by default.
-- Tonkeeper address `UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB` is a separate wallet and is not a sixth allocation destination.
+- The Tonkeeper GAS & OPERATIONS address above is a separate fee-funding wallet, not an allocation destination.
 - Any Gram Wallet address is likewise outside this five-address allocation map unless the project owner explicitly approves a change.
 - Do not infer wallet ownership from a pasted address. Before signing or sending, verify each address on the intended TON network and complete an appropriate wallet-control/signature check where required.
 
-## 4. Required pre-transfer verification
+## 5. Required pre-transfer verification
 
 Before any real VCOIN issuance or transfer:
 
@@ -45,8 +57,9 @@ Before any real VCOIN issuance or transfer:
 5. Verify the total supply, six decimals, allocation caps and founder vesting design.
 6. Perform a Testnet rehearsal and reconcile each transaction on-chain.
 7. Obtain the project owner's explicit approval before any Mainnet issuance or transfer.
+8. Before depositing TON into the fee wallet, verify its address in Tonkeeper and confirm the intended network.
 
-## 5. Accounting controls
+## 6. Accounting controls
 
 All amounts must be stored and calculated as integer base units. With six decimals:
 
@@ -57,8 +70,8 @@ All amounts must be stored and calculated as integer base units. With six decima
 
 Allocation accounting must be capped at the approved amount for each category. A database record or backend balance is not proof of an on-chain transfer.
 
-## 6. Change control
+## 7. Change control
 
 Any replacement, addition, removal or reassignment of an allocation address requires explicit project-owner approval and a new version of this register. Update all dependent deployment templates and allocation documentation in the same controlled change.
 
-**Current status:** Five destination addresses recorded. Ownership verification, Jetton wallet derivation, contract deployment, initial issuance and transfers are not confirmed by this document.
+**Current status:** Five VCOIN allocation addresses and one separate TON operational-fee address are recorded. Ownership verification, Jetton wallet derivation, contract deployment, initial issuance and transfers are not confirmed by this document.

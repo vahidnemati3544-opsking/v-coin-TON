@@ -27,7 +27,7 @@
       "allocation": "treasury",
       "tokens": "1000000000",
       "base_units": "1000000000000000",
-      "destination": "UQBEW5bLGbq0yVDOimgl6fpZQkdla9Wk5b0tXyx69bmBktQ",
+      "destination": "UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ",
       "requires_founder_signature": true,
       "destination_verification": "pending_wallet_control_proof"
     },

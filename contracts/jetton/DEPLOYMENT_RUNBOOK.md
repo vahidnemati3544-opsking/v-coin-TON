@@ -5,7 +5,7 @@
 **Initial supply:** 10,000,000,000 VCOIN  
 **Decimals:** 6  
 **Initial supply in base units:** 10000000000000000  
-**Candidate founder wallet:** UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy
+**Candidate founder wallet:** UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB
 
 ## 1. Non-negotiable design
 

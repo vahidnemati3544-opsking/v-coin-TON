@@ -3,7 +3,7 @@
 **Document ID:** VCT-JETTON-INV-001  
 **Reviewed:** 2026-11-21  
 **Scope:** `vahidnemati3544-opsking/v-coin-TON` only  
-**Current result:** **BUILD + 18 SANDBOX TESTS + NPM CI INSTALL + ZERO-VULNERABILITY AUDIT PASSED; NOT READY FOR TESTNET OR MAINNET DEPLOYMENT.**
+**Current result:** **BUILD + 25 SANDBOX TESTS + NPM CI INSTALL + ZERO-VULNERABILITY AUDIT PASSED; NOT READY FOR TESTNET OR MAINNET DEPLOYMENT.**
 
 ## Verified repository state
 
@@ -31,6 +31,13 @@
 - Liquidity / market: 1,000,000,000 VCOIN (10%).
 - Ecosystem / marketing: 1,000,000,000 VCOIN (10%).
 - Allocation totals equal the fixed cap. The contract mints the full amount once to the founder wallet; four subsequent founder-signed transfers distribute the other allocations. Separate on-chain per-category caps are not implemented.
+
+## Latest founder-vesting CI evidence
+
+- GitHub Actions run #191 passed the build, all 25 Sandbox/policy tests, `npm ci` and the npm audit gate with zero known vulnerabilities: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44837612965
+- Founder vesting tests cover exact funding, start-clock behavior, forged notification rejection, one-time wallet configuration, daily linear accrual, no release before day one, full release at day 1,460 and prevention of duplicate claims.
+- Run #191 passed on the vesting implementation/test commit. Later documentation-only commits have their own CI runs; check the current PR head before any release decision.
+- The vesting contract remains undeployed and unfunded. The escrow wallet address must be configured after deployment using the master getter. The independent audit and Testnet verification remain mandatory.
 
 ## TEP-64 metadata
 

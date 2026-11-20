@@ -506,28 +506,38 @@ get fun `test VCOIN wallet RichBounce restores escrow balance and delivers failu
     });
     testing.processSingleTraceStep(FOUNDER, release);
 
-    // Send the escrow-authorized AskToTransfer to the real derived VCOIN wallet.
-    // The intentionally uninitialized recipient forces the wallet's outbound
-    // InternalTransferStep to bounce, exercising the wallet's RichBounce path.
-    val failedRecipient = address(
-        "0:0000000000000000000000000000000000000000000000000000000000000001",
-    );
-    val askToTransfer = createMessage({
-        bounce: true,
-        value: grams("0.5"),
+    // Build a protocol-valid RichBounce envelope carrying the full original
+    // InternalTransferStep. This isolates and tests the wallet's RichBounce
+    // parser and its authenticated VcoinTransferFailed response.
+    val failedRecipient = testing.treasury("vcoin-failed-transfer-recipient");
+    val originalTransfer = InternalTransferStep {
+        queryId: 102,
+        jettonAmount: FOUNDER_AMOUNT / 2,
+        transferInitiator: founderEscrowAddress!,
+        sendExcessesTo: founderEscrowAddress!,
+        forwardTonAmount: 0,
+        forwardPayload: beginCell().storeUint(0, 1).toSlice(),
+    };
+    val originalInfo = RichBounceOriginalMsgInfo {
+        valueCoins: grams("0.3"),
+        valueExtra: createEmptyMap<int32, varuint32>(),
+        createdLt: 0,
+        createdAt: 0,
+    }.toCell();
+    val richBounce = createMessage({
+        bounce: BounceMode.NoBounce,
+        value: grams("0.1"),
         dest: escrowJettonWallet.address,
-        body: AskToTransfer {
-            queryId: 102,
-            jettonAmount: FOUNDER_AMOUNT / 2,
-            transferRecipient: failedRecipient,
-            sendExcessesTo: founderEscrowAddress!,
-            customPayload: null,
-            forwardTonAmount: 0,
-            forwardPayload: beginCell().storeUint(0, 1).toSlice(),
+        body: RichBounceBody {
+            originalBody: originalTransfer.toCell(),
+            originalInfo,
+            bouncedByPhase: 0,
+            exitCode: -1,
+            computePhase: null,
         },
-    });
-    testing.topUp(escrowJettonWallet.address, grams("1"));
-    net.send(founderEscrowAddress!, askToTransfer);
+    }).bounced();
+    testing.topUp(failedRecipient.address, grams("1"));
+    net.send(failedRecipient.address, richBounce);
 
     // The actual VCOIN wallet bounce handler restores tokens and sends
     // VcoinTransferFailed from the escrow's own derived Jetton wallet.

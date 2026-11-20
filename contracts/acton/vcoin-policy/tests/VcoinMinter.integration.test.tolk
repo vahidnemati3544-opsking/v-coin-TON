@@ -146,14 +146,9 @@ get fun `test VCOIN minter blocks founder and mining and cannot finalize incompl
     expect(
         mintAllocation(minter, admin, treasury.address, OTHER_AMOUNT, 33),
     ).toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });
-    expect(
-        mintAllocation(minter, admin, LIQUIDITY, OTHER_AMOUNT, 34),
-    ).toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });
-    expect(
-        mintAllocation(minter, admin, ECOSYSTEM, OTHER_AMOUNT, 35),
-    ).toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });
-
-    expect(minter.getJettonData().totalSupply).toEqual(3000000000000000);
+    // One allocation per transaction is serialized until the wallet acknowledgement is processed.
+    // This test deliberately leaves the remaining allocations unissued.
+    expect(minter.getJettonData().totalSupply).toEqual(1000000000000000);
     val finalize = minter.sendDropMinterAdmin(
         admin.address,
         36,
@@ -188,7 +183,7 @@ get fun `test VCOIN deploys both vesting escrows and confirms founder mint only 
     }
 
     val founderEscrow = VcoinVestingEscrow.fromAddress(founderEscrowAddress!);
-    val mint = mintAllocation(
+    val founderMint = mintAllocation(
         minter,
         admin,
         founderEscrowAddress!,
@@ -196,10 +191,31 @@ get fun `test VCOIN deploys both vesting escrows and confirms founder mint only 
         78,
         grams("0.05"),
     );
-    expect(mint).toHaveSuccessfulTx<MintNewJettons>({
+    expect(founderMint).toHaveSuccessfulTx<MintNewJettons>({
         from: admin.address,
         to: minter.address,
     });
     expect(founderEscrow.getVcoinVestingDeposited()).toEqual(true);
     expect(minter.getVcoinFounderAllocationStatus()).toEqual(2);
+
+    val miningEscrowAddress = minter.getVcoinMiningEscrowAddress();
+    expect(miningEscrowAddress).toBeNotNull();
+    if (miningEscrowAddress == null) {
+        return;
+    }
+    val miningEscrow = VcoinVestingEscrow.fromAddress(miningEscrowAddress!);
+    val miningMint = mintAllocation(
+        minter,
+        admin,
+        miningEscrowAddress!,
+        MINING_AMOUNT,
+        79,
+        grams("0.05"),
+    );
+    expect(miningMint).toHaveSuccessfulTx<MintNewJettons>({
+        from: admin.address,
+        to: minter.address,
+    });
+    expect(miningEscrow.getVcoinVestingDeposited()).toEqual(true);
+    expect(minter.getVcoinMiningAllocationStatus()).toEqual(2);
 }

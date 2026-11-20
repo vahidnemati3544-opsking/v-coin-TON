@@ -77,13 +77,16 @@ The old `tact-lang/jetton` repository is marked deprecated. The maintained direc
 
 ## Current status
 
+The migration is intentionally isolated from the legacy Tact folder. The imported upstream minter still has admin mint, metadata-change, admin-handoff and code-upgrade capabilities; therefore it is a reference core for the next VCOIN policy layer, not safe to deploy unchanged.
+
 - [x] Existing CI build and four arithmetic tests recorded as passing.
 - [x] Existing code's mint-bounce flaw and missing allocation/vesting controls recorded.
 - [x] Deprecated Tact reference identified; maintained Tolk/Acton baseline identified.
-- [ ] Tolk/Acton migration implemented and compiled.
+- [x] Pinned TON Acton/Tolk Jetton v2.1 core, wrappers, and upstream integration-test sources vendored under `contracts/acton/`.
+- [ ] Acton build and full vendored integration suite pass in the new GitHub Actions run (workflow added; result pending).
 - [ ] VCOIN allocation enforcement implemented and tested.
 - [ ] Founder vesting escrow implemented and tested.
-- [ ] Full Acton integration test suite passing.
+- [ ] Full Acton integration test suite passing in repository CI.
 - [ ] Dependency audit and reproducible lockfile complete.
 - [ ] Independent security review complete.
 - [ ] Testnet deployment and verification complete.

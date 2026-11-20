@@ -4,6 +4,7 @@ import "@acton/testing/expect"
 import "@acton/types/message"
 import "test-utils"
 import "../contracts/messages"
+import "../contracts/vcoin-messages"
 import "../wrappers/JettonMinter.gen"
 import "../wrappers/JettonWallet.gen"
 import "../wrappers/utils"
@@ -91,9 +92,11 @@ get fun `test wallet restores balance on internal_transfer bounce`() {
         dest: senderWallet.address,
         body: bouncedBody,
     }).bounced();
-    testing.processSingleTraceStep(receiverWallet.address, bouncedMsg);
+    val bounceResult = testing.processSingleTraceStep(receiverWallet.address, bouncedMsg);
 
     expect(senderWallet.getJettonBalance()).toEqual(balanceBefore);
+    val failureAck = bounceResult.outMessages.at<VcoinTransferFailed>(0).loadBody();
+    expect(failureAck.ownerAddress).toEqual(deployer.address);
 }
 
 get fun `test wallet restores balance on burn_notification bounce`() {

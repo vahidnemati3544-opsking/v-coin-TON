@@ -105,41 +105,17 @@ fun vcoinStatus(storage: VcoinMinterStorage, allocationId: int): uint8 {
     return VCOIN_MINT_NOT_ISSUED;
 }
 
-fun vcoinQueryId(storage: VcoinMinterStorage, allocationId: int): uint64 {
-    if (allocationId == VCOIN_ALLOCATION_FOUNDER) {
-        return storage.founderQueryId;
-    }
-    if (allocationId == VCOIN_ALLOCATION_MINING) {
-        return storage.miningQueryId;
-    }
-    if (allocationId == VCOIN_ALLOCATION_TREASURY) {
-        return storage.treasuryQueryId;
-    }
-    if (allocationId == VCOIN_ALLOCATION_LIQUIDITY) {
-        return storage.liquidityQueryId;
-    }
-    if (allocationId == VCOIN_ALLOCATION_ECOSYSTEM) {
-        return storage.ecosystemQueryId;
-    }
-    return 0;
-}
-
-fun setVcoinPending(mutate storage: VcoinMinterStorage, allocationId: int, queryId: uint64) {
+fun setVcoinPending(mutate storage: VcoinMinterStorage, allocationId: int) {
     if (allocationId == VCOIN_ALLOCATION_FOUNDER) {
         storage.founderStatus = VCOIN_MINT_PENDING;
-        storage.founderQueryId = queryId;
     } else if (allocationId == VCOIN_ALLOCATION_MINING) {
         storage.miningStatus = VCOIN_MINT_PENDING;
-        storage.miningQueryId = queryId;
     } else if (allocationId == VCOIN_ALLOCATION_TREASURY) {
         storage.treasuryStatus = VCOIN_MINT_PENDING;
-        storage.treasuryQueryId = queryId;
     } else if (allocationId == VCOIN_ALLOCATION_LIQUIDITY) {
         storage.liquidityStatus = VCOIN_MINT_PENDING;
-        storage.liquidityQueryId = queryId;
     } else if (allocationId == VCOIN_ALLOCATION_ECOSYSTEM) {
         storage.ecosystemStatus = VCOIN_MINT_PENDING;
-        storage.ecosystemQueryId = queryId;
     } else {
         throw ERROR_INVALID_OP;
     }
@@ -195,27 +171,22 @@ fun onBouncedMessage(in: InMessageBounced) {
     var matchedOwner: address? = null;
 
     if (storage.founderStatus == VCOIN_MINT_PENDING &&
-        storage.founderQueryId == msg.queryId &&
         msg.jettonAmount == VCOIN_FOUNDER_CAP) {
         matchedAllocation = VCOIN_ALLOCATION_FOUNDER;
         matchedOwner = VCOIN_FOUNDER_OWNER;
     } else if (storage.miningStatus == VCOIN_MINT_PENDING &&
-        storage.miningQueryId == msg.queryId &&
         msg.jettonAmount == VCOIN_MINING_CAP) {
         matchedAllocation = VCOIN_ALLOCATION_MINING;
         matchedOwner = VCOIN_MINING_OWNER;
     } else if (storage.treasuryStatus == VCOIN_MINT_PENDING &&
-        storage.treasuryQueryId == msg.queryId &&
         msg.jettonAmount == VCOIN_TREASURY_CAP) {
         matchedAllocation = VCOIN_ALLOCATION_TREASURY;
         matchedOwner = storage.treasuryOwner;
     } else if (storage.liquidityStatus == VCOIN_MINT_PENDING &&
-        storage.liquidityQueryId == msg.queryId &&
         msg.jettonAmount == VCOIN_LIQUIDITY_CAP) {
         matchedAllocation = VCOIN_ALLOCATION_LIQUIDITY;
         matchedOwner = VCOIN_LIQUIDITY_OWNER;
     } else if (storage.ecosystemStatus == VCOIN_MINT_PENDING &&
-        storage.ecosystemQueryId == msg.queryId &&
         msg.jettonAmount == VCOIN_ECOSYSTEM_CAP) {
         matchedAllocation = VCOIN_ALLOCATION_ECOSYSTEM;
         matchedOwner = VCOIN_ECOSYSTEM_OWNER;
@@ -262,12 +233,11 @@ fun onInternalMessage(in: InMessage) {
             val cap = vcoinAllocationCap(allocationId);
             assert (internalTransferMsg.jettonAmount == cap) throw ERROR_INVALID_OP;
             assert (vcoinStatus(storage, allocationId) == VCOIN_MINT_NOT_ISSUED) throw ERROR_INVALID_OP;
-            assert (vcoinQueryId(storage, allocationId) != msg.queryId) throw ERROR_INVALID_OP;
             assert (storage.lifetimeIssued + internalTransferMsg.jettonAmount <= VCOIN_MAX_SUPPLY) throw ERROR_INVALID_OP;
 
             checkAmountIsEnoughToTransfer(msg.tonAmount, internalTransferMsg.forwardTonAmount, in.originalForwardFee);
 
-            setVcoinPending(mutate storage, allocationId, msg.queryId);
+            setVcoinPending(mutate storage, allocationId);
             storage.totalSupply += internalTransferMsg.jettonAmount;
             storage.save();
 
@@ -291,7 +261,6 @@ fun onInternalMessage(in: InMessage) {
             assert (allocationId != VCOIN_ALLOCATION_NONE) throw ERROR_INVALID_OP;
             assert (msg.jettonAmount == vcoinAllocationCap(allocationId)) throw ERROR_INVALID_OP;
             assert (vcoinStatus(storage, allocationId) == VCOIN_MINT_PENDING) throw ERROR_INVALID_OP;
-            assert (vcoinQueryId(storage, allocationId) == msg.queryId) throw ERROR_INVALID_OP;
             assert (
                 in.senderAddress == calcAddressOfJettonWallet(
                     msg.ownerAddress,

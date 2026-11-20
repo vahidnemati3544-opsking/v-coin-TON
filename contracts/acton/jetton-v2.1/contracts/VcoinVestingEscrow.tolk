@@ -15,10 +15,6 @@ const VCOIN_MINING_AMOUNT = 5000000000000000
 const VCOIN_FOUNDER_DURATION = 126230400
 const VCOIN_MINING_DURATION = 63072000
 
-struct (0x5643524c) ReleaseVestedVcoin {
-    queryId: uint64
-}
-
 type AllowedVestingEscrowMessage =
     | TransferNotificationForRecipient
     | ReleaseVestedVcoin

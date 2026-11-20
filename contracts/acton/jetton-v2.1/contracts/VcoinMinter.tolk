@@ -46,13 +46,14 @@ type AllowedVcoinMinterMessage =
     | ChangeMinterMetadata
     | DropMinterAdmin
     | VcoinMintAccepted
+    | ConfigureVcoinEscrows
     | TopUpTons
 
 fun vcoinAllocationId(storage: VcoinMinterStorage, recipient: address): int {
-    if (recipient == VCOIN_FOUNDER_OWNER) {
+    if (storage.founderEscrowOwner != null && recipient == storage.founderEscrowOwner!) {
         return VCOIN_ALLOCATION_FOUNDER;
     }
-    if (recipient == VCOIN_MINING_OWNER) {
+    if (storage.miningEscrowOwner != null && recipient == storage.miningEscrowOwner!) {
         return VCOIN_ALLOCATION_MINING;
     }
     if (recipient == storage.treasuryOwner) {
@@ -179,19 +180,21 @@ fun onBouncedMessage(in: InMessageBounced) {
     if (
         storage.pendingAllocation == VCOIN_ALLOCATION_FOUNDER &&
         storage.pendingQueryId == msg.queryId &&
+        storage.founderEscrowOwner != null &&
         storage.founderStatus == VCOIN_MINT_PENDING &&
         msg.jettonAmount == VCOIN_FOUNDER_CAP
     ) {
         matchedAllocation = VCOIN_ALLOCATION_FOUNDER;
-        matchedOwner = VCOIN_FOUNDER_OWNER;
+        matchedOwner = storage.founderEscrowOwner;
     } else if (
         storage.pendingAllocation == VCOIN_ALLOCATION_MINING &&
         storage.pendingQueryId == msg.queryId &&
+        storage.miningEscrowOwner != null &&
         storage.miningStatus == VCOIN_MINT_PENDING &&
         msg.jettonAmount == VCOIN_MINING_CAP
     ) {
         matchedAllocation = VCOIN_ALLOCATION_MINING;
-        matchedOwner = VCOIN_MINING_OWNER;
+        matchedOwner = storage.miningEscrowOwner;
     } else if (
         storage.pendingAllocation == VCOIN_ALLOCATION_TREASURY &&
         storage.pendingQueryId == msg.queryId &&
@@ -262,13 +265,10 @@ fun onInternalMessage(in: InMessage) {
             assert (storage.pendingAllocation == VCOIN_ALLOCATION_NONE) throw ERROR_INVALID_OP;
             internalTransferMsg.forwardPayload.checkIsCorrectTlbEither();
 
+            assert (storage.founderEscrowOwner != null) throw ERROR_INVALID_OP;
+            assert (storage.miningEscrowOwner != null) throw ERROR_INVALID_OP;
             val allocationId = vcoinAllocationId(storage, msg.mintRecipient);
             assert (allocationId != VCOIN_ALLOCATION_NONE) throw ERROR_INVALID_OP;
-            // Founder and mining allocations must remain blocked until their
-            // audited vesting escrows are implemented and wired into mint routing.
-            assert (
-                allocationId != VCOIN_ALLOCATION_FOUNDER && allocationId != VCOIN_ALLOCATION_MINING
-            ) throw ERROR_INVALID_OP;
             val cap = vcoinAllocationCap(allocationId);
             assert (internalTransferMsg.jettonAmount == cap) throw ERROR_INVALID_OP;
             assert (
@@ -300,6 +300,27 @@ fun onInternalMessage(in: InMessage) {
                 body: msg.internalTransferMsg,
             });
             deployMsg.send(SEND_MODE_PAY_FEES_SEPARATELY | SEND_MODE_BOUNCE_ON_ACTION_FAIL);
+        }
+
+        ConfigureVcoinEscrows => {
+            var storage = lazy VcoinMinterStorage.load();
+            assert (
+                storage.adminAddress != null && in.senderAddress == storage.adminAddress!
+            ) throw ERROR_NOT_OWNER;
+            assert (!storage.finalized) throw ERROR_NOT_OWNER;
+            assert (storage.pendingAllocation == VCOIN_ALLOCATION_NONE) throw ERROR_INVALID_OP;
+            assert (storage.founderStatus == VCOIN_MINT_NOT_ISSUED) throw ERROR_INVALID_OP;
+            assert (storage.miningStatus == VCOIN_MINT_NOT_ISSUED) throw ERROR_INVALID_OP;
+            assert (storage.founderEscrowOwner == null) throw ERROR_INVALID_OP;
+            assert (storage.miningEscrowOwner == null) throw ERROR_INVALID_OP;
+            assert (msg.founderEscrowOwner != msg.miningEscrowOwner) throw ERROR_INVALID_OP;
+            assert (msg.founderEscrowOwner != VCOIN_FOUNDER_OWNER) throw ERROR_INVALID_OP;
+            assert (msg.miningEscrowOwner != VCOIN_MINING_OWNER) throw ERROR_INVALID_OP;
+            assert (msg.founderEscrowOwner.getWorkchain() == MY_WORKCHAIN) throw ERROR_WRONG_WORKCHAIN;
+            assert (msg.miningEscrowOwner.getWorkchain() == MY_WORKCHAIN) throw ERROR_WRONG_WORKCHAIN;
+            storage.founderEscrowOwner = msg.founderEscrowOwner;
+            storage.miningEscrowOwner = msg.miningEscrowOwner;
+            storage.save();
         }
 
         VcoinMintAccepted => {
@@ -436,5 +457,7 @@ get fun get_vcoin_issuance_state(): tuple {
         storage.liquidityStatus,
         storage.ecosystemStatus,
         storage.finalized,
+        storage.founderEscrowOwner,
+        storage.miningEscrowOwner,
     ];
 }

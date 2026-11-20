@@ -198,25 +198,6 @@ fun addVcoinAllocation(mutate storage: VcoinMinterStorage, allocationId: int, am
     }
 }
 
-fun ownerForAllocation(allocationId: int): address {
-    if (allocationId == VCOIN_ALLOCATION_FOUNDER) {
-        return VCOIN_FOUNDER_OWNER;
-    }
-    if (allocationId == VCOIN_ALLOCATION_MINING) {
-        return VCOIN_MINING_OWNER;
-    }
-    if (allocationId == VCOIN_ALLOCATION_TREASURY) {
-        return VCOIN_TREASURY_OWNER;
-    }
-    if (allocationId == VCOIN_ALLOCATION_LIQUIDITY) {
-        return VCOIN_LIQUIDITY_OWNER;
-    }
-    if (allocationId == VCOIN_ALLOCATION_ECOSYSTEM) {
-        return VCOIN_ECOSYSTEM_OWNER;
-    }
-    throw ERROR_INVALID_OP;
-}
-
 fun vcoinAllAllocationsConfirmed(storage: VcoinMinterStorage): bool {
     return storage.founderStatus == VCOIN_MINT_CONFIRMED &&
         storage.miningStatus == VCOIN_MINT_CONFIRMED &&

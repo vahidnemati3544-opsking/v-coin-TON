@@ -581,3 +581,33 @@ get fun get_vcoin_issuance_state(): tuple {
         escrowState.miningEscrowOwner,
     ];
 }
+
+
+get fun get_vcoin_founder_escrow_address(): address? {
+    val storage = lazy VcoinMinterStorage.load();
+    val escrowState = VcoinMinterEscrowState.fromCell(storage.escrowState);
+    return escrowState.founderEscrowOwner;
+}
+
+get fun get_vcoin_mining_escrow_address(): address? {
+    val storage = lazy VcoinMinterStorage.load();
+    val escrowState = VcoinMinterEscrowState.fromCell(storage.escrowState);
+    return escrowState.miningEscrowOwner;
+}
+
+get fun get_vcoin_escrows_ready(): bool {
+    val storage = lazy VcoinMinterStorage.load();
+    val escrowState = VcoinMinterEscrowState.fromCell(storage.escrowState);
+    return escrowState.founderEscrowReady && escrowState.miningEscrowReady;
+}
+
+get fun get_vcoin_founder_allocation_status(): uint8 {
+    val storage = lazy VcoinMinterStorage.load();
+    return storage.founderStatus;
+}
+
+get fun get_vcoin_mining_allocation_status(): uint8 {
+    val storage = lazy VcoinMinterStorage.load();
+    return storage.miningStatus;
+}
+

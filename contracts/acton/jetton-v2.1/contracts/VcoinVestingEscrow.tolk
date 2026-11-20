@@ -2,6 +2,8 @@ import "@gen/VcoinJettonWallet.code"
 import "errors"
 import "jetton-utils"
 import "messages"
+import "vcoin-storage"
+import "vcoin-messages"
 
 const VCOIN_FOUNDER_BENEFICIARY = address("UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy")
 const VCOIN_MINING_BENEFICIARY = address("UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0")
@@ -123,7 +125,7 @@ fun onInternalMessage(in: InMessage) {
                 dest: storage.minterAddress,
                 value: 0,
                 body: VcoinVestingEscrowReady {
-                    queryId: 0,
+                    queryId: storage.configQueryId,
                     vestingKind: storage.vestingKind,
                     escrowAddress: contract.getAddress(),
                 },

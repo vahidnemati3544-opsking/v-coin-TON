@@ -17,7 +17,6 @@ const VCOIN_ECOSYSTEM_CAP = 1000000000000000
 
 const VCOIN_FOUNDER_OWNER = address("UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy")
 const VCOIN_MINING_OWNER = address("UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0")
-const VCOIN_TREASURY_OWNER = address("UQBEW5bLGbq0yVDOimgl6fpZQkdla9Wk5b0tXyx69bmBktQ")
 const VCOIN_LIQUIDITY_OWNER = address("UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn")
 const VCOIN_ECOSYSTEM_OWNER = address("UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE")
 
@@ -49,14 +48,14 @@ type AllowedVcoinMinterMessage =
     | VcoinMintAccepted
     | TopUpTons
 
-fun vcoinAllocationId(recipient: address): int {
+fun vcoinAllocationId(storage: VcoinMinterStorage, recipient: address): int {
     if (recipient == VCOIN_FOUNDER_OWNER) {
         return VCOIN_ALLOCATION_FOUNDER;
     }
     if (recipient == VCOIN_MINING_OWNER) {
         return VCOIN_ALLOCATION_MINING;
     }
-    if (recipient == VCOIN_TREASURY_OWNER) {
+    if (recipient == storage.treasuryOwner) {
         return VCOIN_ALLOCATION_TREASURY;
     }
     if (recipient == VCOIN_LIQUIDITY_OWNER) {
@@ -254,7 +253,7 @@ fun onBouncedMessage(in: InMessageBounced) {
         storage.treasuryQueryId == msg.queryId &&
         storage.treasuryIssued == msg.jettonAmount) {
         matchedAllocation = VCOIN_ALLOCATION_TREASURY;
-        matchedOwner = VCOIN_TREASURY_OWNER;
+        matchedOwner = storage.treasuryOwner;
     } else if (storage.liquidityStatus == VCOIN_MINT_PENDING &&
         storage.liquidityQueryId == msg.queryId &&
         storage.liquidityIssued == msg.jettonAmount) {
@@ -313,7 +312,7 @@ fun onInternalMessage(in: InMessage) {
             assert (msg.queryId != 0) throw ERROR_INVALID_OP;
             internalTransferMsg.forwardPayload.checkIsCorrectTlbEither();
 
-            val allocationId = vcoinAllocationId(msg.mintRecipient);
+            val allocationId = vcoinAllocationId(storage, msg.mintRecipient);
             assert (allocationId != VCOIN_ALLOCATION_NONE) throw ERROR_INVALID_OP;
             val cap = vcoinAllocationCap(allocationId);
             assert (internalTransferMsg.jettonAmount == cap) throw ERROR_INVALID_OP;
@@ -355,7 +354,7 @@ fun onInternalMessage(in: InMessage) {
 
         VcoinMintAccepted => {
             var storage = lazy VcoinMinterStorage.load();
-            val allocationId = vcoinAllocationId(msg.ownerAddress);
+            val allocationId = vcoinAllocationId(storage, msg.ownerAddress);
             assert (allocationId != VCOIN_ALLOCATION_NONE) throw ERROR_INVALID_OP;
             val pendingLookup = storage.pendingMints.get(msg.queryId);
             assert (pendingLookup.isFound) throw ERROR_INVALID_OP;

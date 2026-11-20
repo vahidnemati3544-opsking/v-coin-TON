@@ -218,19 +218,20 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
     let queryId = 10n;
     for (const allocation of allocations) {
       const recipientWallet = await walletFor(allocation.destination.address);
+      const transferMessage: any = {
+        ["$" + "$" + "type"]: "TokenTransfer",
+        query_id: queryId,
+        amount: allocation.amount,
+        destination: allocation.destination.address,
+        response_destination: owner.address,
+        custom_payload: null,
+        forward_ton_amount: 0n,
+        forward_payload: beginCell().endCell().asSlice(),
+      };
       const result = await founderWallet.send(
         owner.getSender(),
         { value: toNano("0.2") },
-        {
-          $type: "TokenTransfer",
-          query_id: queryId,
-          amount: allocation.amount,
-          destination: allocation.destination.address,
-          response_destination: owner.address,
-          custom_payload: null,
-          forward_ton_amount: 0n,
-          forward_payload: beginCell().endCell().asSlice(),
-        },
+        transferMessage,
       );
       expect(result.transactions).toHaveTransaction({
         from: founderWallet.address,

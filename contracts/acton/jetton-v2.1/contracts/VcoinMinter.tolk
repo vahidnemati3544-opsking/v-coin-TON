@@ -284,9 +284,13 @@ fun onBouncedMessage(in: InMessageBounced) {
     storage.lifetimeIssued -= msg.jettonAmount;
     setVcoinRolledBack(mutate storage, matchedAllocation, msg.jettonAmount);
     val pendingLookup = storage.pendingMints.get(msg.queryId);
-    if (!pendingLookup.isFound) return;
+    if (!pendingLookup.isFound) {
+        return;
+    }
     val pending = VcoinPendingMint.fromCell(pendingLookup.loadValue());
-    if (pending.allocationId != matchedAllocation || pending.amount != msg.jettonAmount || pending.recipient != matchedOwner!) return;
+    if (pending.allocationId != matchedAllocation || pending.amount != msg.jettonAmount || pending.recipient != matchedOwner!) {
+        return;
+    }
     storage.pendingMints.delete(msg.queryId);
     storage.save();
 }
@@ -388,7 +392,9 @@ fun onInternalMessage(in: InMessage) {
             storage.totalSupply -= msg.jettonAmount;
             storage.save();
 
-            if (msg.sendExcessesTo == null) return;
+            if (msg.sendExcessesTo == null) {
+                return;
+            }
             val excessesMsg = createMessage({
                 bounce: BounceMode.NoBounce,
                 dest: msg.sendExcessesTo,

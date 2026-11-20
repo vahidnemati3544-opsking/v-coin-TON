@@ -115,18 +115,22 @@ Stop if any of the following is true:
 
 - Five allocation candidate destinations: recorded in Section 5; ownership/control verification pending.
 - Separate GAS & OPERATIONS wallet: recorded for TON fees only; not an allocation recipient.
+- TEP-64 metadata draft: `contracts/jetton/metadata.json`; URI pinned in `deployment.config.template.json` to immutable commit `49c462124a082ef6c850079b35c6f77c5bda6ea2`. The JSON contains name, symbol, description and six decimals; no image is included until the approved logo asset is committed.
+- TEP-74 required response-destination fields were corrected to mandatory addresses for transfer, internal transfer, burn and burn notification. Excesses are routed to the required response destination.
+- TEP-89 `include_address` behavior remains covered for both values.
+- GitHub Actions run #173 passed build, 18 Sandbox/policy tests, `npm ci`, and npm audit with zero known vulnerabilities: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44836046070
+- `contracts/jetton/package-lock.json` was committed immediately after run #173. CI must be run again against the commit containing the lockfile to verify the committed dependency graph.
+- Source-level TEP-74 notes: `docs/TEP74_CONFORMANCE_REVIEW.md`. This is not an independent audit or full certification.
+- Wallet bounce handlers exist in source, but explicit bounce/recovery tests remain outstanding.
+- `@tact-lang/compiler@1.6.13` emits a deprecation warning; current build succeeds. No blind Tolk migration is authorized.
 - Jetton master address: not deployed.
 - Deployment transaction: none.
 - Initial mint transaction: none.
 - Mainnet allocation transfers: none.
-- GitHub Actions run #157: build passed; 13 Sandbox/policy tests passed, including five-wallet allocation transfer accounting and TEP-89 optional owner-address response; dependency audit reported zero vulnerabilities after transitive overrides. Run: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44827055497
-- TEP-89 `include_address` response encoding was corrected to use `Maybe ^Cell` and both flag values are covered by Sandbox tests.
-- Test evidence is limited to the current CI Sandbox suite; it is not a full TEP-74/TEP-64 conformance audit or independent smart-contract audit.
-- Dependency versions are constrained by package.json overrides, but a committed package-lock.json is still outstanding for fully reproducible installs.
-- Independent smart-contract audit: pending.
-- Testnet deployment and on-chain verification: pending.
-- TEP-64 metadata URI/content: not finalized; deployment config still has metadata URI unset.
 - Founder four-year vesting/escrow implementation: pending.
 - Recipient wallet-control proofs on the intended network: pending.
+- Independent smart-contract audit: pending.
+- Deterministic deploy/transaction builder: pending.
+- Testnet deployment and on-chain verification: pending.
 
 This runbook is an execution control document, not evidence that any token has been deployed or transferred.

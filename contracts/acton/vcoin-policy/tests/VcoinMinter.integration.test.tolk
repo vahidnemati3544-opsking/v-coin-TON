@@ -389,7 +389,6 @@ get fun `test VCOIN deploys both vesting escrows and confirms founder mint only 
     });
 }
 
-
 get fun `test founder vesting release completes through actual VCOIN jetton wallets`() {
     testing.setNow(1000);
     val (minter, admin, _, _) = setupVcoinMinter(false);

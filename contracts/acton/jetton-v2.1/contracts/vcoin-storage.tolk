@@ -11,6 +11,7 @@ struct VcoinMinterStorage {
     totalSupply: coins
     adminAddress: address?
     metadata: cell
+    treasuryOwner: address
     lifetimeIssued: coins
     founderIssued: coins
     miningIssued: coins

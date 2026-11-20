@@ -12,15 +12,13 @@ trait JettonMaster {
         require(contractAddress(init) == sender(), "Invalid Jetton wallet");
         require(self.total_supply >= msg.amount, "Burn exceeds supply");
         self.total_supply = self.total_supply - msg.amount;
-        if (msg.response_destination != null) {
-            send(SendParameters{
-                to: msg.response_destination!!,
-                value: 0,
-                bounce: false,
-                mode: SendRemainingValue + SendIgnoreErrors,
-                body: TokenExcesses{query_id: msg.query_id}.toCell()
-            });
-        }
+        send(SendParameters{
+            to: msg.response_destination,
+            value: 0,
+            bounce: false,
+            mode: SendRemainingValue + SendIgnoreErrors,
+            body: TokenExcesses{query_id: msg.query_id}.toCell()
+        });
     }
 
     receive(msg: ProvideWalletAddress) {
@@ -162,9 +160,9 @@ contract VCoinJettonWallet {
                 }.toCell()
             });
         }
-        if (msg.response_destination != null && remaining > 0) {
+        if (remaining > 0) {
             send(SendParameters{
-                to: msg.response_destination!!,
+                to: msg.response_destination,
                 value: remaining,
                 mode: SendIgnoreErrors,
                 bounce: false,

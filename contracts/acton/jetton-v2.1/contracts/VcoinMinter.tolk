@@ -615,4 +615,3 @@ get fun get_vcoin_mining_allocation_status(): uint8 {
     val storage = lazy VcoinMinterStorage.load();
     return storage.miningStatus;
 }
-

@@ -41,6 +41,7 @@ struct VcoinVestingEscrowStorage {
     releasedAmount: coins
     pendingReleaseAmount: coins
     pendingReleaseQueryId: uint64
+    lastReleaseQueryId: uint64
 }
 fun VcoinVestingEscrowStorage.save(self) {
     contract.setData(self.toCell());

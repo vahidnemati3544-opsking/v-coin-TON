@@ -71,10 +71,10 @@ fun vcoinVestedAmount(storage: VcoinVestingEscrowStorage, timestamp: int): coins
         return 0;
     }
     val elapsed = min(timestamp - storage.startTime, vcoinVestingDuration(storage));
-    if (elapsed == storage.duration) {
+    if (elapsed == vcoinVestingDuration(storage)) {
         return vcoinVestingAllocation(storage);
     }
-    return (storage.allocationAmount * elapsed) / storage.duration;
+    return (vcoinVestingAllocation(storage) * elapsed) / vcoinVestingDuration(storage);
 }
 
 fun onBouncedMessage(in: InMessageBounced) {
@@ -109,7 +109,7 @@ fun onInternalMessage(in: InMessage) {
             validateVcoinVestingConfig(storage);
             assert (!storage.deposited) throw ERROR_INVALID_OP;
             assert (msg.transferInitiator == null) throw ERROR_INVALID_OP;
-            assert (msg.jettonAmount == storage.allocationAmount) throw ERROR_INVALID_OP;
+            assert (msg.jettonAmount == vcoinVestingAllocation(storage)) throw ERROR_INVALID_OP;
             val expectedJettonWallet = calcAddressOfJettonWallet(
                 contract.getAddress(),
                 storage.minterAddress,
@@ -179,7 +179,7 @@ fun onInternalMessage(in: InMessage) {
             assert (storage.pendingReleaseAmount > 0) throw ERROR_INVALID_OP;
             assert (msg.queryId == storage.pendingReleaseQueryId) throw ERROR_INVALID_OP;
             val beneficiaryWallet = calcAddressOfJettonWallet(
-                storage.beneficiaryAddress,
+                vcoinVestingBeneficiary(storage),
                 storage.minterAddress,
                 vcoinJettonWalletCompiledCode(),
             );
@@ -235,11 +235,11 @@ get fun get_vcoin_vesting_state(): tuple {
     return [
         storage.vestingKind,
         storage.minterAddress,
-        storage.beneficiaryAddress,
-        storage.controllerAddress,
-        storage.allocationAmount,
+        vcoinVestingBeneficiary(storage),
+        VCOIN_RELEASE_CONTROLLER,
+        vcoinVestingAllocation(storage),
         storage.startTime,
-        storage.duration,
+        vcoinVestingDuration(storage),
         storage.deposited,
         storage.releasedAmount,
         storage.pendingReleaseAmount,

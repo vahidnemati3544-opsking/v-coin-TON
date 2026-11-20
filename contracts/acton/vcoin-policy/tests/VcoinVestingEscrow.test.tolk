@@ -10,7 +10,6 @@ fun founderVestingConfig(): VcoinVestingEscrowStorage {
     return {
         vestingKind: VCOIN_VESTING_FOUNDER,
         minterAddress: minter.address,
-        controllerAddress: minter.address,
         startTime: TEST_START,
         configQueryId: 1,
         deposited: false,

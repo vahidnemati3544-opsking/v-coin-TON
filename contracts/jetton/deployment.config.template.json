@@ -43,7 +43,7 @@
   },
   "founder_vesting": {
     "amount_base_units": "2000000000000000",
-    "duration_seconds": 126144000,
+    "duration_seconds": 126230400,
     "schedule": "linear",
     "cliff_seconds": 0,
     "release_frequency_seconds": 86400,
@@ -51,7 +51,8 @@
     "controller": "founder",
     "vesting_contract_address": null,
     "implementation_status": "specification_only_not_implemented",
-    "note": "Tokens must be minted to an audited vesting escrow, not directly to the beneficiary wallet, until release."
+    "note": "Tokens must be minted to an audited vesting escrow, not directly to the beneficiary wallet, until release.",
+    "duration_days": 1461
   },
   "metadata": {
     "uri": null,
@@ -81,6 +82,7 @@
     "controller": "founder",
     "vesting_contract_address": null,
     "implementation_status": "specification_only_not_implemented",
-    "note": "Mining reserve must be held in a founder-controlled audited escrow with a 24-month linear release schedule."
+    "note": "Mining reserve must be held in a founder-controlled audited escrow with a 24-month linear release schedule.",
+    "duration_days": 730
   }
 }

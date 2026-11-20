@@ -71,6 +71,7 @@ fun calcVcoinVestingEscrowDeployment(
         releasedAmount: 0,
         pendingReleaseAmount: 0,
         pendingReleaseQueryId: 0,
+        lastReleaseQueryId: 0,
     };
     return {
         workchain: MY_WORKCHAIN,

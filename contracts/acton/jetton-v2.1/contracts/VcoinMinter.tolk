@@ -49,6 +49,7 @@ type AllowedVcoinMinterMessage =
     | VcoinMintAccepted
     | ConfigureVcoinEscrows
     | VcoinVestingEscrowReady
+    | VcoinEscrowDepositAccepted
     | TopUpTons
 
 
@@ -408,6 +409,30 @@ fun onInternalMessage(in: InMessage) {
             storage.save();
         }
 
+        VcoinEscrowDepositAccepted => {
+            var storage = lazy VcoinMinterStorage.load();
+            assert (msg.queryId == storage.pendingQueryId) throw ERROR_INVALID_OP;
+            assert (msg.escrowAddress == in.senderAddress) throw ERROR_INVALID_OP;
+            var allocationId = VCOIN_ALLOCATION_NONE;
+            if (msg.vestingKind == 1) {
+                assert (storage.founderEscrowOwner != null) throw ERROR_INVALID_OP;
+                assert (in.senderAddress == storage.founderEscrowOwner!) throw ERROR_NOT_VALID_WALLET;
+                allocationId = VCOIN_ALLOCATION_FOUNDER;
+            } else if (msg.vestingKind == 2) {
+                assert (storage.miningEscrowOwner != null) throw ERROR_INVALID_OP;
+                assert (in.senderAddress == storage.miningEscrowOwner!) throw ERROR_NOT_VALID_WALLET;
+                allocationId = VCOIN_ALLOCATION_MINING;
+            } else {
+                throw ERROR_INVALID_OP;
+            }
+            assert (storage.pendingAllocation == allocationId) throw ERROR_INVALID_OP;
+            assert (msg.jettonAmount == vcoinAllocationCap(allocationId)) throw ERROR_INVALID_OP;
+            assert (vcoinStatus(storage, allocationId) == VCOIN_MINT_PENDING) throw ERROR_INVALID_OP;
+            setVcoinConfirmed(mutate storage, allocationId);
+            storage.lifetimeIssued += msg.jettonAmount;
+            storage.save();
+        }
+
         VcoinMintAccepted => {
             var storage = lazy VcoinMinterStorage.load();
             val allocationId = vcoinAllocationId(storage, msg.ownerAddress);
@@ -425,6 +450,12 @@ fun onInternalMessage(in: InMessage) {
                     vcoinJettonWalletCompiledCode(),
                 )
             ) throw ERROR_NOT_VALID_WALLET;
+            if (
+                allocationId == VCOIN_ALLOCATION_FOUNDER ||
+                allocationId == VCOIN_ALLOCATION_MINING
+            ) {
+                return;
+            }
             setVcoinConfirmed(mutate storage, allocationId);
             storage.lifetimeIssued += msg.jettonAmount;
             storage.save();

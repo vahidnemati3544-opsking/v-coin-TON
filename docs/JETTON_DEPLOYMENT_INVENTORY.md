@@ -32,6 +32,20 @@ The current `VCoinMaster` accepts one exact initial mint of the full 10-billion 
 
 The source-level bounce handler attempts to roll back provisional supply if the wallet-credit message bounces. This is an important recovery path, but it remains unverified. It must be exercised in Sandbox, including duplicate/bounce/replay scenarios, before any deployment.
 
+## Recorded Mainnet owner-wallet allocation map
+
+The following is the approved destination map for the initial fixed supply. These are owner-wallet addresses, not Jetton-wallet addresses; the latter must be derived from the deployed master after Testnet verification.
+
+| Allocation | Share | VCOIN | Owner-wallet address |
+|---|---:|---:|---|
+| Founder | 20% | 2,000,000,000 | `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` |
+| Mining reserve | 50% | 5,000,000,000 | `UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0` |
+| Treasury | 10% | 1,000,000,000 | `UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ` |
+| Liquidity / market | 10% | 1,000,000,000 | `UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn` |
+| Ecosystem / marketing | 10% | 1,000,000,000 | `UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE` |
+
+Under the current one-time mint design, the exact sequence is: mint 10,000,000,000 VCOIN to the founder owner wallet; then, only after confirming the deployed master and the five derived Jetton-wallet addresses, have the founder sign four separate transfers: 5,000,000,000 to mining reserve, 1,000,000,000 to treasury, 1,000,000,000 to liquidity / market, and 1,000,000,000 to ecosystem / marketing. The founder retains 2,000,000,000 VCOIN. Each transfer is a separate irreversible on-chain transaction and must show its destination, amount, network, fee and payload for the founder's review before signing. This is an execution plan only; no master deployment, mint or transfer has occurred.
+
 ## Blocking gates
 
 1. **Fresh build — passed for PR merge commit `adbcdcbbc53f2ed08a4a9e8a159e50b33a6eb560`:** GitHub Actions run #44823097949 successfully compiled and packaged both contracts. Retain and independently verify the generated code hashes before deployment; a successful build is not a security approval.

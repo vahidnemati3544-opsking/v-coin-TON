@@ -5,42 +5,47 @@
   "jetton_master_address": null,
   "decimals": 6,
   "total_supply_base_units": "10000000000000000",
-  "founder_wallet_candidate": "UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB",
+  "founder_wallet_candidate": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
   "transfers": [
     {
       "allocation": "founder_vesting",
       "tokens": "2000000000",
       "base_units": "2000000000000000",
-      "destination": null,
-      "requires_founder_signature": true
+      "destination": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
+      "requires_founder_signature": true,
+      "destination_verification": "pending_wallet_control_proof"
     },
     {
       "allocation": "mining_reserve",
       "tokens": "5000000000",
       "base_units": "5000000000000000",
-      "destination": null,
-      "requires_founder_signature": true
+      "destination": "UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0",
+      "requires_founder_signature": true,
+      "destination_verification": "pending_wallet_control_proof"
     },
     {
       "allocation": "treasury",
       "tokens": "1000000000",
       "base_units": "1000000000000000",
-      "destination": null,
-      "requires_founder_signature": true
+      "destination": "UQBEW5bLGbq0yVDOimgl6fpZQkdla9Wk5b0tXyx69bmBktQ",
+      "requires_founder_signature": true,
+      "destination_verification": "pending_wallet_control_proof"
     },
     {
       "allocation": "liquidity_market",
       "tokens": "1000000000",
       "base_units": "1000000000000000",
-      "destination": null,
-      "requires_founder_signature": true
+      "destination": "UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn",
+      "requires_founder_signature": true,
+      "destination_verification": "pending_wallet_control_proof"
     },
     {
       "allocation": "ecosystem_marketing",
       "tokens": "1000000000",
       "base_units": "1000000000000000",
-      "destination": null,
-      "requires_founder_signature": true
+      "destination": "UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE",
+      "requires_founder_signature": true,
+      "destination_verification": "pending_wallet_control_proof"
     }
   ],
   "safeguards": [
@@ -52,5 +57,15 @@
     "founder_wallet_signature",
     "on_chain_finality_check"
   ],
-  "secrets_must_never_be_committed": true
+  "secrets_must_never_be_committed": true,
+  "gas_operations_wallet": {
+    "address": "UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB",
+    "purpose": "TON fees and operational funding only; not a VCOIN allocation recipient"
+  },
+  "notes": [
+    "The five destination addresses are recorded candidates; recording does not prove ownership or authorize transfers.",
+    "Founder allocation remains subject to an approved four-year vesting/custody arrangement before any transfer.",
+    "The separate GAS & OPERATIONS wallet is for TON fees only and is not a VCOIN allocation destination.",
+    "Every transfer requires exact transaction review and founder wallet signature."
+  ]
 }

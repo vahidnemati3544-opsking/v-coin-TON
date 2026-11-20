@@ -54,7 +54,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
         ["$" + "$" + "type"]: "VCoinMint",
         receiver: owner.address,
         amount: MAX_SUPPLY,
-      },
+      } as any,
     );
 
     expect(result.transactions).toHaveTransaction({
@@ -91,7 +91,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
         ["$" + "$" + "type"]: "VCoinMint",
         receiver: owner.address,
         amount: MAX_SUPPLY,
-      },
+      } as any,
     );
 
     expect(result.transactions).toHaveTransaction({
@@ -113,7 +113,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
         ["$" + "$" + "type"]: "VCoinMint",
         receiver: owner.address,
         amount: MAX_SUPPLY - 1n,
-      },
+      } as any,
     );
 
     expect(result.transactions).toHaveTransaction({
@@ -135,7 +135,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
         ["$" + "$" + "type"]: "VCoinMint",
         receiver: attacker.address,
         amount: MAX_SUPPLY,
-      },
+      } as any,
     );
 
     expect(result.transactions).toHaveTransaction({
@@ -159,7 +159,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
         ["$" + "$" + "type"]: "VCoinMint",
         receiver: owner.address,
         amount: MAX_SUPPLY,
-      },
+      } as any,
     );
 
     expect(second.transactions).toHaveTransaction({
@@ -191,7 +191,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
         custom_payload: null,
         forward_ton_amount: 0n,
         forward_payload: beginCell().endCell().asSlice(),
-      },
+      } as any,
     );
 
     expect(result.transactions).toHaveTransaction({
@@ -302,7 +302,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
         custom_payload: null,
         forward_ton_amount: 0n,
         forward_payload: beginCell().endCell().asSlice(),
-      },
+      } as any as any as any,
     );
 
     expect(result.transactions).toHaveTransaction({
@@ -329,7 +329,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
         custom_payload: null,
         forward_ton_amount: 0n,
         forward_payload: beginCell().endCell().asSlice(),
-      },
+      } as any,
     );
     expect(result.transactions).toHaveTransaction({
       from: founderWallet.address,
@@ -355,7 +355,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
         custom_payload: null,
         forward_ton_amount: 0n,
         forward_payload: beginCell().endCell().asSlice(),
-      },
+      } as any,
     );
     expect(result.transactions).toHaveTransaction({
       from: founderWallet.address,
@@ -379,7 +379,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
         response_destination: attacker.address,
         forward_ton_amount: 0n,
         forward_payload: beginCell().endCell().asSlice(),
-      },
+      } as any,
     );
     expect(result.transactions).toHaveTransaction({
       from: attacker.address,
@@ -400,7 +400,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
         amount: ONE_TOKEN,
         sender: owner.address,
         response_destination: attacker.address,
-      },
+      } as any,
     );
     expect(result.transactions).toHaveTransaction({
       from: attacker.address,
@@ -424,7 +424,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
         amount: burnAmount,
         response_destination: owner.address,
         custom_payload: null,
-      },
+      } as any,
     );
 
     expect(result.transactions).toHaveTransaction({

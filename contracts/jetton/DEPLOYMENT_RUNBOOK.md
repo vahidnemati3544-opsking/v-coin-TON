@@ -65,7 +65,7 @@ Required custody behavior:
 - The founder is the sole authorized signer/controller for release transactions, but the escrow contract must enforce the time-based vested ceiling. Founder authorization must not bypass the lock.
 - The mining reserve escrow may release only vested amounts to the recorded mining-reserve destination; any subsequent movement remains subject to founder-controlled wallet keys.
 - No admin backdoor, arbitrary unlock, beneficiary substitution, or emergency withdrawal may bypass the schedule.
-- The draft escrow implements one-time deployment readiness acknowledgements, one-time exact deposits, integer linear vesting, monotonic release query IDs, beneficiary-wallet success acknowledgement, failed-transfer recovery, and no admin unlock or beneficiary substitution. The current draft branch passes Acton build, 85 emulator tests across 9 files, static checks, and formatting. Deeper adversarial tests and independent review remain mandatory.
+- The draft escrow implements one-time deployment readiness acknowledgements, one-time exact deposits, integer linear vesting, monotonic release query IDs, beneficiary-wallet success acknowledgement, failed-transfer recovery, and no admin unlock or beneficiary substitution. The current verified draft revision passes Acton build, 86 emulator tests across 9 files, static checks, formatting, and a local-emulated run of the guarded minter deployment script. Deeper adversarial tests and independent review remain mandatory.
 - Start timestamps and escrow addresses remain unset until explicitly approved and verified on-chain.
 
 **Hard stop:** the escrow code and minter integration exist only on the unmerged Draft security branch. The current CI suite passes, but do not merge, deploy, or mint until the exact deployment configuration is reviewed, an independent smart-contract audit is complete, and Testnet deployment plus end-to-end wallet verification succeeds. Founder and mining allocations must never be minted directly to beneficiary wallets. Mainnet remains unauthorized.
@@ -144,7 +144,8 @@ Stop if any of the following is true:
 - Deployment transaction: none.
 - Initial mint transaction: none.
 - Mainnet allocation transfers: none.
-- Draft escrow implementation: present in PR #4 security branch; deterministic dual escrow deployment and founder/mining deposit acknowledgement covered by emulator tests; final CI, adversarial bounce/retry coverage, and audit still pending.
+- Draft escrow implementation: present in PR #4 security branch; deterministic dual escrow deployment and founder/mining deposit acknowledgement covered by emulator tests. The guarded minter deployment script has passed local emulation. Dedicated end-to-end successful-release, replay, and bounce/retry tests, independent audit, and Testnet verification remain pending.
+- Latest verified Acton CI: 86 tests passed in 9 files; build, wrapper generation, local deployment-script exercise, static checks, and formatting passed.
 - Independent audit: not yet completed.
 
 This runbook is an execution control document, not evidence that any token has been deployed or transferred.

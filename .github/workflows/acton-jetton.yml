@@ -33,7 +33,7 @@ jobs:
       - name: Build Jetton contracts
         run: acton build
       - name: Run Jetton contract integration tests
-        run: acton test jetton-v2.1/tests
+        run: acton test jetton-v2.1/tests vcoin-policy/tests
       - name: Static checks
         run: acton check
       - name: Formatting check

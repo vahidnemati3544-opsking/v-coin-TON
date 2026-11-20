@@ -61,7 +61,7 @@ All arithmetic must use checked integer operations; rounding remainder is releas
 
 Required custody behavior:
 - Mint founder and mining allocations only to two separate deterministic `VcoinVestingEscrow` instances created by the minter. The draft implementation derives each escrow address from the minter address, escrow code, vesting kind, and approved start time; direct minting to either beneficiary wallet is rejected.
-- The minter must be deployed with `adminAddress` equal to the recorded Founder wallet. That immutable original minter administrator becomes the release controller for both escrow instances; the deployment template records this requirement.
+- The minter must be deployed with `adminAddress` equal to the recorded Founder wallet because it authorizes the one-time start-time configuration. The escrow code independently fixes the release controller to the Founder wallet; no admin unlock or controller substitution exists.
 - The founder is the sole authorized signer/controller for release transactions, but the escrow contract must enforce the time-based vested ceiling. Founder authorization must not bypass the lock.
 - The mining reserve escrow may release only vested amounts to the recorded mining-reserve destination; any subsequent movement remains subject to founder-controlled wallet keys.
 - No admin backdoor, arbitrary unlock, beneficiary substitution, or emergency withdrawal may bypass the schedule.

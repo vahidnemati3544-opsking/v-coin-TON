@@ -1,6 +1,6 @@
 V COIN – TON Tokenomics
 
-Document version: 1.0
+Document version: 1.1
 Status: Approved for design
 Network: TON Blockchain
 Token standard: Jetton (TEP-74)
@@ -36,6 +36,8 @@ Project treasury| 10%| 1,000,000,000 VCOIN
 Liquidity and market| 10%| 1,000,000,000 VCOIN
 Ecosystem development and marketing| 10%| 1,000,000,000 VCOIN
 Total| 100%| 10,000,000,000 VCOIN
+
+The five official allocation destination addresses are recorded in `docs/WALLET_ALLOCATION_REGISTER.md`. Those five addresses are the sole approved allocation destinations unless the project owner explicitly approves a documented change. Tonkeeper and Gram Wallet addresses mentioned for general wallet use are not additional allocation destinations.
 
 4. Founder allocation
 
@@ -102,14 +104,23 @@ Controlled allocation and distribution of the approved reserves.
 Appropriate vesting logic for the founder allocation.
 Secure accounting and transaction verification.
 Contract implementation must be reviewed against the applicable TON standards and security requirements.
+
 11. Testing and deployment restrictions
+
 The implementation must undergo local testing, TON Testnet deployment, functional verification, and independent security review before any Mainnet deployment.
 Mainnet deployment requires a separate, explicit approval.
 No Mainnet deployment, initial issuance, liquidity commitment, or irreversible administrative action is authorized by this document.
+
 12. Change control
+
 Any change to the total supply, allocation percentages, founder vesting period, or prohibition on additional minting requires explicit approval from the project owner and an updated version of this document.
+
 Document status: Approved tokenomics design — implementation pending.
 
-
 13. Smart contract specification
+
 The technical specification for the VCOIN TON Jetton Master and Wallet contracts is maintained in docs/JETTON_CONTRACT_SPEC.md. This is a design specification, not compiled contract source code or deployment evidence. Implementation, compilation, tests, independent security review and Testnet deployment remain pending. The deployment parameter template is contracts/jetton/deployment.config.template.json. Null addresses and vesting parameters must be explicitly approved before deployment.
+
+14. Official wallet allocation register
+
+The canonical five-wallet allocation map is maintained in docs/WALLET_ALLOCATION_REGISTER.md. The register is part of the approved design baseline. Address ownership, wallet control, Jetton wallet derivation, on-chain balances and transfers must still be independently verified before any issuance or payout. The register does not authorize deployment or transfer by itself.

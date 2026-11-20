@@ -7,6 +7,7 @@ import "@acton/build"
 import "@acton/emulation/network"
 import "@acton/testing/assert"
 import "../contracts/messages"
+import "../contracts/storage"
 import "../contracts/vcoin-storage"
 
 /// Storage `VcoinMinterStorage` is defined in `../contracts/storage`

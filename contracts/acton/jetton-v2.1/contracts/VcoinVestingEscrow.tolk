@@ -140,7 +140,7 @@ fun onInternalMessage(in: InMessage) {
             assert (in.senderAddress == VCOIN_RELEASE_CONTROLLER) throw ERROR_NOT_OWNER;
             assert (storage.deposited) throw ERROR_INVALID_OP;
             assert (storage.pendingReleaseAmount == 0) throw ERROR_INVALID_OP;
-            assert (msg.queryId != 0) throw ERROR_INVALID_OP;
+            assert (msg.queryId > storage.lastReleaseQueryId) throw ERROR_INVALID_OP;
 
             val vested = vcoinVestedAmount(storage, blockchain.now());
             assert (vested > storage.releasedAmount) throw ERROR_INVALID_OP;
@@ -150,6 +150,7 @@ fun onInternalMessage(in: InMessage) {
             // from this escrow owner and the configured VCOIN master.
             storage.pendingReleaseAmount = releasable;
             storage.pendingReleaseQueryId = msg.queryId;
+            storage.lastReleaseQueryId = msg.queryId;
             storage.save();
 
             val forwardPayload = beginCell().storeUint(0, 1).endCell().beginParse();
@@ -244,6 +245,7 @@ get fun get_vcoin_vesting_state(): tuple {
         storage.releasedAmount,
         storage.pendingReleaseAmount,
         storage.pendingReleaseQueryId,
+        storage.lastReleaseQueryId,
         vested,
         claimable,
     ];

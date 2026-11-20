@@ -113,7 +113,7 @@ get fun `test VCOIN minter rejects partial and over-allocation mints`() {
 }
 
 get fun `test VCOIN minter finalizes only after all five exact allocations are credited`() {
-    val (minter, admin, _) = setupVcoinMinter();
+    val (minter, admin, _, treasury) = setupVcoinMinter();
 
     val earlyFinalize = minter.sendDropMinterAdmin(admin.address, 30, { value: grams("0.1"), bounce: true });
     expect(earlyFinalize).toHaveFailedTx<DropMinterAdmin>({ from: admin.address, to: minter.address });

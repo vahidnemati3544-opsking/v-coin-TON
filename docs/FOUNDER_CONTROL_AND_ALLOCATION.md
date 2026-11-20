@@ -4,13 +4,14 @@
 **Status:** Approved design direction; implementation and legal review pending  
 **Network:** TON  
 **Token:** VCOIN, Jetton (TEP-74)  
-**Owner wallet proposed by founder:** `UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB`
+**Founder allocation destination:** `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy`  
+**Separate operational fee wallet:** `UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB`
 
 ## 1. Purpose and scope
 
 This document defines the founder's operational authority over VCOIN issuance, custody, allocation and treasury distributions. It applies only to the independent TON project and does not modify or reuse the legacy BNB project.
 
-The address above is a user-provided public address. It is not yet cryptographically verified as controlled by the founder and must not be hard-coded as an authenticated administrator until a wallet-signature challenge has been completed on the selected network.
+The founder allocation destination and the operational fee wallet are distinct addresses with different purposes. The operational fee wallet is not the founder's VCOIN allocation destination and is not included in the five-wallet token allocation.
 
 ## 2. Fixed supply
 
@@ -56,9 +57,19 @@ If stronger custody controls are required for a particular allocation, use a dis
 | Ecosystem and marketing | 10% | 1,000,000,000 VCOIN |
 | **Total** | **100%** | **10,000,000,000 VCOIN** |
 
-Founder allocation remains subject to the approved four-year vesting design. The exact vesting contract and schedule must be specified before implementation. The mining reserve is a pre-existing allocation; mining rewards must be paid from this reserve and must never mint new tokens.
+The exact five allocation owner addresses are maintained in `docs/WALLET_ALLOCATION_REGISTER.md`. Founder allocation remains subject to the approved four-year vesting design. The exact vesting contract and schedule must be specified before implementation. The mining reserve is a pre-existing allocation; mining rewards must be paid from this reserve and must never mint new tokens.
 
-## 6. Transaction lifecycle
+## 6. Operational TON network-fee funding
+
+The project owner has explicitly selected the separate Tonkeeper address `UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB` as **V COIN – TON GAS & OPERATIONS**.
+
+The owner's funding instruction is that TON deposits intended for TON network fees and authorized operational transaction costs will be made to this wallet only. It is not a VCOIN allocation wallet, does not receive any share of the initial VCOIN supply, and must not be treated as the founder allocation address.
+
+Do not request routine TON fee deposits into all five VCOIN allocation wallets. Some TON transaction flows may technically require the wallet that signs a Jetton transfer to hold TON. If that occurs, document the exact operation and required amount, then obtain explicit owner approval before moving any TON from the designated fee wallet. Do not assume universal fee sponsorship is technically available.
+
+The address is owner-provided and must be verified in the wallet app and against the intended network before funding. Never request or store seed phrases or private keys.
+
+## 7. Transaction lifecycle
 
 Every allocation transfer must follow this sequence:
 
@@ -75,7 +86,7 @@ Every allocation transfer must follow this sequence:
 
 A transaction must remain pending or failed until independently verified on-chain. Retries must be idempotent and must not duplicate a transfer.
 
-## 7. Required security controls
+## 8. Required security controls
 
 - Verify founder wallet ownership with a TON Connect proof/signature challenge; a pasted address is not proof of control.
 - Bind every transaction to the approved network and exact VCOIN Jetton master address.
@@ -87,7 +98,7 @@ A transaction must remain pending or failed until independently verified on-chai
 - Keep distribution disabled when chain data is stale, inconsistent or unavailable.
 - Perform independent smart-contract review and deployment verification before Mainnet use.
 
-## 8. Release gates
+## 9. Release gates
 
 The following are not yet established by this document:
 - a completed Jetton master and wallet contract implementation;
@@ -100,6 +111,6 @@ The following are not yet established by this document:
 
 No token should be represented as issued, transferable or available for extraction until the relevant on-chain evidence exists.
 
-## 9. Operational record
+## 10. Operational record
 
-The proposed founder wallet address is recorded above only as a candidate. Before deployment it must be verified by a fresh wallet challenge on the chosen network. The Jetton master address, deployment transaction, code hash, metadata and allocation transfers must be added here only after independently verified.
+The founder allocation address and separate TON operational-fee wallet are recorded for distinct purposes. Before deployment or funding, each must be verified by a fresh wallet/network check. The Jetton master address, deployment transaction, code hash, metadata and allocation transfers must be added here only after independently verified.

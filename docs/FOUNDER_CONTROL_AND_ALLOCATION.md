@@ -4,7 +4,7 @@
 **Status:** Approved design direction; implementation and legal review pending  
 **Network:** TON  
 **Token:** VCOIN, Jetton (TEP-74)  
-**Owner wallet proposed by founder:** `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy`
+**Owner wallet proposed by founder:** `UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB`
 
 ## 1. Purpose and scope
 

@@ -48,3 +48,7 @@ struct VcoinVestingEscrowStorage {
     deposited: bool
     releasedAmount: coins
 }
+
+fun VcoinVestingEscrowStorage.save(self) {
+    contract.setData(self.toCell());
+}

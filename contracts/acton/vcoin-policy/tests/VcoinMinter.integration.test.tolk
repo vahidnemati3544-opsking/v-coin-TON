@@ -162,7 +162,7 @@ get fun `test VCOIN minter blocks founder and mining and cannot finalize incompl
 
 get fun `test VCOIN deploys both vesting escrows and confirms founder mint only after deposit`() {
     testing.setNow(1000);
-    val (minter, admin, _, _) = setupVcoinMinter(false);
+    val (minter, admin, outsider, _) = setupVcoinMinter(false);
 
     val configure = minter.sendConfigureVcoinEscrows(
         admin.address,
@@ -218,4 +218,55 @@ get fun `test VCOIN deploys both vesting escrows and confirms founder mint only 
     });
     expect(miningEscrow.getVcoinVestingDeposited()).toEqual(true);
     expect(minter.getVcoinMiningAllocationStatus()).toEqual(2);
+
+    val unauthorizedRelease = founderEscrow.sendReleaseVestedVcoin(
+        outsider.address,
+        80,
+        { value: grams("0.6"), bounce: true },
+    );
+    expect(
+        unauthorizedRelease,
+    ).toHaveFailedTx<ReleaseVestedVcoin>({
+        from: outsider.address,
+        to: founderEscrow.address,
+        exitCode: 73,
+    });
+
+    val prematureRelease = founderEscrow.sendReleaseVestedVcoin(
+        admin.address,
+        81,
+        { value: grams("0.6"), bounce: true },
+    );
+    expect(
+        prematureRelease,
+    ).toHaveFailedTx<ReleaseVestedVcoin>({
+        from: admin.address,
+        to: founderEscrow.address,
+        exitCode: 72,
+    });
+
+    testing.setNow(1000 + 63115200);
+    val validRelease = founderEscrow.sendReleaseVestedVcoin(
+        admin.address,
+        82,
+        { value: grams("0.6"), bounce: true },
+    );
+    expect(validRelease).toHaveSuccessfulTx<ReleaseVestedVcoin>({
+        from: admin.address,
+        to: founderEscrow.address,
+    });
+    expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(FOUNDER_AMOUNT / 2);
+
+    val replayRelease = founderEscrow.sendReleaseVestedVcoin(
+        admin.address,
+        82,
+        { value: grams("0.6"), bounce: true },
+    );
+    expect(
+        replayRelease,
+    ).toHaveFailedTx<ReleaseVestedVcoin>({
+        from: admin.address,
+        to: founderEscrow.address,
+        exitCode: 72,
+    });
 }

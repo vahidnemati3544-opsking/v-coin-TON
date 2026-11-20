@@ -34,6 +34,10 @@ jobs:
         run: acton --version
       - name: Build Jetton contracts
         run: acton build
+      - name: Generate VCOIN contract wrappers
+        run: |
+          acton wrapper VcoinMinter
+          acton wrapper VcoinVestingEscrow
       - name: Run Jetton contract integration tests
         run: acton test jetton-v2.1/tests vcoin-policy/tests
       - name: Static checks

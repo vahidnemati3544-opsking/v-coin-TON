@@ -367,6 +367,21 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
 
   test("rejects forged internal transfers from an untrusted wallet address", async () => {
     await issueFullSupply();
+    const founderWallet = await walletFor(owner.address);
+    await founderWallet.send(
+      owner.getSender(),
+      { value: toNano("0.2") },
+      {
+        ["$" + "$" + "type"]: "TokenTransfer",
+        query_id: 44n,
+        amount: ONE_TOKEN,
+        destination: recipient.address,
+        response_destination: owner.address,
+        custom_payload: null,
+        forward_ton_amount: 0n,
+        forward_payload: beginCell().endCell().asSlice(),
+      } as any,
+    );
     const recipientWallet = await walletFor(recipient.address);
     const result = await recipientWallet.send(
       attacker.getSender(),
@@ -386,7 +401,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       to: recipientWallet.address,
       aborted: true,
     });
-    expect((await recipientWallet.getGetWalletData()).balance).toBe(0n);
+    expect((await recipientWallet.getGetWalletData()).balance).toBe(ONE_TOKEN);
   });
 
   test("rejects forged burn notifications that do not come from the derived Jetton wallet", async () => {

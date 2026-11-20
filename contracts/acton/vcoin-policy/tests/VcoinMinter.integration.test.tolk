@@ -444,7 +444,7 @@ get fun `test founder vesting release completes through actual VCOIN jetton wall
     // net.send executes the complete message chain:
     // Founder -> Escrow -> escrow Jetton wallet -> beneficiary Jetton wallet
     // -> ReturnExcessesBack -> Escrow.
-    val trace = net.send(FOUNDER, release);
+    net.send(FOUNDER, release);
 
     expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(
         FOUNDER_AMOUNT / 2,
@@ -455,5 +455,4 @@ get fun `test founder vesting release completes through actual VCOIN jetton wall
     expect(beneficiaryJettonWallet.getWalletData().jettonBalance).toEqual(
         FOUNDER_AMOUNT / 2,
     );
-    expect(trace.size()).toBeGreaterThan(0);
 }

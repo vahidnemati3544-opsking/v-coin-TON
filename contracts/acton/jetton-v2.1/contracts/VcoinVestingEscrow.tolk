@@ -14,27 +14,11 @@ const VCOIN_MINING_AMOUNT = 5000000000000000
 const VCOIN_FOUNDER_DURATION = 126230400
 const VCOIN_MINING_DURATION = 63072000
 
-struct VcoinVestingEscrowStorage {
-    vestingKind: uint8
-    minterAddress: address
-    beneficiaryAddress: address
-    controllerAddress: address
-    allocationAmount: coins
-    startTime: uint32
-    duration: uint32
-    deposited: bool
-    releasedAmount: coins
-}
-
-fun VcoinVestingEscrowStorage.save(self) {
-    contract.setData(self.toCell());
-}
-
 struct (0x5643524c) ReleaseVestedVcoin {
     queryId: uint64
 }
 
-type AllowedVestingEscrowMessage = TransferNotificationForRecipient | ReleaseVestedVcoin
+type AllowedVestingEscrowMessage = TransferNotificationForRecipient | ReleaseVestedVcoin | TopUpTons
 
 contract VcoinVestingEscrow {
     author: "V COIN"
@@ -128,6 +112,23 @@ fun onInternalMessage(in: InMessage) {
                 },
             });
             transfer.send(SEND_MODE_PAY_FEES_SEPARATELY | SEND_MODE_BOUNCE_ON_ACTION_FAIL);
+        }
+
+        TopUpTons => {
+            var storage = lazy VcoinVestingEscrowStorage.fromCell(contract.getData());
+            validateVcoinVestingConfig(storage);
+            assert (in.senderAddress == storage.minterAddress) throw ERROR_NOT_OWNER;
+            val ready = createMessage({
+                bounce: BounceMode.NoBounce,
+                dest: storage.minterAddress,
+                value: 0,
+                body: VcoinVestingEscrowReady {
+                    queryId: 0,
+                    vestingKind: storage.vestingKind,
+                    escrowAddress: contract.getAddress(),
+                },
+            });
+            ready.send(SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE | SEND_MODE_BOUNCE_ON_ACTION_FAIL);
         }
 
         else => throw 0xFFFF,

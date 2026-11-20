@@ -31,6 +31,25 @@ fun onBouncedMessage(in: InMessageBounced) {
     var storage = lazy WalletStorage.load();
     storage.jettonBalance += restoreAmount;
     storage.save();
+
+    match (msg) {
+        InternalTransferStep => {
+            if (msg.transferInitiator != null) {
+                val failed = createMessage({
+                    bounce: BounceMode.NoBounce,
+                    dest: storage.ownerAddress,
+                    value: 0,
+                    body: VcoinTransferFailed {
+                        queryId: msg.queryId,
+                        jettonAmount: msg.jettonAmount,
+                        ownerAddress: storage.ownerAddress,
+                    },
+                });
+                failed.send(SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE | SEND_MODE_IGNORE_ERRORS);
+            }
+        }
+        BurnNotificationForMinter => {}
+    }
 }
 
 fun onInternalMessage(in: InMessage) {

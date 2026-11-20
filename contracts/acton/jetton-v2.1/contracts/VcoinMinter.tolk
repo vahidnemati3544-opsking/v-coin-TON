@@ -211,6 +211,9 @@ fun onBouncedMessage(in: InMessageBounced) {
 }
 
 fun onInternalMessage(in: InMessage) {
+    if (in.body.isEmpty()) {
+        return;
+    }
     val msg = lazy AllowedVcoinMinterMessage.fromSlice(in.body);
 
     match (msg) {

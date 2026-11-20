@@ -86,7 +86,7 @@ The migration is intentionally isolated from the legacy Tact folder. The importe
 - [ ] Acton build and full vendored integration suite pass in the new GitHub Actions run (workflow added; result pending).
 - [ ] VCOIN allocation enforcement implemented and tested.
 - [ ] Founder vesting escrow implemented and tested.
-- [ ] Full Acton Jetton + VCOIN policy test suites passing in repository CI (workflow configured; result not visible yet).
+- [x] Acton 1.2.0 CI: build, Jetton + VCOIN policy test suites, static checks, and formatting all pass — 75 tests across 7 files. [Run #45](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44718483274).
 - [ ] Dependency audit and reproducible lockfile complete.
 - [ ] Independent security review complete.
 - [ ] Testnet deployment and verification complete.

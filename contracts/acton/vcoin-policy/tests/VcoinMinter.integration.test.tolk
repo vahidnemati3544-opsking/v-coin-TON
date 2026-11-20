@@ -256,6 +256,63 @@ get fun `test founder vesting release success failure rollback and retry`() {
     expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(
         FOUNDER_AMOUNT * 3 / 4,
     );
+
+    // A replayed query ID cannot release the same accrued amount twice.
+    val replayRelease = createMessage({
+        bounce: true,
+        value: grams("0.6"),
+        dest: founderEscrowAddress!,
+        body: ReleaseVestedVcoin { queryId: 82 },
+    });
+    testing.processSingleTraceStep(FOUNDER, replayRelease);
+    expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(
+        FOUNDER_AMOUNT * 3 / 4,
+    );
+
+    // Exercise the escrow's bounced AskToTransfer recovery path.
+    testing.setNow(1000 + 126230400 * 7 / 8);
+    val bouncedRelease = createMessage({
+        bounce: true,
+        value: grams("0.6"),
+        dest: founderEscrowAddress!,
+        body: ReleaseVestedVcoin { queryId: 83 },
+    });
+    val releaseTrace = testing.processSingleTraceStep(FOUNDER, bouncedRelease);
+    val outgoingTransfer = releaseTrace.outMessages.at<AskToTransfer>(0);
+    val outgoingBody = outgoingTransfer.loadBody();
+    val bouncedBody = beginCell()
+        .storeUint(0xffffffff, 32)
+        .storeSlice(outgoingBody.toCell().beginParse())
+        .endCell();
+    val bouncedMessage = createMessage({
+        bounce: false,
+        value: grams("0.1"),
+        dest: founderEscrowAddress!,
+        body: bouncedBody,
+    }).bounced();
+    testing.processSingleTraceStep(escrowJettonWallet, bouncedMessage);
+    expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(
+        FOUNDER_AMOUNT * 3 / 4,
+    );
+
+    // A new query ID succeeds after bounce recovery clears the pending release.
+    val finalRetry = createMessage({
+        bounce: true,
+        value: grams("0.6"),
+        dest: founderEscrowAddress!,
+        body: ReleaseVestedVcoin { queryId: 84 },
+    });
+    testing.processSingleTraceStep(FOUNDER, finalRetry);
+    val finalSuccessAck = createMessage({
+        bounce: false,
+        value: grams("0.1"),
+        dest: founderEscrowAddress!,
+        body: ReturnExcessesBack { queryId: 84 },
+    });
+    testing.processSingleTraceStep(beneficiaryWallet, finalSuccessAck);
+    expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(
+        FOUNDER_AMOUNT * 7 / 8,
+    );
 }
 
 get fun `test VCOIN deploys both vesting escrows and confirms founder mint only after deposit`() {

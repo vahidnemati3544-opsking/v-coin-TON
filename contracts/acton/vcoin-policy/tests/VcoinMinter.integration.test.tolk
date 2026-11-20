@@ -9,7 +9,6 @@ import "../../jetton-v2.1/wrappers/VcoinJettonWallet.gen"
 
 const FOUNDER = address("UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy")
 const MINING = address("UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0")
-const TREASURY = address("UQBEW5bLGbq0yVDOimgl6fpZQkdla9Wk5b0tXyx69bmBktQ")
 const LIQUIDITY = address("UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn")
 const ECOSYSTEM = address("UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE")
 
@@ -24,14 +23,15 @@ fun testMetadata(): cell {
     return metadata.toCell();
 }
 
-fun setupVcoinMinter(): (VcoinMinter, Treasury, Treasury) {
+fun setupVcoinMinter(): (VcoinMinter, Treasury, Treasury, Treasury) {
     val admin = testing.treasury("vcoin-admin");
     val outsider = testing.treasury("vcoin-outsider");
+    val treasury = testing.treasury("vcoin-treasury");
     val minter = VcoinMinter.fromStorage(VcoinMinterStorage {
         totalSupply: 0,
         adminAddress: admin.address,
         metadata: testMetadata(),
-        treasuryOwner: TREASURY,
+        treasuryOwner: treasury.address,
         lifetimeIssued: 0,
         founderStatus: 0,
         miningStatus: 0,
@@ -42,7 +42,7 @@ fun setupVcoinMinter(): (VcoinMinter, Treasury, Treasury) {
     });
     val deploy = minter.deploy(admin.address, { value: grams("10"), bounce: false });
     expect(deploy).toHaveSuccessfulDeploy({ to: minter.address });
-    return (minter, admin, outsider);
+    return (minter, admin, outsider, treasury);
 }
 
 fun mintAllocation(
@@ -71,7 +71,7 @@ fun mintAllocation(
 }
 
 get fun `test VCOIN minter rejects mint from non-admin`() {
-    val (minter, _, outsider) = setupVcoinMinter();
+    val (minter, _, outsider, _) = setupVcoinMinter();
     val result = mintAllocation(minter, outsider, FOUNDER, FOUNDER_AMOUNT, 1);
     expect(result).toHaveFailedTx<MintNewJettons>({
         from: outsider.address,
@@ -80,7 +80,7 @@ get fun `test VCOIN minter rejects mint from non-admin`() {
 }
 
 get fun `test VCOIN minter rejects a sixth destination`() {
-    val (minter, admin, _) = setupVcoinMinter();
+    val (minter, admin, _, _) = setupVcoinMinter();
     val outsider = testing.treasury("vcoin-sixth-destination");
     val result = mintAllocation(minter, admin, outsider.address, 1, 2);
     expect(result).toHaveFailedTx<MintNewJettons>({
@@ -91,7 +91,7 @@ get fun `test VCOIN minter rejects a sixth destination`() {
 }
 
 get fun `test VCOIN minter mints exact founder allocation and rejects a second mint`() {
-    val (minter, admin, _) = setupVcoinMinter();
+    val (minter, admin, _, _) = setupVcoinMinter();
     val first = mintAllocation(minter, admin, FOUNDER, FOUNDER_AMOUNT, 11);
     expect(first).toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });
     val founderWallet = VcoinJettonWallet { address: minter.getWalletAddress(FOUNDER) };
@@ -104,7 +104,7 @@ get fun `test VCOIN minter mints exact founder allocation and rejects a second m
 }
 
 get fun `test VCOIN minter rejects partial and over-allocation mints`() {
-    val (minter, admin, _) = setupVcoinMinter();
+    val (minter, admin, _, _) = setupVcoinMinter();
     val partial = mintAllocation(minter, admin, FOUNDER, FOUNDER_AMOUNT - 1, 21);
     expect(partial).toHaveFailedTx<MintNewJettons>({ from: admin.address, to: minter.address });
     val over = mintAllocation(minter, admin, FOUNDER, FOUNDER_AMOUNT + 1, 22);
@@ -122,7 +122,7 @@ get fun `test VCOIN minter finalizes only after all five exact allocations are c
         .toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });
     expect(mintAllocation(minter, admin, MINING, MINING_AMOUNT, 32))
         .toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });
-    expect(mintAllocation(minter, admin, TREASURY, OTHER_AMOUNT, 33))
+    expect(mintAllocation(minter, admin, treasury.address, OTHER_AMOUNT, 33))
         .toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });
     expect(mintAllocation(minter, admin, LIQUIDITY, OTHER_AMOUNT, 34))
         .toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });

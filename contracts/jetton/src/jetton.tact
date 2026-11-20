@@ -2,7 +2,7 @@ import "./messages";
 
 @interface("org.ton.jetton.master")
 trait JettonMaster {
-    total_supply: Int;
+    total_supply: Int as coins;
     mintable: Bool;
     owner: Address;
     content: Cell;

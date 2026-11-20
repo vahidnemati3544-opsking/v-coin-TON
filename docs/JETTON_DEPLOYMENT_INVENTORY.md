@@ -1,60 +1,68 @@
 # V COIN–TON Jetton Deployment Inventory
 
 **Document ID:** VCT-JETTON-INV-001  
-**Reviewed:** 2026-11-20  
+**Reviewed:** 2026-11-21  
 **Scope:** `vahidnemati3544-opsking/v-coin-TON` only  
-**Result:** **TACT BUILD PASSED; LIMITED ARITHMETIC TESTS PASSED; NOT DEPLOYABLE.**
+**Result:** **SOURCE PRESENT; PRIOR BUILD EVIDENCE EXISTS; CURRENT SOURCE NOT VERIFIED; NOT DEPLOYABLE.**
 
-## Verified CI result
+## Verified repository state
 
-- Commit `ad54496b45cac115285a21ce0ef9be4147da6f02` — [GitHub Actions run 44716041416](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44716041416) completed successfully.
-- `npm run build`: passed; both `VCoinJettonWallet` and `VCoinMaster` compiled and packaged.
-- `npm test`: passed; 1 suite, 4 tests. These validate arithmetic supply policy only; they do not execute contracts in TON Sandbox.
-- Dependency installation reported **5 high-severity vulnerabilities** and deprecated packages, including `@tact-lang/compiler@1.6.13`. Audit remediation and a committed lockfile remain outstanding.
+- Main branch head reviewed: `5cc9e6d4955cf19b73be6c8484dcd736bcbdaefa`.
+- The prior CI record for commit `ad54496b45cac115285a21ce0ef9be4147da6f02` reports a successful Tact build and four arithmetic-only Jest tests. That result does not establish that the latest source builds or that contracts behave correctly in TON Sandbox.
+- Current master source: `contracts/jetton/src/vcoin.tact`; it includes a bounced `TokenTransferInternal` handler. The handler is present in source but has not been proven by a fresh build and TON Sandbox test.
+- Current Jetton implementation: `contracts/jetton/src/jetton.tact`; it contains master and wallet logic, but TEP-74/TEP-64 conformance and secure behavior remain unverified.
+- `contracts/jetton/package.json` pins `@tact-lang/compiler@1.6.13` and related dependencies. No `package-lock.json` was found at the reviewed path.
+- The workflow `.github/workflows/vcoin-jetton.yml` runs install, build and Jest tests; the existing Jest suite is arithmetic policy testing, not contract execution in Sandbox.
 
-## Current repository state
+## Fixed supply and allocation policy
 
-1. First-pass Tact source exists under `contracts/jetton/src/`: `messages.tact`, `jetton.tact`, and `vcoin.tact`.
-2. The master source encodes a global cap of 10,000,000,000 VCOIN at six decimals (10^16 base units), owner-authorized minting, and mint disablement when the cap is reached.
-3. Build configuration, npm manifest, Jest configuration, TypeScript configuration, arithmetic tests, and GitHub Actions workflow are present.
-4. No VCOIN master address, deployment transaction, Testnet issuance, or Mainnet issuance exists in the evidence reviewed here.
+- Maximum supply: 10,000,000,000 VCOIN.
+- Decimals: 6.
+- Maximum base units: 10000000000000000.
+- Founder: 2,000,000,000 VCOIN (20%; four-year vesting intended).
+- Mining reserve: 5,000,000,000 VCOIN (50%; user mining is deferred until Telegram bot integration).
+- Treasury: 1,000,000,000 VCOIN (10%).
+- Liquidity / market: 1,000,000,000 VCOIN (10%).
+- Ecosystem / marketing: 1,000,000,000 VCOIN (10%).
+- The five allocations sum to the fixed cap. Arithmetic agreement is not proof of on-chain enforcement.
 
-## Latest remediation activity — 2026-11-20
+## Current master issuance behavior
 
-- Commit `d050aa042c5b34411ecbea31acc3882bd1d00496` adds a master-contract bounced-message handler for mint-originated `TokenTransferInternal` messages. It reverses the provisional supply increment when the Jetton wallet deployment/credit message bounces and re-enables owner minting if the failed operation had reached the global cap.
-- **Verification status:** this is a source-level remediation only. A fresh Tact build and TON Sandbox bounce test have not yet been run against this commit. Do not treat the issue as closed until both pass.
-- The handler does not replace the required broader integration suite, five-allocation enforcement, vesting implementation, dependency remediation, or independent audit.
+The current `VCoinMaster` accepts one exact initial mint of the full 10-billion supply and requires the receiver to equal the master owner wallet. It then disables minting. This means the current code does **not** mint directly to the five destination wallets and does **not** enforce their separate allocation caps. Distribution from the founder wallet would require separate owner-signed Jetton transfers after a successful mint.
 
-## Blocking security and implementation findings
+The source-level bounce handler attempts to roll back provisional supply if the wallet-credit message bounces. This is an important recovery path, but it remains unverified. It must be exercised in Sandbox, including duplicate/bounce/replay scenarios, before any deployment.
 
-- **Mint bounce accounting:** `mintTo` increments master `total_supply` before recipient Jetton-wallet credit is confirmed. The master has no corresponding bounced-mint recovery/acknowledgement flow. A bounced mint can leave master supply inconsistent with holder balances.
-- **No allocation-specific on-chain controls:** only the global cap is enforced. The five approved destination addresses and individual allocation ceilings are not enforced by the contract.
-- **No founder vesting enforcement:** the four-year founder vesting arrangement is not implemented in an audited vesting/escrow contract.
-- **No TON Sandbox integration suite:** tests do not exercise deployment, minting, wallet derivation, transfers, burns, invalid senders, gas/fees, bounce recovery, or post-cap mint rejection against contract instances.
-- **TEP compatibility and wallet behavior:** source compilation is not proof of TEP-74/TEP-64 conformance or safe contract behavior.
-- **Dependency risk:** CI reported five high-severity dependency findings; dependency pinning/lockfile and audit remediation are incomplete.
+## Blocking gates
 
-## Required gates before any Testnet or Mainnet issuance
+1. **Fresh build:** run the current source with the pinned compiler and retain the exact build output and code hashes.
+2. **TON Sandbox contract tests:** deploy master and wallet instances in Sandbox; test exact one-time mint, wrong owner, wrong receiver, wrong amount, second mint, successful wallet initialization, bounced wallet-credit recovery, transfers, burns, invalid senders, duplicate/replay messages, and balances/supply consistency.
+3. **Allocation execution design:** decide and test whether the full supply is first minted to the founder wallet and then split by five explicit signed transfers. Confirm the five exact owner-wallet addresses and derive each Jetton wallet address from the deployed master. Do not mistake owner-wallet addresses for Jetton-wallet addresses.
+4. **Founder vesting:** the current source does not enforce four-year vesting. Either implement and independently review a disclosed vesting/escrow contract or explicitly revise the custody design before issuance. Do not describe an ordinary founder wallet as time-locked.
+5. **TEP compatibility:** validate the master/wallet interfaces, message opcodes, getters and metadata against TEP-74/TEP-64 and a maintained reference implementation.
+6. **Dependencies:** create and commit a reproducible lockfile; investigate and remediate or explicitly disposition all dependency advisories. The previous installation reported five high-severity findings.
+7. **Independent review:** obtain smart-contract security review and record reviewed source/build hashes.
+8. **Testnet:** only after the above code gates, deploy using the founder's own wallet signature; verify master state, wallet derivation, mint, transfers, metadata and finality.
+9. **Mainnet:** only after Testnet evidence and independent review, show the founder the exact final build hashes, network, master deployment details, recipients, amounts, fees and transaction payloads for explicit approval and signature.
 
-1. Correct mint accounting so failed/bounced wallet credit cannot leave total supply inflated; verify the fix in Sandbox.
-2. Implement and test the five allocation ceilings/destinations and founder vesting/custody design.
-3. Run TON Sandbox integration and negative tests for master and wallet flows, including transfers, burns, invalid senders, wallet derivation, bounce recovery, replay/duplicate messages, gas and fees.
-4. Pin dependencies, commit a reproducible lockfile, and resolve or explicitly disposition all high-severity advisories.
-5. Verify TEP-74/TEP-64 behavior and obtain independent smart-contract security review.
-6. Deploy to Testnet using an owner-controlled wallet signature; verify master state, metadata, holder Jetton wallet addresses and transaction finality.
-7. Mainnet deployment and issuance require separate explicit final approval after review of exact code hashes, metadata, supply and recipient destinations.
+## Evidence status
 
-## Custody and execution boundaries
+| Evidence | Status |
+|---|---|
+| Fixed supply arithmetic | Present in source and prior arithmetic tests |
+| Current-source fresh build | Pending |
+| TON Sandbox integration / bounce tests | Pending |
+| Five allocation-specific on-chain caps | Not implemented |
+| Four-year founder vesting enforcement | Not implemented |
+| Dependency lockfile / advisory disposition | Pending |
+| TEP-74 / TEP-64 conformance review | Pending |
+| Independent security review | Pending |
+| Testnet master address / deployment tx | None recorded |
+| Mainnet master address / deployment tx | None recorded |
+| Initial issuance transaction | None recorded |
+| Mainnet allocation transfers | None recorded |
 
-- The five recorded allocation addresses are candidate TON owner-wallet addresses; recording them does not prove control. Their Jetton wallet addresses are separate contracts derived from the deployed master.
-- The GAS & OPERATIONS Tonkeeper address is for TON fees only. It does not automatically pay fees for transactions signed by other wallets.
-- Wallet signatures and irreversible on-chain approvals must occur in the owner's Tonkeeper/TON Connect interface. Never request or store a seed phrase/private key.
-- Do not issue, transfer real-value assets, or activate mining until the gates above are complete.
+## Custody and safety
 
-## Official technical references
+The five recorded TON owner-wallet addresses are candidate destinations; recording them does not prove control. Their Jetton wallet addresses are separate contracts derived from the deployed master. The separate GAS & OPERATIONS wallet is for TON fees and is not a VCOIN allocation recipient. Each transaction must be reviewed and signed by the founder in their own wallet. Never request or store a recovery phrase or private key.
 
-- [TON TEP-74 Jetton standard](https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md)
-- [TON Jetton implementation and test suite in Tact](https://github.com/tact-lang/jetton)
-- [TON guidance on minting Jettons](https://docs.ton.org/develop/dapps/tutorials/jetton-minter)
-
-This inventory records verified evidence and blockers; it is not a deployment authorization or evidence that VCOIN has been issued.
+This inventory is an evidence and release-control record. It is not a deployment authorization and does not claim that VCOIN has been deployed, minted or transferred.

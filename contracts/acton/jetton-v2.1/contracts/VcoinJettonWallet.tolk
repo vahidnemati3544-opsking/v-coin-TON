@@ -34,7 +34,7 @@ fun onBouncedMessage(in: InMessageBounced) {
                 // be rolled back. Ordinary transfers retain the owner notification.
                 var failureRecipient = storage.ownerAddress;
                 if (msg.sendExcessesTo != null) {
-                    failureRecipient = msg.sendExcessesTo!;
+                    failureRecipient = msg.sendExcessesTo;
                 }
                 val failed = createMessage({
                     bounce: BounceMode.NoBounce,

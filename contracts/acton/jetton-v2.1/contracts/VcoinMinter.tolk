@@ -55,6 +55,7 @@ type AllowedVcoinMinterMessage =
 fun calcVcoinVestingEscrowDeployment(
     vestingKind: uint8,
     startTime: uint32,
+    queryId: uint64,
 ): AutoDeployAddress {
     var beneficiaryAddress = VCOIN_FOUNDER_OWNER;
     var allocationAmount: coins = VCOIN_FOUNDER_CAP;
@@ -72,6 +73,7 @@ fun calcVcoinVestingEscrowDeployment(
         allocationAmount,
         startTime,
         duration,
+        configQueryId: queryId,
         deposited: false,
         releasedAmount: 0,
     };
@@ -354,8 +356,8 @@ fun onInternalMessage(in: InMessage) {
             assert (msg.startTime >= blockchain.now()) throw ERROR_INVALID_OP;
             assert (in.valueCoins >= grams("1.2")) throw ERROR_NOT_ENOUGH_GAS;
 
-            val founderEscrowInit = calcVcoinVestingEscrowDeployment(1, msg.startTime);
-            val miningEscrowInit = calcVcoinVestingEscrowDeployment(2, msg.startTime);
+            val founderEscrowInit = calcVcoinVestingEscrowDeployment(1, msg.startTime, msg.queryId);
+            val miningEscrowInit = calcVcoinVestingEscrowDeployment(2, msg.startTime, msg.queryId);
             storage.founderEscrowOwner = founderEscrowInit.calculateAddress();
             storage.miningEscrowOwner = miningEscrowInit.calculateAddress();
             storage.founderEscrowReady = false;

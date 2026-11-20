@@ -76,6 +76,7 @@ get fun `test VCOIN minter rejects mint from non-admin`() {
     expect(result).toHaveFailedTx<MintNewJettons>({
         from: outsider.address,
         to: minter.address,
+        exitCode: 73,
     });
 }
 
@@ -86,6 +87,7 @@ get fun `test VCOIN minter rejects a sixth destination`() {
     expect(result).toHaveFailedTx<MintNewJettons>({
         from: admin.address,
         to: minter.address,
+        exitCode: 72,
     });
     expect(minter.getJettonData().totalSupply).toEqual(0);
 }
@@ -99,16 +101,16 @@ get fun `test VCOIN minter mints exact founder allocation and rejects a second m
     expect(minter.getJettonData().totalSupply).toEqual(FOUNDER_AMOUNT);
 
     val second = mintAllocation(minter, admin, FOUNDER, FOUNDER_AMOUNT, 12);
-    expect(second).toHaveFailedTx<MintNewJettons>({ from: admin.address, to: minter.address });
+    expect(second).toHaveFailedTx<MintNewJettons>({ from: admin.address, to: minter.address, exitCode: 72 });
     expect(minter.getJettonData().totalSupply).toEqual(FOUNDER_AMOUNT);
 }
 
 get fun `test VCOIN minter rejects partial and over-allocation mints`() {
     val (minter, admin, _, _) = setupVcoinMinter();
     val partial = mintAllocation(minter, admin, FOUNDER, FOUNDER_AMOUNT - 1, 21);
-    expect(partial).toHaveFailedTx<MintNewJettons>({ from: admin.address, to: minter.address });
+    expect(partial).toHaveFailedTx<MintNewJettons>({ from: admin.address, to: minter.address, exitCode: 72 });
     val over = mintAllocation(minter, admin, FOUNDER, FOUNDER_AMOUNT + 1, 22);
-    expect(over).toHaveFailedTx<MintNewJettons>({ from: admin.address, to: minter.address });
+    expect(over).toHaveFailedTx<MintNewJettons>({ from: admin.address, to: minter.address, exitCode: 72 });
     expect(minter.getJettonData().totalSupply).toEqual(0);
 }
 
@@ -116,7 +118,7 @@ get fun `test VCOIN minter finalizes only after all five exact allocations are c
     val (minter, admin, _, treasury) = setupVcoinMinter();
 
     val earlyFinalize = minter.sendDropMinterAdmin(admin.address, 30, { value: grams("0.1"), bounce: true });
-    expect(earlyFinalize).toHaveFailedTx<DropMinterAdmin>({ from: admin.address, to: minter.address });
+    expect(earlyFinalize).toHaveFailedTx<DropMinterAdmin>({ from: admin.address, to: minter.address, exitCode: 72 });
 
     expect(mintAllocation(minter, admin, FOUNDER, FOUNDER_AMOUNT, 31))
         .toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });

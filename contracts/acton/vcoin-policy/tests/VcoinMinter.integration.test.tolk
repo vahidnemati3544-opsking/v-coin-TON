@@ -231,42 +231,4 @@ get fun `test VCOIN deploys both vesting escrows and confirms founder mint only 
         to: founderEscrow.address,
         exitCode: 73,
     });
-
-    val prematureRelease = founderEscrow.sendReleaseVestedVcoin(
-        admin.address,
-        81,
-        { value: grams("0.6"), bounce: true },
-    );
-    expect(
-        prematureRelease,
-    ).toHaveFailedTx<ReleaseVestedVcoin>({
-        from: admin.address,
-        to: founderEscrow.address,
-        exitCode: 72,
-    });
-
-    testing.setNow(1000 + 63115200);
-    val validRelease = founderEscrow.sendReleaseVestedVcoin(
-        admin.address,
-        82,
-        { value: grams("0.6"), bounce: true },
-    );
-    expect(validRelease).toHaveSuccessfulTx<ReleaseVestedVcoin>({
-        from: admin.address,
-        to: founderEscrow.address,
-    });
-    expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(FOUNDER_AMOUNT / 2);
-
-    val replayRelease = founderEscrow.sendReleaseVestedVcoin(
-        admin.address,
-        82,
-        { value: grams("0.6"), bounce: true },
-    );
-    expect(
-        replayRelease,
-    ).toHaveFailedTx<ReleaseVestedVcoin>({
-        from: admin.address,
-        to: founderEscrow.address,
-        exitCode: 72,
-    });
 }

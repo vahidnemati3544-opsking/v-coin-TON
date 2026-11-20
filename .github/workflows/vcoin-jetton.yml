@@ -25,9 +25,12 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: contracts/jetton/package.json
-      - run: npm install
-      - name: Apply non-breaking dependency security fixes
-        run: npm audit fix || true
+      - name: Bootstrap a lockfile only when one is absent
+        run: |
+          if [ ! -f package-lock.json ]; then
+            npm install --package-lock-only --ignore-scripts
+          fi
+      - run: npm ci
       - name: Report dependency audit findings
         shell: bash
         run: |
@@ -37,3 +40,11 @@ jobs:
       - run: npm test
       - name: Enforce dependency security gate
         run: npm audit --audit-level=high
+      - name: Upload dependency lockfile for repository commit
+        if: always() && hashFiles('contracts/jetton/package-lock.json') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: vcoin-jetton-package-lock
+          path: contracts/jetton/package-lock.json
+          if-no-files-found: error
+          retention-days: 7

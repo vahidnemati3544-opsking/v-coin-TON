@@ -19,6 +19,12 @@
 3. Build configuration, npm manifest, Jest configuration, TypeScript configuration, arithmetic tests, and GitHub Actions workflow are present.
 4. No VCOIN master address, deployment transaction, Testnet issuance, or Mainnet issuance exists in the evidence reviewed here.
 
+## Latest remediation activity — 2026-11-20
+
+- Commit `d050aa042c5b34411ecbea31acc3882bd1d00496` adds a master-contract bounced-message handler for mint-originated `TokenTransferInternal` messages. It reverses the provisional supply increment when the Jetton wallet deployment/credit message bounces and re-enables owner minting if the failed operation had reached the global cap.
+- **Verification status:** this is a source-level remediation only. A fresh Tact build and TON Sandbox bounce test have not yet been run against this commit. Do not treat the issue as closed until both pass.
+- The handler does not replace the required broader integration suite, five-allocation enforcement, vesting implementation, dependency remediation, or independent audit.
+
 ## Blocking security and implementation findings
 
 - **Mint bounce accounting:** `mintTo` increments master `total_supply` before recipient Jetton-wallet credit is confirmed. The master has no corresponding bounced-mint recovery/acknowledgement flow. A bounced mint can leave master supply inconsistent with holder balances.

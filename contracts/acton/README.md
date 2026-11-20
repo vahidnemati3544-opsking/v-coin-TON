@@ -21,9 +21,10 @@ acton build
 acton test jetton-v2.1/tests vcoin-policy/tests
 acton check
 acton fmt --check
+acton script scripts/deploy-vcoin-minter.tolk
 ```
 
-The last fully successful verification on the previous code revision passed 85 emulator tests across 9 files, build, static checks, and formatting. The current revision adds mining start/end rounding boundary tests; its CI run is pending. This verifies the current CI suite only; independent audit and Testnet verification are still required before merge or deployment:
+The current verified revision passes the Acton build, 86 emulator tests across 9 files, static checks, and formatting. CI also executes `scripts/deploy-vcoin-minter.tolk` in local emulation, confirming the minter deployment script can construct and deploy the contract without broadcasting a real transaction. This verifies the current CI suite only; independent audit and Testnet verification are still required before merge or deployment:
 https://github.com/vahidnemati3544-opsking/v-coin-TON/actions
 
 The suite includes the pinned Jetton protocol tests, VCOIN issuance policy tests, exact one-time allocation tests, deterministic deployment/readiness tests for both escrow instances, founder and mining reserve deposit acknowledgements, unauthorized release rejection, and linear vesting/rounding boundary tests. The contract enforces monotonically increasing release query IDs and bounce/failure rollback paths, but dedicated end-to-end tests for successful release, replay, and both bounce paths remain a pre-deployment requirement.
@@ -46,6 +47,6 @@ The suite includes the pinned Jetton protocol tests, VCOIN issuance policy tests
 2. The deployment configuration must set the minter's original administrator to the Founder wallet, and the one-time escrow start timestamp must be explicitly approved.
 3. Final metadata URI/content, treasury owner, wallet-control proof, derived escrow addresses, and TON gas budget must be reviewed and pinned.
 4. Additional adversarial tests for release bounce/retry, authorization, replay, and message authentication plus an independent security audit remain mandatory.
-5. Testnet deployment, explorer verification, and end-to-end Tonkeeper wallet tests have not yet been performed.
+5. The guarded minter deployment script has passed local emulation. Testnet deployment, explorer verification, and end-to-end Tonkeeper wallet tests have not yet been performed.
 
 **No Testnet or Mainnet deployment has been performed.** Mainnet issuance remains prohibited until final CI, independent audit, legal review, Testnet verification, and the owner's explicit final approval are complete.

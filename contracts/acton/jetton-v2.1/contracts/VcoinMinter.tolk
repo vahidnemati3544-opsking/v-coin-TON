@@ -420,11 +420,15 @@ fun onInternalMessage(in: InMessage) {
             var allocationId = VCOIN_ALLOCATION_NONE;
             if (msg.vestingKind == 1) {
                 assert (escrowState.founderEscrowOwner != null) throw ERROR_INVALID_OP;
-                assert (in.senderAddress == escrowState.founderEscrowOwner!) throw ERROR_NOT_VALID_WALLET;
+                assert (
+                    in.senderAddress == escrowState.founderEscrowOwner!
+                ) throw ERROR_NOT_VALID_WALLET;
                 allocationId = VCOIN_ALLOCATION_FOUNDER;
             } else if (msg.vestingKind == 2) {
                 assert (escrowState.miningEscrowOwner != null) throw ERROR_INVALID_OP;
-                assert (in.senderAddress == escrowState.miningEscrowOwner!) throw ERROR_NOT_VALID_WALLET;
+                assert (
+                    in.senderAddress == escrowState.miningEscrowOwner!
+                ) throw ERROR_NOT_VALID_WALLET;
                 allocationId = VCOIN_ALLOCATION_MINING;
             } else {
                 throw ERROR_INVALID_OP;

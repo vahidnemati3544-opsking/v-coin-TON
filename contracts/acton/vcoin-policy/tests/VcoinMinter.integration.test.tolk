@@ -510,6 +510,25 @@ get fun `test VCOIN wallet RichBounce restores escrow balance and delivers failu
     // InternalTransferStep. This isolates and tests the wallet's RichBounce
     // parser and its authenticated VcoinTransferFailed response.
     val failedRecipient = testing.treasury("vcoin-failed-transfer-recipient");
+    val askToTransfer = createMessage({
+        bounce: true,
+        value: grams("0.5"),
+        dest: escrowJettonWallet.address,
+        body: AskToTransfer {
+            queryId: 102,
+            jettonAmount: FOUNDER_AMOUNT / 2,
+            transferRecipient: failedRecipient.address,
+            sendExcessesTo: founderEscrowAddress!,
+            customPayload: null,
+            forwardTonAmount: 0,
+            forwardPayload: beginCell().storeUint(0, 1).toSlice(),
+        },
+    });
+    testing.topUp(escrowJettonWallet.address, grams("1"));
+    // Execute the actual VCOIN wallet's outgoing transfer logic; this debits
+    // the escrow wallet before the bounced transfer is delivered.
+    testing.processSingleTraceStep(founderEscrowAddress!, askToTransfer);
+
     val originalTransfer = InternalTransferStep {
         queryId: 102,
         jettonAmount: FOUNDER_AMOUNT / 2,

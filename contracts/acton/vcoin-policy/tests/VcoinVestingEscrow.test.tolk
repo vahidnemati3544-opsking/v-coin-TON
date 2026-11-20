@@ -17,6 +17,7 @@ fun founderVestingConfig(): VcoinVestingEscrowStorage {
         allocationAmount: VCOIN_FOUNDER_AMOUNT,
         startTime: TEST_START,
         duration: VCOIN_FOUNDER_DURATION,
+        configQueryId: 1,
         deposited: false,
         releasedAmount: 0,
     };
@@ -32,6 +33,7 @@ fun miningVestingConfig(): VcoinVestingEscrowStorage {
         allocationAmount: VCOIN_MINING_AMOUNT,
         startTime: TEST_START,
         duration: VCOIN_MINING_DURATION,
+        configQueryId: 2,
         deposited: false,
         releasedAmount: 0,
     };

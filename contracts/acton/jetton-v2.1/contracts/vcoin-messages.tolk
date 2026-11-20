@@ -14,3 +14,9 @@ struct (0x56435244) VcoinVestingEscrowReady {
     vestingKind: uint8
     escrowAddress: address
 }
+
+struct (0x56434641) VcoinTransferFailed {
+    queryId: uint64
+    jettonAmount: coins
+    ownerAddress: address
+}

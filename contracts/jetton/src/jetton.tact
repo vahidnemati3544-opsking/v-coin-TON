@@ -27,18 +27,32 @@ trait JettonMaster {
         require(context().value >= ton("0.0061"), "Insufficient gas");
         let init: StateInit = self.walletInit(msg.owner_address);
         let addr: Address = contractAddress(init);
-        let ownerCell: Cell = beginCell().storeAddress(msg.owner_address).endCell();
-        send(SendParameters{
-            to: sender(),
-            value: 0,
-            mode: SendRemainingValue,
-            bounce: false,
-            body: TakeWalletAddress{
-                query_id: msg.query_id,
-                wallet_address: addr,
-                owner_address: ownerCell.asSlice()
-            }.toCell()
-        });
+        if (msg.include_address) {
+            let ownerCell: Cell = beginCell().storeAddress(msg.owner_address).endCell();
+            send(SendParameters{
+                to: sender(),
+                value: 0,
+                mode: SendRemainingValue,
+                bounce: false,
+                body: TakeWalletAddress{
+                    query_id: msg.query_id,
+                    wallet_address: addr,
+                    owner_address: ownerCell
+                }.toCell()
+            });
+        } else {
+            send(SendParameters{
+                to: sender(),
+                value: 0,
+                mode: SendRemainingValue,
+                bounce: false,
+                body: TakeWalletAddress{
+                    query_id: msg.query_id,
+                    wallet_address: addr,
+                    owner_address: null
+                }.toCell()
+            });
+        }
     }
 
     virtual fun walletInit(ownerAddress: Address): StateInit {

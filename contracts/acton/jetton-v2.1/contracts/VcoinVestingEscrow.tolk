@@ -30,31 +30,49 @@ contract VcoinVestingEscrow {
     storage: VcoinVestingEscrowStorage
 }
 
+fun vcoinVestingBeneficiary(storage: VcoinVestingEscrowStorage): address {
+    if (storage.vestingKind == VCOIN_VESTING_FOUNDER) {
+        return VCOIN_FOUNDER_BENEFICIARY;
+    }
+    if (storage.vestingKind == VCOIN_VESTING_MINING) {
+        return VCOIN_MINING_BENEFICIARY;
+    }
+    throw ERROR_INVALID_OP;
+}
+
+fun vcoinVestingAllocation(storage: VcoinVestingEscrowStorage): coins {
+    if (storage.vestingKind == VCOIN_VESTING_FOUNDER) {
+        return VCOIN_FOUNDER_AMOUNT;
+    }
+    if (storage.vestingKind == VCOIN_VESTING_MINING) {
+        return VCOIN_MINING_AMOUNT;
+    }
+    throw ERROR_INVALID_OP;
+}
+
+fun vcoinVestingDuration(storage: VcoinVestingEscrowStorage): uint32 {
+    if (storage.vestingKind == VCOIN_VESTING_FOUNDER) {
+        return VCOIN_FOUNDER_DURATION;
+    }
+    if (storage.vestingKind == VCOIN_VESTING_MINING) {
+        return VCOIN_MINING_DURATION;
+    }
+    throw ERROR_INVALID_OP;
+}
+
 fun validateVcoinVestingConfig(storage: VcoinVestingEscrowStorage) {
     assert (storage.startTime > 0) throw ERROR_INVALID_OP;
-    assert (storage.controllerAddress == VCOIN_RELEASE_CONTROLLER) throw ERROR_INVALID_OP;
-    assert (storage.releasedAmount <= storage.allocationAmount) throw ERROR_INVALID_OP;
-
-    if (storage.vestingKind == VCOIN_VESTING_FOUNDER) {
-        assert (storage.beneficiaryAddress == VCOIN_FOUNDER_BENEFICIARY) throw ERROR_INVALID_OP;
-        assert (storage.allocationAmount == VCOIN_FOUNDER_AMOUNT) throw ERROR_INVALID_OP;
-        assert (storage.duration == VCOIN_FOUNDER_DURATION) throw ERROR_INVALID_OP;
-    } else if (storage.vestingKind == VCOIN_VESTING_MINING) {
-        assert (storage.beneficiaryAddress == VCOIN_MINING_BENEFICIARY) throw ERROR_INVALID_OP;
-        assert (storage.allocationAmount == VCOIN_MINING_AMOUNT) throw ERROR_INVALID_OP;
-        assert (storage.duration == VCOIN_MINING_DURATION) throw ERROR_INVALID_OP;
-    } else {
-        throw ERROR_INVALID_OP;
-    }
+    assert (storage.releasedAmount <= vcoinVestingAllocation(storage)) throw ERROR_INVALID_OP;
+    assert (storage.pendingReleaseAmount <= vcoinVestingAllocation(storage)) throw ERROR_INVALID_OP;
 }
 
 fun vcoinVestedAmount(storage: VcoinVestingEscrowStorage, timestamp: int): coins {
     if (timestamp <= storage.startTime) {
         return 0;
     }
-    val elapsed = min(timestamp - storage.startTime, storage.duration);
+    val elapsed = min(timestamp - storage.startTime, vcoinVestingDuration(storage));
     if (elapsed == storage.duration) {
-        return storage.allocationAmount;
+        return vcoinVestingAllocation(storage);
     }
     return (storage.allocationAmount * elapsed) / storage.duration;
 }
@@ -119,7 +137,7 @@ fun onInternalMessage(in: InMessage) {
         ReleaseVestedVcoin => {
             var storage = lazy VcoinVestingEscrowStorage.fromCell(contract.getData());
             validateVcoinVestingConfig(storage);
-            assert (in.senderAddress == storage.controllerAddress) throw ERROR_NOT_OWNER;
+            assert (in.senderAddress == VCOIN_RELEASE_CONTROLLER) throw ERROR_NOT_OWNER;
             assert (storage.deposited) throw ERROR_INVALID_OP;
             assert (storage.pendingReleaseAmount == 0) throw ERROR_INVALID_OP;
             assert (msg.queryId != 0) throw ERROR_INVALID_OP;
@@ -146,7 +164,7 @@ fun onInternalMessage(in: InMessage) {
                 body: AskToTransfer {
                     queryId: msg.queryId,
                     jettonAmount: releasable,
-                    transferRecipient: storage.beneficiaryAddress,
+                    transferRecipient: vcoinVestingBeneficiary(storage),
                     sendExcessesTo: contract.getAddress(),
                     customPayload: null,
                     forwardTonAmount: 0,

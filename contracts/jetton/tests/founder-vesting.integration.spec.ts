@@ -116,7 +116,7 @@ describe("VCOIN founder four-year daily linear vesting", () => {
     await fundVesting();
     const after = await vesting.getGetVestingData();
     expect(after.funded).toBe(true);
-    expect(after.start_time).toBe(blockchain.now);
+    expect(after.start_time).toBe(BigInt(blockchain.now!));
     expect(after.released).toBe(0n);
   });
 

@@ -310,6 +310,12 @@ fun onInternalMessage(in: InMessage) {
             assert (allocationId != VCOIN_ALLOCATION_NONE) throw ERROR_INVALID_OP;
             val cap = vcoinAllocationCap(allocationId);
             assert (internalTransferMsg.jettonAmount == cap) throw ERROR_INVALID_OP;
+            if (
+                allocationId == VCOIN_ALLOCATION_FOUNDER ||
+                allocationId == VCOIN_ALLOCATION_MINING
+            ) {
+                assert (internalTransferMsg.forwardTonAmount > 0) throw ERROR_INVALID_OP;
+            }
             assert (
                 vcoinStatus(storage, allocationId) == VCOIN_MINT_NOT_ISSUED
             ) throw ERROR_INVALID_OP;

@@ -39,7 +39,8 @@
     "mining_reserve_wallet": null,
     "treasury_wallet": null,
     "liquidity_market_wallet": null,
-    "ecosystem_marketing_wallet": null
+    "ecosystem_marketing_wallet": null,
+    "mining_reserve_vesting_contract": null
   },
   "founder_vesting": {
     "amount_base_units": "2000000000000000",
@@ -48,10 +49,10 @@
     "cliff_seconds": 0,
     "release_frequency_seconds": 86400,
     "beneficiary": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
-    "controller": "founder",
+    "controller": "immutable minter deployment admin; minter_admin_address must be the founder wallet",
     "vesting_contract_address": null,
-    "implementation_status": "specification_only_not_implemented",
-    "note": "Tokens must be minted to an audited vesting escrow, not directly to the beneficiary wallet, until release.",
+    "implementation_status": "implemented_in_draft_branch_pending_final_ci_audit_and_testnet",
+    "note": "Two deterministic escrow instances are created by the minter after one-time start-time configuration. Mint only to the founder escrow; no direct beneficiary mint.",
     "duration_days": 1461
   },
   "metadata": {
@@ -60,7 +61,7 @@
   },
   "deployment_authorized": false,
   "mainnet_authorized": false,
-  "notes": "Template only. The five allocation owner wallet candidates are recorded in allocation_wallets; the Treasury address has been corrected against the allocation register. These owner addresses are distinct from derived Jetton wallet contract addresses and the founder vesting contract. Keep derived contract addresses null until the Jetton master is deployed and wallet addresses are derived and verified on the intended network. The operational fee wallet is a separate TON-only funding address and is not part of VCOIN allocation. Verify network and wallet control before funding. Null contract/deployment fields require owner approval and verification. Never commit secrets, seed phrases or private keys. No deployment or transfer is authorized by this template. Founder 48-month and mining-reserve 24-month linear vesting schedules are approved as requirements but are NOT implemented in the current Jetton minter. Do not mint either allocation directly to beneficiary wallets until audited vesting escrow contracts, integration tests, and beneficiary/controller semantics are complete.",
+  "notes": "Template only. Vesting escrow source and minter integration have been added to the draft security branch; they are not merged, deployed, audited, or Testnet-verified. Set minter_admin_address to the founder wallet before deployment; it is the immutable release controller for both escrows. The five allocation owner wallet candidates are recorded in allocation_wallets; verify wallet control on the intended network before any transfer. The operational fee wallet is separate and TON-only. Keep escrow/master addresses null until derived and verified. Null contract/deployment fields require owner approval. Never commit secrets, seed phrases or private keys. No deployment or transfer is authorized by this template.",
   "allocation_wallet_verification": {
     "status": "pending_wallet_control_proof",
     "note": "These are recorded owner wallet candidates, not derived Jetton wallet contract addresses. Verify control on the intended network before any transfer.",
@@ -79,10 +80,21 @@
     "cliff_seconds": 0,
     "release_frequency_seconds": 86400,
     "beneficiary": "UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0",
-    "controller": "founder",
+    "controller": "immutable minter deployment admin; minter_admin_address must be the founder wallet",
     "vesting_contract_address": null,
-    "implementation_status": "specification_only_not_implemented",
-    "note": "Mining reserve must be held in a founder-controlled audited escrow with a 24-month linear release schedule.",
+    "implementation_status": "implemented_in_draft_branch_pending_final_ci_audit_and_testnet",
+    "note": "Separate deterministic escrow instance holds the mining reserve and releases linearly over 730 days to the recorded mining wallet. Mint only to the escrow, never directly to beneficiary.",
     "duration_days": 730
+  },
+  "minter_admin_address": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
+  "vesting_escrow_implementation": {
+    "source": "contracts/acton/jetton-v2.1/contracts/VcoinVestingEscrow.tolk",
+    "deployment": "two separate deterministic instances derived by VcoinMinter from its address, escrow code, vesting kind and approved start_time",
+    "controller": "minter_admin_address; must equal founder allocation wallet",
+    "start_time_required": true,
+    "one_time_configuration": true,
+    "mint_gate": "both escrow instances must acknowledge deployment readiness before any allocation mint",
+    "deposit_gate": "founder and mining allocations count as issued only after escrow deposit acknowledgement",
+    "release": "linear integer base-unit accrual; no admin bypass; monotonic query IDs; wallet success/failure acknowledgement and bounce recovery"
   }
 }

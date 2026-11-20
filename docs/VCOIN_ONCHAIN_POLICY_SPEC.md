@@ -31,7 +31,7 @@ The following owner addresses are the five destination addresses previously assi
 |---|---:|---:|---:|---|
 | Founder | 20% | 2,000,000,000 | 2,000,000,000,000,000 | `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` |
 | Mining reserve | 50% | 5,000,000,000 | 5,000,000,000,000,000 | `UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0` |
-| Treasury | 10% | 1,000,000,000 | 1,000,000,000,000,000 | `UQBEW5bLGbq0yVDOimgl6fpZQkdla9Wk5b0tXyx69bmBktQ` |
+| Treasury | 10% | 1,000,000,000 | 1,000,000,000,000,000 | `UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ` |
 | Liquidity / market | 10% | 1,000,000,000 | 1,000,000,000,000,000 | `UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn` |
 | Ecosystem / marketing | 10% | 1,000,000,000 | 1,000,000,000,000,000 | `UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE` |
 | **Total** | **100%** | **10,000,000,000** | **10,000,000,000,000,000** | |

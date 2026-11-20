@@ -313,6 +313,103 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
     expect((await founderWallet.getGetWalletData()).balance).toBe(MAX_SUPPLY);
   });
 
+
+  test("rejects transfer attempts exceeding the sender wallet balance", async () => {
+    await issueFullSupply();
+    const founderWallet = await walletFor(owner.address);
+    const result = await founderWallet.send(
+      owner.getSender(),
+      { value: toNano("0.2") },
+      {
+        $type: "TokenTransfer",
+        query_id: 40n,
+        amount: MAX_SUPPLY + 1n,
+        destination: recipient.address,
+        response_destination: owner.address,
+        custom_payload: null,
+        forward_ton_amount: 0n,
+        forward_payload: beginCell().endCell().asSlice(),
+      },
+    );
+    expect(result.transactions).toHaveTransaction({
+      from: founderWallet.address,
+      to: founderWallet.address,
+      aborted: true,
+    });
+    expect((await founderWallet.getGetWalletData()).balance).toBe(MAX_SUPPLY);
+    expect((await master.getGetJettonData()).total_supply).toBe(MAX_SUPPLY);
+  });
+
+  test("rejects a transfer with insufficient TON for wallet execution", async () => {
+    await issueFullSupply();
+    const founderWallet = await walletFor(owner.address);
+    const result = await founderWallet.send(
+      owner.getSender(),
+      { value: toNano("0.001") },
+      {
+        $type: "TokenTransfer",
+        query_id: 41n,
+        amount: ONE_TOKEN,
+        destination: recipient.address,
+        response_destination: owner.address,
+        custom_payload: null,
+        forward_ton_amount: 0n,
+        forward_payload: beginCell().endCell().asSlice(),
+      },
+    );
+    expect(result.transactions).toHaveTransaction({
+      from: founderWallet.address,
+      to: founderWallet.address,
+      aborted: true,
+    });
+    expect((await founderWallet.getGetWalletData()).balance).toBe(MAX_SUPPLY);
+  });
+
+  test("rejects forged internal transfers from an untrusted wallet address", async () => {
+    await issueFullSupply();
+    const recipientWallet = await walletFor(recipient.address);
+    const result = await recipientWallet.send(
+      attacker.getSender(),
+      { value: toNano("0.1") },
+      {
+        $type: "TokenTransferInternal",
+        query_id: 42n,
+        amount: ONE_TOKEN,
+        from: owner.address,
+        response_destination: attacker.address,
+        forward_ton_amount: 0n,
+        forward_payload: beginCell().endCell().asSlice(),
+      },
+    );
+    expect(result.transactions).toHaveTransaction({
+      from: attacker.address,
+      to: recipientWallet.address,
+      aborted: true,
+    });
+    expect((await recipientWallet.getGetWalletData()).balance).toBe(0n);
+  });
+
+  test("rejects forged burn notifications that do not come from the derived Jetton wallet", async () => {
+    await issueFullSupply();
+    const result = await master.send(
+      attacker.getSender(),
+      { value: toNano("0.1") },
+      {
+        $type: "TokenBurnNotification",
+        query_id: 43n,
+        amount: ONE_TOKEN,
+        sender: owner.address,
+        response_destination: attacker.address,
+      },
+    );
+    expect(result.transactions).toHaveTransaction({
+      from: attacker.address,
+      to: master.address,
+      aborted: true,
+    });
+    expect((await master.getGetJettonData()).total_supply).toBe(MAX_SUPPLY);
+  });
+
   test("burns Jettons and updates wallet balance and master supply consistently", async () => {
     await issueFullSupply();
     const founderWallet = await walletFor(owner.address);

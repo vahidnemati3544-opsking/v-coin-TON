@@ -46,6 +46,29 @@ A confirmed TON transfer to an independently controlled wallet cannot be reverse
 
 Allocation sums must be checked in base units before every batch. No category may exceed its approved cap.
 
+## 3A. Approved vesting requirements (implementation gate)
+
+The founder has approved these linear vesting schedules. Approval records the policy; it does not mean vesting code exists or that any tokens are currently locked.
+
+| Allocation | Amount | Duration | Cliff | Accrual |
+|---|---:|---:|---:|---|
+| Founder | 2,000,000,000 VCOIN | 4 years (1,461 days / 126,230,400 seconds) | None | Linear, continuously accrued; daily display may be used |
+| Mining reserve | 5,000,000,000 VCOIN | 24 months (730 days / 63,072,000 seconds) | None | Linear, continuously accrued; daily display may be used |
+
+Vested amount at time t is calculated in integer base units:
+`vested = allocation × min(max(t - start_time, 0), duration) / duration`.
+All arithmetic must use checked integer operations; rounding remainder is released only at full vest completion.
+
+Required custody behavior:
+- Mint founder and mining allocations to separate audited vesting escrow contracts, never directly to their candidate destination wallets.
+- The founder is the sole authorized signer/controller for release transactions, but the escrow contract must enforce the time-based vested ceiling. Founder authorization must not bypass the lock.
+- The mining reserve escrow may release only vested amounts to the recorded mining-reserve destination; any subsequent movement remains subject to founder-controlled wallet keys.
+- No admin backdoor, arbitrary unlock, beneficiary substitution, or emergency withdrawal may bypass the schedule.
+- Escrow code, master integration, start-time initialization, replay protection, rounding, bounce handling, and all boundary cases require dedicated tests and independent review.
+- Start timestamps and escrow addresses remain unset until explicitly approved and verified on-chain.
+
+**Hard stop:** the current VcoinMinter mints directly to the five allocation owners and does not implement either vesting escrow. Therefore founder and mining allocations MUST NOT be minted on the current build. Mainnet deployment and initial issuance remain blocked until escrow contracts are implemented, integrated, tested, independently reviewed, and deployed as part of the reviewed release.
+
 ## 4. Deployment sequence
 
 ### Gate A — source and build

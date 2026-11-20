@@ -61,6 +61,19 @@ describe("VCOIN founder four-year daily linear vesting", () => {
 
     const founderWalletAddress = await master.getGetWalletAddress(owner.address);
     const vestingWalletAddress = await master.getGetWalletAddress(vesting.address);
+    const configure = await vesting.send(
+      owner.getSender(),
+      { value: toNano("0.05") },
+      {
+        ["$" + "$" + "type"]: "ConfigureFounderVestingWallet",
+        wallet: vestingWalletAddress,
+      } as any,
+    );
+    expect(configure.transactions).toHaveTransaction({
+      from: owner.address,
+      to: vesting.address,
+      success: true,
+    });
     founderWallet = blockchain.openContract(VCoinJettonWallet.fromAddress(founderWalletAddress));
     vestingWallet = blockchain.openContract(VCoinJettonWallet.fromAddress(vestingWalletAddress));
   });

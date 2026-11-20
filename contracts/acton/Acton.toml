@@ -1,0 +1,53 @@
+[package]
+name = "vcoin-ton-acton-jetton"
+description = "V COIN TON Jetton core migration based on pinned TON reference Jetton v2.1"
+version = "0.1.0"
+license = "MIT"
+
+[toolchain]
+acton = "1.2.0"
+
+[contracts.JettonMinter]
+src = "jetton-v2.1/contracts/JettonMinter.tolk"
+
+[[contracts.JettonMinter.depends]]
+name = "JettonWallet"
+kind = "embed_code"
+function = "jettonWalletCompiledCode"
+
+[contracts.JettonWallet]
+src = "jetton-v2.1/contracts/JettonWallet.tolk"
+
+[contracts.VcoinJettonWallet]
+src = "jetton-v2.1/contracts/VcoinJettonWallet.tolk"
+
+[contracts.VcoinMinter]
+src = "jetton-v2.1/contracts/VcoinMinter.tolk"
+
+[[contracts.VcoinMinter.depends]]
+name = "VcoinJettonWallet"
+kind = "embed_code"
+function = "vcoinJettonWalletCompiledCode"
+
+[[contracts.VcoinMinter.depends]]
+name = "VcoinVestingEscrow"
+kind = "embed_code"
+function = "vcoinVestingEscrowCompiledCode"
+
+[contracts.VcoinVestingEscrow]
+src = "jetton-v2.1/contracts/VcoinVestingEscrow.tolk"
+
+[[contracts.VcoinVestingEscrow.depends]]
+name = "VcoinJettonWallet"
+kind = "embed_code"
+function = "vcoinJettonWalletCompiledCode"
+
+[scripts]
+test-jetton-v2 = "acton test jetton-v2.1/tests"
+
+[import-mappings]
+acton = ".acton"
+contracts = "contracts"
+gen = "gen"
+tests = "tests"
+wrappers = "wrappers"

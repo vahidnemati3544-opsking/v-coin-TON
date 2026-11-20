@@ -455,3 +455,101 @@ get fun `test founder vesting release completes through actual VCOIN jetton wall
         FOUNDER_AMOUNT / 2,
     );
 }
+
+
+get fun `test VCOIN wallet RichBounce restores escrow balance and delivers failure acknowledgement`() {
+    testing.setNow(2000);
+    val (minter, admin, _, _) = setupVcoinMinter(false);
+
+    val configure = minter.sendConfigureVcoinEscrows(
+        admin.address,
+        100,
+        2000,
+        { value: grams("1.5"), bounce: true },
+    );
+    expect(configure).toHaveSuccessfulTx<ConfigureVcoinEscrows>({
+        from: admin.address,
+        to: minter.address,
+    });
+
+    val founderEscrowAddress = minter.getVcoinFounderEscrowAddress();
+    expect(founderEscrowAddress).toBeNotNull();
+    if (founderEscrowAddress == null) {
+        return;
+    }
+
+    val founderEscrow = VcoinVestingEscrow.fromAddress(founderEscrowAddress!);
+    val founderMint = mintAllocation(
+        minter,
+        admin,
+        founderEscrowAddress!,
+        FOUNDER_AMOUNT,
+        101,
+        grams("0.05"),
+    );
+    expect(founderMint).toHaveSuccessfulTx<MintNewJettons>({
+        from: admin.address,
+        to: minter.address,
+    });
+
+    val escrowJettonWallet = VcoinJettonWallet.fromAddress(
+        minter.getWalletAddress(founderEscrowAddress!),
+    );
+    val balanceBefore = escrowJettonWallet.getWalletData().jettonBalance;
+
+    testing.setNow(2000 + 126230400 / 2);
+    val release = createMessage({
+        bounce: true,
+        value: grams("0.6"),
+        dest: founderEscrowAddress!,
+        body: ReleaseVestedVcoin { queryId: 102 },
+    });
+    val releaseResult = testing.processSingleTraceStep(FOUNDER, release);
+    val askToTransfer = releaseResult.outMessages.at<AskToTransfer>(0);
+
+    // Execute the real VCOIN escrow-wallet transaction so its jetton balance
+    // is debited and its pending transfer is established.
+    testing.processSingleTraceStep(founderEscrowAddress!, askToTransfer);
+    expect(escrowJettonWallet.getWalletData().jettonBalance).toEqual(
+        balanceBefore - FOUNDER_AMOUNT / 2,
+    );
+
+    // Exercise a real TVM bounce from an uninitialized destination. The
+    // bounced message carries the complete original InternalTransferStep.
+    testing.topUp(escrowJettonWallet.address, grams("1"));
+    val failedTransfer = createMessage({
+        bounce: BounceMode.RichBounce,
+        value: grams("0.3"),
+        dest: address("0:0000000000000000000000000000000000000000000000000000000000000001"),
+        body: InternalTransferStep {
+            queryId: 102,
+            jettonAmount: FOUNDER_AMOUNT / 2,
+            transferInitiator: founderEscrowAddress!,
+            sendExcessesTo: founderEscrowAddress!,
+            forwardTonAmount: 0,
+            forwardPayload: beginCell().storeUint(0, 1).toSlice(),
+        },
+    });
+    net.send(escrowJettonWallet.address, failedTransfer);
+
+    // The actual VCOIN wallet bounce handler restores tokens and sends
+    // VcoinTransferFailed from the escrow's own derived Jetton wallet.
+    expect(escrowJettonWallet.getWalletData().jettonBalance).toEqual(balanceBefore);
+    expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(0);
+
+    // A fresh query succeeds after the failure acknowledgement cleared pending state.
+    testing.setNow(2000 + 126230400 * 3 / 4);
+    val retry = createMessage({
+        bounce: true,
+        value: grams("0.6"),
+        dest: founderEscrowAddress!,
+        body: ReleaseVestedVcoin { queryId: 103 },
+    });
+    net.send(FOUNDER, retry);
+    expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(
+        FOUNDER_AMOUNT * 3 / 4,
+    );
+    expect(escrowJettonWallet.getWalletData().jettonBalance).toEqual(
+        FOUNDER_AMOUNT / 4,
+    );
+}

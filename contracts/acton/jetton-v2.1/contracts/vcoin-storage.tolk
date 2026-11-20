@@ -35,7 +35,6 @@ fun VcoinMinterStorage.save(self) {
 struct VcoinVestingEscrowStorage {
     vestingKind: uint8
     minterAddress: address
-    controllerAddress: address
     startTime: uint32
     configQueryId: uint64
     deposited: bool

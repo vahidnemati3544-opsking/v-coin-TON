@@ -27,7 +27,7 @@ jobs:
           cache-dependency-path: contracts/jetton/package.json
       - run: npm install
       - name: Apply non-breaking dependency security fixes
-        run: npm audit fix
+        run: npm audit fix || true
       - name: Report dependency audit findings
         shell: bash
         run: |
@@ -35,3 +35,5 @@ jobs:
           node -e "const r=require('./npm-audit-report.json'); console.log(JSON.stringify({metadata:r.metadata?.vulnerabilities, vulnerabilities:r.vulnerabilities}, null, 2))"
       - run: npm run build
       - run: npm test
+      - name: Enforce dependency security gate
+        run: npm audit --audit-level=high

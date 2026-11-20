@@ -23,7 +23,7 @@ acton check
 acton fmt --check
 ```
 
-Latest workflow history includes successful Acton builds, the 85-test emulator suite, and static checks on the draft escrow implementation. Final formatting CI is still being reconciled; do not treat an earlier passing test run as final branch verification. Check the current Actions runs before merging:
+The current draft branch passes the Acton build, 85 emulator tests across 9 files, static checks, and formatting. This verifies the current CI suite only; independent audit and Testnet verification are still required before merge or deployment:
 https://github.com/vahidnemati3544-opsking/v-coin-TON/actions
 
 The suite includes the pinned Jetton protocol tests, VCOIN issuance policy tests, exact one-time allocation tests, deterministic deployment/readiness tests for both escrow instances, founder and mining reserve deposit acknowledgements, unauthorized/premature release rejection, monotonic release query replay rejection, and linear vesting/rounding boundary tests.

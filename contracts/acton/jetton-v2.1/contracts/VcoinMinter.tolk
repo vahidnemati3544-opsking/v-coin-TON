@@ -50,38 +50,78 @@ type AllowedVcoinMinterMessage =
     | TopUpTons
 
 fun vcoinAllocationId(recipient: address): int {
-    if (recipient == VCOIN_FOUNDER_OWNER) return VCOIN_ALLOCATION_FOUNDER;
-    if (recipient == VCOIN_MINING_OWNER) return VCOIN_ALLOCATION_MINING;
-    if (recipient == VCOIN_TREASURY_OWNER) return VCOIN_ALLOCATION_TREASURY;
-    if (recipient == VCOIN_LIQUIDITY_OWNER) return VCOIN_ALLOCATION_LIQUIDITY;
-    if (recipient == VCOIN_ECOSYSTEM_OWNER) return VCOIN_ALLOCATION_ECOSYSTEM;
+    if (recipient == VCOIN_FOUNDER_OWNER) {
+        return VCOIN_ALLOCATION_FOUNDER;
+    }
+    if (recipient == VCOIN_MINING_OWNER) {
+        return VCOIN_ALLOCATION_MINING;
+    }
+    if (recipient == VCOIN_TREASURY_OWNER) {
+        return VCOIN_ALLOCATION_TREASURY;
+    }
+    if (recipient == VCOIN_LIQUIDITY_OWNER) {
+        return VCOIN_ALLOCATION_LIQUIDITY;
+    }
+    if (recipient == VCOIN_ECOSYSTEM_OWNER) {
+        return VCOIN_ALLOCATION_ECOSYSTEM;
+    }
     return VCOIN_ALLOCATION_NONE;
 }
 
 fun vcoinAllocationCap(allocationId: int): coins {
-    if (allocationId == VCOIN_ALLOCATION_FOUNDER) return VCOIN_FOUNDER_CAP;
-    if (allocationId == VCOIN_ALLOCATION_MINING) return VCOIN_MINING_CAP;
-    if (allocationId == VCOIN_ALLOCATION_TREASURY) return VCOIN_TREASURY_CAP;
-    if (allocationId == VCOIN_ALLOCATION_LIQUIDITY) return VCOIN_LIQUIDITY_CAP;
-    if (allocationId == VCOIN_ALLOCATION_ECOSYSTEM) return VCOIN_ECOSYSTEM_CAP;
+    if (allocationId == VCOIN_ALLOCATION_FOUNDER) {
+        return VCOIN_FOUNDER_CAP;
+    }
+    if (allocationId == VCOIN_ALLOCATION_MINING) {
+        return VCOIN_MINING_CAP;
+    }
+    if (allocationId == VCOIN_ALLOCATION_TREASURY) {
+        return VCOIN_TREASURY_CAP;
+    }
+    if (allocationId == VCOIN_ALLOCATION_LIQUIDITY) {
+        return VCOIN_LIQUIDITY_CAP;
+    }
+    if (allocationId == VCOIN_ALLOCATION_ECOSYSTEM) {
+        return VCOIN_ECOSYSTEM_CAP;
+    }
     return 0;
 }
 
 fun vcoinStatus(storage: VcoinMinterStorage, allocationId: int): uint8 {
-    if (allocationId == VCOIN_ALLOCATION_FOUNDER) return storage.founderStatus;
-    if (allocationId == VCOIN_ALLOCATION_MINING) return storage.miningStatus;
-    if (allocationId == VCOIN_ALLOCATION_TREASURY) return storage.treasuryStatus;
-    if (allocationId == VCOIN_ALLOCATION_LIQUIDITY) return storage.liquidityStatus;
-    if (allocationId == VCOIN_ALLOCATION_ECOSYSTEM) return storage.ecosystemStatus;
+    if (allocationId == VCOIN_ALLOCATION_FOUNDER) {
+        return storage.founderStatus;
+    }
+    if (allocationId == VCOIN_ALLOCATION_MINING) {
+        return storage.miningStatus;
+    }
+    if (allocationId == VCOIN_ALLOCATION_TREASURY) {
+        return storage.treasuryStatus;
+    }
+    if (allocationId == VCOIN_ALLOCATION_LIQUIDITY) {
+        return storage.liquidityStatus;
+    }
+    if (allocationId == VCOIN_ALLOCATION_ECOSYSTEM) {
+        return storage.ecosystemStatus;
+    }
     return VCOIN_MINT_NOT_ISSUED;
 }
 
 fun vcoinQueryId(storage: VcoinMinterStorage, allocationId: int): uint64 {
-    if (allocationId == VCOIN_ALLOCATION_FOUNDER) return storage.founderQueryId;
-    if (allocationId == VCOIN_ALLOCATION_MINING) return storage.miningQueryId;
-    if (allocationId == VCOIN_ALLOCATION_TREASURY) return storage.treasuryQueryId;
-    if (allocationId == VCOIN_ALLOCATION_LIQUIDITY) return storage.liquidityQueryId;
-    if (allocationId == VCOIN_ALLOCATION_ECOSYSTEM) return storage.ecosystemQueryId;
+    if (allocationId == VCOIN_ALLOCATION_FOUNDER) {
+        return storage.founderQueryId;
+    }
+    if (allocationId == VCOIN_ALLOCATION_MINING) {
+        return storage.miningQueryId;
+    }
+    if (allocationId == VCOIN_ALLOCATION_TREASURY) {
+        return storage.treasuryQueryId;
+    }
+    if (allocationId == VCOIN_ALLOCATION_LIQUIDITY) {
+        return storage.liquidityQueryId;
+    }
+    if (allocationId == VCOIN_ALLOCATION_ECOSYSTEM) {
+        return storage.ecosystemQueryId;
+    }
     return 0;
 }
 
@@ -160,11 +200,21 @@ fun addVcoinAllocation(mutate storage: VcoinMinterStorage, allocationId: int, am
 }
 
 fun ownerForAllocation(allocationId: int): address {
-    if (allocationId == VCOIN_ALLOCATION_FOUNDER) return VCOIN_FOUNDER_OWNER;
-    if (allocationId == VCOIN_ALLOCATION_MINING) return VCOIN_MINING_OWNER;
-    if (allocationId == VCOIN_ALLOCATION_TREASURY) return VCOIN_TREASURY_OWNER;
-    if (allocationId == VCOIN_ALLOCATION_LIQUIDITY) return VCOIN_LIQUIDITY_OWNER;
-    if (allocationId == VCOIN_ALLOCATION_ECOSYSTEM) return VCOIN_ECOSYSTEM_OWNER;
+    if (allocationId == VCOIN_ALLOCATION_FOUNDER) {
+        return VCOIN_FOUNDER_OWNER;
+    }
+    if (allocationId == VCOIN_ALLOCATION_MINING) {
+        return VCOIN_MINING_OWNER;
+    }
+    if (allocationId == VCOIN_ALLOCATION_TREASURY) {
+        return VCOIN_TREASURY_OWNER;
+    }
+    if (allocationId == VCOIN_ALLOCATION_LIQUIDITY) {
+        return VCOIN_LIQUIDITY_OWNER;
+    }
+    if (allocationId == VCOIN_ALLOCATION_ECOSYSTEM) {
+        return VCOIN_ECOSYSTEM_OWNER;
+    }
     throw ERROR_INVALID_OP;
 }
 

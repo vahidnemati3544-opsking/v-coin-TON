@@ -28,6 +28,7 @@ jobs:
         run: |
           curl -LsSf https://github.com/ton-blockchain/acton/releases/latest/download/acton-installer.sh | sh
           echo "$HOME/.acton/bin" >> "$GITHUB_PATH"
+          source "$HOME/.acton/bin/env"
           acton up 1.2.0
       - name: Show toolchain
         run: acton --version

@@ -100,6 +100,20 @@ fun onInternalMessage(in: InMessage) {
             assert (in.senderAddress == expectedJettonWallet) throw ERROR_NOT_VALID_WALLET;
             storage.deposited = true;
             storage.save();
+            val depositAck = createMessage({
+                bounce: BounceMode.NoBounce,
+                dest: storage.minterAddress,
+                value: 0,
+                body: VcoinEscrowDepositAccepted {
+                    queryId: msg.queryId,
+                    vestingKind: storage.vestingKind,
+                    jettonAmount: msg.jettonAmount,
+                    escrowAddress: contract.getAddress(),
+                },
+            });
+            depositAck.send(
+                SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE | SEND_MODE_BOUNCE_ON_ACTION_FAIL,
+            );
         }
 
         ReleaseVestedVcoin => {

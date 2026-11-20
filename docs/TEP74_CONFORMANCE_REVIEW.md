@@ -18,12 +18,12 @@
 
 ## Current test evidence
 
-GitHub Actions run #173 completed successfully:
+GitHub Actions run #177 completed successfully on the current reviewed branch state:
 - Tact build: passed.
 - Jest/Sandbox: 18 tests passed.
 - Dependency audit: 0 known vulnerabilities.
 - `npm ci`: passed using the generated lockfile.
-- Run: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44836046070
+- Run: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44836195642
 
 The committed `contracts/jetton/package-lock.json` was added immediately after that run. A subsequent CI run against the commit containing the lockfile is still required.
 

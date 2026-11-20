@@ -35,7 +35,7 @@ The suite includes the pinned Jetton protocol tests, VCOIN issuance policy tests
 - Five allocation ceilings: Founder 2B; Mining 5B; Treasury 1B; Liquidity 1B; Ecosystem/Marketing 1B.
 - Two deterministic instances of `VcoinVestingEscrow` are derived and deployed by the minter after one-time start-time configuration: Founder 2B over 1,461 days and Mining Reserve 5B over 730 days.
 - The minter requires both escrow deployment acknowledgements before any allocation mint. Founder and Mining mints are routed only to their escrow addresses, and their issuance status is finalized only after the escrow confirms the exact Jetton deposit.
-- The immutable original minter administrator is the escrow release controller. The deployment template requires this administrator to be the Founder wallet.
+- The escrow release controller is fixed in code to the Founder wallet with no admin override. The deployment template requires the minter administrator to be the Founder wallet because it authorizes the one-time start-time configuration.
 - Escrows enforce fixed beneficiary, allocation amount, and duration by vesting kind; linear integer accrual; monotonic release query IDs; transfer-success confirmation from the beneficiary Jetton wallet; and bounce/failure recovery. No admin bypass, arbitrary unlock, beneficiary substitution, or emergency withdrawal exists.
 - Each non-vesting allocation remains exact and one-time. Lifetime issuance is independent of circulating supply; burns do not reopen allocation capacity.
 - Admin can change metadata before finalization. Admin is irreversibly dropped only after all five exact allocation credits are confirmed.

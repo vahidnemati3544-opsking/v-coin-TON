@@ -361,8 +361,8 @@ fun onInternalMessage(in: InMessage) {
             assert (msg.startTime >= blockchain.now()) throw ERROR_INVALID_OP;
             assert (in.valueCoins >= grams("1.2")) throw ERROR_NOT_ENOUGH_GAS;
 
-            val founderEscrowInit = calcVcoinVestingEscrowDeployment(1, msg.startTime, msg.queryId, VCOIN_FOUNDER_OWNER);
-            val miningEscrowInit = calcVcoinVestingEscrowDeployment(2, msg.startTime, msg.queryId, VCOIN_FOUNDER_OWNER);
+            val founderEscrowInit = calcVcoinVestingEscrowDeployment(1, msg.startTime, msg.queryId, storage.adminAddress!);
+            val miningEscrowInit = calcVcoinVestingEscrowDeployment(2, msg.startTime, msg.queryId, storage.adminAddress!);
             escrowState.founderEscrowOwner = founderEscrowInit.calculateAddress();
             escrowState.miningEscrowOwner = miningEscrowInit.calculateAddress();
             escrowState.founderEscrowReady = false;

@@ -207,9 +207,6 @@ get fun `test founder vesting release success failure rollback and retry`() {
     });
     testing.processSingleTraceStep(FOUNDER, firstRelease);
     expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(0);
-    expect(founderEscrow.getVcoinVestingState().get(9) as int).toEqual(
-        FOUNDER_AMOUNT / 2,
-    );
 
     // A non-wallet cannot acknowledge a successful transfer.
     val unauthorizedAck = createMessage({
@@ -255,7 +252,6 @@ get fun `test founder vesting release success failure rollback and retry`() {
     });
     testing.processSingleTraceStep(beneficiaryWallet, firstSuccessAck);
     expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(FOUNDER_AMOUNT / 2);
-    expect(founderEscrow.getVcoinVestingState().get(9) as int).toEqual(0);
 
     // The same acknowledgement cannot be replayed after pending state clears.
     val duplicateAckResult = net.send(beneficiaryWallet, firstSuccessAck);

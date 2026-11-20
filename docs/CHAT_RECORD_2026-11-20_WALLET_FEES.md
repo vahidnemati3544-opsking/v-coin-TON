@@ -104,3 +104,19 @@ This record is a durable audit note. Any future change to the designated fee wal
 
 ---
 **Record status:** Conversation decision archived; GitHub commit for this archive is recorded by the repository history.
+
+## 8. Follow-up decision — number of wallets to fund with TON
+
+**User:** «الان چند تا کیف تون بریزم»
+
+**Assistant:** پاسخ داده شد که در مرحله فعلی فقط یک کیف باید برای موجودی TON عملیاتی در نظر گرفته شود: کیف مستقل GAS & OPERATIONS با آدرس:
+
+`UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB`
+
+هیچ‌یک از پنج کیف تخصیص VCOIN در این مرحله نباید صرفاً برای کارمزد به‌طور روتین با TON شارژ شوند.
+
+**User:** «ذخیره کن»
+
+**ثبت تصمیم:** در وضعیت فعلی، تعداد کیف‌هایی که مالک برای شارژ اولیه TON جهت کارمزد در نظر گرفته است **یک کیف** است؛ همان کیف عملیاتی بالا. این تصمیم به معنی انتقال خودکار کارمزد از آن کیف به تراکنش‌های امضاشده توسط پنج کیف دیگر نیست. تا زمانی که سازوکار sponsored transaction/relayer پیاده‌سازی و روی Testnet آزمایش نشده، هر تراکنش باید موجودی TON لازم را در کیف امضاکننده داشته باشد. هرگونه نیاز به انتقال TON به کیف دیگری باید با ذکر عملیات، کیف امضاکننده و مبلغ دقیق، جداگانه برای تأیید مالک ارائه شود.
+
+**وضعیت:** تصمیم مستند شد؛ در این مرحله هیچ انتقال TON یا VCOIN انجام نشده و مبلغ شارژ هنوز تعیین نشده است.

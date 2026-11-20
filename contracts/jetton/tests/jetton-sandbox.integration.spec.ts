@@ -358,7 +358,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       } as any,
     );
     expect(result.transactions).toHaveTransaction({
-      from: founderWallet.address,
+      from: owner.address,
       to: founderWallet.address,
       aborted: true,
     });

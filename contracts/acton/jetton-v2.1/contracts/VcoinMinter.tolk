@@ -59,12 +59,8 @@ fun calcVcoinVestingEscrowDeployment(
     queryId: uint64,
 ): AutoDeployAddress {
     var beneficiaryAddress = VCOIN_FOUNDER_OWNER;
-    var allocationAmount: coins = VCOIN_FOUNDER_CAP;
-    var duration: uint32 = 126230400;
     if (vestingKind == 2) {
         beneficiaryAddress = VCOIN_MINING_OWNER;
-        allocationAmount = VCOIN_MINING_CAP;
-        duration = 63072000;
     }
     val escrowStorage: VcoinVestingEscrowStorage = {
         vestingKind,

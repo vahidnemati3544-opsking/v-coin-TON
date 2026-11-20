@@ -505,32 +505,23 @@ get fun `test VCOIN wallet RichBounce restores escrow balance and delivers failu
         body: ReleaseVestedVcoin { queryId: 102 },
     });
     val releaseResult = testing.processSingleTraceStep(FOUNDER, release);
-    val askToTransfer = releaseResult.outMessages.at<AskToTransfer>(0);
+    val askToTransfer = releaseResult.outMessages.at(0);
 
     // Execute the real VCOIN escrow-wallet transaction so its jetton balance
     // is debited and its pending transfer is established.
-    testing.processSingleTraceStep(founderEscrowAddress!, askToTransfer);
+    val walletResult = testing.processSingleTraceStep(
+        founderEscrowAddress!,
+        askToTransfer,
+    );
+    val actualInternalTransfer = walletResult.outMessages.at(0);
     expect(escrowJettonWallet.getWalletData().jettonBalance).toEqual(
         balanceBefore - FOUNDER_AMOUNT / 2,
     );
 
-    // Exercise a real TVM bounce from an uninitialized destination. The
-    // bounced message carries the complete original InternalTransferStep.
+    // Deliver the exact InternalTransferStep emitted by the VCOIN wallet.
+    // Its destination is intentionally uninitialized, causing a real TVM bounce.
     testing.topUp(escrowJettonWallet.address, grams("1"));
-    val failedTransfer = createMessage({
-        bounce: BounceMode.RichBounce,
-        value: grams("0.3"),
-        dest: address("0:0000000000000000000000000000000000000000000000000000000000000001"),
-        body: InternalTransferStep {
-            queryId: 102,
-            jettonAmount: FOUNDER_AMOUNT / 2,
-            transferInitiator: founderEscrowAddress!,
-            sendExcessesTo: founderEscrowAddress!,
-            forwardTonAmount: 0,
-            forwardPayload: beginCell().storeUint(0, 1).toSlice(),
-        },
-    });
-    net.send(escrowJettonWallet.address, failedTransfer);
+    net.send(escrowJettonWallet.address, actualInternalTransfer);
 
     // The actual VCOIN wallet bounce handler restores tokens and sends
     // VcoinTransferFailed from the escrow's own derived Jetton wallet.

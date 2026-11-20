@@ -105,7 +105,9 @@ fun vcoinStatus(storage: VcoinMinterStorage, allocationId: int): uint8 {
     return VCOIN_MINT_NOT_ISSUED;
 }
 
-fun setVcoinPending(mutate storage: VcoinMinterStorage, allocationId: int) {
+fun setVcoinPending(mutate storage: VcoinMinterStorage, allocationId: int, queryId: uint64) {
+    storage.pendingAllocation = allocationId;
+    storage.pendingQueryId = queryId;
     if (allocationId == VCOIN_ALLOCATION_FOUNDER) {
         storage.founderStatus = VCOIN_MINT_PENDING;
     } else if (allocationId == VCOIN_ALLOCATION_MINING) {
@@ -122,6 +124,8 @@ fun setVcoinPending(mutate storage: VcoinMinterStorage, allocationId: int) {
 }
 
 fun setVcoinConfirmed(mutate storage: VcoinMinterStorage, allocationId: int) {
+    storage.pendingAllocation = VCOIN_ALLOCATION_NONE;
+    storage.pendingQueryId = 0;
     if (allocationId == VCOIN_ALLOCATION_FOUNDER) {
         storage.founderStatus = VCOIN_MINT_CONFIRMED;
     } else if (allocationId == VCOIN_ALLOCATION_MINING) {
@@ -138,6 +142,8 @@ fun setVcoinConfirmed(mutate storage: VcoinMinterStorage, allocationId: int) {
 }
 
 fun setVcoinRolledBack(mutate storage: VcoinMinterStorage, allocationId: int, amount: coins) {
+    storage.pendingAllocation = VCOIN_ALLOCATION_NONE;
+    storage.pendingQueryId = 0;
     if (allocationId == VCOIN_ALLOCATION_FOUNDER) {
         storage.founderStatus = VCOIN_MINT_NOT_ISSUED;
     } else if (allocationId == VCOIN_ALLOCATION_MINING) {
@@ -170,23 +176,26 @@ fun onBouncedMessage(in: InMessageBounced) {
     var matchedAllocation = VCOIN_ALLOCATION_NONE;
     var matchedOwner: address? = null;
 
-    if (storage.founderStatus == VCOIN_MINT_PENDING && msg.jettonAmount == VCOIN_FOUNDER_CAP) {
+    if (storage.pendingAllocation == VCOIN_ALLOCATION_FOUNDER && storage.pendingQueryId == msg.queryId && storage.founderStatus == VCOIN_MINT_PENDING && msg.jettonAmount == VCOIN_FOUNDER_CAP) {
         matchedAllocation = VCOIN_ALLOCATION_FOUNDER;
         matchedOwner = VCOIN_FOUNDER_OWNER;
-    } else if (storage.miningStatus == VCOIN_MINT_PENDING && msg.jettonAmount == VCOIN_MINING_CAP) {
+    } else if (storage.pendingAllocation == VCOIN_ALLOCATION_MINING && storage.pendingQueryId == msg.queryId && storage.miningStatus == VCOIN_MINT_PENDING && msg.jettonAmount == VCOIN_MINING_CAP) {
         matchedAllocation = VCOIN_ALLOCATION_MINING;
         matchedOwner = VCOIN_MINING_OWNER;
     } else if (
+        storage.pendingAllocation == VCOIN_ALLOCATION_TREASURY && storage.pendingQueryId == msg.queryId &&
         storage.treasuryStatus == VCOIN_MINT_PENDING && msg.jettonAmount == VCOIN_TREASURY_CAP
     ) {
         matchedAllocation = VCOIN_ALLOCATION_TREASURY;
         matchedOwner = storage.treasuryOwner;
     } else if (
+        storage.pendingAllocation == VCOIN_ALLOCATION_LIQUIDITY && storage.pendingQueryId == msg.queryId &&
         storage.liquidityStatus == VCOIN_MINT_PENDING && msg.jettonAmount == VCOIN_LIQUIDITY_CAP
     ) {
         matchedAllocation = VCOIN_ALLOCATION_LIQUIDITY;
         matchedOwner = VCOIN_LIQUIDITY_OWNER;
     } else if (
+        storage.pendingAllocation == VCOIN_ALLOCATION_ECOSYSTEM && storage.pendingQueryId == msg.queryId &&
         storage.ecosystemStatus == VCOIN_MINT_PENDING && msg.jettonAmount == VCOIN_ECOSYSTEM_CAP
     ) {
         matchedAllocation = VCOIN_ALLOCATION_ECOSYSTEM;
@@ -234,6 +243,7 @@ fun onInternalMessage(in: InMessage) {
             assert (internalTransferMsg.transferInitiator == null) throw ERROR_INVALID_OP;
             assert (internalTransferMsg.jettonAmount > 0) throw ERROR_INVALID_OP;
             assert (msg.queryId != 0) throw ERROR_INVALID_OP;
+            assert (storage.pendingAllocation == VCOIN_ALLOCATION_NONE) throw ERROR_INVALID_OP;
             internalTransferMsg.forwardPayload.checkIsCorrectTlbEither();
 
             val allocationId = vcoinAllocationId(storage, msg.mintRecipient);
@@ -253,7 +263,7 @@ fun onInternalMessage(in: InMessage) {
                 in.originalForwardFee,
             );
 
-            setVcoinPending(mutate storage, allocationId);
+            setVcoinPending(mutate storage, allocationId, msg.queryId);
             storage.totalSupply += internalTransferMsg.jettonAmount;
             storage.save();
 

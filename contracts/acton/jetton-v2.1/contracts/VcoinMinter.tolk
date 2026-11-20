@@ -220,7 +220,7 @@ fun onBouncedMessage(in: InMessageBounced) {
         msg.jettonAmount == VCOIN_FOUNDER_CAP
     ) {
         matchedAllocation = VCOIN_ALLOCATION_FOUNDER;
-        matchedOwner = storage.founderEscrowOwner;
+        matchedOwner = escrowState.founderEscrowOwner;
     } else if (
         storage.pendingAllocation == VCOIN_ALLOCATION_MINING &&
         storage.pendingQueryId == msg.queryId &&
@@ -229,7 +229,7 @@ fun onBouncedMessage(in: InMessageBounced) {
         msg.jettonAmount == VCOIN_MINING_CAP
     ) {
         matchedAllocation = VCOIN_ALLOCATION_MINING;
-        matchedOwner = storage.miningEscrowOwner;
+        matchedOwner = escrowState.miningEscrowOwner;
     } else if (
         storage.pendingAllocation == VCOIN_ALLOCATION_TREASURY &&
         storage.pendingQueryId == msg.queryId &&
@@ -283,6 +283,7 @@ fun onInternalMessage(in: InMessage) {
     match (msg) {
         MintNewJettons => {
             var storage = lazy VcoinMinterStorage.load();
+            val escrowState = VcoinMinterEscrowState.fromCell(storage.escrowState);
             assert (
                 storage.adminAddress != null && in.senderAddress == storage.adminAddress!
             ) throw ERROR_NOT_OWNER;
@@ -300,8 +301,8 @@ fun onInternalMessage(in: InMessage) {
             assert (storage.pendingAllocation == VCOIN_ALLOCATION_NONE) throw ERROR_INVALID_OP;
             internalTransferMsg.forwardPayload.checkIsCorrectTlbEither();
 
-            assert (storage.founderEscrowOwner != null) throw ERROR_INVALID_OP;
-            assert (storage.miningEscrowOwner != null) throw ERROR_INVALID_OP;
+            assert (escrowState.founderEscrowOwner != null) throw ERROR_INVALID_OP;
+            assert (escrowState.miningEscrowOwner != null) throw ERROR_INVALID_OP;
             assert (escrowState.founderEscrowReady && escrowState.miningEscrowReady) throw ERROR_INVALID_OP;
             val allocationId = vcoinAllocationId(storage, msg.mintRecipient);
             assert (allocationId != VCOIN_ALLOCATION_NONE) throw ERROR_INVALID_OP;
@@ -354,19 +355,19 @@ fun onInternalMessage(in: InMessage) {
             assert (storage.pendingAllocation == VCOIN_ALLOCATION_NONE) throw ERROR_INVALID_OP;
             assert (storage.founderStatus == VCOIN_MINT_NOT_ISSUED) throw ERROR_INVALID_OP;
             assert (storage.miningStatus == VCOIN_MINT_NOT_ISSUED) throw ERROR_INVALID_OP;
-            assert (storage.founderEscrowOwner == null) throw ERROR_INVALID_OP;
-            assert (storage.miningEscrowOwner == null) throw ERROR_INVALID_OP;
+            assert (escrowState.founderEscrowOwner == null) throw ERROR_INVALID_OP;
+            assert (escrowState.miningEscrowOwner == null) throw ERROR_INVALID_OP;
             assert (msg.queryId != 0) throw ERROR_INVALID_OP;
             assert (msg.startTime >= blockchain.now()) throw ERROR_INVALID_OP;
             assert (in.valueCoins >= grams("1.2")) throw ERROR_NOT_ENOUGH_GAS;
 
             val founderEscrowInit = calcVcoinVestingEscrowDeployment(1, msg.startTime, msg.queryId);
             val miningEscrowInit = calcVcoinVestingEscrowDeployment(2, msg.startTime, msg.queryId);
-            storage.founderEscrowOwner = founderEscrowInit.calculateAddress();
-            storage.miningEscrowOwner = miningEscrowInit.calculateAddress();
-            storage.founderEscrowReady = false;
-            storage.miningEscrowReady = false;
-            storage.escrowConfigQueryId = msg.queryId;
+            escrowState.founderEscrowOwner = founderEscrowInit.calculateAddress();
+            escrowState.miningEscrowOwner = miningEscrowInit.calculateAddress();
+            escrowState.founderEscrowReady = false;
+            escrowState.miningEscrowReady = false;
+            escrowState.escrowConfigQueryId = msg.queryId;
             storage.escrowState = escrowState.toCell();
             storage.save();
 
@@ -390,18 +391,18 @@ fun onInternalMessage(in: InMessage) {
         VcoinVestingEscrowReady => {
             var storage = lazy VcoinMinterStorage.load();
             var escrowState = VcoinMinterEscrowState.fromCell(storage.escrowState);
-            assert (msg.queryId == storage.escrowConfigQueryId) throw ERROR_INVALID_OP;
+            assert (msg.queryId == escrowState.escrowConfigQueryId) throw ERROR_INVALID_OP;
             assert (msg.escrowAddress == in.senderAddress) throw ERROR_INVALID_OP;
             if (msg.vestingKind == 1) {
-                assert (storage.founderEscrowOwner != null) throw ERROR_INVALID_OP;
-                assert (in.senderAddress == storage.founderEscrowOwner!) throw ERROR_NOT_VALID_WALLET;
-                assert (!storage.founderEscrowReady) throw ERROR_INVALID_OP;
-                storage.founderEscrowReady = true;
+                assert (escrowState.founderEscrowOwner != null) throw ERROR_INVALID_OP;
+                assert (in.senderAddress == escrowState.founderEscrowOwner!) throw ERROR_NOT_VALID_WALLET;
+                assert (!escrowState.founderEscrowReady) throw ERROR_INVALID_OP;
+                escrowState.founderEscrowReady = true;
             } else if (msg.vestingKind == 2) {
-                assert (storage.miningEscrowOwner != null) throw ERROR_INVALID_OP;
-                assert (in.senderAddress == storage.miningEscrowOwner!) throw ERROR_NOT_VALID_WALLET;
-                assert (!storage.miningEscrowReady) throw ERROR_INVALID_OP;
-                storage.miningEscrowReady = true;
+                assert (escrowState.miningEscrowOwner != null) throw ERROR_INVALID_OP;
+                assert (in.senderAddress == escrowState.miningEscrowOwner!) throw ERROR_NOT_VALID_WALLET;
+                assert (!escrowState.miningEscrowReady) throw ERROR_INVALID_OP;
+                escrowState.miningEscrowReady = true;
             } else {
                 throw ERROR_INVALID_OP;
             }
@@ -416,12 +417,12 @@ fun onInternalMessage(in: InMessage) {
             assert (msg.escrowAddress == in.senderAddress) throw ERROR_INVALID_OP;
             var allocationId = VCOIN_ALLOCATION_NONE;
             if (msg.vestingKind == 1) {
-                assert (storage.founderEscrowOwner != null) throw ERROR_INVALID_OP;
-                assert (in.senderAddress == storage.founderEscrowOwner!) throw ERROR_NOT_VALID_WALLET;
+                assert (escrowState.founderEscrowOwner != null) throw ERROR_INVALID_OP;
+                assert (in.senderAddress == escrowState.founderEscrowOwner!) throw ERROR_NOT_VALID_WALLET;
                 allocationId = VCOIN_ALLOCATION_FOUNDER;
             } else if (msg.vestingKind == 2) {
-                assert (storage.miningEscrowOwner != null) throw ERROR_INVALID_OP;
-                assert (in.senderAddress == storage.miningEscrowOwner!) throw ERROR_NOT_VALID_WALLET;
+                assert (escrowState.miningEscrowOwner != null) throw ERROR_INVALID_OP;
+                assert (in.senderAddress == escrowState.miningEscrowOwner!) throw ERROR_NOT_VALID_WALLET;
                 allocationId = VCOIN_ALLOCATION_MINING;
             } else {
                 throw ERROR_INVALID_OP;
@@ -575,7 +576,7 @@ get fun get_vcoin_issuance_state(): tuple {
         storage.liquidityStatus,
         storage.ecosystemStatus,
         storage.finalized,
-        storage.founderEscrowOwner,
-        storage.miningEscrowOwner,
+        escrowState.founderEscrowOwner,
+        escrowState.miningEscrowOwner,
     ];
 }

@@ -29,6 +29,11 @@ name = "VcoinJettonWallet"
 kind = "embed_code"
 function = "vcoinJettonWalletCompiledCode"
 
+[[contracts.VcoinMinter.depends]]
+name = "VcoinVestingEscrow"
+kind = "embed_code"
+function = "vcoinVestingEscrowCompiledCode"
+
 [contracts.VcoinVestingEscrow]
 src = "jetton-v2.1/contracts/VcoinVestingEscrow.tolk"
 

@@ -3,16 +3,19 @@
 **Document ID:** VCT-JETTON-INV-001  
 **Reviewed:** 2026-11-21  
 **Scope:** `vahidnemati3544-opsking/v-coin-TON` only  
-**Result:** **CURRENT PR MERGE BUILDS; FOUR ARITHMETIC TESTS PASS; SANDBOX / SECURITY GATES OPEN; NOT DEPLOYABLE.**
+**Current result:** **BUILD + 13 SANDBOX/POLICY TESTS + NPM AUDIT PASSED; NOT READY FOR TESTNET OR MAINNET DEPLOYMENT.**
 
 ## Verified repository state
 
-- Main branch head reviewed: `5cc9e6d4955cf19b73be6c8484dcd736bcbdaefa`.
-- Fresh GitHub Actions run [#44823097949](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44823097949), workflow run number 139, completed successfully for PR #5 merge commit `adbcdcbbc53f2ed08a4a9e8a159e50b33a6eb560` (including head commit `a7d919702a108706859395f3166f2a3d5e378c24`). `npm run build` compiled and packaged both `VCoinJettonWallet` and `VCoinMaster`; `npm test` passed one suite with four arithmetic-only tests. This confirms compilation of the PR merge source, not runtime correctness or TON Sandbox behavior.
-- Current master source: `contracts/jetton/src/vcoin.tact`; it includes a bounced `TokenTransferInternal` handler. The handler is present in source but has not been proven by a fresh build and TON Sandbox test.
-- Current Jetton implementation: `contracts/jetton/src/jetton.tact`; it contains master and wallet logic, but TEP-74/TEP-64 conformance and secure behavior remain unverified.
-- `contracts/jetton/package.json` pins `@tact-lang/compiler@1.6.13` and related dependencies. No `package-lock.json` was found at the reviewed path.
-- The workflow `.github/workflows/vcoin-jetton.yml` runs install, build and Jest tests. The fresh run emitted five high-severity npm audit findings and deprecation warnings for `@tact-lang/compiler@1.6.13` and transitive packages. The existing Jest suite is arithmetic policy testing, not contract execution in Sandbox.
+- Active review branch: `audit/issuance-readiness-2026-11-21`.
+- Draft PR #5 remains open and unmerged: https://github.com/vahidnemati3544-opsking/v-coin-TON/pull/5
+- Latest verified CI run #157 completed successfully: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44827055497
+- CI #157 compiled both `VCoinMaster` and `VCoinJettonWallet`, passed 13 Jest/Sandbox/policy tests, and reported zero npm audit vulnerabilities.
+- The suite includes exact one-time issuance, owner/receiver/amount rejection, second-mint rejection, founder wallet credit, transfer, unauthorized transfer rejection, burn accounting, five-wallet allocation transfers, and TEP-89 optional owner-address response behavior.
+- TEP-89 `take_wallet_address.owner_address` was corrected to the standard optional referenced-cell representation (`Maybe ^Cell`); tests cover both `include_address=false` and `true`.
+- The wallet bounce handlers exist in source, but explicit bounce/replay/recovery tests remain outstanding.
+- `package.json` now overrides vulnerable transitive `protobufjs` and `zod` versions; CI reports zero known vulnerabilities. A committed `package-lock.json` is still missing, so fully reproducible dependency installation is not yet established.
+- npm still emits a deprecation warning for `@tact-lang/compiler@1.6.13`; the current compiler builds successfully, but the longer-term Tolk migration question has not been resolved.
 
 ## Fixed supply and allocation policy
 
@@ -20,21 +23,15 @@
 - Decimals: 6.
 - Maximum base units: 10000000000000000.
 - Founder: 2,000,000,000 VCOIN (20%; four-year vesting intended).
-- Mining reserve: 5,000,000,000 VCOIN (50%; user mining is deferred until Telegram bot integration).
+- Mining reserve: 5,000,000,000 VCOIN (50%; mining remains disabled until Telegram bot integration).
 - Treasury: 1,000,000,000 VCOIN (10%).
 - Liquidity / market: 1,000,000,000 VCOIN (10%).
 - Ecosystem / marketing: 1,000,000,000 VCOIN (10%).
-- The five allocations sum to the fixed cap. Arithmetic agreement is not proof of on-chain enforcement.
-
-## Current master issuance behavior
-
-The current `VCoinMaster` accepts one exact initial mint of the full 10-billion supply and requires the receiver to equal the master owner wallet. It then disables minting. This means the current code does **not** mint directly to the five destination wallets and does **not** enforce their separate allocation caps. Distribution from the founder wallet would require separate owner-signed Jetton transfers after a successful mint.
-
-The source-level bounce handler attempts to roll back provisional supply if the wallet-credit message bounces. This is an important recovery path, but it remains unverified. It must be exercised in Sandbox, including duplicate/bounce/replay scenarios, before any deployment.
+- Allocation totals equal the fixed cap. The contract mints the full amount once to the founder wallet; four subsequent founder-signed transfers distribute the other allocations. Separate on-chain per-category caps are not implemented.
 
 ## Recorded Mainnet owner-wallet allocation map
 
-The following is the approved destination map for the initial fixed supply. These are owner-wallet addresses, not Jetton-wallet addresses; the latter must be derived from the deployed master after Testnet verification.
+These are owner-wallet addresses, not Jetton-wallet contract addresses. The latter must be derived from the deployed master and verified on the intended network.
 
 | Allocation | Share | VCOIN | Owner-wallet address |
 |---|---:|---:|---|
@@ -44,39 +41,46 @@ The following is the approved destination map for the initial fixed supply. Thes
 | Liquidity / market | 10% | 1,000,000,000 | `UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn` |
 | Ecosystem / marketing | 10% | 1,000,000,000 | `UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE` |
 
-Under the current one-time mint design, the exact sequence is: mint 10,000,000,000 VCOIN to the founder owner wallet; then, only after confirming the deployed master and the five derived Jetton-wallet addresses, have the founder sign four separate transfers: 5,000,000,000 to mining reserve, 1,000,000,000 to treasury, 1,000,000,000 to liquidity / market, and 1,000,000,000 to ecosystem / marketing. The founder retains 2,000,000,000 VCOIN. Each transfer is a separate irreversible on-chain transaction and must show its destination, amount, network, fee and payload for the founder's review before signing. This is an execution plan only; no master deployment, mint or transfer has occurred.
+Separate GAS & OPERATIONS wallet (TON fees only, not a VCOIN allocation): `UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB`.
 
-## Blocking gates
+The intended distribution sequence is: mint 10,000,000,000 VCOIN to the founder owner wallet; then have the founder sign four separate transfers of 5,000,000,000 to mining reserve and 1,000,000,000 each to treasury, liquidity/market, and ecosystem/marketing. The founder retains 2,000,000,000 VCOIN. Each transaction is independently reviewed and irreversible after confirmation.
 
-1. **Fresh build — passed for PR merge commit `adbcdcbbc53f2ed08a4a9e8a159e50b33a6eb560`:** GitHub Actions run #44823097949 successfully compiled and packaged both contracts. Retain and independently verify the generated code hashes before deployment; a successful build is not a security approval.
-2. **TON Sandbox contract tests:** deploy master and wallet instances in Sandbox; test exact one-time mint, wrong owner, wrong receiver, wrong amount, second mint, successful wallet initialization, bounced wallet-credit recovery, transfers, burns, invalid senders, duplicate/replay messages, and balances/supply consistency.
-3. **Allocation execution design:** decide and test whether the full supply is first minted to the founder wallet and then split by five explicit signed transfers. Confirm the five exact owner-wallet addresses and derive each Jetton wallet address from the deployed master. Do not mistake owner-wallet addresses for Jetton-wallet addresses.
-4. **Founder vesting:** the current source does not enforce four-year vesting. Either implement and independently review a disclosed vesting/escrow contract or explicitly revise the custody design before issuance. Do not describe an ordinary founder wallet as time-locked.
-5. **TEP compatibility:** validate the master/wallet interfaces, message opcodes, getters and metadata against TEP-74/TEP-64 and a maintained reference implementation.
-6. **Dependencies:** create and commit a reproducible lockfile; investigate and remediate or explicitly disposition the five high-severity npm audit findings and compiler/transitive-package deprecation warnings reported by run #44823097949.
-7. **Independent review:** obtain smart-contract security review and record reviewed source/build hashes.
-8. **Testnet:** only after the above code gates, deploy using the founder's own wallet signature; verify master state, wallet derivation, mint, transfers, metadata and finality.
-9. **Mainnet:** only after Testnet evidence and independent review, show the founder the exact final build hashes, network, master deployment details, recipients, amounts, fees and transaction payloads for explicit approval and signature.
+## Remaining release blockers
+
+1. **Bounce and adversarial tests:** test failed wallet deployment/credit, bounce recovery, replay/duplicate messages, insufficient TON, invalid wallet senders, and supply/balance invariants.
+2. **Dependency reproducibility:** generate and commit `package-lock.json`; change CI to `npm ci` once committed. Keep the zero-vulnerability audit gate.
+3. **Compiler lifecycle:** assess migration from deprecated Tact compiler tooling to maintained Tolk tooling; do not perform a blind language migration without equivalent tests and code-hash review.
+4. **TEP-74 / TEP-64 conformance:** independently compare all message layouts, getters, wallet behavior, and metadata serialization against the active standards/reference implementation.
+5. **Metadata:** final TEP-64 content/URI is not selected; deployment template still has `metadata.uri=null`. Do not deploy empty or placeholder metadata.
+6. **Founder vesting:** the four-year founder vesting arrangement is not enforced by the current contract. Implement and review a disclosed vesting/escrow contract or revise the custody arrangement before issuance.
+7. **Wallet ownership:** prove control of all five destination wallets on the intended network; recorded addresses alone are not proof.
+8. **Independent security review:** obtain a separate smart-contract audit and record the exact reviewed source/compiler/build hashes.
+9. **Testnet:** deploy only after code gates pass; verify master state, wallet derivation, metadata, one-time issuance, transfers, fees, and finality on-chain.
+10. **Mainnet:** only after Testnet evidence and independent review, prepare exact reviewed build hashes, network, master deployment payload, recipient addresses, amounts, fees, and transfer payloads for founder inspection and signature.
 
 ## Evidence status
 
 | Evidence | Status |
 |---|---|
-| Fixed supply arithmetic | Present in source and prior arithmetic tests |
-| Fresh build of PR merge commit `adbcdcbbc53f2ed08a4a9e8a159e50b33a6eb560` | Passed in Actions run #44823097949 |
-| TON Sandbox integration / bounce tests | Pending |
-| Five allocation-specific on-chain caps | Not implemented |
+| Fixed supply and allocation arithmetic | Passed in CI |
+| Contract build | Passed in CI #157 |
+| 13 Sandbox/policy tests | Passed in CI #157 |
+| npm audit | 0 vulnerabilities in CI #157 |
+| TEP-89 optional owner-address behavior | Implemented and tested |
+| Bounce/replay recovery tests | Pending |
+| Committed dependency lockfile | Pending |
+| Full TEP-74 / TEP-64 conformance review | Pending |
+| Metadata URI/content | Not finalized |
 | Four-year founder vesting enforcement | Not implemented |
-| Dependency lockfile / advisory disposition | Pending; 5 high-severity findings reported |
-| TEP-74 / TEP-64 conformance review | Pending |
-| Independent security review | Pending |
-| Testnet master address / deployment tx | None recorded |
-| Mainnet master address / deployment tx | None recorded |
-| Initial issuance transaction | None recorded |
-| Mainnet allocation transfers | None recorded |
+| Recipient wallet-control proofs | Pending |
+| Independent smart-contract audit | Pending |
+| Testnet master / deployment transaction | None |
+| Mainnet master / deployment transaction | None |
+| Initial mint transaction | None |
+| Mainnet allocation transfers | None |
 
 ## Custody and safety
 
-The five recorded TON owner-wallet addresses are candidate destinations; recording them does not prove control. Their Jetton wallet addresses are separate contracts derived from the deployed master. The separate GAS & OPERATIONS wallet is for TON fees and is not a VCOIN allocation recipient. Each transaction must be reviewed and signed by the founder in their own wallet. Never request or store a recovery phrase or private key.
+The founder remains the signer for operational distributions. The five recorded addresses are candidate owner-wallet destinations; recording them does not prove control. Their Jetton wallet contract addresses are derived from the deployed master. The separate GAS & OPERATIONS wallet is for TON fees only. Never request or store a recovery phrase or private key.
 
-This inventory is an evidence and release-control record. It is not a deployment authorization and does not claim that VCOIN has been deployed, minted or transferred.
+This inventory records source, test and release evidence. It is not a deployment authorization and does not claim VCOIN has been deployed, minted or transferred.

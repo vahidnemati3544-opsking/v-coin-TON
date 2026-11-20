@@ -19,10 +19,12 @@ describe("VCOIN Jetton master — TON Sandbox integration", () => {
       await VCoinMaster.fromInit(owner.address, beginCell().endCell()),
     );
 
-    const deployment = await master.sendDeploy(
-      owner.getSender(),
-      toNano("0.1"),
-    );
+    const deployment = await owner.send({
+      to: master.address,
+      value: toNano("0.1"),
+      init: master.init,
+      body: beginCell().endCell(),
+    });
 
     expect(deployment.transactions).toHaveTransaction({
       from: owner.address,

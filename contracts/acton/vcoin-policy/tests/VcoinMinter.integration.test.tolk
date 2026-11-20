@@ -4,8 +4,8 @@ import "@acton/testing/expect"
 import "../../jetton-v2.1/contracts/messages"
 import "../../jetton-v2.1/contracts/storage"
 import "../../jetton-v2.1/contracts/vcoin-storage"
-import "../../jetton-v2.1/wrappers/VcoinMinter.gen"
 import "../../jetton-v2.1/wrappers/VcoinJettonWallet.gen"
+import "../../jetton-v2.1/wrappers/VcoinMinter.gen"
 
 const FOUNDER = address("UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy")
 const MINING = address("UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0")
@@ -19,7 +19,12 @@ const TOTAL_AMOUNT = 10000000000000000
 
 fun testMetadata(): cell {
     var metadata: OnchainMetadataReply = { contentDict: [] };
-    metadata.contentDict.set("uri".sha256(), SnakeDataReply { string: "https://vcoin.example/metadata.json" }.toCell());
+    metadata
+        .contentDict
+        .set(
+            "uri".sha256(),
+            SnakeDataReply { string: "https://vcoin.example/metadata.json" }.toCell(),
+        );
     return metadata.toCell();
 }
 
@@ -101,39 +106,62 @@ get fun `test VCOIN minter mints exact founder allocation and rejects a second m
     expect(minter.getJettonData().totalSupply).toEqual(FOUNDER_AMOUNT);
 
     val second = mintAllocation(minter, admin, FOUNDER, FOUNDER_AMOUNT, 12);
-    expect(second).toHaveFailedTx<MintNewJettons>({ from: admin.address, to: minter.address, exitCode: 72 });
+    expect(
+        second,
+    ).toHaveFailedTx<MintNewJettons>({ from: admin.address, to: minter.address, exitCode: 72 });
     expect(minter.getJettonData().totalSupply).toEqual(FOUNDER_AMOUNT);
 }
 
 get fun `test VCOIN minter rejects partial and over-allocation mints`() {
     val (minter, admin, _, _) = setupVcoinMinter();
     val partial = mintAllocation(minter, admin, FOUNDER, FOUNDER_AMOUNT - 1, 21);
-    expect(partial).toHaveFailedTx<MintNewJettons>({ from: admin.address, to: minter.address, exitCode: 72 });
+    expect(
+        partial,
+    ).toHaveFailedTx<MintNewJettons>({ from: admin.address, to: minter.address, exitCode: 72 });
     val over = mintAllocation(minter, admin, FOUNDER, FOUNDER_AMOUNT + 1, 22);
-    expect(over).toHaveFailedTx<MintNewJettons>({ from: admin.address, to: minter.address, exitCode: 72 });
+    expect(
+        over,
+    ).toHaveFailedTx<MintNewJettons>({ from: admin.address, to: minter.address, exitCode: 72 });
     expect(minter.getJettonData().totalSupply).toEqual(0);
 }
 
 get fun `test VCOIN minter finalizes only after all five exact allocations are credited`() {
     val (minter, admin, _, treasury) = setupVcoinMinter();
 
-    val earlyFinalize = minter.sendDropMinterAdmin(admin.address, 30, { value: grams("0.1"), bounce: true });
-    expect(earlyFinalize).toHaveFailedTx<DropMinterAdmin>({ from: admin.address, to: minter.address, exitCode: 72 });
+    val earlyFinalize = minter.sendDropMinterAdmin(
+        admin.address,
+        30,
+        { value: grams("0.1"), bounce: true },
+    );
+    expect(
+        earlyFinalize,
+    ).toHaveFailedTx<DropMinterAdmin>({ from: admin.address, to: minter.address, exitCode: 72 });
 
-    expect(mintAllocation(minter, admin, FOUNDER, FOUNDER_AMOUNT, 31))
-        .toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });
-    expect(mintAllocation(minter, admin, MINING, MINING_AMOUNT, 32))
-        .toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });
-    expect(mintAllocation(minter, admin, treasury.address, OTHER_AMOUNT, 33))
-        .toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });
-    expect(mintAllocation(minter, admin, LIQUIDITY, OTHER_AMOUNT, 34))
-        .toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });
-    expect(mintAllocation(minter, admin, ECOSYSTEM, OTHER_AMOUNT, 35))
-        .toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });
+    expect(
+        mintAllocation(minter, admin, FOUNDER, FOUNDER_AMOUNT, 31),
+    ).toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });
+    expect(
+        mintAllocation(minter, admin, MINING, MINING_AMOUNT, 32),
+    ).toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });
+    expect(
+        mintAllocation(minter, admin, treasury.address, OTHER_AMOUNT, 33),
+    ).toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });
+    expect(
+        mintAllocation(minter, admin, LIQUIDITY, OTHER_AMOUNT, 34),
+    ).toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });
+    expect(
+        mintAllocation(minter, admin, ECOSYSTEM, OTHER_AMOUNT, 35),
+    ).toHaveSuccessfulTx<MintNewJettons>({ from: admin.address, to: minter.address });
 
     expect(minter.getJettonData().totalSupply).toEqual(TOTAL_AMOUNT);
-    val finalize = minter.sendDropMinterAdmin(admin.address, 36, { value: grams("0.1"), bounce: true });
-    expect(finalize).toHaveSuccessfulTx<DropMinterAdmin>({ from: admin.address, to: minter.address });
+    val finalize = minter.sendDropMinterAdmin(
+        admin.address,
+        36,
+        { value: grams("0.1"), bounce: true },
+    );
+    expect(
+        finalize,
+    ).toHaveSuccessfulTx<DropMinterAdmin>({ from: admin.address, to: minter.address });
     expect(minter.getJettonData().mintable).toEqual(false);
     expect(minter.getJettonData().adminAddress).toEqual(null);
 }

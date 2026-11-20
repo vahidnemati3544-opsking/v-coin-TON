@@ -247,7 +247,7 @@ fun onInternalMessage(in: InMessage) {
                 dest: calcDeployedJettonWallet(
                     msg.mintRecipient,
                     contract.getAddress(),
-                    jettonWalletCompiledCode(),
+                    vcoinJettonWalletCompiledCode(),
                 ),
                 value: msg.tonAmount,
                 body: msg.internalTransferMsg,
@@ -265,7 +265,7 @@ fun onInternalMessage(in: InMessage) {
                 in.senderAddress == calcAddressOfJettonWallet(
                     msg.ownerAddress,
                     contract.getAddress(),
-                    jettonWalletCompiledCode(),
+                    vcoinJettonWalletCompiledCode(),
                 )
             ) throw ERROR_NOT_VALID_WALLET;
             setVcoinConfirmed(mutate storage, allocationId);
@@ -275,7 +275,7 @@ fun onInternalMessage(in: InMessage) {
 
         BurnNotificationForMinter => {
             var storage = lazy VcoinMinterStorage.load();
-            val jettonWalletCode = jettonWalletCompiledCode();
+            val jettonWalletCode = vcoinJettonWalletCompiledCode();
             assert (
                 in.senderAddress == calcAddressOfJettonWallet(
                     msg.burnInitiator,
@@ -308,7 +308,7 @@ fun onInternalMessage(in: InMessage) {
                 walletAddress = calcAddressOfJettonWallet(
                     msg.ownerAddress,
                     contract.getAddress(),
-                    jettonWalletCompiledCode(),
+                    vcoinJettonWalletCompiledCode(),
                 );
             }
             val respondMsg = createMessage({
@@ -355,12 +355,12 @@ get fun get_jetton_data(): JettonDataReply {
         mintable: storage.adminAddress != null && !storage.finalized,
         adminAddress: storage.adminAddress,
         jettonContent: storage.metadata as Cell<OnchainMetadataReply>,
-        jettonWalletCode: jettonWalletCompiledCode(),
+        jettonWalletCode: vcoinJettonWalletCompiledCode(),
     };
 }
 
 get fun get_wallet_address(ownerAddress: address): address {
-    return calcAddressOfJettonWallet(ownerAddress, contract.getAddress(), jettonWalletCompiledCode());
+    return calcAddressOfJettonWallet(ownerAddress, contract.getAddress(), vcoinJettonWalletCompiledCode());
 }
 
 get fun get_vcoin_issuance_state(): tuple {

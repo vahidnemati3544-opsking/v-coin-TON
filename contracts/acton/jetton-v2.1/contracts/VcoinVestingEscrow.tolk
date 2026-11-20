@@ -20,7 +20,7 @@ struct (0x5643524c) ReleaseVestedVcoin {
     queryId: uint64
 }
 
-type AllowedVestingEscrowMessage = TransferNotificationForRecipient | ReleaseVestedVcoin | TopUpTons
+type AllowedVestingEscrowMessage = TransferNotificationForRecipient | ReleaseVestedVcoin | ReturnExcessesBack | VcoinTransferFailed | TopUpTons
 
 contract VcoinVestingEscrow {
     author: "V COIN"
@@ -59,6 +59,29 @@ fun vcoinVestedAmount(storage: VcoinVestingEscrowStorage, timestamp: int): coins
     return (storage.allocationAmount * elapsed) / storage.duration;
 }
 
+fun onBouncedMessage(in: InMessageBounced) {
+    in.bouncedBody.skipBouncedPrefix();
+    val msg = lazy AskToTransfer.fromSlice(in.bouncedBody);
+    var storage = lazy VcoinVestingEscrowStorage.fromCell(contract.getData());
+    val expectedWallet = calcAddressOfJettonWallet(
+        contract.getAddress(),
+        storage.minterAddress,
+        vcoinJettonWalletCompiledCode(),
+    );
+    if (in.senderAddress != expectedWallet) {
+        return;
+    }
+    if (
+        storage.pendingReleaseQueryId != msg.queryId ||
+        storage.pendingReleaseAmount != msg.jettonAmount
+    ) {
+        return;
+    }
+    storage.pendingReleaseAmount = 0;
+    storage.pendingReleaseQueryId = 0;
+    storage.save();
+}
+
 fun onInternalMessage(in: InMessage) {
     val msg = lazy AllowedVestingEscrowMessage.fromSlice(in.body);
 
@@ -84,6 +107,8 @@ fun onInternalMessage(in: InMessage) {
             validateVcoinVestingConfig(storage);
             assert (in.senderAddress == storage.controllerAddress) throw ERROR_NOT_OWNER;
             assert (storage.deposited) throw ERROR_INVALID_OP;
+            assert (storage.pendingReleaseAmount == 0) throw ERROR_INVALID_OP;
+            assert (msg.queryId != 0) throw ERROR_INVALID_OP;
 
             val vested = vcoinVestedAmount(storage, blockchain.now());
             assert (vested > storage.releasedAmount) throw ERROR_INVALID_OP;
@@ -91,7 +116,8 @@ fun onInternalMessage(in: InMessage) {
 
             // Effects are recorded before sending. The Jetton wallet is derived
             // from this escrow owner and the configured VCOIN master.
-            storage.releasedAmount += releasable;
+            storage.pendingReleaseAmount = releasable;
+            storage.pendingReleaseQueryId = msg.queryId;
             storage.save();
 
             val forwardPayload = beginCell().storeUint(0, 1).endCell().beginParse();
@@ -114,6 +140,39 @@ fun onInternalMessage(in: InMessage) {
                 },
             });
             transfer.send(SEND_MODE_PAY_FEES_SEPARATELY | SEND_MODE_BOUNCE_ON_ACTION_FAIL);
+        }
+
+        ReturnExcessesBack => {
+            var storage = lazy VcoinVestingEscrowStorage.fromCell(contract.getData());
+            assert (storage.pendingReleaseAmount > 0) throw ERROR_INVALID_OP;
+            assert (msg.queryId == storage.pendingReleaseQueryId) throw ERROR_INVALID_OP;
+            val beneficiaryWallet = calcAddressOfJettonWallet(
+                storage.beneficiaryAddress,
+                storage.minterAddress,
+                vcoinJettonWalletCompiledCode(),
+            );
+            assert (in.senderAddress == beneficiaryWallet) throw ERROR_NOT_VALID_WALLET;
+            storage.releasedAmount += storage.pendingReleaseAmount;
+            storage.pendingReleaseAmount = 0;
+            storage.pendingReleaseQueryId = 0;
+            storage.save();
+        }
+
+        VcoinTransferFailed => {
+            var storage = lazy VcoinVestingEscrowStorage.fromCell(contract.getData());
+            assert (storage.pendingReleaseAmount > 0) throw ERROR_INVALID_OP;
+            assert (msg.queryId == storage.pendingReleaseQueryId) throw ERROR_INVALID_OP;
+            assert (msg.jettonAmount == storage.pendingReleaseAmount) throw ERROR_INVALID_OP;
+            assert (msg.ownerAddress == contract.getAddress()) throw ERROR_INVALID_OP;
+            val escrowWallet = calcAddressOfJettonWallet(
+                contract.getAddress(),
+                storage.minterAddress,
+                vcoinJettonWalletCompiledCode(),
+            );
+            assert (in.senderAddress == escrowWallet) throw ERROR_NOT_VALID_WALLET;
+            storage.pendingReleaseAmount = 0;
+            storage.pendingReleaseQueryId = 0;
+            storage.save();
         }
 
         TopUpTons => {
@@ -151,6 +210,8 @@ get fun get_vcoin_vesting_state(): tuple {
         storage.duration,
         storage.deposited,
         storage.releasedAmount,
+        storage.pendingReleaseAmount,
+        storage.pendingReleaseQueryId,
         vested,
         claimable,
     ];

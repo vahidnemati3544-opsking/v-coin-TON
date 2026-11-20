@@ -85,6 +85,11 @@ describe("VCOIN founder four-year daily linear vesting", () => {
       to: vestingWallet.address,
       success: true,
     });
+    expect(funding.transactions).toHaveTransaction({
+      from: vestingWallet.address,
+      to: vesting.address,
+      success: true,
+    });
     expect((await vesting.getGetVestingData()).funded).toBe(true);
     expect((await vestingWallet.getGetWalletData()).balance).toBe(FOUNDER_ALLOCATION);
   }
@@ -92,7 +97,7 @@ describe("VCOIN founder four-year daily linear vesting", () => {
   test("starts the clock only after the exact founder allocation is received", async () => {
     const before = await vesting.getGetVestingData();
     expect(before.funded).toBe(false);
-    expect(before.start_time).toBe(0);
+    expect(before.start_time).toBe(0n);
 
     await fundVesting();
     const after = await vesting.getGetVestingData();

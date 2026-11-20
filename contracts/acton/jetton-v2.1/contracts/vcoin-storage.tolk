@@ -1,5 +1,3 @@
-import "storage"
-
 struct VcoinPendingMint {
     allocationId: uint8
     recipient: address

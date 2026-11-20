@@ -20,14 +20,14 @@ contract VCoinMaster with JettonMaster {
         self.content = content;
     }
 
-    // One-time issuance: exactly the full fixed supply, to the founder-controlled
-    // initial custody wallet. The founder distributes allocations by ordinary
-    // signed Jetton transfers after verifying all five destination wallets.
+    // One-time issuance: the exact full supply is credited to the founder's
+    // own wallet. The founder then distributes allocations with signed transfers.
     receive(msg: VCoinMint) {
         let ctx: Context = context();
         require(ctx.sender == self.owner, "Unauthorized issuance authority");
         require(self.mintable, "Initial issuance already completed");
         require(self.total_supply == 0, "Initial supply already issued");
+        require(msg.receiver == self.owner, "Initial supply must go to owner wallet");
         require(msg.amount == VCOIN_MAX_SUPPLY, "Must issue exact fixed supply");
         self.mintTo(msg.receiver, msg.amount, self.owner);
         self.mintable = false;

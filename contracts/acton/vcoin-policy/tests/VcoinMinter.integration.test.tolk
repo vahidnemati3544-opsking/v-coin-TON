@@ -218,10 +218,7 @@ get fun `test founder vesting release success failure rollback and retry`() {
         dest: founderEscrowAddress!,
         body: ReturnExcessesBack { queryId: 80 },
     });
-    val unauthorizedAckResult = testing.processSingleTraceStep(
-        outsider.address,
-        unauthorizedAck,
-    );
+    val unauthorizedAckResult = net.send(outsider.address, unauthorizedAck);
     expect(unauthorizedAckResult).toHaveFailedTx<ReturnExcessesBack>({
         from: outsider.address,
         to: founderEscrowAddress!,
@@ -240,10 +237,7 @@ get fun `test founder vesting release success failure rollback and retry`() {
             ownerAddress: founderEscrowAddress!,
         },
     });
-    val mismatchedAckResult = testing.processSingleTraceStep(
-        escrowJettonWallet,
-        mismatchedAck,
-    );
+    val mismatchedAckResult = net.send(escrowJettonWallet, mismatchedAck);
     expect(mismatchedAckResult).toHaveFailedTx<VcoinTransferFailed>({
         from: escrowJettonWallet,
         to: founderEscrowAddress!,
@@ -264,10 +258,7 @@ get fun `test founder vesting release success failure rollback and retry`() {
     expect(founderEscrow.getVcoinVestingState().get(9) as int).toEqual(0);
 
     // The same acknowledgement cannot be replayed after pending state clears.
-    val duplicateAckResult = testing.processSingleTraceStep(
-        beneficiaryWallet,
-        firstSuccessAck,
-    );
+    val duplicateAckResult = net.send(beneficiaryWallet, firstSuccessAck);
     expect(duplicateAckResult).toHaveFailedTx<ReturnExcessesBack>({
         from: beneficiaryWallet,
         to: founderEscrowAddress!,

@@ -31,6 +31,7 @@ fun setupVcoinMinter(): (VcoinMinter, Treasury, Treasury) {
         totalSupply: 0,
         adminAddress: admin.address,
         metadata: testMetadata(),
+        treasuryOwner: TREASURY,
         lifetimeIssued: 0,
         founderStatus: 0,
         miningStatus: 0,

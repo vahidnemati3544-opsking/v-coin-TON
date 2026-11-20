@@ -118,10 +118,11 @@ Stop if any of the following is true:
 - TEP-64 metadata draft: `contracts/jetton/metadata.json`; URI pinned in `deployment.config.template.json` to immutable commit `49c462124a082ef6c850079b35c6f77c5bda6ea2`. The JSON contains name, symbol, description and six decimals; no image is included until the approved logo asset is committed.
 - TEP-74 required response-destination fields were corrected to mandatory addresses for transfer, internal transfer, burn and burn notification. Excesses are routed to the required response destination.
 - TEP-89 `include_address` behavior remains covered for both values.
-- GitHub Actions run #191 passed build, 25 Sandbox/policy tests, `npm ci` using the committed lockfile, and npm audit with zero known vulnerabilities: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44837612965
+- Latest PR-head GitHub Actions run #196 on commit `aa0391a09bc03f690367a53e7cae43f9030528ef` completed successfully: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44837742976
+- Earlier full run #191 passed 25 Sandbox/policy tests, build, `npm ci` using the committed lockfile, and npm audit with zero known vulnerabilities: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44837612965.
 - The committed `contracts/jetton/package-lock.json` was used successfully by `npm ci` in runs #175, #176 and #177.
 - Source-level TEP-74 notes: `docs/TEP74_CONFORMANCE_REVIEW.md`. This is not an independent audit or full certification.
-- Wallet bounce handlers exist in source, but explicit bounce/recovery tests remain outstanding.
+- Master and Jetton-wallet bounce handlers exist in source, but downstream Jetton-wallet-to-founder delivery bounce is not reconciled by the founder vesting contract. The vesting counter may remain advanced after escrow tokens are restored; this is a hard deployment blocker pending an independently reviewed recovery design and Sandbox tests.
 - `@tact-lang/compiler@1.6.13` emits a deprecation warning; current build succeeds. No blind Tolk migration is authorized.
 - Jetton master address: not deployed.
 - Deployment transaction: none.

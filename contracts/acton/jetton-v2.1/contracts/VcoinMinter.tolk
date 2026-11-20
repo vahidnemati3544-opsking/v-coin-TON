@@ -261,17 +261,7 @@ fun onBouncedMessage(in: InMessageBounced) {
     }
 
     storage.totalSupply -= msg.jettonAmount;
-    storage.lifetimeIssued -= msg.jettonAmount;
     setVcoinRolledBack(mutate storage, matchedAllocation, msg.jettonAmount);
-    val pendingLookup = storage.pendingMints.get(msg.queryId);
-    if (!pendingLookup.isFound) {
-        return;
-    }
-    val pending = VcoinPendingMint.fromCell(pendingLookup.loadValue());
-    if (pending.allocationId != matchedAllocation || pending.amount != msg.jettonAmount || pending.recipient != matchedOwner!) {
-        return;
-    }
-    storage.pendingMints.delete(msg.queryId);
     storage.save();
 }
 
@@ -300,23 +290,12 @@ fun onInternalMessage(in: InMessage) {
             assert (vcoinStatus(storage, allocationId) == VCOIN_MINT_NOT_ISSUED) throw ERROR_INVALID_OP;
             assert (vcoinQueryId(storage, allocationId) != msg.queryId) throw ERROR_INVALID_OP;
             assert (storage.lifetimeIssued + internalTransferMsg.jettonAmount <= VCOIN_MAX_SUPPLY) throw ERROR_INVALID_OP;
-            assert (!storage.pendingMints.exists(msg.queryId)) throw ERROR_INVALID_OP;
 
             checkAmountIsEnoughToTransfer(msg.tonAmount, internalTransferMsg.forwardTonAmount, in.originalForwardFee);
 
             setVcoinPending(mutate storage, allocationId, msg.queryId);
             addVcoinAllocation(mutate storage, allocationId, internalTransferMsg.jettonAmount);
             storage.totalSupply += internalTransferMsg.jettonAmount;
-            storage.lifetimeIssued += internalTransferMsg.jettonAmount;
-            storage.pendingMints.set(
-                msg.queryId,
-                VcoinPendingMint {
-                    allocationId: allocationId,
-                    recipient: msg.mintRecipient,
-                    amount: internalTransferMsg.jettonAmount,
-                    queryId: msg.queryId,
-                }.toCell(),
-            );
             storage.save();
 
             reserveGramsOnBalance(grams("0.01"), RESERVE_MODE_EXACT_AMOUNT);
@@ -337,12 +316,6 @@ fun onInternalMessage(in: InMessage) {
             var storage = lazy VcoinMinterStorage.load();
             val allocationId = vcoinAllocationId(storage, msg.ownerAddress);
             assert (allocationId != VCOIN_ALLOCATION_NONE) throw ERROR_INVALID_OP;
-            val pendingLookup = storage.pendingMints.get(msg.queryId);
-            assert (pendingLookup.isFound) throw ERROR_INVALID_OP;
-            val pending = VcoinPendingMint.fromCell(pendingLookup.loadValue());
-            assert (pending.allocationId == allocationId) throw ERROR_INVALID_OP;
-            assert (pending.recipient == msg.ownerAddress) throw ERROR_INVALID_OP;
-            assert (pending.amount == msg.jettonAmount) throw ERROR_INVALID_OP;
             assert (msg.jettonAmount == vcoinAllocationCap(allocationId)) throw ERROR_INVALID_OP;
             assert (vcoinStatus(storage, allocationId) == VCOIN_MINT_PENDING) throw ERROR_INVALID_OP;
             assert (vcoinQueryId(storage, allocationId) == msg.queryId) throw ERROR_INVALID_OP;
@@ -354,7 +327,7 @@ fun onInternalMessage(in: InMessage) {
                 )
             ) throw ERROR_NOT_VALID_WALLET;
             setVcoinConfirmed(mutate storage, allocationId);
-            storage.pendingMints.delete(msg.queryId);
+            storage.lifetimeIssued += msg.jettonAmount;
             storage.save();
         }
 

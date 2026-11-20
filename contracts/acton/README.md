@@ -18,12 +18,12 @@ Run from this directory with Acton 1.2.0:
 
 ```bash
 acton build
-acton test jetton-v2.1/tests
+acton test jetton-v2.1/tests vcoin-policy/tests
 acton check
 acton fmt --check
 ```
 
-The tests include end-to-end minter/wallet deployment, mint, transfer, notification, burn, wallet discovery, admin handoff, bounce handling, protocol validation, regression and gas checks.
+The tests include end-to-end minter/wallet deployment, mint, transfer, notification, burn, wallet discovery, admin handoff, bounce handling, protocol validation, regression and gas checks. The separate `vcoin-policy/tests` suite exercises a pure VCOIN policy kernel for five fixed allocation owners, ceilings, lifetime issuance, burn accounting and finalization. That policy kernel is not yet wired into JettonMinter and must not be treated as on-chain enforcement.
 
 ## Important security boundary
 

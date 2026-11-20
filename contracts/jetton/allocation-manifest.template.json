@@ -5,7 +5,7 @@
   "jetton_master_address": null,
   "decimals": 6,
   "total_supply_base_units": "10000000000000000",
-  "founder_wallet_candidate": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
+  "founder_wallet_candidate": "UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB",
   "transfers": [
     {
       "allocation": "founder_vesting",

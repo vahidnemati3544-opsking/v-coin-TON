@@ -13,11 +13,6 @@ struct VcoinMinterStorage {
     metadata: cell
     treasuryOwner: address
     lifetimeIssued: coins
-    founderIssued: coins
-    miningIssued: coins
-    treasuryIssued: coins
-    liquidityIssued: coins
-    ecosystemIssued: coins
     founderStatus: uint8
     miningStatus: uint8
     treasuryStatus: uint8

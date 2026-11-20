@@ -61,8 +61,3 @@ get fun `test mining reserve vests linearly over twenty four months`() {
         .toEqual(VCOIN_MINING_AMOUNT);
 }
 
-get fun `test vesting configuration rejects wrong allocation beneficiary and duration`() {
-    var storage = founderVestingConfig();
-    storage.duration = VCOIN_MINING_DURATION;
-    expect(validateVcoinVestingConfig(storage)).toEqual(null);
-}

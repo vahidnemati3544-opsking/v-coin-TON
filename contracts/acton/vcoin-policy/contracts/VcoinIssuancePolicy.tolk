@@ -1,18 +1,18 @@
 // VCOIN issuance policy kernel. This module is deliberately pure and is not yet
 // wired into JettonMinter; see docs/VCOIN_ONCHAIN_POLICY_SPEC.md.
-const VCOIN_MAX_SUPPLY = 10000000000000000;
-const VCOIN_FOUNDER_CAP = 2000000000000000;
-const VCOIN_MINING_CAP = 5000000000000000;
-const VCOIN_TREASURY_CAP = 1000000000000000;
-const VCOIN_LIQUIDITY_CAP = 1000000000000000;
-const VCOIN_ECOSYSTEM_CAP = 1000000000000000;
+const VCOIN_MAX_SUPPLY = 10000000000000000
+const VCOIN_FOUNDER_CAP = 2000000000000000
+const VCOIN_MINING_CAP = 5000000000000000
+const VCOIN_TREASURY_CAP = 1000000000000000
+const VCOIN_LIQUIDITY_CAP = 1000000000000000
+const VCOIN_ECOSYSTEM_CAP = 1000000000000000
 
-const ALLOCATION_NONE = 0;
-const ALLOCATION_FOUNDER = 1;
-const ALLOCATION_MINING = 2;
-const ALLOCATION_TREASURY = 3;
-const ALLOCATION_LIQUIDITY = 4;
-const ALLOCATION_ECOSYSTEM = 5;
+const ALLOCATION_NONE = 0
+const ALLOCATION_FOUNDER = 1
+const ALLOCATION_MINING = 2
+const ALLOCATION_TREASURY = 3
+const ALLOCATION_LIQUIDITY = 4
+const ALLOCATION_ECOSYSTEM = 5
 
 struct VcoinAllocationOwners {
     founder: address
@@ -53,7 +53,11 @@ fun emptyVcoinIssuanceState(): VcoinIssuanceState {
 }
 
 fun rejectVcoinMint(state: VcoinIssuanceState): VcoinMintDecision {
-    return { accepted: false, allocationId: ALLOCATION_NONE, nextState: state };
+    return {
+        accepted: false,
+        allocationId: ALLOCATION_NONE,
+        nextState: state,
+    };
 }
 
 // Returns a candidate state only. The Jetton master must persist this state
@@ -107,7 +111,11 @@ fun evaluateVcoinMint(
 
     next.totalSupply += amount;
     next.lifetimeIssued += amount;
-    return { accepted: true, allocationId, nextState: next };
+    return {
+        accepted: true,
+        allocationId,
+        nextState: next,
+    };
 }
 
 // A burn decreases outstanding supply only. Lifetime and allocation counters
@@ -125,8 +133,7 @@ fun applyVcoinBurn(state: VcoinIssuanceState, amount: int): VcoinIssuanceState {
 // The production minter must make this transition irreversible on-chain.
 fun finalizeVcoinIssuance(state: VcoinIssuanceState): VcoinIssuanceState {
     if (
-        state.finalized ||
-        state.founderIssued != VCOIN_FOUNDER_CAP ||
+        state.finalized || state.founderIssued != VCOIN_FOUNDER_CAP ||
         state.miningIssued != VCOIN_MINING_CAP ||
         state.treasuryIssued != VCOIN_TREASURY_CAP ||
         state.liquidityIssued != VCOIN_LIQUIDITY_CAP ||

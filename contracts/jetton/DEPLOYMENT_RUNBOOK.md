@@ -5,7 +5,8 @@
 **Initial supply:** 10,000,000,000 VCOIN  
 **Decimals:** 6  
 **Initial supply in base units:** 10000000000000000  
-**Candidate founder wallet:** UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB
+**Recorded founder allocation wallet (ownership unverified):** UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy  
+**GAS & OPERATIONS wallet (TON fees only; not a VCOIN allocation):** UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB
 
 ## 1. Non-negotiable design
 
@@ -19,7 +20,7 @@
 
 ## 2. Founder authority and custody
 
-The founder is the operational approver for distributions from founder-controlled custody. The candidate wallet address above is not proof of ownership; it must pass TON Connect proof/signature verification on the intended network.
+The founder is the operational approver for distributions from founder-controlled custody. The recorded founder allocation wallet above is a candidate destination, not proof of ownership; it must pass TON Connect proof/signature verification on the intended network. The separate GAS & OPERATIONS wallet is reserved for TON fees and operational funding only; it is not the founder's VCOIN allocation destination.
 
 Founder authority is implemented through transaction authorization:
 - backend creates a proposal only;
@@ -80,11 +81,23 @@ Allocation sums must be checked in base units before every batch. No category ma
 - Reconcile each confirmed transfer against the allocation ledger.
 - Publish the Jetton master address and verified transaction references.
 
-## 5. Required recipient details
+## 5. Recorded allocation recipient addresses
 
-Only one candidate public wallet address has been supplied so far. Before allocating tokens, the founder must provide and verify the destination for each allocation, or explicitly choose to retain an allocation in the founder's custody pending later distribution.
+The following five public wallet addresses have been recorded as the current candidate destinations for the five VCOIN allocations. Recording an address does not prove wallet ownership or authorize a transfer. Each destination must be independently verified on the intended TON network before any distribution.
 
-Do not infer a recipient address from a wallet label, Telegram username, or a prior transaction.
+| Allocation | VCOIN | Recorded candidate destination | Verification status |
+|---|---:|---|---|
+| Founder (4-year vesting) | 2,000,000,000 | `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` | Ownership unverified; vesting custody must be finalized |
+| Treasury | 1,000,000,000 | `UQBEW5bLGbq0yVDOimgl6fpZQkdla9Wk5b0tXyx69bmBktQ` | Ownership unverified |
+| Liquidity / market | 1,000,000,000 | `UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn` | Ownership unverified |
+| Ecosystem / marketing | 1,000,000,000 | `UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE` | Ownership unverified |
+| Mining reserve | 5,000,000,000 | `UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0` | Ownership unverified |
+
+**Separate GAS & OPERATIONS wallet (TON fees only; no VCOIN allocation):** `UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB`.
+
+The GAS & OPERATIONS wallet is not a substitute for TON held by a wallet that must sign a transaction. Sponsored fees or a relayer require separate implementation and testing.
+
+Do not infer a recipient address from a wallet label, Telegram username, or a prior transaction. No transfer is authorized by this register; each transfer still requires exact transaction review and founder signature.
 
 ## 6. Mainnet stop conditions
 
@@ -100,7 +113,8 @@ Stop if any of the following is true:
 
 ## 7. Current evidence record
 
-- Candidate founder wallet: recorded, ownership unverified.
+- Five allocation candidate destinations: recorded in Section 5; ownership/control verification pending.
+- Separate GAS & OPERATIONS wallet: recorded for TON fees only; not an allocation recipient.
 - Jetton master address: not deployed.
 - Deployment transaction: none.
 - Initial mint transaction: none.

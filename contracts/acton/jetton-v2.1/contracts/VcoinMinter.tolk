@@ -176,27 +176,43 @@ fun onBouncedMessage(in: InMessageBounced) {
     var matchedAllocation = VCOIN_ALLOCATION_NONE;
     var matchedOwner: address? = null;
 
-    if (storage.pendingAllocation == VCOIN_ALLOCATION_FOUNDER && storage.pendingQueryId == msg.queryId && storage.founderStatus == VCOIN_MINT_PENDING && msg.jettonAmount == VCOIN_FOUNDER_CAP) {
+    if (
+        storage.pendingAllocation == VCOIN_ALLOCATION_FOUNDER &&
+        storage.pendingQueryId == msg.queryId &&
+        storage.founderStatus == VCOIN_MINT_PENDING &&
+        msg.jettonAmount == VCOIN_FOUNDER_CAP
+    ) {
         matchedAllocation = VCOIN_ALLOCATION_FOUNDER;
         matchedOwner = VCOIN_FOUNDER_OWNER;
-    } else if (storage.pendingAllocation == VCOIN_ALLOCATION_MINING && storage.pendingQueryId == msg.queryId && storage.miningStatus == VCOIN_MINT_PENDING && msg.jettonAmount == VCOIN_MINING_CAP) {
+    } else if (
+        storage.pendingAllocation == VCOIN_ALLOCATION_MINING &&
+        storage.pendingQueryId == msg.queryId &&
+        storage.miningStatus == VCOIN_MINT_PENDING &&
+        msg.jettonAmount == VCOIN_MINING_CAP
+    ) {
         matchedAllocation = VCOIN_ALLOCATION_MINING;
         matchedOwner = VCOIN_MINING_OWNER;
     } else if (
-        storage.pendingAllocation == VCOIN_ALLOCATION_TREASURY && storage.pendingQueryId == msg.queryId &&
-        storage.treasuryStatus == VCOIN_MINT_PENDING && msg.jettonAmount == VCOIN_TREASURY_CAP
+        storage.pendingAllocation == VCOIN_ALLOCATION_TREASURY &&
+        storage.pendingQueryId == msg.queryId &&
+        storage.treasuryStatus == VCOIN_MINT_PENDING &&
+        msg.jettonAmount == VCOIN_TREASURY_CAP
     ) {
         matchedAllocation = VCOIN_ALLOCATION_TREASURY;
         matchedOwner = storage.treasuryOwner;
     } else if (
-        storage.pendingAllocation == VCOIN_ALLOCATION_LIQUIDITY && storage.pendingQueryId == msg.queryId &&
-        storage.liquidityStatus == VCOIN_MINT_PENDING && msg.jettonAmount == VCOIN_LIQUIDITY_CAP
+        storage.pendingAllocation == VCOIN_ALLOCATION_LIQUIDITY &&
+        storage.pendingQueryId == msg.queryId &&
+        storage.liquidityStatus == VCOIN_MINT_PENDING &&
+        msg.jettonAmount == VCOIN_LIQUIDITY_CAP
     ) {
         matchedAllocation = VCOIN_ALLOCATION_LIQUIDITY;
         matchedOwner = VCOIN_LIQUIDITY_OWNER;
     } else if (
-        storage.pendingAllocation == VCOIN_ALLOCATION_ECOSYSTEM && storage.pendingQueryId == msg.queryId &&
-        storage.ecosystemStatus == VCOIN_MINT_PENDING && msg.jettonAmount == VCOIN_ECOSYSTEM_CAP
+        storage.pendingAllocation == VCOIN_ALLOCATION_ECOSYSTEM &&
+        storage.pendingQueryId == msg.queryId &&
+        storage.ecosystemStatus == VCOIN_MINT_PENDING &&
+        msg.jettonAmount == VCOIN_ECOSYSTEM_CAP
     ) {
         matchedAllocation = VCOIN_ALLOCATION_ECOSYSTEM;
         matchedOwner = VCOIN_ECOSYSTEM_OWNER;

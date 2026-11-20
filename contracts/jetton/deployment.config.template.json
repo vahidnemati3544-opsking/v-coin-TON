@@ -47,13 +47,14 @@
     "duration_seconds": 126230400,
     "schedule": "linear",
     "cliff_seconds": 0,
-    "release_frequency_seconds": 86400,
+    "release_frequency_seconds": null,
     "beneficiary": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
     "controller": "fixed Founder wallet address compiled into VcoinVestingEscrow; no admin override",
     "vesting_contract_address": null,
-    "implementation_status": "implemented_in_draft_branch_pending_final_ci_audit_and_testnet",
+    "implementation_status": "implemented_in_draft_branch_ci_passed_pending_independent_audit_and_testnet",
     "note": "Two deterministic escrow instances are created by the minter after one-time start-time configuration. Mint only to the founder escrow; no direct beneficiary mint.",
-    "duration_days": 1461
+    "duration_days": 1461,
+    "release_mode": "on_demand_claim_of_accrued_linear_vesting"
   },
   "metadata": {
     "uri": null,
@@ -61,7 +62,7 @@
   },
   "deployment_authorized": false,
   "mainnet_authorized": false,
-  "notes": "Template only. Vesting escrow source and minter integration are present in the unmerged security branch; they are not deployed, audited, or Testnet-verified. Set minter_admin_address to the Founder wallet because it is the one-time configuration authority for the start timestamp; the release controller is independently fixed to the Founder wallet in escrow code. Verify wallet control on the intended network before any transfer. The operational fee wallet is separate and TON-only. Keep escrow/master addresses null until derived and verified. Null contract/deployment fields require owner approval. Never commit secrets, seed phrases or private keys. No deployment or transfer is authorized by this template.",
+  "notes": "Template only. Vesting escrow source and minter integration are present in the unmerged security branch; Acton build, emulator integration tests, static checks and formatting have passed on the latest verified code revision. They are not deployed, independently audited, or Testnet-verified. Set minter_admin_address to the Founder wallet because it authorizes the one-time start-time configuration; the release controller is independently fixed to the Founder wallet in escrow code. Vesting claims are on-demand and release only accrued linear amounts; no automatic daily transaction is scheduled. Verify wallet control on the intended network before any transfer. The operational fee wallet is separate and TON-only. Keep escrow/master addresses null until derived and verified. Null contract/deployment fields require owner approval. Never commit secrets, seed phrases or private keys. No deployment or transfer is authorized by this template.",
   "allocation_wallet_verification": {
     "status": "pending_wallet_control_proof",
     "note": "These are recorded owner wallet candidates, not derived Jetton wallet contract addresses. Verify control on the intended network before any transfer.",
@@ -78,13 +79,14 @@
     "duration_seconds": 63072000,
     "schedule": "linear",
     "cliff_seconds": 0,
-    "release_frequency_seconds": 86400,
+    "release_frequency_seconds": null,
     "beneficiary": "UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0",
     "controller": "fixed Founder wallet address compiled into VcoinVestingEscrow; no admin override",
     "vesting_contract_address": null,
-    "implementation_status": "implemented_in_draft_branch_pending_final_ci_audit_and_testnet",
+    "implementation_status": "implemented_in_draft_branch_ci_passed_pending_independent_audit_and_testnet",
     "note": "Separate deterministic escrow instance holds the mining reserve and releases linearly over 730 days to the recorded mining wallet. Mint only to the escrow, never directly to beneficiary.",
-    "duration_days": 730
+    "duration_days": 730,
+    "release_mode": "on_demand_claim_of_accrued_linear_vesting"
   },
   "minter_admin_address": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
   "vesting_escrow_implementation": {
@@ -96,5 +98,14 @@
     "mint_gate": "both escrow instances must acknowledge deployment readiness before any allocation mint",
     "deposit_gate": "founder and mining allocations count as issued only after escrow deposit acknowledgement",
     "release": "linear integer base-unit accrual; no admin bypass; monotonic query IDs; wallet success/failure acknowledgement and bounce recovery"
+  },
+  "minter_escrow_state_initialization": {
+    "founderEscrowOwner": null,
+    "miningEscrowOwner": null,
+    "founderEscrowReady": false,
+    "miningEscrowReady": false,
+    "escrowConfigQueryId": 0,
+    "encoding": "VcoinMinterEscrowState{...}.toCell()",
+    "note": "The minter's one-time ConfigureVcoinEscrows message derives and deploys both deterministic escrow instances; do not prefill these addresses."
   }
 }

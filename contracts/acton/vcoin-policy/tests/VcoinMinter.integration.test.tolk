@@ -163,7 +163,7 @@ get fun `test VCOIN minter blocks founder and mining and cannot finalize incompl
 
 get fun `test founder vesting release success failure rollback and retry`() {
     testing.setNow(1000);
-    val (minter, admin, _, _) = setupVcoinMinter(false);
+    val (minter, admin, outsider, _) = setupVcoinMinter(false);
 
     val configure = minter.sendConfigureVcoinEscrows(
         admin.address,
@@ -207,6 +207,51 @@ get fun `test founder vesting release success failure rollback and retry`() {
     });
     testing.processSingleTraceStep(FOUNDER, firstRelease);
     expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(0);
+    expect(founderEscrow.getVcoinVestingState().get(9) as int).toEqual(
+        FOUNDER_AMOUNT / 2,
+    );
+
+    // A non-wallet cannot acknowledge a successful transfer.
+    val unauthorizedAck = createMessage({
+        bounce: false,
+        value: grams("0.1"),
+        dest: founderEscrowAddress!,
+        body: ReturnExcessesBack { queryId: 80 },
+    });
+    val unauthorizedAckResult = testing.processSingleTraceStep(
+        outsider.address,
+        unauthorizedAck,
+    );
+    expect(unauthorizedAckResult).toHaveFailedTx<ReturnExcessesBack>({
+        from: outsider.address,
+        to: founderEscrowAddress!,
+        exitCode: 74,
+    });
+
+    // A wallet-originated failure acknowledgement with the wrong amount
+    // must not clear or alter the pending release.
+    val mismatchedAck = createMessage({
+        bounce: false,
+        value: grams("0.1"),
+        dest: founderEscrowAddress!,
+        body: VcoinTransferFailed {
+            queryId: 80,
+            jettonAmount: FOUNDER_AMOUNT / 2 - 1,
+            ownerAddress: founderEscrowAddress!,
+        },
+    });
+    val mismatchedAckResult = testing.processSingleTraceStep(
+        escrowJettonWallet,
+        mismatchedAck,
+    );
+    expect(mismatchedAckResult).toHaveFailedTx<VcoinTransferFailed>({
+        from: escrowJettonWallet,
+        to: founderEscrowAddress!,
+        exitCode: 72,
+    });
+    expect(founderEscrow.getVcoinVestingState().get(9) as int).toEqual(
+        FOUNDER_AMOUNT / 2,
+    );
 
     val firstSuccessAck = createMessage({
         bounce: false,
@@ -216,6 +261,18 @@ get fun `test founder vesting release success failure rollback and retry`() {
     });
     testing.processSingleTraceStep(beneficiaryWallet, firstSuccessAck);
     expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(FOUNDER_AMOUNT / 2);
+    expect(founderEscrow.getVcoinVestingState().get(9) as int).toEqual(0);
+
+    // The same acknowledgement cannot be replayed after pending state clears.
+    val duplicateAckResult = testing.processSingleTraceStep(
+        beneficiaryWallet,
+        firstSuccessAck,
+    );
+    expect(duplicateAckResult).toHaveFailedTx<ReturnExcessesBack>({
+        from: beneficiaryWallet,
+        to: founderEscrowAddress!,
+        exitCode: 72,
+    });
 
     testing.setNow(1000 + 126230400 * 3 / 4);
     val secondRelease = createMessage({

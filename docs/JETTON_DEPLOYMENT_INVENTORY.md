@@ -56,6 +56,17 @@ Separate GAS & OPERATIONS wallet (TON fees only, not a VCOIN allocation): `UQCOZ
 
 These recorded addresses are candidates only. Recording an address does not prove control or authorize a transfer. Each destination requires proof of wallet control on the intended network. The separate fee wallet is not a VCOIN allocation recipient.
 
+## Founder vesting implementation — approved design
+
+- Founder allocation: 2,000,000,000 VCOIN (2,000,000,000,000,000 base units).
+- Approved schedule: 1,460 daily accrual steps over 1,261,440,000 seconds (4 × 365 days), no cliff.
+- The vesting clock begins only when the vesting contract receives the exact 2B allocation through an authentic Jetton notification from the founder.
+- The beneficiary is fixed at vesting-contract deployment to the registered founder owner wallet.
+- Anyone may trigger a claim, but the contract can send tokens only to that fixed beneficiary.
+- The vesting contract source is `contracts/jetton/src/founder-vesting.tact`; dedicated integration tests are in `contracts/jetton/tests/founder-vesting.integration.spec.ts`.
+- The escrow Jetton wallet address is configured once after deployment, using the deployed master’s `get_wallet_address` getter and a founder-signed configuration message. It cannot be changed after configuration.
+- The vesting contract has not been deployed or funded. The approved schedule is implemented in source but remains subject to passing CI, code review, independent audit and Testnet verification.
+
 ## Remaining release blockers
 
 1. **Bounce and recovery tests:** explicitly test failed destination-wallet delivery, bounce recovery, failed burn notification recovery and supply/balance invariants.

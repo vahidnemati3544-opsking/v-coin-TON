@@ -26,5 +26,10 @@ jobs:
           cache: npm
           cache-dependency-path: contracts/jetton/package.json
       - run: npm install
+      - name: Report dependency audit findings
+        shell: bash
+        run: |
+          npm audit --json > npm-audit-report.json || true
+          node -e "const r=require('./npm-audit-report.json'); console.log(JSON.stringify({metadata:r.metadata?.vulnerabilities, vulnerabilities:r.vulnerabilities}, null, 2))"
       - run: npm run build
       - run: npm test

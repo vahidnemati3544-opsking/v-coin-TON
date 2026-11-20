@@ -21,19 +21,13 @@ type BounceOpToHandle = InternalTransferStep | BurnNotificationForMinter
 
 fun onBouncedMessage(in: InMessageBounced) {
     in.bouncedBody.skipBouncedPrefix();
-
     val msg = lazy BounceOpToHandle.fromSlice(in.bouncedBody);
-    val restoreAmount = match (msg) {
-        InternalTransferStep => msg.jettonAmount,      // safe to fetch jettonAmount, because
-        BurnNotificationForMinter => msg.jettonAmount, // it's in the beginning of a message
-    };
-
     var storage = lazy WalletStorage.load();
-    storage.jettonBalance += restoreAmount;
-    storage.save();
 
     match (msg) {
         InternalTransferStep => {
+            storage.jettonBalance += msg.jettonAmount;
+            storage.save();
             if (msg.transferInitiator != null) {
                 val failed = createMessage({
                     bounce: BounceMode.NoBounce,
@@ -48,7 +42,10 @@ fun onBouncedMessage(in: InMessageBounced) {
                 failed.send(SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE | SEND_MODE_IGNORE_ERRORS);
             }
         }
-        BurnNotificationForMinter => {}
+        BurnNotificationForMinter => {
+            storage.jettonBalance += msg.jettonAmount;
+            storage.save();
+        }
     }
 }
 

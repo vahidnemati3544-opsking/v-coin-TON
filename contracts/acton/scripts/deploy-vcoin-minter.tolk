@@ -6,6 +6,7 @@ import "../jetton-v2.1/contracts/vcoin-storage"
 import "../jetton-v2.1/wrappers/VcoinMinter.gen"
 
 const VCOIN_FOUNDER = address("UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy")
+const VCOIN_GAS_OPERATIONS = address("UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB")
 const VCOIN_TREASURY = address("UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ")
 const VCOIN_LIQUIDITY = address("UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn")
 const VCOIN_ECOSYSTEM = address("UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE")
@@ -42,8 +43,11 @@ fun initialMetadata(): cell {
 
 fun main() {
     val deployer = scripts.wallet("deployer");
-    if (net.isBroadcasting() && deployer.address != VCOIN_FOUNDER) {
-        println("STOP: Testnet/Mainnet deployer must be the recorded Founder wallet.");
+    if (
+        net.isBroadcasting() && deployer.address != VCOIN_FOUNDER &&
+        deployer.address != VCOIN_GAS_OPERATIONS
+    ) {
+        println("STOP: Testnet/Mainnet deployer must be the recorded Founder or GAS & OPERATIONS wallet.");
         return;
     }
 
@@ -56,7 +60,7 @@ fun main() {
     };
     val minterStorage = VcoinMinterStorage {
         totalSupply: 0,
-        adminAddress: deployer.address,
+        adminAddress: VCOIN_FOUNDER,
         metadata: initialMetadata(),
         treasuryOwner: VCOIN_TREASURY,
         escrowState: escrowState.toCell(),
@@ -74,6 +78,7 @@ fun main() {
     val minter = VcoinMinter.fromStorage(minterStorage);
     println("VCOIN minter deterministic address: {}", minter.address);
     println("Network broadcast mode: {}", net.isBroadcasting());
+    println("Minter admin: {}", VCOIN_FOUNDER);
     println("Initial supply: 0 / 10000000000000000 base units");
     println("Metadata: V COIN / VCOIN / 6 decimals");
 

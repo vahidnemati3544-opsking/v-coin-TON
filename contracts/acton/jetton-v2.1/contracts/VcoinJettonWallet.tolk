@@ -20,8 +20,12 @@ type AllowedMessageToWallet = AskToTransfer | AskToBurn | InternalTransferStep |
 type BounceOpToHandle = InternalTransferStep | BurnNotificationForMinter
 
 fun onBouncedMessage(in: InMessageBounced) {
-    in.bouncedBody.skipBouncedPrefix();
-    val msg = lazy BounceOpToHandle.fromSlice(in.bouncedBody);
+    // Both bounceable wallet out-messages use RichBounce so the complete
+    // original body is available. InternalTransferStep contains an optional
+    // address after the amount; that address cannot be safely parsed from
+    // the 256-bit legacy bounce payload.
+    val rich = lazy RichBounceBody.fromSlice(in.bouncedBody);
+    val msg = lazy BounceOpToHandle.fromSlice(rich.originalBody.beginParse());
     var storage = lazy WalletStorage.load();
 
     match (msg) {
@@ -143,7 +147,7 @@ fun onInternalMessage(in: InMessage) {
             storage.save();
 
             val deployMsg = createMessage({
-                bounce: BounceMode.Only256BitsOfBody,
+                bounce: BounceMode.RichBounce,
                 dest: calcDeployedJettonWallet(
                     msg.transferRecipient,
                     storage.minterAddress,
@@ -174,7 +178,7 @@ fun onInternalMessage(in: InMessage) {
             storage.save();
 
             val notifyMinterMsg = createMessage({
-                bounce: BounceMode.Only256BitsOfBody,
+                bounce: BounceMode.RichBounce,
                 dest: storage.minterAddress,
                 value: 0,
                 body: BurnNotificationForMinter {

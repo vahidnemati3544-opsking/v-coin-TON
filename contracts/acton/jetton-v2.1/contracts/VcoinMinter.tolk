@@ -1,4 +1,4 @@
-import "@gen/JettonWallet.code"
+import "@gen/VcoinJettonWallet.code"
 import "errors"
 import "fees-management"
 import "jetton-utils"
@@ -199,7 +199,7 @@ fun onBouncedMessage(in: InMessageBounced) {
     val expectedWallet = calcAddressOfJettonWallet(
         matchedOwner!,
         contract.getAddress(),
-        jettonWalletCompiledCode(),
+        vcoinJettonWalletCompiledCode(),
     );
     if (in.senderAddress != expectedWallet) {
         return;

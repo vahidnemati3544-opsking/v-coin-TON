@@ -31,6 +31,8 @@ jobs:
           cache-dependency-path: contracts/jetton/package.json
       - name: Install dependencies
         run: npm install --no-audit --no-fund
+      - name: Capture dependency audit report
+        run: npm audit --json > npm-audit-report.json || true
       - name: Compile Tact contracts
         run: npm run build
       - name: Run Jest tests
@@ -43,4 +45,6 @@ jobs:
           path: |
             contracts/jetton/build/
             contracts/jetton/build-test/
+            contracts/jetton/package-lock.json
+            contracts/jetton/npm-audit-report.json
           if-no-files-found: warn

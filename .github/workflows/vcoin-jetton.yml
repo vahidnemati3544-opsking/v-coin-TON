@@ -42,7 +42,7 @@ jobs:
           node -e "const r=require('./npm-audit-report.json'); console.log(JSON.stringify({metadata:r.metadata?.vulnerabilities, vulnerabilities:r.vulnerabilities}, null, 2))"
       - run: npm run build
       - name: Type-check offline Mainnet artifact generator
-        run: npx tsc -p tsconfig.deploy.json --noEmit
+        run: npx tsc -p tsconfig.deploy.json
       - name: Smoke-test deterministic offline StateInit generation (no network/signing)
         env:
           SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}

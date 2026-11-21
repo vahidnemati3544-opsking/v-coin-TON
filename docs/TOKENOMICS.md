@@ -1,7 +1,7 @@
 V COIN – TON Tokenomics
 
-Document version: 1.1
-Status: Approved for design
+Document version: 1.2
+Status: Owner-approved economic design
 Network: TON Blockchain
 Token standard: Jetton (TEP-74)
 Token symbol: VCOIN
@@ -39,13 +39,13 @@ Total| 100%| 10,000,000,000 VCOIN
 
 The five official allocation destination addresses are recorded in `docs/WALLET_ALLOCATION_REGISTER.md`. Those five addresses are the sole approved allocation destinations unless the project owner explicitly approves a documented change. Tonkeeper and Gram Wallet addresses mentioned for general wallet use are not additional allocation destinations.
 
-4. Founder allocation
+4. Founder allocation — immediate full withdrawal right
 
 The founder allocation is fixed at 2,000,000,000 VCOIN, representing 20% of the total initial supply.
 
-The allocation is subject to a four-year release period.
+The founder has the explicit right to receive and withdraw the entire 2,000,000,000 VCOIN allocation at once. No vesting period, monthly installments, time lock, or staged release applies to this allocation.
 
-The exact vesting mechanism, start time, release intervals, and contract parameters must be specified and reviewed before implementation.
+The founder's full allocation is credited to the founder's designated wallet as one exact allocation. After receipt, the founder controls and may transfer or withdraw the full amount, subject to ordinary TON network rules and applicable law.
 
 No additional founder allocation is authorized by this document.
 
@@ -101,7 +101,7 @@ Standard-compatible Jetton Wallet contracts.
 Fixed initial supply.
 Verified disabling of additional minting.
 Controlled allocation and distribution of the approved reserves.
-Appropriate vesting logic for the founder allocation.
+Immediate, unrestricted founder access to the full 2,000,000,000 VCOIN founder allocation.
 Secure accounting and transaction verification.
 Contract implementation must be reviewed against the applicable TON standards and security requirements.
 
@@ -113,13 +113,13 @@ No Mainnet deployment, initial issuance, liquidity commitment, or irreversible a
 
 12. Change control
 
-Any change to the total supply, allocation percentages, founder vesting period, or prohibition on additional minting requires explicit approval from the project owner and an updated version of this document.
+Any change to the total supply, allocation percentages, founder's immediate full-withdrawal right, or prohibition on additional minting requires explicit approval from the project owner and an updated version of this document.
 
-Document status: Approved tokenomics design — implementation pending.
+Document status: Owner-approved tokenomics design — implementation pending.
 
 13. Smart contract specification
 
-The technical specification for the VCOIN TON Jetton Master and Wallet contracts is maintained in docs/JETTON_CONTRACT_SPEC.md. This is a design specification, not compiled contract source code or deployment evidence. Implementation, compilation, tests, independent security review and Testnet deployment remain pending. The deployment parameter template is contracts/jetton/deployment.config.template.json. Null addresses and vesting parameters must be explicitly approved before deployment.
+The technical specification for the VCOIN TON Jetton Master and Wallet contracts is maintained in docs/JETTON_CONTRACT_SPEC.md. This is a design specification, not compiled contract source code or deployment evidence. Implementation, compilation, tests, independent security review and Testnet deployment remain subject to the release gates. The deployment parameter template is contracts/jetton/deployment.config.template.json.
 
 14. Official wallet allocation register
 

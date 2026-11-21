@@ -14,6 +14,10 @@ describe("VCOIN founder four-year daily linear vesting", () => {
   let blockchain: Blockchain;
   let owner: SandboxContract<TreasuryContract>;
   let attacker: SandboxContract<TreasuryContract>;
+  let mining: SandboxContract<TreasuryContract>;
+  let treasury: SandboxContract<TreasuryContract>;
+  let liquidity: SandboxContract<TreasuryContract>;
+  let ecosystem: SandboxContract<TreasuryContract>;
   let master: SandboxContract<VCoinMaster>;
   let vesting: SandboxContract<VCoinFounderVesting>;
   let founderWallet: SandboxContract<VCoinJettonWallet>;
@@ -24,6 +28,10 @@ describe("VCOIN founder four-year daily linear vesting", () => {
     blockchain.now = 1_800_000_000;
     owner = await blockchain.treasury("vcoin-founder");
     attacker = await blockchain.treasury("vesting-attacker");
+    mining = await blockchain.treasury("vesting-mining");
+    treasury = await blockchain.treasury("vesting-treasury");
+    liquidity = await blockchain.treasury("vesting-liquidity");
+    ecosystem = await blockchain.treasury("vesting-ecosystem");
     master = blockchain.openContract(
       await VCoinMaster.fromInit(owner.address, beginCell().endCell()),
     );
@@ -34,20 +42,35 @@ describe("VCOIN founder four-year daily linear vesting", () => {
       body: beginCell().endCell(),
     });
 
-    const issuance = await master.send(
+    const configuration = await master.send(
       owner.getSender(),
-      { value: toNano("0.2") },
+      { value: toNano("0.1") },
       {
-        ["$" + "$" + "type"]: "VCoinMint",
-        receiver: owner.address,
-        amount: MAX_SUPPLY,
+        ["$" + "$" + "type"]: "VCoinConfigureAllocations",
+        founder: owner.address,
+        mining: mining.address,
+        treasury: treasury.address,
+        liquidity: liquidity.address,
+        ecosystem: ecosystem.address,
       } as any,
     );
-    expect(issuance.transactions).toHaveTransaction({
+    expect(configuration.transactions).toHaveTransaction({
       from: owner.address,
       to: master.address,
       success: true,
     });
+    for (const category of [1, 2, 3, 4, 5]) {
+      const issuance = await master.send(
+        owner.getSender(),
+        { value: toNano("0.2") },
+        { ["$" + "$" + "type"]: "VCoinMintAllocation", category } as any,
+      );
+      expect(issuance.transactions).toHaveTransaction({
+        from: owner.address,
+        to: master.address,
+        success: true,
+      });
+    }
 
     vesting = blockchain.openContract(
       await VCoinFounderVesting.fromInit(owner.address, master.address, owner.address),
@@ -189,7 +212,7 @@ describe("VCOIN founder four-year daily linear vesting", () => {
     expect((await vesting.getGetVestingData()).released).toBe(quarter);
     expect((await vestingWallet.getGetWalletData()).balance).toBe(FOUNDER_ALLOCATION - quarter);
     const founderBalance = await founderWallet.getGetWalletData();
-    expect(founderBalance.balance).toBe(MAX_SUPPLY - FOUNDER_ALLOCATION + quarter);
+    expect(founderBalance.balance).toBe(quarter);
   });
 
   test("does not release anything before the first full vesting day", async () => {
@@ -223,7 +246,7 @@ describe("VCOIN founder four-year daily linear vesting", () => {
     });
     expect((await vesting.getGetVestingData()).released).toBe(FOUNDER_ALLOCATION);
     expect((await vestingWallet.getGetWalletData()).balance).toBe(0n);
-    expect((await founderWallet.getGetWalletData()).balance).toBe(MAX_SUPPLY);
+    expect((await founderWallet.getGetWalletData()).balance).toBe(FOUNDER_ALLOCATION);
   });
 
 

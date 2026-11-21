@@ -1,5 +1,8 @@
 import "./jetton";
 
+// The sole time-locked tranche in the entire V COIN–TON allocation is the
+// Founder's own 2B VCOIN. No Mining/Treasury/Liquidity/Ecosystem wallet is
+// governed by this contract or subject to a release schedule.
 const FOUNDER_VESTING_TOTAL: Int = 2000000000000000; // 2,000,000,000 VCOIN * 10^6
 const FOUNDER_VESTING_DURATION: Int = 126144000; // 4 * 365 days
 const FOUNDER_VESTING_DAY: Int = 86400;
@@ -23,6 +26,10 @@ struct FounderVestingData {
     total_allocation: Int;
 }
 
+// This contract enforces only the Founder's approved four-year release schedule.
+ // The beneficiary is immutable after deployment. It does not create another
+ // signer or custodian; the Founder remains the sole operational authority
+ // for all five ordinary allocation wallets, subject only to this 2B vesting.
 contract VCoinFounderVesting {
     owner: Address;
     master: Address;

@@ -95,11 +95,14 @@ Before staging or production:
 
 No real-value transfer, token issuance, Mainnet deployment, or public mining launch is authorized by this document. Each requires a separate readiness review and explicit approval.
 
-## 9. Jetton initial-issuance bounce protection
+## 9. Jetton fixed-allocation issuance and Bounce protection
 
-- The initial fixed-supply issuance remains founder-authorized, one-time, and restricted to the founder's deterministic Jetton wallet.
-- The Master contract now accepts a bounced initial TokenTransferInternal message only when the actual sender equals the deterministic Jetton wallet derived for the configured owner.
-- The bounce amount must be positive and cannot exceed the Master contract's recorded supply before rollback.
-- The issuance gate is reopened only after the recorded supply returns to zero.
-- This sender-authentication guard is committed in contracts/jetton/src/vcoin.tact.
-- **Verification status:** source change committed; Tact compilation and sandbox Natural Bounce tests are still pending. Do not treat the guard as independently verified until those tests pass.
+- The Master StateInit permanently fixes the founder, mining-reserve, treasury, liquidity/market, and ecosystem/marketing destination addresses.
+- The owner can request only the exact preassigned allocation for one of those five addresses; arbitrary destinations, partial amounts, and excess amounts are rejected.
+- Each role allocation can be issued once. After all five wallet credits succeed, the Master permanently disables further issuance.
+- The Master requires a minimum TON funding amount before starting a wallet-credit operation, preventing an underfunded request from recording supply without enough value to create the destination wallet.
+- A natural bounced TokenTransferInternal message is accepted only from the deterministic Jetton wallet for the corresponding role and only for that role's exact allocation.
+- A valid bounce rolls back only the failed role's amount and reopens only that role for retry; successful allocations remain recorded.
+- The five-wallet allocation manifest is in contracts/jetton/allocation/allocation-plan.json.
+- Executable Sandbox tests cover fixed destinations, exact amounts, owner authorization, underfunding, natural bounce rollback, retry, and final issuance lock.
+- CI success is necessary but does not replace independent review, dependency audit, or Testnet verification.

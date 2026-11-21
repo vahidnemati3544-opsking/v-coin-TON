@@ -41,6 +41,8 @@ jobs:
           npm audit --json > npm-audit-report.json || true
           node -e "const r=require('./npm-audit-report.json'); console.log(JSON.stringify({metadata:r.metadata?.vulnerabilities, vulnerabilities:r.vulnerabilities}, null, 2))"
       - run: npm run build
+      - name: Type-check offline Mainnet artifact generator
+        run: npx tsc -p tsconfig.deploy.json --noEmit
       - run: npm test
       - name: Enforce dependency security gate
         run: npm audit --audit-level=high

@@ -1,30 +1,31 @@
-# V COIN Jetton sandbox verification plan
+# V COIN Jetton Sandbox verification
 
-**Scope:** Initial fixed-supply issuance and the Natural Bounce rollback guard.
+**Scope:** Tact compilation, fixed five-wallet allocation enforcement, initial issuance, and authenticated Natural Bounce rollback.
 
-**Current state:** The source-level sender-authentication and exact-rollback guards are committed. This document is a test specification, not evidence that tests have passed. Mainnet release remains blocked until these cases are implemented in the TON Sandbox harness and the full verification command passes.
+**Current release gate:** The suite is implemented and must pass in CI. This file describes executable tests; the latest CI run is the source of truth for pass/fail evidence.
 
-## Required automated cases
+## Automated coverage
 
-1. **Initial state:** a newly deployed Master reports zero total supply, minting enabled, and the configured owner.
-2. **Unauthorized issuance:** a message from any non-owner is rejected and leaves total supply and mintability unchanged.
-3. **Exact issuance constraints:** reject a non-owner receiver, a partial amount, and an amount above the fixed 10,000,000,000 VCOIN supply (10^16 base units).
-4. **One-time issuance:** accept exactly one owner-authorized issuance to the owner's deterministic Jetton wallet; verify the wallet balance and Master total supply equal 10^16 base units and minting is disabled.
-5. **Repeat issuance:** reject a second issuance after successful initial issuance without changing supply or balances.
-6. **Natural Bounce rollback:** cause the initial wallet-credit message to bounce naturally in Sandbox; verify the Master supply is rolled back from exactly 10^16 to zero and the issuance gate reopens.
-7. **Forged/untrusted bounce:** send a bounced-message-shaped payload from an address other than the owner's deterministic Jetton wallet; verify the Master rejects it and does not alter supply or mintability.
-8. **Invalid rollback amount:** verify zero, partial, or greater-than-fixed-supply bounced amounts are rejected.
-9. **Stale or duplicate bounce:** verify a bounce received while minting is already enabled is rejected.
-10. **Retry after valid rollback:** after a valid full rollback, allow one retry of the exact fixed issuance; verify that the successful retry closes the issuance gate permanently.
+1. **Owner-only issuance:** reject any issuance request not signed by the configured founder/owner.
+2. **Fixed destination set:** accept only the five addresses stored immutably in Master StateInit; reject any unregistered receiver.
+3. **Exact per-wallet allocations:** founder 2B, mining reserve 5B, treasury 1B, liquidity/market 1B, ecosystem/marketing 1B VCOIN (six decimals).
+4. **No partial or over-allocation:** reject wrong amounts for each destination and prevent aggregate supply from exceeding 10B VCOIN.
+5. **One-time role issuance:** each destination allocation can be issued only once.
+6. **Underfunded request:** reject an issuance request below the required TON funding threshold before changing supply.
+7. **Natural Bounce rollback:** a real bounce from the deterministic destination Jetton wallet rolls back only that role's allocation.
+8. **Authenticated bounce source:** only the deterministic wallet for the corresponding approved role can roll back that allocation.
+9. **Retry after valid bounce:** after a role's wallet-credit message naturally bounces, allow that exact role's allocation to be retried.
+10. **Final issuance lock:** once all five allocations have been credited, set mintable=false and reject all further issuance.
 
-## Acceptance criteria
+## CI acceptance
 
-- `npm run build` completes without compiler errors.
-- `npm test -- --runInBand` executes the sandbox suite with all cases passing (not merely an empty test run).
-- `npm run verify` exits successfully.
-- The test report and commit SHA are retained as release evidence.
-- No Testnet or Mainnet transaction is sent as part of this verification.
+- npm run build compiles VCoinMaster, VCoinJettonWallet, and the test-only BounceRejector fixture.
+- npm test runs the allocation policy, manifest, and TON Sandbox suites.
+- The Sandbox suite verifies the five deterministic wallet balances and the Master supply.
+- No Testnet or Mainnet transaction is sent during CI.
 
-## Release gate
+## Deployment restrictions
 
-Until all acceptance criteria are met, the Natural Bounce test is **pending**, the contract is **not release-verified**, and no Mainnet deployment or token issuance is authorized.
+- The five destination addresses must be checked against the approved operational register before Master deployment.
+- The deployed Master allocation config must be read back and compared with the approved register before any issuance.
+- No Mainnet deployment or issuance is authorized until independent smart-contract review and a separate explicit approval.

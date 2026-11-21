@@ -40,5 +40,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: vcoin-jetton-build-${{ github.run_id }}
-          path: contracts/jetton/build/
+          path: |
+            contracts/jetton/build/
+            contracts/jetton/build-test/
           if-no-files-found: warn

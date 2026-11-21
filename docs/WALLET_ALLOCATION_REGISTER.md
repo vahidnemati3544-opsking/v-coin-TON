@@ -35,7 +35,7 @@ The project owner explicitly designated the following separate Tonkeeper address
 
 The five allocation addresses remain unchanged. Do not ask the owner to fund all five allocation wallets with TON merely because they are VCOIN recipients. The operational fee wallet is the designated TON funding source. If a specific Jetton transfer or contract operation technically requires TON in another signing wallet, document the exact requirement and obtain the owner's approval before any top-up. Do not assume that a separate fee wallet can sponsor every transaction type without a supported transaction flow.
 
-The separate fee wallet address is owner-provided; control and network format must be verified before funding. Never request or store its seed phrase or private key.
+The separate fee wallet address is owner-provided; control and network format must be verified before funding. Never request or store its seed phrase or private key. In the current VCoinMaster design, this address is the immutable gasOperatorWallet and may fund the Master reserve only through VCoinFund (minimum 0.75 TON). It is not authorized to issue VCOIN and is not a token-allocation destination. The founder wallet remains the sole VCoinMint authority; each owner-signed issuance request carries at least 0.01 TON while the Master pays 0.1 TON per destination-wallet credit from the reserve.
 
 ## 4. Wallet separation rules
 

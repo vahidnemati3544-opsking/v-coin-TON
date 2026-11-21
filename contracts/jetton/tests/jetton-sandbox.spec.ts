@@ -48,7 +48,7 @@ async function deployMaster(
   if (fundMaster) {
     const funding = await master.send(
       gasOperator.getSender(),
-      { value: toNano('1') },
+      { value: toNano('0.75') },
       { $type: 'VCoinFund' },
     );
     expect(funding.transactions).toHaveTransaction({
@@ -118,7 +118,7 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     const unauthorizedFunding = await master.send(
       attacker.getSender(),
       { value: toNano('1') },
-      { $type: 'VCoinFund' },
+      { $$type: 'VCoinFund' },
     );
     expect(unauthorizedFunding.transactions).toHaveTransaction({
       to: master.address,
@@ -128,7 +128,7 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     const authorizedFunding = await master.send(
       gasOperator.getSender(),
       { value: toNano('0.75') },
-      { $type: 'VCoinFund' },
+      { $$type: 'VCoinFund' },
     );
     expect(authorizedFunding.transactions).toHaveTransaction({
       from: gasOperator.address,
@@ -139,7 +139,7 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     const issued = await master.send(
       owner.getSender(),
       { value: toNano('0.01') },
-      { $type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
+      { $$type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
     );
     expect(issued.transactions).toHaveTransaction({
       from: owner.address,
@@ -176,7 +176,7 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     const result = await master.send(
       owner.getSender(),
       { value: toNano('0.01') },
-      { $type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
+      { $$type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
     );
     expect(result.transactions).toHaveTransaction({
       from: owner.address,
@@ -237,7 +237,7 @@ describe('VCOIN Jetton Sandbox release gates', () => {
       const result = await master.send(
         owner.getSender(),
         { value: toNano('0.01') },
-        { $type: 'VCoinMint', receiver: allocation.address, amount: allocation.amount },
+        { $$type: 'VCoinMint', receiver: allocation.address, amount: allocation.amount },
       );
       expect(result.transactions).toHaveTransaction({
         from: owner.address,

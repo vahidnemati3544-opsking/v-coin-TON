@@ -193,6 +193,19 @@ contract VCoinJettonWallet {
 
     bounced(msg: bounced<TokenTransferInternal>) {
         self.balance = self.balance + msg.amount;
+        // Notify the response destination after restoring the source-wallet
+        // balance. The vesting contract authenticates this wallet address and
+        // rolls back the matching released amount.
+        send(SendParameters{
+            to: msg.response_destination,
+            value: 0,
+            mode: SendRemainingValue,
+            bounce: false,
+            body: JettonTransferBounce{
+                query_id: msg.query_id,
+                amount: msg.amount
+            }.toCell()
+        });
     }
     bounced(msg: bounced<TokenBurnNotification>) {
         self.balance = self.balance + msg.amount;

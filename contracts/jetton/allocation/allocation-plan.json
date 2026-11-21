@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0.0",
+  "token": "VCOIN",
+  "network": "TON",
+  "decimals": 6,
+  "totalSupplyBaseUnits": "10000000000000000",
+  "totalSupplyTokens": "10000000000",
+  "issuance": "one-time; no additional minting",
+  "allocations": [
+    {
+      "role": "founder",
+      "percent": 20,
+      "amountTokens": "2000000000",
+      "amountBaseUnits": "2000000000000000",
+      "destinationEnv": "VCOIN_FOUNDER_WALLET"
+    },
+    {
+      "role": "mining_reserve",
+      "percent": 50,
+      "amountTokens": "5000000000",
+      "amountBaseUnits": "5000000000000000",
+      "destinationEnv": "VCOIN_MINING_RESERVE_WALLET"
+    },
+    {
+      "role": "treasury",
+      "percent": 10,
+      "amountTokens": "1000000000",
+      "amountBaseUnits": "1000000000000000",
+      "destinationEnv": "VCOIN_TREASURY_WALLET"
+    },
+    {
+      "role": "liquidity_market",
+      "percent": 10,
+      "amountTokens": "1000000000",
+      "amountBaseUnits": "1000000000000000",
+      "destinationEnv": "VCOIN_LIQUIDITY_WALLET"
+    },
+    {
+      "role": "ecosystem_marketing",
+      "percent": 10,
+      "amountTokens": "1000000000",
+      "amountBaseUnits": "1000000000000000",
+      "destinationEnv": "VCOIN_ECOSYSTEM_WALLET"
+    }
+  ],
+  "releaseConstraints": [
+    "This manifest is a pre-transfer allocation specification, not an on-chain enforcement mechanism.",
+    "Never send Mainnet transactions from CI.",
+    "Verify all five destination addresses against the approved operational register before signing transfers.",
+    "After issuance and transfers, reconcile each Jetton wallet balance against this manifest."
+  ]
+}

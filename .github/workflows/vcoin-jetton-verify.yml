@@ -35,3 +35,10 @@ jobs:
         run: npm run build
       - name: Run Jest tests
         run: npm test
+      - name: Preserve generated contract bindings for sandbox test development
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vcoin-jetton-build-${{ github.run_id }}
+          path: contracts/jetton/build/
+          if-no-files-found: warn

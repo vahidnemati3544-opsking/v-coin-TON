@@ -277,7 +277,18 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
     });
     expect((await master.getGetJettonData()).total_supply).toBe(0n);
     expect((await master.getGetJettonData()).mintable).toBe(true);
-    expect((await walletFor(miningReserve.address)).getGetWalletData()).resolves.toMatchObject({
+    // The deliberately corrupted account remains invalid after the bounce.
+    // Restore the deterministic wallet StateInit before testing a retry.
+    await blockchain.setShardAccount(
+      miningWalletAddress,
+      createShardAccount({
+        address: miningWalletAddress,
+        code: brokenWallet.init!.code,
+        data: brokenWallet.init!.data,
+        balance: toNano("1"),
+      }),
+    );
+    expect(await (await walletFor(miningReserve.address)).getGetWalletData()).toMatchObject({
       balance: 0n,
     });
 
@@ -298,7 +309,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       inMessageBounceable: true,
     });
     expect((await master.getGetJettonData()).total_supply).toBe(5_000_000_000n * ONE_TOKEN);
-    expect((await walletFor(miningReserve.address)).getGetWalletData()).resolves.toMatchObject({
+    expect(await (await walletFor(miningReserve.address)).getGetWalletData()).toMatchObject({
       balance: 5_000_000_000n * ONE_TOKEN,
     });
 

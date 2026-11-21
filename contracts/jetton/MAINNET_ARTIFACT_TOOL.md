@@ -8,7 +8,7 @@
 - `state-init.boc`: serialized StateInit only;
 - `manifest.json`: derived master address, source commit, compiler/dependency versions, and SHA-256/cell hashes.
 
-The tool verifies that the supplied 40-character source commit equals the checked-out Git `HEAD`, and hashes the three Tact sources, package manifest, lockfile, Tact config, compiled code/data cells, StateInit cell and BOC. It has no wallet, mnemonic, private-key, signing, RPC, TonConnect, or broadcast dependency. It does not create or submit a TON transaction. The `mainnet` argument is a declared target label only; the tool makes no network connection and cannot independently attest a live network identity.
+The tool verifies that the supplied 40-character source commit equals the checked-out Git `HEAD`, and hashes the three Tact sources, package manifest, lockfile, Tact config, compiled code/data cells, StateInit cell and BOC. The manifest explicitly sets `network_identity_verified: false`; the offline builder never claims that a target label proves the active network. It has no wallet, mnemonic, private-key, signing, RPC, TonConnect, or broadcast dependency. It does not create or submit a TON transaction. The `mainnet` argument is a declared target label only; the tool makes no network connection and cannot independently attest a live network identity.
 
 ## Build and run
 

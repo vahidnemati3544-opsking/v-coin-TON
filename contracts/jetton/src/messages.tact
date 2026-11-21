@@ -11,6 +11,20 @@ struct JettonWalletData {
     master: Address;
     code: Cell;
 }
+struct VCoinAllocationConfig {
+    founder_wallet: Address;
+    mining_reserve_wallet: Address;
+    treasury_wallet: Address;
+    liquidity_wallet: Address;
+    ecosystem_wallet: Address;
+}
+struct VCoinAllocationStatus {
+    founder_issued: Bool;
+    mining_reserve_issued: Bool;
+    treasury_issued: Bool;
+    liquidity_issued: Bool;
+    ecosystem_issued: Bool;
+}
 message(0xf8a7ea5) TokenTransfer {
     query_id: Int as uint64;
     amount: Int as coins;

@@ -5,7 +5,7 @@
   "decimals": 6,
   "totalSupplyBaseUnits": "10000000000000000",
   "totalSupplyTokens": "10000000000",
-  "issuance": "one-time; no additional minting",
+  "issuance": "five fixed per-wallet allocations; owner-authorized; each allocation one-time; no additional minting",
   "allocations": [
     {
       "role": "founder",
@@ -44,9 +44,12 @@
     }
   ],
   "releaseConstraints": [
-    "This manifest is a pre-transfer allocation specification, not an on-chain enforcement mechanism.",
+    "The VCoinMaster StateInit permanently fixes the five destination addresses.",
+    "The Master accepts only the exact approved amount for the matching destination wallet.",
+    "Each allocation can be issued once; only that allocation can be retried after an authenticated natural bounce.",
+    "After all five wallet credits succeed, minting is permanently disabled.",
     "Never send Mainnet transactions from CI.",
-    "Verify all five destination addresses against the approved operational register before signing transfers.",
-    "After issuance and transfers, reconcile each Jetton wallet balance against this manifest."
+    "Verify the deployed Master allocation config against the approved operational register before signing any issuance messages.",
+    "Reconcile each Jetton wallet balance against this manifest after issuance."
   ]
 }

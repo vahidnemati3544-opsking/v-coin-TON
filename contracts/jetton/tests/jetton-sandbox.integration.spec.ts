@@ -1,4 +1,4 @@
-import { beginCell, internal, toNano } from "@ton/core";
+import { Address, beginCell, internal, toNano } from "@ton/core";
 import { Blockchain, SandboxContract, TreasuryContract } from "@ton/sandbox";
 import { VCoinMaster } from "../build/VCoinMaster_VCoinMaster";
 import { VCoinJettonWallet } from "../build/VCoinMaster_VCoinJettonWallet";
@@ -431,13 +431,53 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
     expect((await master.getGetJettonData()).total_supply).toBe(MAX_SUPPLY);
   });
 
-  test("restores wallet balance after a simulated bounced burn notification", async () => {
-    await issueFullSupply();
-    const founderWallet = await walletFor(owner.address);
-    const burnAmount = 7n * ONE_TOKEN;
-    const initialBalance = (await founderWallet.getGetWalletData()).balance;
+  test("restores wallet balance when its burn notification reaches an inactive master address", async () => {
+    const fakeMaster = Address.parse("0:" + "0".repeat(63) + "1");
+    const isolatedWallet = blockchain.openContract(
+      await VCoinJettonWallet.fromInit(owner.address, fakeMaster),
+    );
+    const deployment = await owner.send({
+      to: isolatedWallet.address,
+      value: toNano("0.1"),
+      init: isolatedWallet.init,
+      body: beginCell().endCell(),
+    });
+    expect(deployment.transactions).toHaveTransaction({
+      from: owner.address,
+      to: isolatedWallet.address,
+      deploy: true,
+      success: true,
+    });
 
-    const burn = await founderWallet.send(
+    const burnAmount = 7n * ONE_TOKEN;
+    const fundingBody = beginCell()
+      .storeUint(0x178d4519, 32) // TokenTransferInternal
+      .storeUint(76, 64)
+      .storeCoins(burnAmount)
+      .storeAddress(fakeMaster)
+      .storeAddress(owner.address)
+      .storeCoins(0)
+      .storeSlice(beginCell().endCell().asSlice())
+      .endCell();
+    const fundingMessage = internal({
+      to: isolatedWallet.address,
+      value: toNano("0.1"),
+      bounce: true,
+      body: fundingBody,
+    }) as any;
+    fundingMessage.info.src = fakeMaster;
+    const funding = await blockchain.sendMessage(fundingMessage);
+    expect(funding.transactions).toHaveTransaction({
+      from: fakeMaster,
+      to: isolatedWallet.address,
+      success: true,
+    });
+    const initialBalance = (await isolatedWallet.getGetWalletData()).balance;
+    expect(initialBalance).toBe(burnAmount);
+
+    // The wallet sends its burn notification to an intentionally inactive
+    // master address. TON bounces that real outbound message back to the wallet.
+    const burn = await isolatedWallet.send(
       owner.getSender(),
       { value: toNano("0.2") },
       {
@@ -449,36 +489,17 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       } as any,
     );
     expect(burn.transactions).toHaveTransaction({
-      from: founderWallet.address,
-      to: master.address,
+      from: isolatedWallet.address,
+      to: fakeMaster,
       success: true,
     });
-    expect((await founderWallet.getGetWalletData()).balance).toBe(initialBalance - burnAmount);
-
-    // Simulate the bounced TokenBurnNotification from the master. This runs
-    // the wallet's actual bounced(TokenBurnNotification) recovery handler.
-    const bouncedBody = beginCell()
-      .storeUint(0xffffffff, 32)
-      .storeUint(0x7bdd97de, 32) // TokenBurnNotification
-      .storeUint(77, 64)
-      .storeCoins(burnAmount)
-      .endCell();
-    const bouncedMessage = internal({
-      to: founderWallet.address,
-      value: toNano("0.05"),
-      bounce: false,
-      body: bouncedBody,
-    }) as any;
-    bouncedMessage.info.src = master.address;
-    bouncedMessage.info.bounced = true;
-    const recovered = await blockchain.sendMessage(bouncedMessage);
-    expect(recovered.transactions).toHaveTransaction({
-      from: master.address,
-      to: founderWallet.address,
+    expect(burn.transactions).toHaveTransaction({
+      from: fakeMaster,
+      to: isolatedWallet.address,
       success: true,
+      inMessageBounced: true,
     });
-    expect((await founderWallet.getGetWalletData()).balance).toBe(initialBalance);
-    expect((await master.getGetJettonData()).total_supply).toBe(MAX_SUPPLY);
+    expect((await isolatedWallet.getGetWalletData()).balance).toBe(initialBalance);
   });
 
   test("burns Jettons and updates wallet balance and master supply consistently", async () => {

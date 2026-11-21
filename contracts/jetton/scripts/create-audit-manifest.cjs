@@ -35,7 +35,8 @@ async function addFile(relative, kind) {
   const bytes = await readFile(absolute);
   let gitBlobSha = null;
   try {
-    gitBlobSha = execFileSync("git", ["rev-parse", "HEAD:" + relative], { encoding: "utf8" }).trim();
+    const gitPath = relative.startsWith("../../") ? relative.slice(6) : "contracts/jetton/" + relative;
+    gitBlobSha = execFileSync("git", ["rev-parse", "HEAD:" + gitPath], { encoding: "utf8" }).trim();
   } catch {}
   return { path: relative, kind, bytes: bytes.length, sha256: sha256(bytes), git_blob_sha: gitBlobSha };
 }

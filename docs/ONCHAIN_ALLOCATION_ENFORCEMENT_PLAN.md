@@ -57,6 +57,15 @@ The Founder category destination is the Founder's ordinary owner wallet, just li
 5. Verify Founder control of all five recorded Mainnet wallets and prepare deterministic deployment payloads and fee budget for review.
 6. Obtain explicit Founder approval for exact build hashes and each irreversible Mainnet transaction.
 
+## 6A. Five-destination bounce and retry verification — 2026-11-21
+
+The Sandbox suite now runs five independent failure/recovery cases, one for each allocation destination (Founder, Mining Reserve, Treasury, Liquidity/Market, Ecosystem/Marketing). Each case corrupts only the selected destination wallet storage to force a downstream TVM failure, verifies the protocol-generated bounce reaches the master, verifies the category issuance flag and supply are rolled back, restores the deterministic wallet StateInit, retries that same category, and verifies that exactly its fixed cap is credited.
+
+- Source commit: `8db80093487852e000fed85e77448a1f32181505`.
+- CI workflow run #298: **passed** — Tact build, deploy-generator TypeScript check, deterministic offline StateInit/manifest double-generation smoke test, `npm ci`, 24/24 Sandbox/Jest tests, and `npm audit --audit-level=high` with zero reported vulnerabilities.
+- Run: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44908971540
+- This is emulator evidence only. It is not a live Mainnet deployment, independent audit, wallet-control proof, or authorization to mint/transfer.
+
 ## 7. Release decision
 
 **HOLD** until code/tests, reproducible build, independent audit, wallet-control checks, and exact transaction approvals are complete. No merge, deployment, mint, transfer, or wallet-signing action is authorized here. Testnet deployment remains omitted by the Founder's direction.

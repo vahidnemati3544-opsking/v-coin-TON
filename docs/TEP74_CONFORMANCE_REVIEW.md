@@ -28,15 +28,15 @@ CI success is evidence for the checked commit and configured tests only. It is n
 
 ## Vesting-specific security limitation
 
-The founder vesting contract restores its `released` counter if the outgoing message to the escrow Jetton wallet itself bounces. A later failure in delivery from that Jetton wallet to the founder's Jetton wallet is different: the standard Jetton wallet restores its own token balance, but the vesting contract receives no authenticated downstream-bounce acknowledgement. Its `released` counter can therefore remain advanced while the tokens have returned to escrow. This recovery/accounting path is unresolved and is a hard deployment blocker. Do not fund or deploy the vesting contract until an independently reviewed recovery design and Sandbox tests prove the accounting invariant.
+The founder vesting contract restores its `released` counter if the outgoing message to the escrow Jetton wallet itself bounces. For a later downstream delivery bounce, the custom VCOIN Jetton wallet restores its token balance and emits `JettonTransferBounce` to its wallet owner. The founder vesting contract accepts this callback only from its configured escrow Jetton wallet and subtracts the bounced amount from `released`, rejecting invalid amounts and forged senders. Dedicated Sandbox tests cover authenticated rollback and forged-callback rejection. The natural TVM downstream-bounce path and complete balance/counter invariants still require end-to-end verification; do not deploy or fund until those tests and independent review pass.
 
 ## Remaining review and release gates
 
-- Test explicit bounce/recovery behavior for failed destination-wallet delivery and failed burn notification; do not infer these cases from source handlers alone.
+- Run a natural end-to-end TVM bounce test for failed destination-wallet delivery, verify the source wallet restores its token balance and callback reaches vesting, and test failed burn-notification recovery; do not infer these cases from isolated callback tests.
 - Complete replay/idempotency analysis and additional adversarial transaction tests.
 - Compare every TEP-74 message bit layout, getter stack order, storage/gas assumptions and wallet derivation against the official reference implementation.
 - Complete TEP-64 metadata validation, including the final approved icon. The current off-chain JSON provides name, symbol, description and six decimals, but intentionally has no image field.
-- Founder vesting source and daily-linear schedule are implemented with dedicated Sandbox tests. Before any founder allocation is transferred, resolve the downstream Jetton-wallet delivery-bounce accounting gap with authenticated recovery and adversarial Sandbox tests.
+- Founder vesting source, daily-linear schedule, authenticated downstream-bounce callback and callback Sandbox tests are implemented. The natural downstream TVM bounce path and full balance/counter invariants remain a release gate.
 - Obtain wallet-control proofs for all five intended destinations on the chosen network.
 - Obtain an independent smart-contract security audit of the exact source and compiled code hashes.
 - Respect the owner's direction to omit Testnet deployment; this does not waive reproducible builds, adversarial Sandbox tests, independent audit, wallet-control proofs, or explicit founder approval before Mainnet.
@@ -44,4 +44,4 @@ The founder vesting contract restores its `released` counter if the outgoing mes
 
 ## Conclusion
 
-The required-address mismatch was corrected and the source has passed the CI runs recorded above. Founder vesting source and tests exist, but downstream bounce recovery remains unresolved and blocks deployment/funding. This document is a source-level checklist, not proof of complete TEP-74/TEP-64 compliance, independent security, or Mainnet readiness.
+The required-address mismatch was corrected and the source has passed the CI runs recorded above. Founder vesting source and callback tests exist; the custom owner callback now reconciles a bounced downstream transfer. Natural TVM bounce-path verification, full invariants and independent review still block deployment/funding. This document is a source-level checklist, not proof of complete TEP-74/TEP-64 compliance, independent security, or Mainnet readiness.

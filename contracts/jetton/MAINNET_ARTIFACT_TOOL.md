@@ -1,0 +1,39 @@
+# Offline Mainnet StateInit preparation
+
+**Status:** implemented as a non-broadcasting preparation utility; not deployment approval.
+
+## Purpose and safety boundary
+
+`deploy/prepare-mainnet.ts` builds the reviewed `VCoinMaster` StateInit using the generated Tact wrapper and pinned `@ton/core` version. It writes:
+- `state-init.boc`: serialized StateInit only;
+- `manifest.json`: derived master address, source commit, compiler/dependency versions, and SHA-256/cell hashes.
+
+The tool has no wallet, mnemonic, private-key, signing, RPC, TonConnect, or broadcast dependency. It does not create or submit a TON transaction. The `mainnet` argument is a declared target label only; the tool makes no network connection and cannot independently attest a live network identity.
+
+## Build and run
+
+From `contracts/jetton` on the exact reviewed commit:
+
+```bash
+npm ci
+npm run build
+npm run prepare:mainnet -- --network mainnet --owner <FOUNDER_MAINNET_ADDRESS> --metadata-uri <APPROVED_IMMUTABLE_HTTPS_TEP64_URI> --source-commit <FULL_40_CHARACTER_COMMIT_SHA>
+```
+
+Optional output directory: `--out <directory>`. Default: `artifacts/mainnet-predeploy`.
+
+The metadata cell uses TEP-64 off-chain content encoding: byte prefix `0x01`, followed by the HTTPS URI. The URI must be approved, immutable/pinned, publicly retrievable, and point to the final metadata including the approved logo. No default URI is silently assumed.
+
+## Determinism and independent checks
+
+Run the command twice from clean builds of the same source commit and compare both files byte-for-byte and all manifest hashes. Verify the master address and StateInit independently with a second implementation/reviewer. Confirm the exact source commit and compiler version before relying on any output.
+
+The output is not a signed external message and is not itself a wallet-ready transaction. A separate, independently reviewed wallet transaction must be assembled and shown to the Founder for local review/signature only after every Mainnet gate is closed. Never add private keys or automatic broadcasting to this tool.
+
+## Current limitations / no-go gates
+
+- No generated artifact has yet been executed and independently reproduced in a clean environment.
+- Metadata URI/logo approval and immutability verification remain outstanding.
+- The script's target label is not a network identity guard; any future RPC-based verifier must check the actual TON Mainnet global network identifier and fail closed.
+- Independent contract audit, full TEP-74/TEP-64 review, natural downstream bounce proof, and wallet-control proofs remain mandatory.
+- PR #6 remains Draft and unmerged. No deployment, mint, transfer, signing, or broadcast is authorized by this utility.

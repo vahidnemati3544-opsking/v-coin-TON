@@ -33,7 +33,7 @@ The founder vesting contract restores its `released` counter if the outgoing mes
 
 ## Remaining review and release gates
 
-- Current Sandbox suite injects bounced `TokenTransferInternal` and `TokenBurnNotification` envelopes to execute the wallet's real bounce handlers. Still run natural end-to-end TVM failure tests for destination-wallet delivery and master burn-notification rejection; do not infer these cases from simulated envelopes alone.
+- Current Sandbox suite injects a bounced `TokenTransferInternal` envelope to exercise the real source-wallet/vesting callback path. A separate test naturally bounces a `TokenBurnNotification` to an inactive master address and verifies wallet balance restoration. Still run a natural end-to-end downstream Jetton-wallet delivery failure test and full balance/supply invariants.
 - Complete replay/idempotency analysis and additional adversarial transaction tests.
 - Compare every TEP-74 message bit layout, getter stack order, storage/gas assumptions and wallet derivation against the official reference implementation.
 - Complete TEP-64 metadata validation, including the final approved icon. The current off-chain JSON provides name, symbol, description and six decimals, but intentionally has no image field.

@@ -33,7 +33,8 @@ The output is not a signed external message and is not itself a wallet-ready tra
 ## Current limitations / no-go gates
 
 - GitHub Actions #273 executed the generator twice using a deliberately non-production `example.invalid` metadata URI and compared both StateInit BOCs and manifests byte-for-byte; the smoke test passed on exact head `219abc794b337bc1f719a143d46ea3589cac0cc1`. This proves repeatability in CI for the test inputs, not the final production metadata or an independent clean-room reproduction.
-- Metadata URI/logo approval and immutability verification remain outstanding.
+- The Founder-selected canonical logo was located in the private project Library (1254×1254 PNG; local SHA-256 `08d71b17fecb86ae6006ba0fc498675dc4024b13d3f40459dcd578dfc09719d1`). It is not yet hosted at a public immutable URL or committed to the repository.
+- Metadata URI/logo publication and immutability verification remain outstanding. The historical GitHub metadata URI points to JSON without an image and is explicitly not approved for production.
 - The script's target label is not a network identity guard; any future RPC-based verifier must check the actual TON Mainnet global network identifier and fail closed.
 - Independent contract audit, full TEP-74/TEP-64 review, natural downstream bounce proof, and wallet-control proofs remain mandatory.
 - PR #6 remains Draft and unmerged. No deployment, mint, transfer, signing, or broadcast is authorized by this utility.

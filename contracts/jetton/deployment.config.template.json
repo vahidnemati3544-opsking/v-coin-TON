@@ -67,6 +67,19 @@
     "max_total_deployment_network_fee": "3",
     "hard_stop_if_estimated_fee_exceeds_limit": true,
     "require_founder_review_of_exact_fee_before_signing": true,
-    "note": "This is a Founder-set maximum budget, not a guarantee of network acceptance. Do not sign or broadcast if the wallet or transaction preview indicates a total network fee above 3 TON. Re-estimate immediately before signing; do not split or retry transactions in a way that bypasses the cap."
+    "note": "Target estimated total network fee is 1 TON. Absolute Founder-set maximum is 3 TON. Sum all source and destination fee components from a valid estimate; do not count attached deployment value as a fee. Missing, malformed, stale, or unsuccessful estimates must fail closed. Do not sign or broadcast if total estimated network fee exceeds 3 TON. Re-estimate immediately before signing; never split or retry transactions to bypass the cap.",
+    "target_estimated_deployment_network_fee": "1",
+    "fee_components_to_sum": [
+      "source_fees.in_fwd_fee",
+      "source_fees.storage_fee",
+      "source_fees.gas_fee",
+      "source_fees.fwd_fee",
+      "all destination_fees.in_fwd_fee",
+      "all destination_fees.storage_fee",
+      "all destination_fees.gas_fee",
+      "all destination_fees.fwd_fee"
+    ],
+    "attached_message_value_is_not_network_fee": true,
+    "implementation_status": "fee-cap-validator-added; exact wallet transaction estimation and integration pending"
   }
 }

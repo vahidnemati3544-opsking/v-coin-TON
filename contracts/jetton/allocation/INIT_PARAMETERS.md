@@ -46,4 +46,4 @@ First, the separate GAS & OPERATIONS wallet sends a VCoinFund message with at le
 
 ## Release caveat
 
-The founder allocation is currently directed to the founder wallet by the Master. The approved tokenomics also specifies a four-year founder vesting period; the vesting mechanism and schedule must be approved and implemented before Mainnet issuance. This document does not authorize bypassing that requirement.
+The founder allocation is directed to the founder's Jetton wallet as one exact 2,000,000,000 VCOIN issuance. The project owner has explicitly approved the founder's right to withdraw or transfer the full amount at once. No founder vesting contract, time lock, or installment schedule is required. This does not waive independent contract review, Testnet rehearsal, or explicit Mainnet authorization.

@@ -5,7 +5,7 @@
 **Checkpoint:** 2026-11-21  
 **Candidate:** Draft PR #6  
 **Branch:** `audit/pr5-bounce-guard-and-network-clarity-2026-11-21`  
-**Current PR #6 head:** `219abc794b337bc1f719a143d46ea3589cac0cc1` (Draft; no merge)  
+**Current PR #6 head:** `d8dc4046ed2f8bc8db7e1f4abd900b148889a730` (Draft; no merge)  
 **Network target:** TON Mainnet only; Testnet deployment is excluded by Founder direction.
 
 ## 1. Current decision
@@ -54,7 +54,7 @@ This is CI evidence, not a third-party security audit or proof of Mainnet readin
 
 - [x] Pinned Tact compiler/dependencies and committed lockfile.
 - [x] Added offline StateInit builder, source-commit guard, source/toolchain hashes, and manifest.
-- [x] CI #273 passed the build, generator type-check, two-run deterministic StateInit/manifest comparison, contract tests and dependency audit on exact head `219abc794b337bc1f719a143d46ea3589cac0cc1`.
+- [x] CI #275 passed the build, generator type-check, two-run deterministic StateInit/manifest comparison, 20/20 contract tests and dependency audit on exact head `d8dc4046ed2f8bc8db7e1f4abd900b148889a730`.
 - [ ] Independently reproduce and verify production artifacts using Founder-approved immutable metadata/logo URI.
 - [ ] Independently verify master address and StateInit serialization.
 - [ ] Design and review a human-readable deployment transaction preview; do not sign or broadcast.

@@ -119,15 +119,15 @@ Stop if any of the following is true:
 - Earlier full run #191 passed 25 Sandbox/policy tests, build, `npm ci` using the committed lockfile, and npm audit with zero known vulnerabilities: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44837612965.
 - The committed `contracts/jetton/package-lock.json` was used successfully by `npm ci` in runs #175, #176 and #177.
 - Source-level TEP-74 notes: `docs/TEP74_CONFORMANCE_REVIEW.md`. This is not an independent audit or full certification.
-- Master and Jetton-wallet bounce handlers exist in source, but downstream Jetton-wallet-to-founder delivery bounce is not reconciled by the founder vesting contract. The vesting counter may remain advanced after escrow tokens are restored; this is a hard deployment blocker pending an independently reviewed recovery design and Sandbox tests.
+- On a bounced `TokenTransferInternal`, the source Jetton wallet restores its token balance and emits the custom `JettonTransferBounce` callback to its owner. The founder vesting contract authenticates its configured escrow wallet and rolls back the matching `released` amount. Callback/forgery Sandbox tests have been added; natural TVM downstream-bounce and full balance/counter invariant tests remain mandatory before deployment.
 - `@tact-lang/compiler@1.6.13` emits a deprecation warning; current build succeeds. No blind Tolk migration is authorized.
 - Jetton master address: not deployed.
 - Deployment transaction: none.
 - Initial mint transaction: none.
 - Mainnet allocation transfers: none.
-- Founder four-year vesting/escrow source: implemented in `contracts/jetton/src/founder-vesting.tact` with dedicated Sandbox tests. Approved schedule is 1,460 daily linear accrual steps over four 365-day years, zero cliff; clock starts only after the exact 2B VCOIN allocation is received from the founder through the configured authentic Jetton wallet. Downstream delivery-bounce recovery remains unresolved and is a hard blocker; do not deploy or fund the vesting contract.
+- Founder four-year vesting/escrow source: implemented in `contracts/jetton/src/founder-vesting.tact` with dedicated Sandbox tests. Approved schedule is 1,460 daily linear accrual steps over four 365-day years, zero cliff; clock starts only after the exact 2B VCOIN allocation is received from the founder through the configured authentic Jetton wallet. Authenticated downstream-bounce callback and rollback tests are now implemented; natural TVM bounce-path and balance/counter invariant tests remain a hard blocker. Do not deploy or fund the vesting contract.
 - Escrow Jetton wallet address is configured once after vesting-contract deployment using the master `get_wallet_address` getter and a founder-signed message. It cannot be replaced after configuration.
-- Vesting contract deployment, funding, final CI verification, independent security audit and Testnet verification: pending.
+- Vesting contract deployment/funding, final-head CI verification, natural downstream-bounce tests, independent security audit and Mainnet wallet-control proofs: pending. Testnet deployment is intentionally omitted by owner direction.
 - Recipient wallet-control proofs on the intended network: pending.
 - Independent smart-contract audit: pending.
 - Deterministic deploy/transaction builder: pending.

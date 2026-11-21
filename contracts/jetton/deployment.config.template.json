@@ -41,16 +41,16 @@
     "ecosystem_marketing_wallet": null
   },
   "metadata": {
-    "uri": null,
-    "immutable": false,
+    "uri": "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/9fd9f2b119a0f6b3d343a7a0670ba430c3864aa3/contracts/jetton/metadata.json",
+    "immutable": true,
     "approval_status": "pending_founder_approval",
-    "image_uri": null,
+    "image_uri": "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/1dac91b520de6b9d3dbf7d615128ff2ec3e95f5e/contracts/jetton/assets/vcoin-canonical-logo.jpg",
     "image_approval_status": "pending_founder_approval",
-    "note": "Do not use a historical metadata URI for production. Final TEP-64 JSON must include the Founder-approved canonical logo and be published at an immutable HTTPS URL before artifact generation."
+    "note": "Metadata JSON and logo rendition use immutable commit-pinned HTTPS URLs. Founder approval remains pending; production release must confirm the displayed logo rendition and public retrieval before deployment."
   },
   "deployment_authorized": false,
   "mainnet_authorized": false,
-  "notes": "Template only. Five allocation owner-wallet candidates are recorded in allocation_wallets; they are distinct from derived Jetton wallet contract addresses. Keep derived addresses null until the Jetton master is deployed and wallet addresses are derived and verified on TON Mainnet. The operational fee wallet is a separate TON-only funding address and is not part of VCOIN allocation. Verify network and wallet control before funding. Never commit secrets, seed phrases or private keys. No deployment or transfer is authorized by this template. The previously recorded GitHub metadata URL is historical and is not approved for production because the committed metadata omits the Founder-approved canonical logo. Final metadata URI and image URI require Founder approval and immutable HTTPS hosting. All vesting/escrow configuration is prohibited and has been removed.",
+  "notes": "Template only. Five allocation owner-wallet candidates are recorded in allocation_wallets; they are distinct from derived Jetton wallet contract addresses. Keep derived addresses null until the Jetton master is deployed and wallet addresses are derived and verified on TON Mainnet. The operational fee wallet is a separate TON-only funding address and is not part of VCOIN allocation. Verify network and wallet control before funding. Never commit secrets, seed phrases or private keys. No deployment or transfer is authorized by this template. The TEP-64 metadata JSON and logo rendition are now referenced by immutable commit-pinned GitHub HTTPS URLs. Founder approval and independent public retrieval/content verification remain required before production use. All vesting/escrow configuration is prohibited and has been removed.",
   "allocation_wallet_verification": {
     "status": "pending_wallet_control_proof",
     "note": "These are recorded owner wallet candidates, not derived Jetton wallet contract addresses. Verify control on the intended network before any transfer.",

@@ -233,6 +233,85 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
     });
   });
 
+  test("recovers a bounced final allocation after an earlier burn", async () => {
+    await configureAllocations();
+    await issueCategory(1);
+    const founderWallet = await walletFor(owner.address);
+    const burnAmount = 3n * ONE_TOKEN;
+    await founderWallet.send(
+      owner.getSender(),
+      { value: toNano("0.2") },
+      {
+        ["$" + "$" + "type"]: "TokenBurn",
+        query_id: 301n,
+        amount: burnAmount,
+        response_destination: owner.address,
+        custom_payload: null,
+      } as any,
+    );
+    for (const category of [2, 3, 4]) await issueCategory(category);
+
+    const walletAddress = await master.getGetWalletAddress(ecosystem.address);
+    const wallet = await VCoinJettonWallet.fromInit(ecosystem.address, master.address);
+    await blockchain.setShardAccount(
+      walletAddress,
+      createShardAccount({
+        address: walletAddress,
+        code: wallet.init!.code,
+        data: beginCell().endCell(),
+        balance: toNano("1"),
+      }),
+    );
+
+    const failedFinalIssue = await master.send(
+      owner.getSender(),
+      { value: toNano("0.2") },
+      { ["$" + "$" + "type"]: "VCoinMintAllocation", category: 5 } as any,
+    );
+    expect(failedFinalIssue.transactions).toHaveTransaction({
+      from: master.address,
+      to: walletAddress,
+      inMessageBounceable: true,
+      aborted: true,
+    });
+    expect(failedFinalIssue.transactions).toHaveTransaction({
+      from: walletAddress,
+      to: master.address,
+      inMessageBounced: true,
+      success: true,
+    });
+    expect((await master.getGetJettonData()).total_supply).toBe(
+      9_000_000_000_000_000n - burnAmount,
+    );
+    expect((await master.getGetJettonData()).mintable).toBe(true);
+
+    await blockchain.setShardAccount(
+      walletAddress,
+      createShardAccount({
+        address: walletAddress,
+        code: wallet.init!.code,
+        data: wallet.init!.data,
+        balance: toNano("1"),
+      }),
+    );
+    const retryWallet = blockchain.openContract(
+      VCoinJettonWallet.fromAddress(walletAddress),
+    );
+    const retry = await master.send(
+      owner.getSender(),
+      { value: toNano("0.2") },
+      { ["$" + "$" + "type"]: "VCoinMintAllocation", category: 5 } as any,
+    );
+    expect(retry.transactions).toHaveTransaction({
+      from: master.address,
+      to: walletAddress,
+      success: true,
+    });
+    expect((await retryWallet.getGetWalletData()).balance).toBe(1_000_000_000_000_000n);
+    expect((await master.getGetJettonData()).total_supply).toBe(MAX_SUPPLY - burnAmount);
+    expect((await master.getGetJettonData()).mintable).toBe(false);
+  });
+
   test("transfers Jettons to a recipient wallet and preserves total supply", async () => {
     await issueFullSupply();
     const founderWallet = await walletFor(owner.address);

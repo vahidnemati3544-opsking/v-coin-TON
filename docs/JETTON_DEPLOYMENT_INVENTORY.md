@@ -3,17 +3,17 @@
 **Document ID:** VCT-JETTON-INV-001  
 **Reviewed:** 2026-11-21  
 **Scope:** `vahidnemati3544-opsking/v-coin-TON` only  
-**Current result:** PR #5 Tact candidate compiles and passes 28 Sandbox/Jest tests plus `npm ci` and the high-severity npm audit gate on current head `9ed093f5152d199a66994f38388efee8e200b51c`; backend and mining CI also pass on this head. No Mainnet deployment, mint, or transfer has occurred.
+**Current result:** PR #5 Tact candidate compiles and passes 29 Sandbox/Jest tests plus `npm ci` and the high-severity npm audit gate on current code head `6d9a7ebf6899d5872364ec8b37fc06f190c44f28`; backend and mining CI also pass on this head. No Mainnet deployment, mint, or transfer has occurred.
 
 ## Verified repository state
 
-## Latest verified CI checkpoint — 2026-11-21 06:53 UTC
+## Latest verified CI checkpoint — 2026-11-21 06:55 UTC
 
-- Current PR #5 head: `9ed093f5152d199a66994f38388efee8e200b51c`.
-- Jetton workflow #226 passed on this exact head: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44877646963
-- Result: build passed; all 28 Jest/Sandbox tests passed; `npm ci` passed; `npm audit --audit-level=high` passed with zero known vulnerabilities.
-- Backend workflow #239 passed on the same head: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44877646971
-- Mining workflow #241 passed on the same head: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44877646974
+- Current PR #5 code head: `6d9a7ebf6899d5872364ec8b37fc06f190c44f28`.
+- Jetton workflow #229 passed on this exact head: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44877792568
+- Result: build passed; all 29 Jest/Sandbox tests passed; `npm ci` passed; `npm audit --audit-level=high` passed with zero known vulnerabilities.
+- Backend workflow #242 passed on the same head: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44877792523
+- Mining workflow #244 passed on the same head: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44877792493
 
 ## Previous verified CI checkpoint — 2026-11-21 06:47 UTC
 
@@ -112,13 +112,13 @@ These recorded addresses are candidates only. Recording an address does not prov
 |---|---|
 | Fixed supply and allocation arithmetic | Passed |
 | Contract build | Passed in current-head CI #214 |
-| 28 Sandbox/policy/vesting tests | Passed in current-head CI #226 |
+| 29 Sandbox/policy/vesting tests | Passed in current-head CI #229 |
 | `npm ci` | Passed in current-head CI #214 |
 | npm audit | 0 vulnerabilities in current-head CI #214 |
 | TEP-74 required response-destination correction | Implemented; build and tests passed |
 | TEP-89 optional owner-address behavior | Implemented and tested |
 | Committed package lockfile | Committed and verified by subsequent `npm ci` runs #175–#177 |
-| Transfer/burn bounce recovery and forged-callback Sandbox tests | Passed in current-head CI #226; natural downstream transfer-bounce gate remains open |
+| Transfer/burn bounce recovery, amount-mismatch and forged-callback Sandbox tests | Passed in current-head CI #229; natural downstream transfer-bounce gate remains open |
 | Natural downstream TVM bounce and balance invariants | Pending |
 | Full TEP-74 / TEP-64 conformance audit | Pending |
 | Metadata URI/content draft | Committed; logo approval pending |

@@ -9,6 +9,16 @@
         "external": false,
         "ipfsAbiGetter": true
       }
+    },
+    {
+      "name": "VCoinFounderVesting",
+      "path": "./src/founder-vesting.tact",
+      "output": "./build",
+      "options": {
+        "debug": false,
+        "external": false,
+        "ipfsAbiGetter": true
+      }
     }
   ]
 }

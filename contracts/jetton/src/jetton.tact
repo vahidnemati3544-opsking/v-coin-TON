@@ -12,33 +12,45 @@ trait JettonMaster {
         require(contractAddress(init) == sender(), "Invalid Jetton wallet");
         require(self.total_supply >= msg.amount, "Burn exceeds supply");
         self.total_supply = self.total_supply - msg.amount;
-        if (msg.response_destination != null) {
-            send(SendParameters{
-                to: msg.response_destination!!,
-                value: 0,
-                bounce: false,
-                mode: SendRemainingValue + SendIgnoreErrors,
-                body: TokenExcesses{query_id: msg.query_id}.toCell()
-            });
-        }
+        send(SendParameters{
+            to: msg.response_destination,
+            value: 0,
+            bounce: false,
+            mode: SendRemainingValue + SendIgnoreErrors,
+            body: TokenExcesses{query_id: msg.query_id}.toCell()
+        });
     }
 
     receive(msg: ProvideWalletAddress) {
         require(context().value >= ton("0.0061"), "Insufficient gas");
         let init: StateInit = self.walletInit(msg.owner_address);
         let addr: Address = contractAddress(init);
-        let ownerCell: Cell = beginCell().storeAddress(msg.owner_address).endCell();
-        send(SendParameters{
-            to: sender(),
-            value: 0,
-            mode: SendRemainingValue,
-            bounce: false,
-            body: TakeWalletAddress{
-                query_id: msg.query_id,
-                wallet_address: addr,
-                owner_address: ownerCell.asSlice()
-            }.toCell()
-        });
+        if (msg.include_address) {
+            let ownerCell: Cell = beginCell().storeAddress(msg.owner_address).endCell();
+            send(SendParameters{
+                to: sender(),
+                value: 0,
+                mode: SendRemainingValue,
+                bounce: false,
+                body: TakeWalletAddress{
+                    query_id: msg.query_id,
+                    wallet_address: addr,
+                    owner_address: ownerCell
+                }.toCell()
+            });
+        } else {
+            send(SendParameters{
+                to: sender(),
+                value: 0,
+                mode: SendRemainingValue,
+                bounce: false,
+                body: TakeWalletAddress{
+                    query_id: msg.query_id,
+                    wallet_address: addr,
+                    owner_address: null
+                }.toCell()
+            });
+        }
     }
 
     virtual fun walletInit(ownerAddress: Address): StateInit {
@@ -148,9 +160,9 @@ contract VCoinJettonWallet {
                 }.toCell()
             });
         }
-        if (msg.response_destination != null && remaining > 0) {
+        if (remaining > 0) {
             send(SendParameters{
-                to: msg.response_destination!!,
+                to: msg.response_destination,
                 value: remaining,
                 mode: SendIgnoreErrors,
                 bounce: false,
@@ -181,6 +193,19 @@ contract VCoinJettonWallet {
 
     bounced(msg: bounced<TokenTransferInternal>) {
         self.balance = self.balance + msg.amount;
+        // Notify the response destination after restoring the source-wallet
+        // balance. The vesting contract authenticates this wallet address and
+        // rolls back the matching released amount.
+        send(SendParameters{
+            to: self.owner,
+            value: 0,
+            mode: SendRemainingValue,
+            bounce: false,
+            body: JettonTransferBounce{
+                query_id: msg.query_id,
+                amount: msg.amount
+            }.toCell()
+        });
     }
     bounced(msg: bounced<TokenBurnNotification>) {
         self.balance = self.balance + msg.amount;

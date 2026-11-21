@@ -20,6 +20,9 @@ contract VCoinMaster with JettonMaster {
         self.content = content;
     }
 
+    // Accept the empty deployment message only; this does not issue tokens.
+    receive() {}
+
     // One-time issuance: the exact full supply is credited to the founder's
     // own wallet. The founder then distributes allocations with signed transfers.
     receive(msg: VCoinMint) {

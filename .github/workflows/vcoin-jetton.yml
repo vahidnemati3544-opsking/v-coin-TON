@@ -1,14 +1,18 @@
 name: VCOIN TON Jetton
+permissions:
+  contents: write
 on:
   push:
     branches: [main]
     paths:
       - "contracts/jetton/**"
       - ".github/workflows/vcoin-jetton.yml"
+      - "docs/JETTON_DEPLOYMENT_INVENTORY.md"
   pull_request:
     paths:
       - "contracts/jetton/**"
       - ".github/workflows/vcoin-jetton.yml"
+      - "docs/JETTON_DEPLOYMENT_INVENTORY.md"
   workflow_dispatch:
 jobs:
   build-and-test:
@@ -18,11 +22,47 @@ jobs:
         working-directory: contracts/jetton
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: contracts/jetton/package.json
-      - run: npm install
+      - name: Bootstrap a lockfile only when one is absent
+        run: |
+          if [ ! -f package-lock.json ]; then
+            npm install --package-lock-only --ignore-scripts
+          fi
+      - run: npm ci
+      - name: Report dependency audit findings
+        shell: bash
+        run: |
+          npm audit --json > npm-audit-report.json || true
+          node -e "const r=require('./npm-audit-report.json'); console.log(JSON.stringify({metadata:r.metadata?.vulnerabilities, vulnerabilities:r.vulnerabilities}, null, 2))"
       - run: npm run build
       - run: npm test
+      - name: Enforce dependency security gate
+        run: npm audit --audit-level=high
+      - name: Commit generated lockfile on the pull request branch
+        if: success() && github.event_name == 'pull_request'
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          if git diff --cached --quiet; then
+            echo "package-lock.json is already committed"
+            exit 0
+          fi
+          git commit -m "build(jetton): commit npm lockfile"
+          git push origin "HEAD:${HEAD_REF}"
+      - name: Upload dependency lockfile for repository commit
+        if: always() && hashFiles('contracts/jetton/package-lock.json') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: vcoin-jetton-package-lock
+          path: contracts/jetton/package-lock.json
+          if-no-files-found: error
+          retention-days: 7

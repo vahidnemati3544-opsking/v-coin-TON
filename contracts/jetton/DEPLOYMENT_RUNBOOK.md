@@ -55,24 +55,21 @@ Allocation sums must be checked in base units before every batch. No category ma
 - Build reproducibly; record compiler/toolchain versions and code hashes.
 - Run unit, sandbox, negative, replay, authorization, transfer, burn, and supply-cap tests.
 
-### Gate B — Testnet
-- Verify founder wallet proof on Testnet.
-- Deploy master and verify get_jetton_data.
-- Verify wallet address derivation and wallet code.
-- Mint exactly the approved initial supply once.
-- Attempt a second mint and prove it fails.
-- Transfer small test amounts to separate wallets; verify notifications, balances, fees, and transaction finality.
-- Verify metadata and explorer presentation.
-- Record all addresses, transaction hashes, code hashes, and test outputs.
+### Gate B — Owner-directed Testnet omission
+- The owner has directed that no Testnet deployment be performed.
+- This omits only the Testnet deployment stage; it does not waive reproducible builds, Sandbox/adversarial tests, independent security review, wallet-control proofs, deterministic transaction simulation, or explicit founder approval.
+- Before Mainnet, verify the exact reviewed build, code hashes, master/wallet derivation, metadata serialization, supply cap, one-time issuance, all transfer/bounce paths, and fee assumptions using reproducible local/Sandbox evidence.
+- Record the evidence and unresolved risks. If any critical path cannot be verified without a live Testnet transaction, stop and obtain the owner's explicit decision rather than silently weakening the gate.
 
 ### Gate C — Mainnet approval
-- Complete independent smart-contract review.
+- Complete independent smart-contract security review and close every critical/high finding.
 - Review token distribution, consumer disclosures, sanctions/AML obligations, tax and securities/financial-services considerations with qualified counsel in relevant jurisdictions.
 - Confirm all recipient addresses and custody/vesting arrangements.
 - Confirm TON for deployment and transfer fees.
 - Obtain explicit founder approval of the final build hashes, metadata, supply, and destinations.
 
 ### Gate D — Mainnet deployment and distribution
+- Proceed only after the owner-directed Testnet omission has been compensated by complete reproducible Sandbox evidence and independent review.
 - Deploy only the exact reviewed build.
 - Verify deployed code and state on-chain.
 - Issue the initial supply exactly once and verify total supply.
@@ -88,7 +85,7 @@ The following five public wallet addresses have been recorded as the current can
 | Allocation | VCOIN | Recorded candidate destination | Verification status |
 |---|---:|---|---|
 | Founder (4-year vesting) | 2,000,000,000 | `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` | Ownership unverified; vesting custody must be finalized |
-| Treasury | 1,000,000,000 | `UQBEW5bLGbq0yVDOimgl6fpZQkdla9Wk5b0tXyx69bmBktQ` | Ownership unverified |
+| Treasury | 1,000,000,000 | `UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ` | Ownership unverified |
 | Liquidity / market | 1,000,000,000 | `UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn` | Ownership unverified |
 | Ecosystem / marketing | 1,000,000,000 | `UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE` | Ownership unverified |
 | Mining reserve | 5,000,000,000 | `UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0` | Ownership unverified |
@@ -115,11 +112,26 @@ Stop if any of the following is true:
 
 - Five allocation candidate destinations: recorded in Section 5; ownership/control verification pending.
 - Separate GAS & OPERATIONS wallet: recorded for TON fees only; not an allocation recipient.
+- TEP-64 metadata draft: `contracts/jetton/metadata.json`; URI pinned in `deployment.config.template.json` to immutable commit `49c462124a082ef6c850079b35c6f77c5bda6ea2`. The JSON contains name, symbol, description and six decimals; no image is included until the approved logo asset is committed.
+- TEP-74 required response-destination fields were corrected to mandatory addresses for transfer, internal transfer, burn and burn notification. Excesses are routed to the required response destination.
+- TEP-89 `include_address` behavior remains covered for both values.
+- Latest PR-head GitHub Actions run #229 on head `6d9a7ebf6899d5872364ec8b37fc06f190c44f28` passed build and all 29 tests, with `npm ci` and `npm audit --audit-level=high` successful and zero known vulnerabilities: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44877792568.
+- Backend CI #242 and Mining CI #244 also passed on this exact head: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44877792523 and https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44877792493.
+- Earlier full run #191 passed 25 Sandbox/policy tests, build, `npm ci` using the committed lockfile, and npm audit with zero known vulnerabilities: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44837612965.
+- The committed `contracts/jetton/package-lock.json` was used successfully by `npm ci` in runs #175, #176 and #177.
+- Source-level TEP-74 notes: `docs/TEP74_CONFORMANCE_REVIEW.md`. This is not an independent audit or full certification.
+- On a bounced `TokenTransferInternal`, the source Jetton wallet restores its token balance and emits the custom `JettonTransferBounce` callback to its owner. The founder vesting contract authenticates its configured escrow wallet and rolls back the matching `released` amount. A new end-to-end Sandbox test injects a recipient-side TVM execution failure at the deterministic beneficiary Jetton-wallet address (actual VCoin wallet code with intentionally invalid test storage), allowing TON Sandbox to generate the bounce automatically; it asserts recipient failure, bounced inbound message, source-wallet balance restoration, vesting-counter rollback, and unchanged master supply. This test passed Jetton workflow #234 on exact code commit `da556b64967c892510f2ab924daa5d603f29ecdd`: build, all 29 tests (including founder vesting integration), `npm ci`, and high-severity npm audit with zero known vulnerabilities. The later documentation-only PR head is undergoing its own CI run; the bounce test itself is verified on the exact code commit.
+- `@tact-lang/compiler@1.6.13` emits a deprecation warning; current build succeeds. No blind Tolk migration is authorized.
 - Jetton master address: not deployed.
 - Deployment transaction: none.
 - Initial mint transaction: none.
 - Mainnet allocation transfers: none.
-- Test evidence: not yet attached.
-- Independent audit: not yet completed.
+- Founder four-year vesting/escrow source: implemented in `contracts/jetton/src/founder-vesting.tact` with dedicated Sandbox tests. Approved schedule is 1,460 daily linear accrual steps over four 365-day years, zero cliff; clock starts only after the exact 2B VCOIN allocation is received from the founder through the configured authentic Jetton wallet. Authenticated downstream-bounce callback and rollback logic are implemented. The natural TVM failure-injection test passed Jetton workflow #234 on exact code commit `da556b64967c892510f2ab924daa5d603f29ecdd` (29/29 tests). Independent security audit, wallet-control proofs, and deployment-package checks remain hard blockers. Do not deploy or fund the vesting contract.
+- Escrow Jetton wallet address is configured once after vesting-contract deployment using the master `get_wallet_address` getter and a founder-signed message. It cannot be replaced after configuration.
+- Vesting contract deployment/funding, final-head CI verification, natural downstream-bounce tests, independent security audit and Mainnet wallet-control proofs: pending. Testnet deployment is intentionally omitted by owner direction.
+- Recipient wallet-control proofs on the intended network: pending.
+- Independent smart-contract audit: pending.
+- Deterministic deploy/transaction builder: pending.
+- Testnet deployment: intentionally omitted by owner direction; no Testnet transaction has been broadcast.
 
 This runbook is an execution control document, not evidence that any token has been deployed or transferred.

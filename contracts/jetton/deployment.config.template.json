@@ -43,17 +43,25 @@
   },
   "founder_vesting": {
     "duration_seconds": 126144000,
-    "start_timestamp": null,
-    "cliff_seconds": null,
-    "release_frequency_seconds": null
+    "start_timestamp": "set_on_chain_when_exact_2B_allocation_is_received",
+    "cliff_seconds": 0,
+    "release_frequency_seconds": 86400,
+    "allocation_tokens": "2000000000",
+    "allocation_base_units": "2000000000000000",
+    "beneficiary_wallet": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
+    "vesting_contract_source": "contracts/jetton/src/founder-vesting.tact",
+    "deployment_status": "not_deployed",
+    "wallet_configuration": "after deployment, derive this contract's Jetton wallet using the master get_wallet_address getter, then configure it once with founder signature",
+    "funding_trigger": "accept only one exact 2B VCOIN JettonNotification from the configured Jetton wallet and founder sender",
+    "claim_policy": "permissionless trigger; fixed founder beneficiary; daily linear accrual; no cliff"
   },
   "metadata": {
-    "uri": null,
+    "uri": "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/49c462124a082ef6c850079b35c6f77c5bda6ea2/contracts/jetton/metadata.json",
     "immutable": true
   },
   "deployment_authorized": false,
   "mainnet_authorized": false,
-  "notes": "Template only. The five allocation owner wallet candidates are recorded in allocation_wallets; the Treasury address has been corrected against the allocation register. These owner addresses are distinct from derived Jetton wallet contract addresses and the founder vesting contract. Keep derived contract addresses null until the Jetton master is deployed and wallet addresses are derived and verified on the intended network. The operational fee wallet is a separate TON-only funding address and is not part of VCOIN allocation. Verify network and wallet control before funding. Null contract/deployment fields require owner approval and verification. Never commit secrets, seed phrases or private keys. No deployment or transfer is authorized by this template.",
+  "notes": "Template only. The five allocation owner wallet candidates are recorded in allocation_wallets; the Treasury address has been corrected against the allocation register. These owner addresses are distinct from derived Jetton wallet contract addresses and the founder vesting contract. Keep derived contract addresses null until the Jetton master is deployed and wallet addresses are derived and verified on the intended network. The operational fee wallet is a separate TON-only funding address and is not part of VCOIN allocation. Verify network and wallet control before funding. Null contract/deployment fields require owner approval and verification. Never commit secrets, seed phrases or private keys. No deployment or transfer is authorized by this template. Metadata draft is committed at an immutable Git commit URL; it currently omits an image because no approved project logo asset is stored in this repository. The owner must approve the public metadata and image before deployment. Founder 2B VCOIN vesting contract source has been added but is not deployed. Its escrow Jetton wallet address must be derived from the deployed master after the vesting contract deployment and configured exactly once by founder signature. Vesting starts only after the exact 2B VCOIN allocation is received and verified; daily linear accrual over 1,460 days with zero cliff. The contract must pass its dedicated Sandbox tests and independent review before any deployment or funding.",
   "allocation_wallet_verification": {
     "status": "pending_wallet_control_proof",
     "note": "These are recorded owner wallet candidates, not derived Jetton wallet contract addresses. Verify control on the intended network before any transfer.",

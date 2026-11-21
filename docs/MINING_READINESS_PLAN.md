@@ -2,7 +2,7 @@
 
 **Document ID:** VCT-MINING-READY-001  
 **Revision:** 1.1.0  
-**Updated:** 2026-11-18  
+**Updated:** 2026-11-21  
 **Scope:** This repository only. The legacy BNB Smart Chain project is out of scope.
 
 ## Release decision
@@ -30,7 +30,7 @@ Status is based on repository evidence, not on the existence of documentation or
 |---:|---|---|---|---|
 | 1 | Repository boundary | Work only in V-Coin-TON | DONE | Maintain boundary |
 | 2 | `contracts/mining/engine.js` | Replace internal-balance eligibility with immutable verified wallet snapshots | BLOCKED | Implement after master/network/provider are approved |
-| 3 | `contracts/mining/backend/src/routes/mining.js` | Expose only wallet-policy-compliant status/start/claim/end routes | BLOCKED | Keep public API disabled; add wallet routes after implementation |
+| 3 | `contracts/mining/backend/src/routes/mining.js` + `test/mining-api-safety.test.js` | Expose only wallet-policy-compliant status/start/claim/end routes; regression-test every public mining endpoint remains HTTP 503 until compliant | SAFETY GUARD ADDED; CI PENDING | Keep disabled until verified wallet mining and confirmed payout lifecycle pass all gates |
 | 4 | PostgreSQL schema | Store wallet links, proof status, network/master, snapshots and payout lifecycle | PENDING | Design migrations without treating internal balance as wallet balance |
 | 5 | Mining reserve migration | Preserve 5B cap with atomic reservation/release | CODE PRESENT; TEST PENDING | Verify rollback and exhaustion on PostgreSQL 18 |
 | 6 | Ledger settlement | Separate pending reward from on-chain confirmed payout | BLOCKED | Implement payout-aware double-entry lifecycle |
@@ -50,7 +50,7 @@ Status is based on repository evidence, not on the existence of documentation or
 | 20 | Controlled rehearsal | Use owner's Telegram account and TON Testnet; compare chain snapshot, reward and ledger | BLOCKED | All preceding technical gates must pass |
 | 21 | Go / No-Go | Review evidence, security, reserve, backup and owner approval | BLOCKED | Explicit owner approval after evidence review |
 
-## Mandatory gates before first controlled claim
+## Latest engineering checkpoint — 2026-11-21\n\n- Added `contracts/mining/backend/test/mining-api-safety.test.js`. It exercises public GET status and POST start/claim/end routes and asserts HTTP 503 with `WALLET_BALANCE_MINING_NOT_IMPLEMENTED`. This is a deliberate fail-closed regression guard, not a mining feature.\n- Added this test to `npm run check`. A new backend PostgreSQL 18 CI run must pass before this change is considered verified.\n- The actual extraction engine remains non-compliant: it reads internal PostgreSQL balances and settles internal ledger entries. Do not mount it on the public API or call internal ledger credits on-chain extraction.\n- The official VCOIN Jetton master is not deployed, so there is no valid production/testnet master address to query yet. Wallet proof, balance reader, payout sender, and chain reconciliation cannot be completed against an unverified token identity.\n- Founder vesting downstream bounce/accounting recovery remains a separate hard deployment blocker.\n\n## Mandatory gates before first controlled claim
 
 1. The official VCOIN Jetton master address and target network are independently verified.
 2. TON wallet ownership proof is verified; a pasted address or Telegram username is insufficient.

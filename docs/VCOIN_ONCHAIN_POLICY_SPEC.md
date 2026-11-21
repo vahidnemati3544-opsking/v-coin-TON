@@ -76,7 +76,7 @@ Each receives its exact one-billion VCOIN allocation at its recorded owner addre
 The latest verified Acton CI run for the current branch completed:
 - contract build and wrapper generation;
 - local-emulated guarded minter deployment script;
-- 89 emulator tests across 9 files;
+- 91 emulator tests across 9 files;
 - static checks and formatting.
 
 VCOIN-specific passing tests include:
@@ -86,14 +86,16 @@ VCOIN-specific passing tests include:
 - successful Founder escrow deposit acknowledgement;
 - successful release through the actual VCOIN escrow and beneficiary Jetton wallets;
 - VCOIN wallet balance restoration and failure acknowledgement using a protocol-valid RichBounce envelope;
+- a naturally generated downstream TVM bounce across the actual escrow-wallet-to-beneficiary-wallet route, produced by freezing the derived beneficiary Jetton-wallet account in emulator state; the test verifies escrow balance restoration, pending-release cleanup through a fresh-query retry, and unchanged minter total supply;
+- rejection of forged success acknowledgements, mismatched failure amounts, and replayed escrow-deposit acknowledgements;
 - linear Founder and Mining vesting boundary/rounding tests.
 
-The RichBounce failure test constructs a valid envelope in the emulator. A naturally generated downstream TVM failure and bounce across the complete live wallet-to-wallet chain remains to be verified. Additional adversarial tests remain required for replayed acknowledgements, unauthorized acknowledgements, amount mismatch, pending-state cleanup/retry, and relevant balance/query-ID invariants.
+The natural-bounce regression is now covered by the current CI run. Broader cross-allocation invariant coverage and any findings from the independent security audit remain outstanding.
 
 ## 6. Deployment gates
 
 No Testnet deployment or mint is authorized by this document. Before Testnet:
-- finish the remaining adversarial and natural-bounce tests;
+- complete any additional cross-allocation invariant tests identified during review;
 - pin and verify the exact source/compiler/code hashes;
 - complete an independent smart-contract security review;
 - review the exact deployment and vesting start-time configuration;

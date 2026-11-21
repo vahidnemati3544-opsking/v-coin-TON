@@ -12,7 +12,7 @@
       "base_units": "2000000000000000",
       "destination": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
       "requires_founder_signature": true,
-      "destination_verification": "pending_wallet_control_proof"
+      "destination_verification": "founder_exclusive_control_declared_evidence_pending"
     },
     {
       "allocation": "mining_reserve",
@@ -20,7 +20,7 @@
       "base_units": "5000000000000000",
       "destination": "UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0",
       "requires_founder_signature": true,
-      "destination_verification": "pending_wallet_control_proof"
+      "destination_verification": "founder_exclusive_control_declared_evidence_pending"
     },
     {
       "allocation": "treasury",
@@ -28,7 +28,7 @@
       "base_units": "1000000000000000",
       "destination": "UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ",
       "requires_founder_signature": true,
-      "destination_verification": "pending_wallet_control_proof"
+      "destination_verification": "founder_exclusive_control_declared_evidence_pending"
     },
     {
       "allocation": "liquidity_market",
@@ -36,7 +36,7 @@
       "base_units": "1000000000000000",
       "destination": "UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn",
       "requires_founder_signature": true,
-      "destination_verification": "pending_wallet_control_proof"
+      "destination_verification": "founder_exclusive_control_declared_evidence_pending"
     },
     {
       "allocation": "ecosystem_marketing",
@@ -44,7 +44,7 @@
       "base_units": "1000000000000000",
       "destination": "UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE",
       "requires_founder_signature": true,
-      "destination_verification": "pending_wallet_control_proof"
+      "destination_verification": "founder_exclusive_control_declared_evidence_pending"
     }
   ],
   "safeguards": [
@@ -65,6 +65,19 @@
     "The five destination addresses are recorded candidates; recording does not prove ownership or authorize transfers.",
     "The separate GAS & OPERATIONS wallet is for TON fees only and is not a VCOIN allocation destination.",
     "All five allocations are ordinary transferable balances under the Founders sole authority; no vesting, escrow, or time lock applies.",
-    "Every transfer requires exact transaction review and founder wallet signature."
-  ]
+    "Every transfer requires exact transaction review and founder wallet signature.",
+    "Founder has absolute and exclusive operational authority over deposits, withdrawals and transfers from all five allocation wallets; the five roles are accounting-only.",
+    "Each Jetton Wallet checks its own owner address; the Master does not have a clawback right. Founder-only authority depends on Founder-exclusive signing control of all five recorded owner addresses."
+  ],
+  "governance_authority": {
+    "policy_document": "docs/FOUNDER_EXCLUSIVE_FIVE_WALLET_CONTROL.md",
+    "authority_holder": "Founder only",
+    "all_five_wallets_under_exclusive_founder_control": true,
+    "wallet_separation": "accounting_and_reporting_only",
+    "independent_custodians": false,
+    "third_party_signers": false,
+    "local_founder_signature_required_for_each_movement": true,
+    "proof_status": "non_spending_per_address_evidence_pending",
+    "note": "Founder-exclusive authority is a binding governance assertion. Proof records must never contain private keys, seed phrases or PINs."
+  }
 }

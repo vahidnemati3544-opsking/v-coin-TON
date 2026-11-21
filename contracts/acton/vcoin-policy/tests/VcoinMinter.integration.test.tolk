@@ -578,3 +578,73 @@ get fun `test VCOIN wallet RichBounce restores escrow balance and delivers failu
         FOUNDER_AMOUNT / 4,
     );
 }
+
+
+get fun `test escrow rejects forged success acknowledgement from an unrelated sender`() {
+    testing.setNow(3000);
+    val (minter, admin, outsider, _) = setupVcoinMinter(false);
+
+    val configure = minter.sendConfigureVcoinEscrows(
+        admin.address,
+        201,
+        3000,
+        { value: grams("1.5"), bounce: true },
+    );
+    expect(configure).toHaveSuccessfulTx<ConfigureVcoinEscrows>({
+        from: admin.address,
+        to: minter.address,
+    });
+
+    val founderEscrowAddress = minter.getVcoinFounderEscrowAddress();
+    expect(founderEscrowAddress).toBeNotNull();
+    if (founderEscrowAddress == null) {
+        return;
+    }
+
+    val founderEscrow = VcoinVestingEscrow.fromAddress(founderEscrowAddress!);
+    val founderMint = mintAllocation(
+        minter,
+        admin,
+        founderEscrowAddress!,
+        FOUNDER_AMOUNT,
+        202,
+        grams("0.05"),
+    );
+    expect(founderMint).toHaveSuccessfulTx<MintNewJettons>({
+        from: admin.address,
+        to: minter.address,
+    });
+
+    testing.setNow(3000 + 126230400 / 2);
+    val release = createMessage({
+        bounce: true,
+        value: grams("0.6"),
+        dest: founderEscrowAddress!,
+        body: ReleaseVestedVcoin { queryId: 203 },
+    });
+    testing.processSingleTraceStep(FOUNDER, release);
+    expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(0);
+
+    // A forged success acknowledgement must not clear the pending release.
+    val forgedAck = createMessage({
+        bounce: false,
+        value: grams("0.1"),
+        dest: founderEscrowAddress!,
+        body: ReturnExcessesBack { queryId: 203 },
+    });
+    testing.processSingleTraceStep(outsider.address, forgedAck);
+    expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(0);
+
+    // The authentic beneficiary Jetton wallet can still complete the same pending release.
+    val beneficiaryWallet = minter.getWalletAddress(FOUNDER);
+    val authenticAck = createMessage({
+        bounce: false,
+        value: grams("0.1"),
+        dest: founderEscrowAddress!,
+        body: ReturnExcessesBack { queryId: 203 },
+    });
+    testing.processSingleTraceStep(beneficiaryWallet, authenticAck);
+    expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(
+        FOUNDER_AMOUNT / 2,
+    );
+}

@@ -47,13 +47,16 @@
 ### Completed
 
 - [x] Created `docs/TON_CONNECT_FIVE_WALLET_PROOF.md` with the five-address allowlist, Mainnet-only policy, Founder-first flow, nonce/session requirements, StateInit/address binding, public-key validation, Ed25519 verification, replay prevention, Gram Wallet compatibility gate, evidence statuses, and explicit no-transaction boundary.
-- [x] Confirmed the existing backend codebase is under `contracts/mining/backend`; there is no confirmed production dApp hostname, TON Connect manifest, or browser wallet-connect UI in the inspected repository tree.
+- [x] Confirmed the existing backend codebase is under `contracts/mining/backend`; there is no confirmed production dApp hostname or browser wallet-connect UI in the inspected repository tree.
+- [x] Since the Founder has no custom domain, prepared a GitHub Pages project-site scaffold at `wallet-proof/index.html` and `wallet-proof/tonconnect-manifest.json`, using the registered canonical PNG logo. Proposed HTTPS origin: `https://vahidnemati3544-opsking.github.io/v-coin-TON`.
+- [ ] Enable GitHub Pages for the repository and publish the scaffold; then independently verify the public page, manifest JSON response, CORS behavior, and icon URL before using it in a wallet request.
 - [x] Confirmed that the backend currently has no wallet-proof routes. No live proof endpoint has been implemented or deployed by this documentation-only action.
 
 ### Pending implementation blockers
 
-- [ ] Founder selects/controls the production HTTPS dApp hostname.
-- [ ] Publish a TON Connect manifest on that hostname and bind backend proof verification to the exact hostname.
+- [x] Founder confirmed no custom domain is available; use the proposed free GitHub Pages project-site hostname for the initial proof prototype.
+- [ ] Enable and publish GitHub Pages; verify HTTPS reachability of the page, manifest, and icon before treating the hostname as active.
+- [ ] Bind backend proof verification to the exact published hostname.
 - [ ] Implement frontend TON Connect request flow and backend challenge/verification routes.
 - [ ] Implement reviewed wallet StateInit public-key extraction for supported wallet code versions, plus strict validation and tests.
 - [ ] Add durable one-time challenge/session storage, origin checks, and rate limits.

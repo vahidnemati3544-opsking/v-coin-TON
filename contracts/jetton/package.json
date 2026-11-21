@@ -9,7 +9,8 @@
     "verify": "npm run build && npm test",
     "prepare:mainnet": "npm run build && tsc -p tsconfig.deploy.json && node build-js/deploy/prepare-mainnet.js",
     "verify:metadata": "node scripts/verify-metadata.cjs",
-    "verify:mainnet-network": "node scripts/verify-mainnet-network.cjs"
+    "verify:mainnet-network": "node scripts/verify-mainnet-network.cjs",
+    "audit:manifest": "node scripts/create-audit-manifest.cjs"
   },
   "devDependencies": {
     "@tact-lang/compiler": "1.6.13",

@@ -227,8 +227,9 @@ describe("VCOIN founder four-year daily linear vesting", () => {
   });
 
 
-  test("rolls back released accounting after an authenticated downstream wallet bounce", async () => {
+  test("restores the source wallet and rolls back vesting after a simulated downstream bounce", async () => {
     await fundVesting();
+    const initialEscrowBalance = (await vestingWallet.getGetWalletData()).balance;
     blockchain.now = blockchain.now! + 365 * DAY;
     const claim = await vesting.send(
       owner.getSender(),
@@ -241,27 +242,37 @@ describe("VCOIN founder four-year daily linear vesting", () => {
       success: true,
     });
     expect((await vesting.getGetVestingData()).released).toBe(FOUNDER_ALLOCATION / 4n);
+    expect((await vestingWallet.getGetWalletData()).balance).toBe(initialEscrowBalance - FOUNDER_ALLOCATION / 4n);
 
-    // Sandbox-inject the callback emitted by the configured source Jetton
-    // wallet's bounced(TokenTransferInternal) handler.
-    const bounceBody = beginCell()
-      .storeUint(0x4557784e, 32) // crc32("JettonTransferBounce")
+    // Simulate the bounced TokenTransferInternal envelope from the beneficiary
+    // Jetton wallet. This executes the real source-wallet bounced handler,
+    // which restores its balance and emits JettonTransferBounce to its owner.
+    const bouncedBody = beginCell()
+      .storeUint(0xffffffff, 32)
+      .storeUint(0x178d4519, 32) // TokenTransferInternal
       .storeUint(8, 64)
       .storeCoins(FOUNDER_ALLOCATION / 4n)
       .endCell();
-    const recoveredMessage = internal({
-      to: vesting.address,
+    const bouncedMessage = internal({
+      to: vestingWallet.address,
       value: toNano("0.05"),
       bounce: false,
-      body: bounceBody,
+      body: bouncedBody,
     }) as any;
-    recoveredMessage.info.src = vestingWallet.address;
-    const recovered = await blockchain.sendMessage(recoveredMessage);
+    bouncedMessage.info.src = founderWallet.address;
+    bouncedMessage.info.bounced = true;
+    const recovered = await blockchain.sendMessage(bouncedMessage);
+    expect(recovered.transactions).toHaveTransaction({
+      from: founderWallet.address,
+      to: vestingWallet.address,
+      success: true,
+    });
     expect(recovered.transactions).toHaveTransaction({
       from: vestingWallet.address,
       to: vesting.address,
       success: true,
     });
+    expect((await vestingWallet.getGetWalletData()).balance).toBe(initialEscrowBalance);
     expect((await vesting.getGetVestingData()).released).toBe(0n);
   });
 

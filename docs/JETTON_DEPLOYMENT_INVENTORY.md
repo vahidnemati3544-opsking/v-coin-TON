@@ -7,6 +7,16 @@
 
 ## Verified repository state
 
+## Latest verified CI checkpoint — 2026-11-21 03:26 UTC
+
+- Current review-branch head: `7f9382e24f676138792397980917630bb15737fc`.
+- Jetton workflow #201 passed on this exact commit: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44861135006
+- Mining workflow #215 (push) and #216 (pull request) both passed on this exact commit: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44861128901 and https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44861135054
+- The mining workflow initially failed because the new API safety test imported the server without a `DATABASE_URL`. The test now supplies a syntactically valid test-only PostgreSQL URL when CI has not configured one; no database connection is opened by this route-only test.
+- These CI passes verify build/test workflows only. They do not mean the mining API is enabled, the Jetton is deployed, or any VCOIN has been minted or transferred.
+- PR #5 remains Draft and unmerged. PR #4 remains a separate Draft Acton/Tolk implementation branch; its deployment and bounce-path blockers remain open.
+
+
 - Active review branch: `audit/issuance-readiness-2026-11-21`.
 - Draft PR #5 remains open and unmerged: https://github.com/vahidnemati3544-opsking/v-coin-TON/pull/5
 - GitHub Actions run #177 completed successfully on the current reviewed branch state: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44836195642

@@ -44,6 +44,9 @@ function = "vcoinJettonWalletCompiledCode"
 
 [scripts]
 test-jetton-v2 = "acton test jetton-v2.1/tests"
+# Mainnet is pinned in the command; do not substitute testnet or a custom network.
+deploy-mainnet = "acton script scripts/deploy-vcoin-minter.tolk --net mainnet"
+deploy-mainnet-tonconnect = "acton script scripts/deploy-vcoin-minter.tolk --net mainnet --tonconnect"
 
 [import-mappings]
 acton = ".acton"

@@ -121,7 +121,7 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     const result = await master.send(
       owner.getSender(),
       { value: toNano('0.1') },
-      { $type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
+      { $$type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
     );
     expect(result.transactions).toHaveTransaction({
       from: owner.address,

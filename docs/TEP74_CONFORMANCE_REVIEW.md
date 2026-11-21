@@ -36,12 +36,12 @@ The founder vesting contract restores its `released` counter if the outgoing mes
 - Complete replay/idempotency analysis and additional adversarial transaction tests.
 - Compare every TEP-74 message bit layout, getter stack order, storage/gas assumptions and wallet derivation against the official reference implementation.
 - Complete TEP-64 metadata validation, including the final approved icon. The current off-chain JSON provides name, symbol, description and six decimals, but intentionally has no image field.
-- Implement and test the approved four-year founder vesting/escrow arrangement before any founder allocation is transferred.
+- Founder vesting source and daily-linear schedule are implemented with dedicated Sandbox tests. Before any founder allocation is transferred, resolve the downstream Jetton-wallet delivery-bounce accounting gap with authenticated recovery and adversarial Sandbox tests.
 - Obtain wallet-control proofs for all five intended destinations on the chosen network.
 - Obtain an independent smart-contract security audit of the exact source and compiled code hashes.
-- Deploy and verify on Testnet before any Mainnet deployment.
+- Respect the owner's direction to omit Testnet deployment; this does not waive reproducible builds, adversarial Sandbox tests, independent audit, wallet-control proofs, or explicit founder approval before Mainnet.
 - Add and review a deterministic deployment/transaction-building workflow; all wallet transactions must remain subject to founder inspection and signature.
 
 ## Conclusion
 
-The required-address mismatch was corrected and the current source builds and passes the expanded 18-test suite. This document is a source-level conformance checklist, not proof of complete TEP-74/TEP-64 compliance, independent security, Testnet deployment, or Mainnet readiness.
+The required-address mismatch was corrected and the source has passed the CI runs recorded above. Founder vesting source and tests exist, but downstream bounce recovery remains unresolved and blocks deployment/funding. This document is a source-level checklist, not proof of complete TEP-74/TEP-64 compliance, independent security, or Mainnet readiness.

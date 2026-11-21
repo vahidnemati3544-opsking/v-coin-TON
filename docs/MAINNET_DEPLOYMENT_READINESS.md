@@ -26,6 +26,16 @@ Run: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44890261
 
 This is CI evidence, not a third-party security audit or proof of Mainnet readiness.
 
+Latest exact-head verification: GitHub Actions #275 passed on current PR head `d8dc4046ed2f8bc8db7e1f4abd900b148889a730`:
+- Tact build and deployment-generator TypeScript compilation: passed.
+- Offline StateInit generator smoke test executed twice; BOC and manifest compared byte-for-byte: passed (dummy `example.invalid` metadata URI only).
+- Jest / TON Sandbox: 20/20 tests passed.
+- `npm audit --audit-level=high`: passed; zero reported vulnerabilities.
+
+Run: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44891342726
+
+The smoke test verifies deterministic serialization for test inputs only. It does not verify or approve the final production metadata URI, logo, Mainnet network identity, or a signed deployment transaction.
+
 ## 3. Binding project rules
 
 - Fixed total supply: 10,000,000,000 VCOIN; six decimals; no additional minting after the five category allocations complete.

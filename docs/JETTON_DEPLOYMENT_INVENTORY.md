@@ -35,7 +35,7 @@
 - Decimals: 6.
 - Maximum base units: 10000000000000000.
 - Additional minting: disabled after one exact initial issuance.
-- Founder: 2,000,000,000 VCOIN (20%; four-year vesting intended but not implemented).
+- Founder: 2,000,000,000 VCOIN (20%; four-year daily-linear vesting source and dedicated Sandbox tests are present; downstream bounce recovery remains a hard blocker).
 - Mining reserve: 5,000,000,000 VCOIN (50%; mining remains disabled until Telegram bot integration).
 - Treasury: 1,000,000,000 VCOIN (10%).
 - Liquidity / market: 1,000,000,000 VCOIN (10%).
@@ -89,7 +89,7 @@ These recorded addresses are candidates only. Recording an address does not prov
 1. **Bounce and recovery tests:** explicitly test failed destination-wallet delivery, bounce recovery, failed burn notification recovery and supply/balance invariants.
 2. **Replay/idempotency:** complete adversarial review and tests; distinguish TON message replay protection from application-level duplicate transaction handling.
 3. **Full TEP-74 / TEP-64 review:** complete comparison of every message bit layout, getter stack order, wallet behavior, gas assumptions, metadata serialization and wallet derivation against the active standards and official reference implementation.
-4. **Founder vesting:** four-year vesting/escrow is not implemented. Finalize start time, cliff and release schedule, then implement and test a disclosed vesting contract before transferring the founder allocation.
+4. **Founder vesting recovery:** the four-year daily-linear vesting source and dedicated Sandbox tests exist. Do not deploy or fund it until downstream Jetton-wallet delivery-bounce recovery is implemented, tested, and independently reviewed; preserve the approved zero-cliff schedule and founder beneficiary.
 5. **Wallet ownership:** prove control of all five destination wallets on the intended network.
 6. **Independent security review:** obtain a third-party smart-contract audit and record the exact reviewed source/compiler/build hashes.
 7. **Deployment workflow:** add a deterministic deploy/transaction builder that encodes the TEP-64 URI, records StateInit/code hashes and prepares exact wallet-signable transactions without custody of private keys.
@@ -111,7 +111,7 @@ These recorded addresses are candidates only. Recording an address does not prov
 | Bounce/replay recovery tests | Pending |
 | Full TEP-74 / TEP-64 conformance audit | Pending |
 | Metadata URI/content draft | Committed; logo approval pending |
-| Four-year founder vesting enforcement | Not implemented |
+| Four-year founder vesting source and schedule | Implemented; downstream bounce recovery blocks release |
 | Recipient wallet-control proofs | Pending |
 | Independent smart-contract audit | Pending |
 | Deployment transaction builder | Pending |
@@ -133,7 +133,7 @@ This section supersedes earlier readiness statements where they conflict with th
 
 ### Owner's deployment direction
 
-- The owner has directed the project to proceed toward **TON Mainnet** and not use Testnet as a deployment stage.
+- The owner has directed the project to proceed toward **TON Mainnet** without a Testnet deployment stage. This preference does not waive build reproducibility, adversarial Sandbox testing, independent audit, wallet-control proofs, or explicit transaction approval.
 - This is a deployment preference, not evidence of production safety and not a waiver of code correctness, adversarial testing, independent review, or explicit transaction approval.
 - No Testnet or Mainnet transaction has been broadcast. No VCOIN Jetton Master is deployed; no VCOIN has been minted or transferred.
 

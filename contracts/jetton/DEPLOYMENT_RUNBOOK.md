@@ -62,7 +62,7 @@ It creates `artifacts/mainnet-predeploy/state-init.boc` and `manifest.json` with
 4. TEP-64 JSON and commit-pinned image rendition are now recorded in `metadata.json` and the deployment template. Before production, Founder approval, independent public retrieval/content verification, and exact master-PNG binary replacement remain required.
 5. Founder verifies control of all five Mainnet allocation wallets and the owner wallet in their own wallet interfaces. Never share seed phrases or private keys.
 6. Independently reproduce the production StateInit and all hashes from the exact reviewed commit; verify expected Master address with an independent implementation.
-7. Independently verify actual TON Mainnet network identity before any wallet transaction. The offline builder's `--network mainnet` flag is only a label.
+7. Run `npm run verify:mainnet-network` immediately before any separately approved wallet transaction; it reads TON Center ConfigParam 19 and requires global ID `-239`. Independently confirm the active network in the signing wallet. The offline builder's `--network mainnet` flag remains only a label.
 8. Prepare a human-readable deployment transaction preview and exact fee estimate. Founder reviews the source/build hashes, owner, metadata, master address, StateInit, network and payload.
 9. After deployment, verify the on-chain code/data hashes, owner, metadata, supply getters and derived Jetton wallet addresses.
 10. Founder locally reviews and signs every deployment/configuration/issuance transaction. No automated broadcast or delegated signer.

@@ -88,3 +88,26 @@
 - [ ] Verify the Founder proof cryptographically using the WalletTg-specific checks; do not proceed to the other four wallets before success.
 
 **Current status:** official protocol compatibility path documented; no live connection, proof request, signature, or cryptographic verification has occurred. No transaction, deployment, mint, or transfer is authorized. Release remains HOLD / NO-GO.
+
+
+## Action 29 — Verify standalone Gram Wallet 26.11.1 proof compatibility
+
+**Purpose:** Resolve the distinction between the standalone Gram Wallet Android app used by the Founder and Telegram's native WalletTg account before attempting Founder wallet proof.
+
+### Completed
+
+- [x] Founder confirmed the installed wallet is the standalone Android app, not a wallet opened inside Telegram.
+- [x] Founder reported app version **26.11.1**.
+- [x] Founder confirmed Chrome is installed and the standalone app has no visible Browser, Discover, DApps, or Connect entry in its main interface.
+- [x] Reviewed the current TON Connect wallet registry: standalone `gramwallet` is listed for Android with its own universal link and declared `SendTransaction` / `SignData` features; the inspected registry entry does not declare `ton_proof`.
+- [x] Corrected `docs/GRAM_WALLET_TON_PROOF_COMPATIBILITY.md` to distinguish standalone Gram Wallet from Telegram's native WalletTg and to prohibit assuming WalletTg code/hash behavior without live StateInit evidence.
+
+### Pending
+
+- [ ] Obtain and configure an approved neutral HTTPS dApp domain and manifest. `vcoin.eu.org` is only a candidate; it is not registered or verified. EU.org describes registration as manually validated and says commercial sites should treat it as a last resort.
+- [ ] Implement the TON Connect frontend and backend nonce/proof verifier before connecting any wallet.
+- [ ] Test the exact standalone Gram Wallet 26.11.1 response for `ton_addr` and `ton_proof` only.
+- [ ] If `ton_proof` is absent or unsupported, record that exact app/build as unsupported for cryptographic Founder proof; do not substitute `SignData`, a verbal/address claim, or any transaction.
+- [ ] Do not proceed to the other four allocation wallets until the Founder proof succeeds.
+
+**Status:** compatibility research clarified; no dApp connection, proof request, signature, transaction, deployment, mint, or transfer has occurred. Mainnet remains HOLD / NO-GO.

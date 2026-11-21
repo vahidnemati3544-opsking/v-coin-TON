@@ -38,3 +38,8 @@ The output is not a signed external message and is not itself a wallet-ready tra
 - The script's target label is not a network identity guard. Its manifest explicitly records `network_connection_performed: false`; no artifact from this tool may be treated as proof of TON Mainnet identity. The read-only `npm run verify:mainnet-network` command now queries TON Center `getConfigParam(19)`, decodes the signed int32 from the returned cell, and fails unless the global ID is `-239`. Run it immediately before any separately approved transaction and independently confirm the active network in the signing wallet. This point-in-time check is not a signing or broadcast action and does not alter the offline builder's `network_identity_verified: false` field.
 - Five-category natural downstream-bounce Sandbox integration proof passed on PR head `cf362ef04990aebf928e17ebd380e0aef8b6f96f` (CI #302): each failed destination-wallet delivery bounced to Master, restored supply, and succeeded on exact-cap retry. Independent reproduction, external contract audit, full TEP-74/TEP-64 review, and wallet-control proofs remain mandatory.
 - PR #6 remains Draft and unmerged. No deployment, mint, transfer, signing, or broadcast is authorized by this utility.
+
+
+## Reproducible audit inventory
+
+CI runs the offline generator twice using the pinned production metadata URI and compares the StateInit BOC and builder manifest byte-for-byte. It then creates `audit-manifest.json` with SHA-256 and Git blob IDs for reviewed sources, configuration, canonical PNG, generated compiler outputs and candidate artifacts. The resulting ZIP is uploaded as an unsigned review artifact. This does not create, sign or broadcast a deployment transaction.

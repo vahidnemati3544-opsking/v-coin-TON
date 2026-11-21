@@ -106,3 +106,10 @@ No real-value transfer, token issuance, Mainnet deployment, or public mining lau
 - The five-wallet allocation manifest is in contracts/jetton/allocation/allocation-plan.json.
 - Executable Sandbox tests cover fixed destinations, exact amounts, owner authorization, underfunding, natural bounce rollback, retry, and final issuance lock.
 - CI success is necessary but does not replace independent review, dependency audit, or Testnet verification.
+
+## 10. Compiler and dependency maintenance
+
+- The CI dependency audit is captured as an artifact and the verification workflow fails when high or critical npm advisories are present.
+- Zod and protobufjs are pinned to patched versions through npm overrides; CI has verified that the Tact build and Sandbox suite still pass with these overrides.
+- The current Tact compiler package is upstream-deprecated in favor of Tolk. This is a toolchain-maintenance risk, not a demonstrated flaw in the compiled contract bytecode.
+- Before Mainnet release, an independent reviewer must assess the Tact toolchain and either approve its continued use for this fixed contract or require a Tolk migration. No Mainnet deployment is authorized by the CI result alone.

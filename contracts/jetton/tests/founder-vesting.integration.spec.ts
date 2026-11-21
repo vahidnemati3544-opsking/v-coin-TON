@@ -1,5 +1,5 @@
 import { beginCell, internal, toNano } from "@ton/core";
-import { Blockchain, SandboxContract, TreasuryContract } from "@ton/sandbox";
+import { Blockchain, SandboxContract, TreasuryContract, createShardAccount } from "@ton/sandbox";
 import { VCoinMaster } from "../build/VCoinMaster_VCoinMaster";
 import { VCoinJettonWallet } from "../build/VCoinMaster_VCoinJettonWallet";
 import { VCoinFounderVesting } from "../build/VCoinFounderVesting_VCoinFounderVesting";
@@ -227,53 +227,60 @@ describe("VCOIN founder four-year daily linear vesting", () => {
   });
 
 
-  test("restores the source wallet and rolls back vesting after a simulated downstream bounce", async () => {
+  test("naturally bounces a failed beneficiary-wallet delivery and rolls back vesting", async () => {
     await fundVesting();
     const initialEscrowBalance = (await vestingWallet.getGetWalletData()).balance;
+
+    // Install an active account at the beneficiary's deterministic Jetton-wallet
+    // address, retaining the real VCoin wallet code but corrupting its storage.
+    // The outgoing TokenTransferInternal therefore reaches TVM and fails during
+    // recipient execution. TON Sandbox must create the bounce itself.
+    const brokenRecipient = await VCoinJettonWallet.fromInit(owner.address, master.address);
+    await blockchain.setShardAccount(
+      founderWallet.address,
+      createShardAccount({
+        address: founderWallet.address,
+        code: brokenRecipient.init!.code,
+        data: beginCell().endCell(),
+        balance: toNano("1"),
+      }),
+    );
+
     blockchain.now = blockchain.now! + 365 * DAY;
     const claim = await vesting.send(
       owner.getSender(),
       { value: toNano("0.2") },
       { ["$" + "$" + "type"]: "ClaimFounderVesting", query_id: 8n } as any,
     );
+
     expect(claim.transactions).toHaveTransaction({
       from: vesting.address,
       to: vestingWallet.address,
       success: true,
     });
-    expect((await vesting.getGetVestingData()).released).toBe(FOUNDER_ALLOCATION / 4n);
-    expect((await vestingWallet.getGetWalletData()).balance).toBe(initialEscrowBalance - FOUNDER_ALLOCATION / 4n);
-
-    // Simulate the bounced TokenTransferInternal envelope from the beneficiary
-    // Jetton wallet. This executes the real source-wallet bounced handler,
-    // which restores its balance and emits JettonTransferBounce to its owner.
-    const bouncedBody = beginCell()
-      .storeUint(0xffffffff, 32)
-      .storeUint(0x178d4519, 32) // TokenTransferInternal
-      .storeUint(8, 64)
-      .storeCoins(FOUNDER_ALLOCATION / 4n)
-      .endCell();
-    const bouncedMessage = internal({
-      to: vestingWallet.address,
-      value: toNano("0.05"),
-      bounce: false,
-      body: bouncedBody,
-    }) as any;
-    bouncedMessage.info.src = founderWallet.address;
-    bouncedMessage.info.bounced = true;
-    const recovered = await blockchain.sendMessage(bouncedMessage);
-    expect(recovered.transactions).toHaveTransaction({
-      from: founderWallet.address,
-      to: vestingWallet.address,
+    expect(claim.transactions).toHaveTransaction({
+      from: vestingWallet.address,
+      to: founderWallet.address,
+      inMessageBounceable: true,
       success: true,
     });
-    expect(recovered.transactions).toHaveTransaction({
+    expect(claim.transactions).toHaveTransaction({
+      from: founderWallet.address,
+      to: vestingWallet.address,
+      inMessageBounced: true,
+      success: true,
+    });
+    expect(claim.transactions).toHaveTransaction({
       from: vestingWallet.address,
       to: vesting.address,
       success: true,
     });
+
+    // The real TVM failure must restore the escrow wallet and reverse the
+    // vesting counter; the Jetton master supply must remain unchanged.
     expect((await vestingWallet.getGetWalletData()).balance).toBe(initialEscrowBalance);
     expect((await vesting.getGetVestingData()).released).toBe(0n);
+    expect((await master.getGetJettonData()).total_supply).toBe(MAX_SUPPLY);
   });
 
   test("rejects an authenticated bounce amount larger than the released amount", async () => {

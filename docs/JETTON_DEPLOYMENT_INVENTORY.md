@@ -3,11 +3,19 @@
 **Document ID:** VCT-JETTON-INV-001  
 **Reviewed:** 2026-11-21  
 **Scope:** `vahidnemati3544-opsking/v-coin-TON` only  
-**Current result (superseded by the 2026-11-21 Acton/Tolk review below): legacy Tact checks passed; no Mainnet deployment, mint, or transfer has occurred.**
+**Current result:** PR #5 Tact candidate compiles and passes 27 Sandbox/Jest tests plus `npm ci` and the high-severity npm audit gate on current head `1ff1dbaddc5c6cc365a14ea1a7d4ed738a7ba9ca`; no Mainnet deployment, mint, or transfer has occurred.
 
 ## Verified repository state
 
-## Latest verified CI checkpoint — 2026-11-21 03:26 UTC
+## Latest verified CI checkpoint — 2026-11-21 06:47 UTC
+
+- Current PR #5 head: `1ff1dbaddc5c6cc365a14ea1a7d4ed738a7ba9ca`.
+- Jetton workflow #214 passed on this exact head: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44877153157
+- Result: build passed; all 27 Jest/Sandbox tests passed; `npm ci` passed; `npm audit --audit-level=high` passed with zero known vulnerabilities.
+- Backend workflow #227 passed on the same head: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44877153108
+- Mining workflow #229 was still running at the time of this checkpoint; do not record it as passed until completed.
+
+## Previous verified CI checkpoint — 2026-11-21 03:26 UTC
 
 - Current review-branch head: `7f9382e24f676138792397980917630bb15737fc`.
 - Jetton workflow #201 passed on this exact commit: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44861135006
@@ -45,7 +53,7 @@
 ## Latest founder-vesting CI evidence
 
 - GitHub Actions run #191 passed the build, all 25 Sandbox/policy tests, `npm ci` and the npm audit gate with zero known vulnerabilities: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44837612965
-- Founder vesting tests cover exact funding, start-clock behavior, forged notification rejection, one-time wallet configuration, daily linear accrual, no release before day one, full release at day 1,460 and prevention of duplicate claims.
+- Founder vesting tests cover exact funding, start-clock behavior, forged notification rejection, one-time wallet configuration, daily linear accrual, no release before day one, full release at day 1,460, prevention of duplicate claims, authenticated downstream-bounce callback rollback, and forged-callback rejection.
 - Run #191 passed on the vesting implementation/test commit. Later documentation-only commits have their own CI runs; check the current PR head before any release decision.
 - The vesting contract remains undeployed and unfunded. The escrow wallet address must be configured after deployment using the master getter. Independent audit and complete reproducible Sandbox verification remain mandatory; Testnet deployment is intentionally omitted by owner direction.
 
@@ -101,14 +109,14 @@ These recorded addresses are candidates only. Recording an address does not prov
 | Evidence | Status |
 |---|---|
 | Fixed supply and allocation arithmetic | Passed |
-| Contract build | Passed in CI #177 |
-| 18 Sandbox/policy tests | Passed in CI #177 |
-| `npm ci` | Passed in CI #173 |
-| npm audit | 0 vulnerabilities in CI #177 |
+| Contract build | Passed in current-head CI #214 |
+| 27 Sandbox/policy/vesting tests | Passed in current-head CI #214 |
+| `npm ci` | Passed in current-head CI #214 |
+| npm audit | 0 vulnerabilities in current-head CI #214 |
 | TEP-74 required response-destination correction | Implemented; build and tests passed |
 | TEP-89 optional owner-address behavior | Implemented and tested |
 | Committed package lockfile | Committed and verified by subsequent `npm ci` runs #175–#177 |
-| Bounce callback rollback / forgery Sandbox tests | Added; final-head CI pending |
+| Bounce callback rollback / forgery Sandbox tests | Passed in current-head CI #214 |
 | Natural downstream TVM bounce and balance invariants | Pending |
 | Full TEP-74 / TEP-64 conformance audit | Pending |
 | Metadata URI/content draft | Committed; logo approval pending |

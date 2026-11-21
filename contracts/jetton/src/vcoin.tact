@@ -58,8 +58,17 @@ contract VCoinMaster with JettonMaster {
 
     receive() {}
 
+    // GOVERNANCE INVARIANT (VCT-GOV-FOUNDER-001):
+    // Founder alone controls all five operational allocation wallets.
+    // Only the 2B Founder category is subject to four-year daily-linear vesting.
+    // Mining (5B), Treasury (1B), Liquidity (1B), and Ecosystem (1B) are
+    // ordinary transferable wallets under the Founder's exclusive authority;
+    // do not introduce escrow locks or third-party release controls for them.
+    //
     // The five destination owner-addresses are fixed once, before any issuance.
     // They must be distinct; changing them after configuration is impossible.
+    // The Founder destination must be integrated with the Founder vesting
+    // contract before release; this current stage does not yet enforce that link.
     receive(msg: VCoinConfigureAllocations) {
         require(context().sender == self.owner, "Unauthorized allocation configuration");
         require(!self.allocations_configured, "Allocations already configured");

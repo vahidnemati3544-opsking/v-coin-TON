@@ -9,7 +9,8 @@ This directory contains the authoritative design and security documents for the 
 - [Tokenomics](TOKENOMICS.md) — approved-for-design token supply and allocation.
 
 - [Founder Exclusive Five-Wallet Control](FOUNDER_EXCLUSIVE_FIVE_WALLET_CONTROL.md) — binding rule for exclusive Founder custody/signing authority over all five allocation wallets.
-- [Mainnet Release Action Tracker](MAINNET_RELEASE_ACTION_TRACKER.md) — current sequential release gates; Action 26 tracks per-address wallet-control evidence and exact-head deployment review.
+- [Mainnet Release Action Tracker](MAINNET_RELEASE_ACTION_TRACKER.md) — current sequential release gates; Actions 26–27 track wallet-control evidence and preparation of the five-wallet TON Connect proof flow.
+- [TON Connect Five-Wallet Proof](TON_CONNECT_FIVE_WALLET_PROOF.md) — non-spending Mainnet proof specification for all five Founder-controlled allocation wallets.
 
 Architecture documents describe intended behavior unless a section explicitly identifies functionality as implemented. They do not certify production readiness or authorize TON Mainnet deployment.
 

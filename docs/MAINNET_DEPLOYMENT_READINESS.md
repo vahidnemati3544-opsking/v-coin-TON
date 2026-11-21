@@ -1,3 +1,7 @@
+> **SUPERSEDED POLICY NOTICE — 2026-11-21:** The Founder has cancelled the paid independent audit requirement and elected to proceed under their own responsibility using internal engineering verification. The older independent-audit gate and checklist below are retained as historical context only and are not a current requirement. The current governing decision is `docs/FOUNDER_RISK_ACCEPTANCE.md` and internal verification tracker Issue #10. This waiver is not independent certification or a security guarantee. Exact transaction review and explicit Founder approval remain mandatory before any irreversible Mainnet action.
+
+---
+
 # V COIN–TON Mainnet Deployment Readiness
 
 **Document ID:** VCT-MAINNET-READY-001  

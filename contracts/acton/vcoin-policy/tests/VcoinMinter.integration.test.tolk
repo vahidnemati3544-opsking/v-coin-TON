@@ -2,6 +2,7 @@ import "@acton/emulation/network"
 import "@acton/emulation/testing"
 import "@acton/testing/expect"
 import "@acton/types/message"
+import "@acton/types/transaction"
 import "../../wrappers/VcoinMinter.gen"
 import "../../wrappers/VcoinVestingEscrow.gen"
 import "../../jetton-v2.1/contracts/messages"
@@ -676,4 +677,112 @@ get fun `test escrow rejects forged success acknowledgement from an unrelated se
     expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(
         FOUNDER_AMOUNT / 2,
     );
+}
+
+
+get fun `test VCOIN natural downstream TVM bounce rolls back vesting release`() {
+    testing.setNow(4000);
+    val (minter, admin, _, _) = setupVcoinMinter(false);
+
+    val configure = minter.sendConfigureVcoinEscrows(
+        admin.address,
+        301,
+        4000,
+        { value: grams("1.5"), bounce: true },
+    );
+    expect(configure).toHaveSuccessfulTx<ConfigureVcoinEscrows>({
+        from: admin.address,
+        to: minter.address,
+    });
+
+    val founderEscrowAddress = minter.getVcoinFounderEscrowAddress();
+    expect(founderEscrowAddress).toBeNotNull();
+    if (founderEscrowAddress == null) {
+        return;
+    }
+
+    val founderEscrow = VcoinVestingEscrow.fromAddress(founderEscrowAddress!);
+    val founderMint = mintAllocation(
+        minter,
+        admin,
+        founderEscrowAddress!,
+        FOUNDER_AMOUNT,
+        302,
+        grams("0.05"),
+    );
+    expect(founderMint).toHaveSuccessfulTx<MintNewJettons>({
+        from: admin.address,
+        to: minter.address,
+    });
+    expect(founderEscrow.getVcoinVestingDeposited()).toEqual(true);
+
+    val escrowJettonWallet = VcoinJettonWallet.fromAddress(
+        minter.getWalletAddress(founderEscrowAddress!),
+    );
+    val beneficiaryWalletAddress = minter.getWalletAddress(FOUNDER);
+    val beneficiaryWallet = VcoinJettonWallet.fromAddress(beneficiaryWalletAddress);
+    val supplyBefore = minter.getJettonData().totalSupply;
+
+    // Freeze the derived beneficiary Jetton-wallet account in emulator state.
+    // The escrow transfer will reach this real destination address and TVM will
+    // generate the RichBounce naturally; no synthetic bounce envelope is injected.
+    val baseShard = testing.getShardAccount(admin.address);
+    expect(baseShard).toBeNotNull();
+    if (baseShard == null) {
+        return;
+    }
+    val baseAccount = baseShard!.account.load();
+    expect(baseAccount is TlbAccountInfo).toBeTrue();
+    if (baseAccount is TlbAccountInfo) {
+        val frozenHash = beginCell().storeUint(0x11, 32).endCell().hash();
+        val frozenBeneficiaryAccount = TlbAccountInfo {
+            addr: beneficiaryWalletAddress,
+            storageStat: baseAccount.storageStat,
+            storage: {
+                lastTransLt: baseAccount.storage.lastTransLt,
+                balance: baseAccount.storage.balance,
+                state: TlbAccountStateFrozen { stateHash: frozenHash },
+            },
+        };
+        testing.setShardAccount(
+            beneficiaryWalletAddress,
+            TlbShardAccount {
+                account: (frozenBeneficiaryAccount as TlbAccount).toCell(),
+                lastTransHash: baseShard!.lastTransHash,
+                lastTransLt: baseShard!.lastTransLt,
+            },
+        );
+    }
+
+    testing.setNow(4000 + 126230400 / 2);
+    val failedRelease = createMessage({
+        bounce: true,
+        value: grams("0.6"),
+        dest: founderEscrowAddress!,
+        body: ReleaseVestedVcoin { queryId: 303 },
+    });
+    net.send(FOUNDER, failedRelease);
+
+    // The natural downstream bounce must restore wallet balance and clear
+    // pending escrow state without changing released amount or minter supply.
+    expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(0);
+    expect(escrowJettonWallet.getWalletData().jettonBalance).toEqual(FOUNDER_AMOUNT);
+    expect(minter.getJettonData().totalSupply).toEqual(supplyBefore);
+    expect(minter.getVcoinFounderAllocationStatus()).toEqual(2);
+
+    // Unfreeze the destination and retry with a fresh monotonic query ID.
+    testing.setShardAccount(beneficiaryWalletAddress, null);
+    val retryRelease = createMessage({
+        bounce: true,
+        value: grams("0.6"),
+        dest: founderEscrowAddress!,
+        body: ReleaseVestedVcoin { queryId: 304 },
+    });
+    net.send(FOUNDER, retryRelease);
+
+    expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(FOUNDER_AMOUNT / 2);
+    expect(escrowJettonWallet.getWalletData().jettonBalance).toEqual(FOUNDER_AMOUNT / 2);
+    expect(beneficiaryWallet.getWalletData().jettonBalance).toEqual(FOUNDER_AMOUNT / 2);
+    expect(minter.getJettonData().totalSupply).toEqual(supplyBefore);
+    expect(minter.getVcoinFounderAllocationStatus()).toEqual(2);
 }

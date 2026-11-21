@@ -68,12 +68,15 @@ The smoke test verifies deterministic serialization for test inputs only. It doe
 
 ## 5. Safe next work package
 
-**Action 25 — Prepare deterministic Mainnet deployment package (no broadcast): PARTIALLY IMPLEMENTED — canonical logo source correction recorded; production asset replacement, URI approval, and artifact remain pending**
+**Action 25 — Prepare deterministic Mainnet deployment package (no broadcast): PARTIALLY IMPLEMENTED — asset path and TEP-64 metadata URI corrected; exact master PNG replacement and approvals remain pending**
 
 - [x] Pinned Tact compiler/dependencies and committed lockfile.
 - [x] Added offline StateInit builder, source-commit guard, source/toolchain hashes, and manifest.
 - [x] CI #275 passed the build, generator type-check, two-run deterministic StateInit/manifest comparison, 20/20 contract tests and dependency audit on exact head `d8dc4046ed2f8bc8db7e1f4abd900b148889a730`.
-- [ ] Replace the repository's mismatched JPEG-with-.png logo asset with the exact Founder-selected 1254×1254 Library PNG (SHA-256 `08d71b17fecb86ae6006ba0fc498675dc4024b13d3f40459dcd578dfc09719d1`), then publish/pin and approve the exact metadata/logo URI.
+- [x] Corrected the repository display asset's MIME/extension mismatch: the 194,115-byte JPEG is now stored as `contracts/jetton/assets/vcoin-canonical-logo.jpg` (commit `1dac91b520de6b9d3dbf7d615128ff2ec3e95f5e`). It visually represents the approved V COIN artwork but is not byte-identical to the 1254×1254 Library PNG (SHA-256 `08d71b17fecb86ae6006ba0fc498675dc4024b13d3f40459dcd578dfc09719d1`).
+- [x] Published TEP-64 metadata JSON at the commit-pinned URL in commit `9fd9f2b119a0f6b3d343a7a0670ba430c3864aa3`; updated deployment template to reference the pinned metadata and image URLs.
+- [ ] Replace the JPEG rendition with the exact Founder-selected PNG binary in the public repository; confirm the image rendered from the pinned URL matches the master file byte-for-byte.
+- [ ] Founder approval and independent public retrieval/content verification of the final metadata/logo URI.
 - [ ] Independently reproduce and verify production artifacts using Founder-approved immutable metadata/logo URI.
 - [ ] Independently verify master address and StateInit serialization.
 - [ ] Design and review a human-readable deployment transaction preview; do not sign or broadcast.

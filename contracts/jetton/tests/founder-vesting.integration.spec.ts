@@ -1,4 +1,4 @@
-import { beginCell, toNano } from "@ton/core";
+import { beginCell, internal, toNano } from "@ton/core";
 import { Blockchain, SandboxContract, TreasuryContract } from "@ton/sandbox";
 import { VCoinMaster } from "../build/VCoinMaster_VCoinMaster";
 import { VCoinJettonWallet } from "../build/VCoinMaster_VCoinJettonWallet";
@@ -224,6 +224,72 @@ describe("VCOIN founder four-year daily linear vesting", () => {
     expect((await vesting.getGetVestingData()).released).toBe(FOUNDER_ALLOCATION);
     expect((await vestingWallet.getGetWalletData()).balance).toBe(0n);
     expect((await founderWallet.getGetWalletData()).balance).toBe(MAX_SUPPLY);
+  });
+
+
+  test("rolls back released accounting after an authenticated downstream wallet bounce", async () => {
+    await fundVesting();
+    blockchain.now = blockchain.now! + 365 * DAY;
+    const claim = await vesting.send(
+      owner.getSender(),
+      { value: toNano("0.2") },
+      { ["$" + "$" + "type"]: "ClaimFounderVesting", query_id: 8n } as any,
+    );
+    expect(claim.transactions).toHaveTransaction({
+      from: vesting.address,
+      to: vestingWallet.address,
+      success: true,
+    });
+    expect((await vesting.getGetVestingData()).released).toBe(FOUNDER_ALLOCATION / 4n);
+
+    // Sandbox-inject the callback emitted by the configured source Jetton
+    // wallet's bounced(TokenTransferInternal) handler.
+    const bounceBody = beginCell()
+      .storeUint(0x4557784e, 32) // crc32("JettonTransferBounce")
+      .storeUint(8, 64)
+      .storeCoins(FOUNDER_ALLOCATION / 4n)
+      .endCell();
+    const recovered = await blockchain.sendMessage(internal({
+      from: vestingWallet.address,
+      to: vesting.address,
+      value: toNano("0.05"),
+      bounce: false,
+      body: bounceBody,
+    }));
+    expect(recovered.transactions).toHaveTransaction({
+      from: vestingWallet.address,
+      to: vesting.address,
+      success: true,
+    });
+    expect((await vesting.getGetVestingData()).released).toBe(0n);
+  });
+
+  test("rejects a forged downstream bounce callback", async () => {
+    await fundVesting();
+    blockchain.now = blockchain.now! + 365 * DAY;
+    await vesting.send(
+      owner.getSender(),
+      { value: toNano("0.2") },
+      { ["$" + "$" + "type"]: "ClaimFounderVesting", query_id: 9n } as any,
+    );
+    const bounceBody = beginCell()
+      .storeUint(0x4557784e, 32)
+      .storeUint(9, 64)
+      .storeCoins(FOUNDER_ALLOCATION / 4n)
+      .endCell();
+    const forged = await blockchain.sendMessage(internal({
+      from: attacker.address,
+      to: vesting.address,
+      value: toNano("0.05"),
+      bounce: false,
+      body: bounceBody,
+    }));
+    expect(forged.transactions).toHaveTransaction({
+      from: attacker.address,
+      to: vesting.address,
+      aborted: true,
+    });
+    expect((await vesting.getGetVestingData()).released).toBe(FOUNDER_ALLOCATION / 4n);
   });
 
   test("does not permit a second claim for already released tokens", async () => {

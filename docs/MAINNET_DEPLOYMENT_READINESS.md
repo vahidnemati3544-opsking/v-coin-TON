@@ -122,3 +122,19 @@ GitHub Actions run #365 passed on exact PR head e75560a1e8c18f06027e1787badfe4ea
 - npm audit --audit-level=high: passed; zero reported vulnerabilities.
 
 This is project CI/emulator and read-only endpoint evidence, not an independent external smart-contract audit, wallet-control proof, signed transaction, or authorization to deploy. The PR remains Draft and unmerged; Mainnet release remains NO-GO pending independent audit/conformance review, Founder approval, wallet-control verification, independent artifact reproduction and exact transaction review.
+
+
+## 9. Unsigned Mainnet candidate package — CI run #375
+
+The production-metadata offline candidate workflow completed successfully on PR head `51421af667b47f7eb64e75a4dec792399aa11187` and generated merge commit `8b66e9bef50918e18c4995ef9b4032989babeea6`.
+
+- Run: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44930581309
+- Uploaded artifact: `vcoin-mainnet-predeploy-candidate-8b66e9bef50918e18c4995ef9b4032989babeea6` (ZIP SHA-256 `2106fff283e21144e6e42192ca8b77a7742a729c4f82fe75fd53f857b9675e30`).
+- Contents: `state-init.boc`, offline builder `manifest.json`, and `audit-manifest.json` inventorying 36 source/config/build/artifact files.
+- Candidate Master address (derived offline from the reviewed owner and pinned metadata URI): `UQD2yDIaHQ_uO2MxJBrQ2s_dMJrXA7OKRjb0J8IEUuPMGU38`.
+- StateInit BOC SHA-256: `b5318a2cef495a8e9421093a570aaeb604786147413d3d59967d5580901e8374`.
+- Audit inventory SHA-256: `6d43610da217104e07468636115ae61f449554199ad9b9962f6574c38fc660ed`.
+- Canonical PNG SHA-256 reverified in the inventory: `08d71b17fecb86ae6006ba0fc498675dc4024b13d3f40459dcd578dfc09719d1`.
+- Exact run result: metadata retrieval/hash PASS; Mainnet ConfigParam 19 global ID -239 PASS; production-metadata StateInit built twice and BOC/manifest matched byte-for-byte; 26/26 Sandbox tests passed; dependency audit reported zero vulnerabilities.
+
+The artifact is an **unsigned StateInit candidate**, not a signed deployment transaction. Its manifest explicitly says no network connection, no network identity verification by the offline builder, no transaction created, no signing, no broadcast, and no private key handling. Independent auditor reproduction and Founder approval remain mandatory. Any newer PR head requires its own fresh candidate artifact; do not reuse this package for a different source commit.

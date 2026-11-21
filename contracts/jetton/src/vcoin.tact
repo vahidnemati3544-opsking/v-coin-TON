@@ -12,6 +12,8 @@ message VCoinMint {
     amount: Int as coins;
 }
 
+message VCoinFund {}
+
 contract VCoinMaster with JettonMaster {
     total_supply: Int as coins = 0;
     mintable: Bool = true;
@@ -22,6 +24,7 @@ contract VCoinMaster with JettonMaster {
     treasury_wallet: Address;
     liquidity_wallet: Address;
     ecosystem_wallet: Address;
+    gas_operator_wallet: Address;
 
     founder_issued: Bool = false;
     mining_reserve_issued: Bool = false;
@@ -37,7 +40,8 @@ contract VCoinMaster with JettonMaster {
         miningReserveWallet: Address,
         treasuryWallet: Address,
         liquidityWallet: Address,
-        ecosystemWallet: Address
+        ecosystemWallet: Address,
+        gasOperatorWallet: Address
     ) {
         require(owner != miningReserveWallet, "Duplicate allocation wallet");
         require(owner != treasuryWallet, "Duplicate allocation wallet");
@@ -49,6 +53,11 @@ contract VCoinMaster with JettonMaster {
         require(treasuryWallet != liquidityWallet, "Duplicate allocation wallet");
         require(treasuryWallet != ecosystemWallet, "Duplicate allocation wallet");
         require(liquidityWallet != ecosystemWallet, "Duplicate allocation wallet");
+        require(gasOperatorWallet != owner, "Gas operator must be separate");
+        require(gasOperatorWallet != miningReserveWallet, "Gas operator must be separate");
+        require(gasOperatorWallet != treasuryWallet, "Gas operator must be separate");
+        require(gasOperatorWallet != liquidityWallet, "Gas operator must be separate");
+        require(gasOperatorWallet != ecosystemWallet, "Gas operator must be separate");
 
         self.total_supply = 0;
         self.mintable = true;
@@ -58,11 +67,20 @@ contract VCoinMaster with JettonMaster {
         self.treasury_wallet = treasuryWallet;
         self.liquidity_wallet = liquidityWallet;
         self.ecosystem_wallet = ecosystemWallet;
+        self.gas_operator_wallet = gasOperatorWallet;
         self.founder_issued = false;
         self.mining_reserve_issued = false;
         self.treasury_issued = false;
         self.liquidity_issued = false;
         self.ecosystem_issued = false;
+    }
+
+    // The separate GAS & OPERATIONS wallet funds the Master reserve. It is
+    // deliberately not an allocation destination and cannot issue VCOIN.
+    receive(msg: VCoinFund) {
+        let ctx: Context = context();
+        require(ctx.sender == self.gas_operator_wallet, "Unauthorized gas funding source");
+        require(ctx.value >= ton("0.75"), "Gas reserve deposit must be at least 0.75 TON");
     }
 
     // Owner-authorized allocation issuance. Each approved wallet can receive
@@ -72,7 +90,8 @@ contract VCoinMaster with JettonMaster {
         let ctx: Context = context();
         require(ctx.sender == self.owner, "Unauthorized issuance authority");
         require(self.mintable, "All allocations already issued");
-        require(ctx.value >= ton("0.1"), "Insufficient TON for wallet deployment");
+        require(ctx.value >= ton("0.01"), "Insufficient TON for issuance request");
+        require(myBalance() >= ton("0.15"), "Master gas reserve is insufficient");
         require(self.total_supply + msg.amount <= VCOIN_MAX_SUPPLY, "Fixed supply exceeded");
 
         if (msg.receiver == self.owner) {
@@ -169,6 +188,10 @@ contract VCoinMaster with JettonMaster {
             liquidity_wallet: self.liquidity_wallet,
             ecosystem_wallet: self.ecosystem_wallet
         };
+    }
+
+    get fun get_gas_operator_wallet(): Address {
+        return self.gas_operator_wallet;
     }
 
     get fun get_allocation_status(): VCoinAllocationStatus {

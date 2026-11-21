@@ -679,7 +679,6 @@ get fun `test escrow rejects forged success acknowledgement from an unrelated se
     );
 }
 
-
 get fun `test VCOIN natural downstream TVM bounce rolls back vesting release`() {
     testing.setNow(4000);
     val (minter, admin, _, _) = setupVcoinMinter(false);

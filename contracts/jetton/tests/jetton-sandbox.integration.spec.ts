@@ -1,4 +1,4 @@
-import { beginCell, toNano } from "@ton/core";
+import { beginCell, internal, toNano } from "@ton/core";
 import { Blockchain, SandboxContract, TreasuryContract } from "@ton/sandbox";
 import { VCoinMaster } from "../build/VCoinMaster_VCoinMaster";
 import { VCoinJettonWallet } from "../build/VCoinMaster_VCoinJettonWallet";
@@ -428,6 +428,56 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       to: master.address,
       aborted: true,
     });
+    expect((await master.getGetJettonData()).total_supply).toBe(MAX_SUPPLY);
+  });
+
+  test("restores wallet balance after a simulated bounced burn notification", async () => {
+    await issueFullSupply();
+    const founderWallet = await walletFor(owner.address);
+    const burnAmount = 7n * ONE_TOKEN;
+    const initialBalance = (await founderWallet.getGetWalletData()).balance;
+
+    const burn = await founderWallet.send(
+      owner.getSender(),
+      { value: toNano("0.2") },
+      {
+        ["$" + "$" + "type"]: "TokenBurn",
+        query_id: 77n,
+        amount: burnAmount,
+        response_destination: owner.address,
+        custom_payload: null,
+      } as any,
+    );
+    expect(burn.transactions).toHaveTransaction({
+      from: founderWallet.address,
+      to: master.address,
+      success: true,
+    });
+    expect((await founderWallet.getGetWalletData()).balance).toBe(initialBalance - burnAmount);
+
+    // Simulate the bounced TokenBurnNotification from the master. This runs
+    // the wallet's actual bounced(TokenBurnNotification) recovery handler.
+    const bouncedBody = beginCell()
+      .storeUint(0xffffffff, 32)
+      .storeUint(0x7bdd97de, 32) // TokenBurnNotification
+      .storeUint(77, 64)
+      .storeCoins(burnAmount)
+      .endCell();
+    const bouncedMessage = internal({
+      to: founderWallet.address,
+      value: toNano("0.05"),
+      bounce: false,
+      body: bouncedBody,
+    }) as any;
+    bouncedMessage.info.src = master.address;
+    bouncedMessage.info.bounced = true;
+    const recovered = await blockchain.sendMessage(bouncedMessage);
+    expect(recovered.transactions).toHaveTransaction({
+      from: master.address,
+      to: founderWallet.address,
+      success: true,
+    });
+    expect((await founderWallet.getGetWalletData()).balance).toBe(initialBalance);
     expect((await master.getGetJettonData()).total_supply).toBe(MAX_SUPPLY);
   });
 

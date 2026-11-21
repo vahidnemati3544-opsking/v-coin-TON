@@ -91,3 +91,18 @@ The smoke test verifies deterministic serialization for test inputs only. It doe
 Only after every blocker in Section 4 is evidenced as closed may a separate Mainnet deployment proposal be presented. The Founder must inspect and approve the exact final source hash, compiler/build hash, network, StateInit, destination and fee payload before signing.
 
 **Current state: NOT DEPLOYED. NO MINT. NO TRANSFER. NO MAINNET BROADCAST.**
+
+
+## 7. Corrective audit actions — 2026-11-21
+
+The following code and documentation corrections were committed to the review branch after the earlier evidence recorded above. Older commit references in Sections 1–6 are historical checkpoints and do not describe the latest branch head.
+
+1. **Burn-before-final-allocation invariant:** the Master now locks minting when all five immutable category-issued flags are true; it no longer requires net total_supply to equal the original maximum, because valid burns reduce net supply. A regression test burns tokens after the first category and before the fifth, verifies the remaining allocations complete, checks net supply, and confirms further issuance is rejected. Exact-head CI is still required.
+2. **GitHub Actions permissions:** Jetton PR workflow now has contents: read, uses pinned action commit SHAs, removes automatic lockfile mutation/branch push, and no longer checks out an untrusted PR branch with write permissions.
+3. **Allocation-manifest governance:** obsolete founder_vesting and four-year vesting language were removed; the Founder allocation is recorded as an ordinary immediately transferable allocation under the approved Founder authority policy.
+4. **Testnet policy:** Jetton contract specification now states Mainnet-only deployment review and explicitly excludes Testnet deployment. Sandbox tests remain allowed and are not a Testnet deployment.
+5. **Network identity:** offline builder manifest now explicitly records network_identity_verified: false. It cannot prove the active TON network. A separately reviewed Mainnet identity verifier remains a hard NO-GO blocker; no transaction assembly, signing or broadcast is permitted on the basis of the --network mainnet label.
+6. **Canonical logo:** the exact PNG is already committed at contracts/jetton/assets/VCOIN-canonical-logo.png; Git blob SHA 278e852eb43f4dea8057331749db018395e96358, source SHA-256 08d71b17fecb86ae6006ba0fc498675dc4024b13d3f40459dcd578dfc09719d1. Metadata now points to that case-sensitive path, not the JPEG rendition. CI validator fetches pinned metadata and PNG and checks MIME, dimensions, byte count and SHA-256. Public verification must pass on the exact head.
+7. **Metadata validation:** added scripts/verify-metadata.cjs and npm run verify:metadata, wired into the Jetton workflow against immutable commit-pinned metadata and image URLs. The validator compares public JSON with the checked-in metadata and validates the canonical image bytes.
+
+**Remaining release blockers:** exact-head CI must pass; the Mainnet network-identity verifier is not yet implemented; Founder approval of the exact metadata/artwork pair remains pending; independent smart-contract audit and independent TEP-74/TEP-64 review remain outstanding; all five wallet-control proofs, independent artifact reproduction, fee/payload review, and explicit approval of any exact Mainnet transaction remain outstanding. The Draft PR must not be merged or deployed until these are closed. No transaction has been signed or broadcast.

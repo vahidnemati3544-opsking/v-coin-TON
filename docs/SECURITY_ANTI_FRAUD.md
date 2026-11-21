@@ -113,3 +113,10 @@ No real-value transfer, token issuance, Mainnet deployment, or public mining lau
 - Zod and protobufjs are pinned to patched versions through npm overrides; CI has verified that the Tact build and Sandbox suite still pass with these overrides.
 - The current Tact compiler package is upstream-deprecated in favor of Tolk. This is a toolchain-maintenance risk, not a demonstrated flaw in the compiled contract bytecode.
 - Before Mainnet release, an independent reviewer must assess the Tact toolchain and either approve its continued use for this fixed contract or require a Tolk migration. No Mainnet deployment is authorized by the CI result alone.
+
+## 11. Founder vesting release gate
+
+- The approved tokenomics specifies a four-year founder vesting period.
+- The current VCoinMaster fixed-allocation logic credits the founder's 2,000,000,000 VCOIN allocation directly to the configured founder wallet; it does not itself lock or vest those tokens.
+- The vesting schedule, beneficiary custody model, and vesting contract must be specified, implemented, and independently reviewed before any Mainnet issuance.
+- Until that work is complete, the current source must not be treated as Mainnet-ready, even though fixed allocation and Sandbox tests pass.

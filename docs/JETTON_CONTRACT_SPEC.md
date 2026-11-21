@@ -30,7 +30,7 @@ The total supply is 10^16 base units. All token arithmetic must use integer base
 
 1. **Jetton Master (minter):** authoritative total supply, admin/issuance state, metadata, wallet code and deterministic owner-wallet derivation.
 2. **Jetton Wallet:** one contract instance per owner, implementing standard Jetton balance and transfer behavior.
-3. **Allocation / vesting controls:** separate contracts or independently reviewed wallet controls for allocations that require restrictions. These are not substitutes for the standard Jetton Master or Wallet.
+3. **Allocation controls:** owner-authorized, one-time category issuance caps and five ordinary transferable owner wallets. No allocation vesting or escrow contract is part of the approved design.
 4. **Off-chain deployment and verification scripts:** reproducible compilation, state initialization, deployment, getter verification and address manifest.
 
 The implementation must follow the active TEP-74 interface and TON security recommendations. TEP-89 wallet discovery may be added if the selected implementation supports it and interoperability tests pass.
@@ -97,7 +97,7 @@ Metadata mutability must be explicitly decided before implementation. Recommende
 
 ### 8.1 Founder allocation — 2 billion VCOIN
 
-The approved economic rule is four-year vesting. The exact start timestamp, cliff (if any), release frequency, beneficiary wallet and revocation policy have not been supplied. No vesting contract may be deployed until these parameters are explicitly approved and independently reviewed. No founder identity or confidential address should be placed in public documentation.
+The full Founder allocation is immediately and fully transferable under the Founder's sole authority. No four-year vesting, cliff, daily release, escrow, time lock, withdrawal ceiling, or vesting contract is permitted. The category must be issued directly to the Founder's ordinary Jetton wallet.
 
 ### 8.2 Mining reserve — 5 billion VCOIN
 
@@ -107,7 +107,7 @@ The approved mining rule is separate from the Jetton token contract: the next mi
 
 ### 8.3 Treasury, liquidity and ecosystem allocations
 
-Each destination and its controller must be owner-confirmed. Custody model, multisig threshold, timelocks, vesting/lock conditions and operational policies must be specified in separate reviewed documents before any transfer or deployment. Do not publish confidential controller identities or addresses.
+Each destination and its controller must be owner-confirmed. All four allocations are ordinary transferable Jetton balances under the Founder's exclusive authority. Wallet separation is for accounting and reporting only; no escrow, timelock, multisig approval, or third-party release controller may restrict Founder-authorized transfers. Do not publish confidential controller identities or addresses.
 
 ## 9. Admin, upgradeability and custody
 
@@ -145,7 +145,7 @@ Before Testnet deployment:
 - Select and pin the contract language/compiler and a maintained TEP-74 implementation.
 - Complete Master and Wallet source code, build configuration, deployment scripts and automated tests.
 - Obtain owner approval for all five destination addresses and any distribution vault.
-- Resolve founder vesting start, release schedule and beneficiary.
+- Verify direct Founder-wallet issuance and confirm no vesting or escrow contract is included in the active build.
 - Resolve treasury/liquidity/ecosystem custody and controller arrangements.
 - Reproducibly compile and verify contract artifacts.
 - Complete independent smart-contract review.
@@ -157,7 +157,7 @@ Mainnet deployment, initial issuance on Mainnet, liquidity provision, irreversib
 
 ## 12. Change control
 
-Any change to supply, decimals, allocation, mint prohibition, wallet transfer semantics, admin powers, metadata mutability, vesting or mining reserve controls requires a documented change request, impact analysis, tests and explicit project-owner approval.
+Any change to supply, decimals, allocation, mint prohibition, wallet transfer semantics, admin powers, metadata mutability, unrestricted allocation custody and mining reserve controls requires a documented change request, impact analysis, tests and explicit project-owner approval.
 
 ## 13. Official standards and technical references
 

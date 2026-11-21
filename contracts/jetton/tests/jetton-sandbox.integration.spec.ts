@@ -196,6 +196,43 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
     expect(data.mintable).toBe(false);
   });
 
+  test("burning before the final allocation does not block completion or reopen minting", async () => {
+    await configureAllocations();
+    await issueCategory(1);
+    const founderWallet = await walletFor(owner.address);
+    const burnAmount = 3n * ONE_TOKEN;
+    const burn = await founderWallet.send(
+      owner.getSender(),
+      { value: toNano("0.2") },
+      {
+        ["$" + "$" + "type"]: "TokenBurn",
+        query_id: 300n,
+        amount: burnAmount,
+        response_destination: owner.address,
+        custom_payload: null,
+      } as any,
+    );
+    expect(burn.transactions).toHaveTransaction({
+      from: founderWallet.address,
+      to: master.address,
+      success: true,
+    });
+    for (const category of [2, 3, 4, 5]) await issueCategory(category);
+    const data = await master.getGetJettonData();
+    expect(data.total_supply).toBe(MAX_SUPPLY - burnAmount);
+    expect(data.mintable).toBe(false);
+    const secondAttempt = await master.send(
+      owner.getSender(),
+      { value: toNano("0.2") },
+      { ["$" + "$" + "type"]: "VCoinMintAllocation", category: 1 } as any,
+    );
+    expect(secondAttempt.transactions).toHaveTransaction({
+      from: owner.address,
+      to: master.address,
+      aborted: true,
+    });
+  });
+
   test("transfers Jettons to a recipient wallet and preserves total supply", async () => {
     await issueFullSupply();
     const founderWallet = await walletFor(owner.address);

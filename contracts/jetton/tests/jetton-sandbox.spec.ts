@@ -13,11 +13,13 @@ const MAX_SUPPLY = 10_000_000_000_000_000n;
 async function deployMaster(
   blockchain: Blockchain,
   owner: SandboxContract<TreasuryContract>,
+  fundMaster: boolean = true,
 ) {
   const miningReserve = await blockchain.treasury('mining-reserve');
   const treasury = await blockchain.treasury('treasury');
   const liquidity = await blockchain.treasury('liquidity');
   const ecosystem = await blockchain.treasury('ecosystem');
+  const gasOperator = await blockchain.treasury('gas-operations');
   const master = blockchain.openContract(
     await VCoinMaster.fromInit(
       owner.address,
@@ -26,10 +28,11 @@ async function deployMaster(
       treasury.address,
       liquidity.address,
       ecosystem.address,
+      gasOperator.address,
     ),
   );
   const deployment = await master.send(
-    owner.getSender(),
+    gasOperator.getSender(),
     { value: toNano('0.1') },
     {
       $$type: 'ProvideWalletAddress',
@@ -42,7 +45,19 @@ async function deployMaster(
     to: master.address,
     success: true,
   });
-  return { master, miningReserve, treasury, liquidity, ecosystem };
+  if (fundMaster) {
+    const funding = await master.send(
+      gasOperator.getSender(),
+      { value: toNano('0.75') },
+      { $$type: 'VCoinFund' },
+    );
+    expect(funding.transactions).toHaveTransaction({
+      from: gasOperator.address,
+      to: master.address,
+      success: true,
+    });
+  }
+  return { master, miningReserve, treasury, liquidity, ecosystem, gasOperator };
 }
 
 describe('VCOIN Jetton Sandbox release gates', () => {
@@ -94,10 +109,71 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     expect((await master.getGetJettonData()).total_supply).toBe(FOUNDER_ALLOCATION);
   });
 
+  test('accepts Master gas funding only from the separate GAS & OPERATIONS wallet', async () => {
+    const blockchain = await Blockchain.create();
+    const owner = await blockchain.treasury('owner');
+    const attacker = await blockchain.treasury('attacker');
+    const { master, gasOperator } = await deployMaster(blockchain, owner, false);
+
+    const ownerMintFromGasWallet = await master.send(
+      gasOperator.getSender(),
+      { value: toNano('0.01') },
+      { $$type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
+    );
+    expect(ownerMintFromGasWallet.transactions).toHaveTransaction({
+      to: master.address,
+      success: false,
+    });
+
+    const ownerFunding = await master.send(
+      owner.getSender(),
+      { value: toNano('0.75') },
+      { $$type: 'VCoinFund' },
+    );
+    expect(ownerFunding.transactions).toHaveTransaction({
+      to: master.address,
+      success: false,
+    });
+
+    const unauthorizedFunding = await master.send(
+      attacker.getSender(),
+      { value: toNano('1') },
+      { $$type: 'VCoinFund' },
+    );
+    expect(unauthorizedFunding.transactions).toHaveTransaction({
+      to: master.address,
+      success: false,
+    });
+
+    const authorizedFunding = await master.send(
+      gasOperator.getSender(),
+      { value: toNano('0.75') },
+      { $$type: 'VCoinFund' },
+    );
+    expect(authorizedFunding.transactions).toHaveTransaction({
+      from: gasOperator.address,
+      to: master.address,
+      success: true,
+    });
+    expect((await master.getGetJettonData()).total_supply).toBe(0n);
+
+    const issued = await master.send(
+      owner.getSender(),
+      { value: toNano('0.01') },
+      { $$type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
+    );
+    expect(issued.transactions).toHaveTransaction({
+      from: owner.address,
+      to: master.address,
+      success: true,
+    });
+    expect((await master.getGetJettonData()).total_supply).toBe(FOUNDER_ALLOCATION);
+  });
+
   test('rejects an underfunded allocation before changing supply', async () => {
     const blockchain = await Blockchain.create();
     const owner = await blockchain.treasury('owner');
-    const { master } = await deployMaster(blockchain, owner);
+    const { master } = await deployMaster(blockchain, owner, false);
 
     const underfunded = await master.send(
       owner.getSender(),
@@ -113,14 +189,14 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     expect(data.mintable).toBe(true);
   });
 
-  test('accepts the documented minimum TON funding threshold', async () => {
+  test('accepts a 0.01 TON owner request using the separate Master gas reserve', async () => {
     const blockchain = await Blockchain.create();
     const owner = await blockchain.treasury('owner');
     const { master } = await deployMaster(blockchain, owner);
 
     const result = await master.send(
       owner.getSender(),
-      { value: toNano('0.1') },
+      { value: toNano('0.01') },
       { $$type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
     );
     expect(result.transactions).toHaveTransaction({
@@ -160,7 +236,7 @@ describe('VCOIN Jetton Sandbox release gates', () => {
   test('distributes exactly the five immutable allocations and then disables issuance', async () => {
     const blockchain = await Blockchain.create();
     const owner = await blockchain.treasury('owner');
-    const { master, miningReserve, treasury, liquidity, ecosystem } = await deployMaster(blockchain, owner);
+    const { master, miningReserve, treasury, liquidity, ecosystem, gasOperator } = await deployMaster(blockchain, owner);
 
     const expected = [
       { address: owner.address, amount: FOUNDER_ALLOCATION },
@@ -176,11 +252,12 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     expect(config.treasury_wallet.toString()).toBe(treasury.address.toString());
     expect(config.liquidity_wallet.toString()).toBe(liquidity.address.toString());
     expect(config.ecosystem_wallet.toString()).toBe(ecosystem.address.toString());
+    expect((await master.getGetGasOperatorWallet()).toString()).toBe(gasOperator.address.toString());
 
     for (const allocation of expected) {
       const result = await master.send(
         owner.getSender(),
-        { value: toNano('0.5') },
+        { value: toNano('0.01') },
         { $$type: 'VCoinMint', receiver: allocation.address, amount: allocation.amount },
       );
       expect(result.transactions).toHaveTransaction({

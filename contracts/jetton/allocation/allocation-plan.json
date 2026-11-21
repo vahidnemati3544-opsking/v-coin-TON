@@ -50,6 +50,8 @@
     "After all five wallet credits succeed, minting is permanently disabled.",
     "Never send Mainnet transactions from CI.",
     "Verify the deployed Master allocation config against the approved operational register before signing any issuance messages.",
-    "Reconcile each Jetton wallet balance against this manifest after issuance."
+    "Reconcile each Jetton wallet balance against this manifest after issuance.",
+    "The separate GAS & OPERATIONS wallet is a non-allocation gasOperatorWallet; it can fund the Master gas reserve but cannot issue VCOIN.",
+    "The founder/owner signs each VCoinMint request with at least 0.01 TON; the Master reserve funds 0.1 TON for each destination wallet credit."
   ]
 }

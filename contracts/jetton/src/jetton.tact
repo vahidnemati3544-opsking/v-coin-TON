@@ -52,9 +52,9 @@ trait JettonMaster {
         let init: StateInit = self.walletInit(receiver);
         send(SendParameters{
             to: contractAddress(init),
-            value: 0,
+            value: ton("0.1"),
             bounce: true,
-            mode: SendRemainingValue,
+            mode: SendPayGasSeparately,
             body: TokenTransferInternal{
                 query_id: 0,
                 amount: amount,

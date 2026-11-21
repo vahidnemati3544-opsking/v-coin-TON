@@ -120,3 +120,12 @@ No real-value transfer, token issuance, Mainnet deployment, or public mining lau
 - The current VCoinMaster fixed-allocation logic credits the founder's 2,000,000,000 VCOIN allocation directly to the configured founder wallet; it does not itself lock or vest those tokens.
 - The vesting schedule, beneficiary custody model, and vesting contract must be specified, implemented, and independently reviewed before any Mainnet issuance.
 - Until that work is complete, the current source must not be treated as Mainnet-ready, even though fixed allocation and Sandbox tests pass.
+
+## 12. Separate operational gas reserve
+
+- The separately registered GAS & OPERATIONS wallet is stored as an immutable gas-operator address in VCoinMaster StateInit.
+- It may send VCoinFund messages to seed the Master contract with at least 0.75 TON for the five Jetton wallet-credit operations.
+- This address is not a VCOIN allocation destination and is not authorized to issue VCOIN; only the founder/owner can submit VCoinMint messages.
+- VCoinMaster sends 0.1 TON from its own reserve for each allocation wallet credit. The owner-signed VCoinMint request needs at least 0.01 TON for its own processing.
+- CI tests reject gas funding from any other sender and verify that the separate fee wallet can fund the Master without receiving VCOIN.
+- No operational-fee top-up or blockchain transaction has been made by this code change.

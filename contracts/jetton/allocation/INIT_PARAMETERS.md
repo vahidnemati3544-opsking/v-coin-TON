@@ -13,7 +13,8 @@ VCoinMaster(
   miningReserveWallet,
   treasuryWallet,
   liquidityWallet,
-  ecosystemWallet
+  ecosystemWallet,
+  gasOperatorWallet
 )
 ```
 
@@ -27,6 +28,7 @@ VCoinMaster(
 | treasuryWallet | Treasury — 10% / 1,000,000,000 VCOIN | docs/WALLET_ALLOCATION_REGISTER.md, Treasury row |
 | liquidityWallet | Liquidity and market — 10% / 1,000,000,000 VCOIN | docs/WALLET_ALLOCATION_REGISTER.md, Liquidity and market row |
 | ecosystemWallet | Ecosystem and marketing — 10% / 1,000,000,000 VCOIN | docs/WALLET_ALLOCATION_REGISTER.md, Ecosystem and marketing row |
+| gasOperatorWallet | GAS & OPERATIONS — TON fee funding only; not a VCOIN allocation | docs/WALLET_ALLOCATION_REGISTER.md, Separate operational network-fee wallet section |
 
 ## Mandatory pre-deployment checks
 
@@ -34,12 +36,13 @@ VCoinMaster(
 2. Exclude the separate GAS & OPERATIONS wallet. It is not a VCOIN allocation destination.
 3. Verify the intended network and address control without requesting or storing seed phrases.
 4. Confirm the five addresses are pairwise distinct. The constructor also rejects duplicates.
-5. After deployment, call get_allocation_config and compare all five returned addresses against the register.
-6. Do not issue any VCOIN until the independent review and explicit Mainnet approval are complete.
+5. Confirm gasOperatorWallet is the separate GAS & OPERATIONS address and is distinct from all five allocation addresses.
+6. After deployment, call get_allocation_config and get_gas_operator_wallet; compare all returned addresses against the register.
+7. Do not issue any VCOIN until the independent review and explicit Mainnet approval are complete.
 
 ## Issuance procedure
 
-The founder/owner sends five separate VCoinMint messages, one per allocation, using the exact amount for the corresponding configured destination. Each request must attach at least 0.1 TON. A role becomes complete only after its deterministic Jetton wallet successfully receives the credit. A natural bounce rolls back only that role and permits that exact allocation to be retried. Once all five roles are credited, mintable becomes false.
+First, the separate GAS & OPERATIONS wallet sends a VCoinFund message with at least 0.75 TON to seed the Master contract's gas reserve. This wallet is not authorized to issue VCOIN. The founder/owner then sends five separate VCoinMint messages, one per allocation, using the exact amount for the corresponding configured destination and attaching at least 0.01 TON per request. The Master pays 0.1 TON from its reserved balance for each deterministic Jetton wallet credit. A role becomes complete only after its Jetton wallet successfully receives the credit. A natural bounce rolls back only that role and permits that exact allocation to be retried. Once all five roles are credited, mintable becomes false.
 
 ## Release caveat
 

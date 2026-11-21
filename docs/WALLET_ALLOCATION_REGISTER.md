@@ -2,7 +2,7 @@
 
 **Document ID:** VCT-WALLET-ALLOC-001  
 **Version:** 1.1  
-**Status:** Owner-designated allocation destinations; on-chain verification pending  
+**Status:** Owner-designated allocation destinations; fixed-role enforcement implemented in VCoinMaster source; deployed-address verification pending  
 **Network:** TON Blockchain  
 **Token:** VCOIN Jetton (TEP-74)  
 **Total initial supply:** 10,000,000,000 VCOIN  
@@ -46,7 +46,11 @@ The separate fee wallet address is owner-provided; control and network format mu
 - Any Gram Wallet address is likewise outside this five-address allocation map unless the project owner explicitly approves a change.
 - Do not infer wallet ownership from a pasted address. Before signing or sending, verify each address on the intended TON network and complete an appropriate wallet-control/signature check where required.
 
-## 5. Required pre-transfer verification
+## 5. Contract initialization mapping
+
+The VCoinMaster constructor reads these addresses in the following role order: founder as owner; mining reserve; treasury; liquidity and market; ecosystem and marketing. Do not pass the register's table order directly as positional constructor arguments. The exact constructor argument order and pre-deployment checks are documented in contracts/jetton/allocation/INIT_PARAMETERS.md. The separate GAS & OPERATIONS wallet is excluded.
+
+## 6. Required pre-transfer verification
 
 Before any real VCOIN issuance or transfer:
 
@@ -59,7 +63,7 @@ Before any real VCOIN issuance or transfer:
 7. Obtain the project owner's explicit approval before any Mainnet issuance or transfer.
 8. Before depositing TON into the fee wallet, verify its address in Tonkeeper and confirm the intended network.
 
-## 6. Accounting controls
+## 7. Accounting controls
 
 All amounts must be stored and calculated as integer base units. With six decimals:
 
@@ -70,7 +74,7 @@ All amounts must be stored and calculated as integer base units. With six decima
 
 Allocation accounting must be capped at the approved amount for each category. A database record or backend balance is not proof of an on-chain transfer.
 
-## 7. Change control
+## 8. Change control
 
 Any replacement, addition, removal or reassignment of an allocation address requires explicit project-owner approval and a new version of this register. Update all dependent deployment templates and allocation documentation in the same controlled change.
 

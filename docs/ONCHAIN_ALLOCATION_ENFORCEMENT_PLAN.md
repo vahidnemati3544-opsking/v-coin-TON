@@ -3,7 +3,7 @@
 **Document ID:** VCT-ALLOC-ENF-001  
 **Checkpoint:** 2026-11-21  
 **Scope:** Tact Jetton candidate in Draft PR #6; V COIN–TON only.  
-**Governing policy:** `docs/FOUNDER_AUTHORITY_AND_VESTING_CHARTER.md` v1.1.0  
+**Governing policy:** `docs/FOUNDER_AUTHORITY_CHARTER.md` v1.1.0  
 **Status:** Five category issuance caps implemented; Founder 2B is an ordinary directly credited wallet balance. Vesting contract removed from active build/test configuration. Not deployed; no transaction authorized.
 
 ## 1. Binding governance rule

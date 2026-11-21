@@ -283,6 +283,46 @@ describe("VCOIN founder four-year daily linear vesting", () => {
     expect((await master.getGetJettonData()).total_supply).toBe(MAX_SUPPLY);
   });
 
+  test("rolls back released amount when the vesting wallet rejects the initial transfer", async () => {
+    await fundVesting();
+
+    // Replace the escrow wallet account with an active account using the real
+    // wallet code but invalid storage. The vesting contract's bounceable
+    // TokenTransfer must fail at the first hop and return to this contract.
+    const brokenWallet = await VCoinJettonWallet.fromInit(vesting.address, master.address);
+    await blockchain.setShardAccount(
+      vestingWallet.address,
+      createShardAccount({
+        address: vestingWallet.address,
+        code: brokenWallet.init!.code,
+        data: beginCell().endCell(),
+        balance: toNano("1"),
+      }),
+    );
+
+    blockchain.now = blockchain.now! + 365 * DAY;
+    const claim = await vesting.send(
+      owner.getSender(),
+      { value: toNano("0.2") },
+      { ["$" + "$" + "type"]: "ClaimFounderVesting", query_id: 12n } as any,
+    );
+
+    expect(claim.transactions).toHaveTransaction({
+      from: vesting.address,
+      to: vestingWallet.address,
+      inMessageBounceable: true,
+      aborted: true,
+    });
+    expect(claim.transactions).toHaveTransaction({
+      from: vestingWallet.address,
+      to: vesting.address,
+      inMessageBounced: true,
+      success: true,
+    });
+    expect((await vesting.getGetVestingData()).released).toBe(0n);
+    expect((await master.getGetJettonData()).total_supply).toBe(MAX_SUPPLY);
+  });
+
   test("rejects an authenticated bounce amount larger than the released amount", async () => {
     await fundVesting();
     blockchain.now = blockchain.now! + 365 * DAY;

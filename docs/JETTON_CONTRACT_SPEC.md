@@ -2,7 +2,7 @@
 
 **Document ID:** VCT-JETTON-SPEC-001  
 **Version:** 1.0.0  
-**Status:** Contract design draft — implementation, compilation, audit and deployment pending  
+**Status:** Implemented review candidate — compilation/tests and independent audit evidence must be verified on the exact release commit  
 **Network target:** TON Mainnet only; Testnet deployment is excluded by Founder direction  
 **Token standard:** TEP-74 (Jettons), with TEP-64 metadata  
 **Repository scope:** V-Coin-TON
@@ -61,7 +61,7 @@ The contract/deployment process must reject any configuration whose allocations 
 7. Burning may reduce total supply. Burned tokens must never be reissued or counted as available mining reserve.
 8. Supply and allocation totals must be checked on-chain after issuance. A database record is not proof of issuance.
 
-**Preferred issuance model:** deploy the reviewed Master with a one-time issuance mechanism, issue the exact total only to pre-approved allocation destinations (or to a separately reviewed distribution vault with immutable, auditable allocation rules), and irrevocably disable minting. The final implementation must prove that no partially completed multi-recipient issuance can leave supply or allocation state inconsistent. The implementation choice must be settled in code review before Testnet deployment.
+**Preferred issuance model:** deploy the reviewed Master with a one-time issuance mechanism, issue the exact total only to pre-approved allocation destinations (or to a separately reviewed distribution vault with immutable, auditable allocation rules), and irrevocably disable minting. The final implementation must prove that no partially completed multi-recipient issuance can leave supply or allocation state inconsistent. The implementation choice must be settled in code review before any Mainnet release review.
 
 ## 5. Jetton Master interface and behavior
 
@@ -133,7 +133,7 @@ The implementation is not acceptable until automated tests demonstrate:
 10. Burn reduces supply and cannot enable re-minting.
 11. Bounce, excess, malformed payload and replay cases are safe.
 12. Allocation destinations and any vesting/distributor restrictions behave as specified.
-13. Testnet explorer state and transaction traces match local test results.
+13. Mainnet explorer state and transaction traces are checked only after a separately approved deployment; local Sandbox evidence is not a substitute.
 
 Tests must include adversarial cases and must not be reported as passing unless actually executed.
 
@@ -167,4 +167,4 @@ Any change to supply, decimals, allocation, mint prohibition, wallet transfer se
 - TON Jetton payment/security guidance: https://docs.ton.org/applications/payments/jettons
 - TON Jetton implementation comparison: https://docs.ton.org/contracts/standard/tokens/jettons/comparison
 
-**Document status:** Technical contract specification drafted and attached to V COIN–TON. Smart-contract source implementation, compilation, tests, independent audit and deployment remain pending.
+**Document status:** Technical contract specification drafted and attached to V COIN–TON. Source implementation and Sandbox integration tests are present in the review branch. Exact-commit CI, independent audit, release verification and any Mainnet deployment remain pending. Testnet deployment is excluded.

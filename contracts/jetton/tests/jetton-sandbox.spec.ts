@@ -18,7 +18,7 @@ async function deployMaster(
     owner.getSender(),
     { value: toNano('0.1') },
     {
-      $$type: 'ProvideWalletAddress',
+      $$$type: 'ProvideWalletAddress',
       query_id: 1n,
       owner_address: owner.address,
       include_address: false,

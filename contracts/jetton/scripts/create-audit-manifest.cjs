@@ -21,7 +21,7 @@ const fixedFiles = [
   "metadata.json",
   "deployment.config.template.json",
   "allocation-manifest.template.json",
-  ".github/workflows/vcoin-jetton.yml",
+  "../../.github/workflows/vcoin-jetton.yml",
   "assets/VCOIN-canonical-logo.png",
   "artifacts/mainnet-predeploy/state-init.boc",
   "artifacts/mainnet-predeploy/manifest.json",

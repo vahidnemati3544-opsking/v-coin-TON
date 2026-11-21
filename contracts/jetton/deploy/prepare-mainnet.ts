@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { execFileSync } from "node:child_process";
 import { Address, beginCell, storeStateInit } from "@ton/core";
 import { VCoinMaster } from "../build/VCoinMaster_VCoinMaster";
 
@@ -34,6 +35,8 @@ async function main(): Promise<void> {
   if (args.network !== "mainnet") throw new Error("Fail-closed: only --network mainnet is accepted. This tool does not connect to any TON network.");
   if (!args.owner || !args.metadataUri || !args.sourceCommit) throw new Error("--owner, --metadata-uri, and --source-commit are required.");
   if (!/^[0-9a-f]{40}$/i.test(args.sourceCommit)) throw new Error("--source-commit must be a full 40-character Git commit SHA.");
+  const actualCommit = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+  if (actualCommit.toLowerCase() !== args.sourceCommit.toLowerCase()) throw new Error(`Source commit mismatch: requested ${args.sourceCommit}, checked out ${actualCommit}.`);
   const owner = Address.parse(args.owner);
   const uri = new URL(args.metadataUri);
   if (uri.protocol !== "https:") throw new Error("TEP-64 metadata URI must use HTTPS.");
@@ -49,7 +52,10 @@ async function main(): Promise<void> {
   const codeBoc = contract.init.code.toBoc({ idx: false, crc32: true });
   const dataBoc = contract.init.data.toBoc({ idx: false, crc32: true });
 
-  const packageJson = JSON.parse(await readFile(resolve(process.cwd(), "package.json"), "utf8"));
+  const packageBytes = await readFile(resolve(process.cwd(), "package.json"));
+  const lockBytes = await readFile(resolve(process.cwd(), "package-lock.json"));
+  const tactConfigBytes = await readFile(resolve(process.cwd(), "tact.config.json"));
+  const packageJson = JSON.parse(packageBytes.toString("utf8"));
   const sourcePaths = ["src/vcoin.tact", "src/jetton.tact", "src/messages.tact"];
   const sourceParts = await Promise.all(sourcePaths.map(async (path) => ({ path, content: await readFile(resolve(process.cwd(), path)) })));
   const sourceBundle = Buffer.concat(sourceParts.flatMap((part) => [Buffer.from(part.path + "\\0"), part.content, Buffer.from("\\0")]));
@@ -76,6 +82,9 @@ async function main(): Promise<void> {
     ton_core_version: packageJson.devDependencies["@ton/core"],
     hashes: {
       source_bundle_sha256: sha256(sourceBundle),
+      package_json_sha256: sha256(packageBytes),
+      package_lock_sha256: sha256(lockBytes),
+      tact_config_sha256: sha256(tactConfigBytes),
       code_cell_sha256: contract.init.code.hash().toString("hex"),
       data_cell_sha256: contract.init.data.hash().toString("hex"),
       state_init_cell_sha256: stateInitCell.hash().toString("hex"),

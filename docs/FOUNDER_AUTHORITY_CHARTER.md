@@ -1,7 +1,7 @@
 # V COIN–TON Founder Authority Charter
 
 **Document ID:** VCT-GOV-FOUNDER-001  
-**Version:** 1.1.0  
+**Version:** 1.2.0  
 **Adopted:** 2026-11-21  
 **Scope:** V COIN–TON only; the separate BNB project is unaffected.  
 **Authority:** Founder's explicit, non-amendable project instruction.
@@ -50,3 +50,10 @@ This rule also supersedes any proposal for Mining escrow/730-day lock, restricti
 This Charter defines the approved governance model. It does not authorize deployment, minting, transfers, or signing. PR #6 remains Draft/unmerged until code, tests, reproducible build, and independent security review are complete and the Founder approves the exact transaction payloads.
 
 **Foundational invariant: Five allocation wallets, one operational authority — the Founder; all 10,000,000,000 VCOIN are freely transferable by the Founder without vesting or escrow restrictions.**
+
+
+## Binding governance addendum — 2026-11-21
+
+This document is governed by [FOUNDER_EXCLUSIVE_FIVE_WALLET_CONTROL.md](FOUNDER_EXCLUSIVE_FIVE_WALLET_CONTROL.md): **the Founder alone has absolute, exclusive operational control and signing authority over all five V COIN–TON allocation wallets** (Founder, Mining Reserve, Treasury, Liquidity/Market, and Ecosystem/Marketing). Their separation is for accounting only; none is an independent custodian. No employee, administrator, backend, Telegram bot, CI process, third party, multisig co-signer, escrow, vesting, time lock, withdrawal ceiling, or automated process may authorize, veto, delay, redirect, sign, or execute a Founder-authorized movement.
+
+**TON implementation boundary:** each TEP-74 Jetton Wallet authorizes transfers through its own `owner` address. Master ownership alone does not confer a clawback or withdrawal right over other Jetton Wallets. The approved implementation therefore depends on the Founder being the sole holder of signing authority for each of the five recorded owner-wallet addresses; transfers are signed locally by the Founder. The Master must not add hidden seizure or forced-transfer functionality. Backend/Telegram systems may read, account, reconcile, and prepare unsigned proposals only. Never request or store wallet secrets. Evidence of address control is tracked separately and must not be described as completed until checked. This addendum does not authorize deployment, minting, transfer, signing, or broadcast.

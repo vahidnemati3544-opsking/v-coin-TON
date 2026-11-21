@@ -56,3 +56,25 @@ A successful proof establishes control of the relevant signing key at proof time
 - No cryptographic Founder proof has been received or verified.
 
 **Release status remains HOLD / NO-GO.**
+
+
+## 6. Important distinction — standalone Gram Wallet app vs Telegram's native WalletTg
+
+The Founder reports using the standalone Android app named **Gram Wallet**, version **26.11.1**, not a wallet opened inside Telegram.
+
+Do not infer that this standalone app uses the WalletTg contract merely because TON documentation describes WalletTg for Telegram's native wallet. These are distinct product/runtime claims and must be verified separately.
+
+The current TON Connect wallet registry lists the standalone app under `gramwallet`, with its own universal URL (`https://connect.gramwallet.io`), Android support, and declared `SendTransaction` and `SignData` features. The registry entry inspected for this review does not declare a `ton_proof` feature. This absence is not conclusive proof that the app cannot return `ton_proof`, but it means support is **not confirmed** by the registry.
+
+Therefore:
+- Do not apply the WalletTg trampoline hash or `get_public_key()` fallback to the standalone Gram Wallet unless its live account StateInit is proven to be WalletTg and its active code hash passes the exact check.
+- First test the standalone app's actual TON Connect response using a production-ready, approved HTTPS dApp origin and a non-spending request for `ton_addr` plus `ton_proof`.
+- If the app returns a proof item error, omits `ton_proof`, or cannot complete the connection, record standalone Gram Wallet 26.11.1 as unsupported/unverified for this proof flow. Do not replace proof with `SignData`, address-only matching, or a transaction.
+- A separate wallet with documented `ton_proof` support may be evaluated only as an alternative after the Founder chooses it; do not silently switch wallets.
+
+Official evidence reviewed:
+- TON Connect wallet registry: https://github.com/ton-connect/wallets-list/blob/main/wallets-v2.json
+- TON `ton_proof` verification guide: https://docs.ton.org/applications/ton-connect/how-to/ton-proof
+- TON WalletTg integration guide: https://docs.ton.org/contracts/standard/wallets/telegram/integrate
+
+**Revised compatibility conclusion:** TON Connect connection support for standalone Gram Wallet is listed; `ton_proof` support for the installed standalone build is not established. WalletTg protocol support must not be treated as proof that this separate app implements WalletTg.

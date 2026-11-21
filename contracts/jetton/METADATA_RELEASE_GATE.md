@@ -36,3 +36,14 @@ The current review JSON includes `name`, `symbol`, `description`, `decimals`, an
 - Do not run the production artifact generator until the final URI and canonical logo are approved and pinned.
 - Once approved, run the offline generator twice from the exact reviewed source commit, compare all outputs, and independently verify the resulting Master address and StateInit.
 - This gate does not authorize deployment, signing, minting, or transfer.
+
+## Additional verification — logo identity remains unapproved
+
+The canonical source file in the project Library was independently materialized and checked locally:
+- Source file: 1254 × 1254 PNG, 2,728,338 bytes
+- Source SHA-256: `08d71b17fecb86ae6006ba0fc498675dc4024b13d3f40459dcd578dfc09719d1`
+- Source Git blob SHA: `278e852eb43f4dea8057331749db018395e96358`
+
+The repository logo blob currently has Git blob SHA `87a3e78313d26e36e500802e158827486bbc34c6` and size 194,115 bytes. Its Git blob SHA does not match the source file's Git blob SHA. Therefore the uploaded file is **not byte-identical** to the canonical source. This does not prove the visible artwork is wrong (it may have been re-encoded/resized), but visual equivalence has not been established. Do not mark the logo approved or generate a production artifact until the repository image is visually checked against the canonical source or replaced with the exact original bytes.
+
+The metadata JSON parses successfully and contains all five required fields: `name`, `symbol`, `description`, `decimals`, and `image`. This is a structural check only; public HTTP MIME/retrieval validation and Founder approval remain pending.

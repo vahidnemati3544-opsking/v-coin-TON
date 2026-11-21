@@ -50,3 +50,17 @@ The suite includes the pinned Jetton protocol tests, VCOIN issuance policy tests
 5. The deployment entrypoints in `Acton.toml` specify the built-in Mainnet selector: `acton run deploy-mainnet` or `acton run deploy-mainnet-tonconnect`. This is a command-level pin, not an independent runtime proof of network identity: `net.isBroadcasting()` only reports whether broadcasting is enabled. Do not invoke the raw script with an arbitrary `--net` value. Before any broadcast, verify the exact command and Mainnet network shown by the connected wallet in TON Connect, then review the full transaction. A stronger fail-closed network identity check remains a release gate. Final metadata, escrow start timestamp, derived escrow addresses, wallet-control proofs, and TON fee budget also remain unverified.
 
 **No Testnet or Mainnet deployment has been performed.** The owner has chosen to omit Testnet. Mainnet deployment remains on hold until the Mainnet network guard, outstanding adversarial tests, independent audit, legal review, final deployment package, wallet-control proofs, and the owner's explicit approval are complete.
+
+## Mainnet network-selection evidence and operator guard
+
+The Acton 1.2 deployment documentation defines `--net <network>` as the selector for the real network and documents `net.isBroadcasting()` only as a check for local-emulation versus broadcast mode. It does not document a Tolk runtime getter that independently returns the selected network identity. Therefore, the contract script must not claim that `net.isBroadcasting()` proves Mainnet. The named `deploy-mainnet` and `deploy-mainnet-tonconnect` entries in `Acton.toml` remain the command-level network pin.
+
+Before any Mainnet signature, the operator must independently verify all of the following in the same execution session:
+
+1. The exact command is one of the named Mainnet entries; do not run the raw deployment script with a manually supplied network value.
+2. Acton reports the Mainnet target for that run, and the connected TON Connect wallet itself displays Mainnet (not Testnet or a custom network).
+3. The wallet address is the approved Founder deployer address and is independently checked against the intended address; never infer wallet identity from a display name.
+4. The complete outgoing transaction, destination, attached TON value, initialization data, and derived escrow addresses are reviewed before the wallet signature.
+5. Abort if the CLI target, wallet network, wallet address, or transaction preview disagree or are ambiguous.
+
+Official Acton references: [Interacting with the real blockchain](https://ton-blockchain.github.io/acton/docs/scripting/blockchain-interaction), [Deployment](https://ton-blockchain.github.io/acton/docs/deploy), and [Acton.toml network configuration](https://ton-blockchain.github.io/acton/docs/acton-toml). These references establish the CLI network-selection behavior; they do not establish a contract-level Mainnet identity API. This is an operator verification gate, not an on-chain network guard.

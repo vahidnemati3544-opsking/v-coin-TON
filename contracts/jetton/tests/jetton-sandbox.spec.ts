@@ -118,7 +118,7 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     const ownerMintFromGasWallet = await master.send(
       gasOperator.getSender(),
       { value: toNano('0.01') },
-      { $type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
+      { $$type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
     );
     expect(ownerMintFromGasWallet.transactions).toHaveTransaction({
       to: master.address,
@@ -128,7 +128,7 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     const ownerFunding = await master.send(
       owner.getSender(),
       { value: toNano('0.75') },
-      { $type: 'VCoinFund' },
+      { $$type: 'VCoinFund' },
     );
     expect(ownerFunding.transactions).toHaveTransaction({
       to: master.address,
@@ -138,7 +138,7 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     const unauthorizedFunding = await master.send(
       attacker.getSender(),
       { value: toNano('1') },
-      { $type: 'VCoinFund' },
+      { $$type: 'VCoinFund' },
     );
     expect(unauthorizedFunding.transactions).toHaveTransaction({
       to: master.address,

@@ -33,7 +33,7 @@
 - The TEP-74 response destination fields were corrected from optional to required addresses in transfer, internal-transfer, burn and burn-notification message layouts. The master and wallet now route excesses to those required destinations.
 - TEP-89 `take_wallet_address.owner_address` uses the optional referenced-cell representation; tests cover `include_address=false` and `true`.
 - Four additional adversarial tests cover insufficient Jetton balance, insufficient TON, forged internal transfer sender and forged burn notification sender.
-- The Jetton wallet restores its balance on a bounced `TokenTransferInternal` and now emits a VCOIN-specific `JettonTransferBounce` callback to that wallet's owner. The founder vesting contract authenticates the configured vesting wallet and rolls back `released`. Sandbox tests now simulate a bounced `TokenTransferInternal` envelope into the source Jetton wallet, execute its real bounced handler, verify escrow balance restoration and vesting-counter rollback, and separately reject a forged callback sender. The custom callback uses a pinned explicit opcode. This is a Sandbox-simulated bounce envelope, not proof of a naturally induced downstream TVM failure; natural end-to-end failure injection remains a separate release gate.
+- The Jetton wallet restores its balance on a bounced `TokenTransferInternal` and now emits a VCOIN-specific `JettonTransferBounce` callback to that wallet's owner. The founder vesting contract authenticates the configured vesting wallet and rolls back `released`. Sandbox tests now simulate bounced `TokenTransferInternal` and `TokenBurnNotification` envelopes, execute the real wallet bounce handlers, verify escrow/wallet balance restoration and vesting-counter rollback, and separately reject a forged callback sender. The custom callback uses a pinned explicit opcode. These are Sandbox-simulated bounce envelopes, not proof of naturally induced downstream TVM failures; natural end-to-end failure injection remains a separate release gate.
 - TEP-74 source-level review notes are recorded in `docs/TEP74_CONFORMANCE_REVIEW.md`. This is not an independent audit or full certification.
 - `@tact-lang/compiler@1.6.13` still emits a deprecation warning. The current compiler builds; a Tolk migration must not be attempted without equivalent tests and code-hash review.
 
@@ -94,7 +94,7 @@ These recorded addresses are candidates only. Recording an address does not prov
 
 ## Remaining release blockers
 
-1. **Bounce and recovery tests:** the source Jetton wallet now notifies its owner after restoring tokens on a bounced internal transfer; founder vesting authenticates this callback and rolls back `released`. Authenticated callback and forged-callback Sandbox tests were added. Still required: natural end-to-end destination-wallet bounce, failed burn-notification recovery, and supply/balance invariants.
+1. **Bounce and recovery tests:** the source Jetton wallet now notifies its owner after restoring tokens on a bounced internal transfer; founder vesting authenticates this callback and rolls back `released`. Sandbox tests exercise simulated bounced internal-transfer and burn-notification envelopes. Still required: naturally induced end-to-end downstream/burn bounce tests and complete supply/balance invariants.
 2. **Replay/idempotency:** complete adversarial review and tests; distinguish TON message replay protection from application-level duplicate transaction handling.
 3. **Full TEP-74 / TEP-64 review:** complete comparison of every message bit layout, getter stack order, wallet behavior, gas assumptions, metadata serialization and wallet derivation against the active standards and official reference implementation.
 4. **Founder vesting recovery:** the four-year daily-linear vesting source, authenticated Jetton-wallet owner callback, and callback Sandbox tests exist. Do not deploy or fund it until the natural downstream bounce path and balance/counter invariants pass end-to-end tests and the exact code is independently reviewed; preserve the approved zero-cliff schedule and founder beneficiary.
@@ -116,7 +116,7 @@ These recorded addresses are candidates only. Recording an address does not prov
 | TEP-74 required response-destination correction | Implemented; build and tests passed |
 | TEP-89 optional owner-address behavior | Implemented and tested |
 | Committed package lockfile | Committed and verified by subsequent `npm ci` runs #175–#177 |
-| Bounce callback rollback / forgery Sandbox tests | Passed in current-head CI #214 |
+| Simulated transfer/burn bounce recovery and forged-callback Sandbox tests | Added; latest-head CI pending |
 | Natural downstream TVM bounce and balance invariants | Pending |
 | Full TEP-74 / TEP-64 conformance audit | Pending |
 | Metadata URI/content draft | Committed; logo approval pending |

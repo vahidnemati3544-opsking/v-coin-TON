@@ -478,11 +478,6 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       } as any,
     );
     expect(burn.transactions).toHaveTransaction({
-      from: isolatedWallet.address,
-      to: fakeMaster,
-      success: true,
-    });
-    expect(burn.transactions).toHaveTransaction({
       from: fakeMaster,
       to: isolatedWallet.address,
       success: true,

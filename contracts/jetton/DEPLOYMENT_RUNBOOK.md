@@ -59,7 +59,7 @@ It creates `artifacts/mainnet-predeploy/state-init.boc` and `manifest.json` with
 1. Independent smart-contract security audit of the exact source and generated code; close all critical/high findings.
 2. Full TEP-74 / TEP-64 conformance review, including message layouts, getters, wallet derivation, metadata cell, gas/excess, bounce and replay behavior.
 3. **Sandbox proof completed on PR head `cf362ef04990aebf928e17ebd380e0aef8b6f96f` (CI #302):** the parameterized integration test forces the derived destination Jetton wallet to fail, observes the bounce return to Master, verifies supply rollback, restores the deterministic wallet StateInit, and retries the exact category cap for all five categories. Independent reproduction/audit and full TEP-74/TEP-64 conformance review remain open.
-4. Approve and pin immutable metadata containing the canonical V COIN logo; verify public retrieval and exact TEP-64 content.
+4. TEP-64 JSON and commit-pinned image rendition are now recorded in `metadata.json` and the deployment template. Before production, Founder approval, independent public retrieval/content verification, and exact master-PNG binary replacement remain required.
 5. Founder verifies control of all five Mainnet allocation wallets and the owner wallet in their own wallet interfaces. Never share seed phrases or private keys.
 6. Independently reproduce the production StateInit and all hashes from the exact reviewed commit; verify expected Master address with an independent implementation.
 7. Independently verify actual TON Mainnet network identity before any wallet transaction. The offline builder's `--network mainnet` flag is only a label.

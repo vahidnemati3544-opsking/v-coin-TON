@@ -8,7 +8,7 @@
   "initial_supply_tokens": "10000000000",
   "initial_supply_base_units": "10000000000000000",
   "additional_minting": false,
-  "target_network": "testnet",
+  "target_network": "mainnet",
   "master_address": null,
   "deployment_transaction": null,
   "operational_fee_wallet": {

@@ -436,19 +436,6 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
     const isolatedWallet = blockchain.openContract(
       await VCoinJettonWallet.fromInit(owner.address, fakeMaster),
     );
-    const deployment = await owner.send({
-      to: isolatedWallet.address,
-      value: toNano("0.1"),
-      init: isolatedWallet.init,
-      body: beginCell().endCell(),
-    });
-    expect(deployment.transactions).toHaveTransaction({
-      from: owner.address,
-      to: isolatedWallet.address,
-      deploy: true,
-      success: true,
-    });
-
     const burnAmount = 7n * ONE_TOKEN;
     const fundingBody = beginCell()
       .storeUint(0x178d4519, 32) // TokenTransferInternal
@@ -463,6 +450,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       to: isolatedWallet.address,
       value: toNano("0.1"),
       bounce: true,
+      init: isolatedWallet.init,
       body: fundingBody,
     }) as any;
     fundingMessage.info.src = fakeMaster;
@@ -470,6 +458,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
     expect(funding.transactions).toHaveTransaction({
       from: fakeMaster,
       to: isolatedWallet.address,
+      deploy: true,
       success: true,
     });
     const initialBalance = (await isolatedWallet.getGetWalletData()).balance;

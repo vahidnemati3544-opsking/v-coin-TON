@@ -8,7 +8,7 @@
 - `state-init.boc`: serialized StateInit only;
 - `manifest.json`: derived master address, source commit, compiler/dependency versions, and SHA-256/cell hashes.
 
-The tool has no wallet, mnemonic, private-key, signing, RPC, TonConnect, or broadcast dependency. It does not create or submit a TON transaction. The `mainnet` argument is a declared target label only; the tool makes no network connection and cannot independently attest a live network identity.
+The tool verifies that the supplied 40-character source commit equals the checked-out Git `HEAD`, and hashes the three Tact sources, package manifest, lockfile, Tact config, compiled code/data cells, StateInit cell and BOC. It has no wallet, mnemonic, private-key, signing, RPC, TonConnect, or broadcast dependency. It does not create or submit a TON transaction. The `mainnet` argument is a declared target label only; the tool makes no network connection and cannot independently attest a live network identity.
 
 ## Build and run
 
@@ -32,7 +32,7 @@ The output is not a signed external message and is not itself a wallet-ready tra
 
 ## Current limitations / no-go gates
 
-- No generated artifact has yet been executed and independently reproduced in a clean environment.
+- GitHub Actions #273 executed the generator twice using a deliberately non-production `example.invalid` metadata URI and compared both StateInit BOCs and manifests byte-for-byte; the smoke test passed on exact head `219abc794b337bc1f719a143d46ea3589cac0cc1`. This proves repeatability in CI for the test inputs, not the final production metadata or an independent clean-room reproduction.
 - Metadata URI/logo approval and immutability verification remain outstanding.
 - The script's target label is not a network identity guard; any future RPC-based verifier must check the actual TON Mainnet global network identifier and fail closed.
 - Independent contract audit, full TEP-74/TEP-64 review, natural downstream bounce proof, and wallet-control proofs remain mandatory.

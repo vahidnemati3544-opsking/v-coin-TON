@@ -1,3 +1,19 @@
+# CURRENT AUTHORITATIVE STATUS — 2026-11-21 (supersedes all historical sections below)
+
+**Active candidate:** Draft PR #6, branch `audit/pr5-bounce-guard-and-network-clarity-2026-11-21`, exact head `b11346c18f2ad6a6339d98fb59affa64ef9c6707`.
+
+**Latest exact-head CI:** workflow #263 passed: Tact build, 20/20 Sandbox/Jest tests, `npm ci`, and `npm audit --audit-level=high` with zero reported vulnerabilities. https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44890261282
+
+**Binding governance:** all five allocation wallets are ordinary, fully transferable wallets under the Founder's sole authority. Founder 2B has no vesting, escrow, time lock, release schedule, or withdrawal restriction. The active Founder authority charter is `docs/FOUNDER_AUTHORITY_CHARTER.md`. No vesting contract is included in the active Tact build.
+
+**Current deployment decision: NO-GO / HOLD.** The candidate is not independently audited and has no completed deterministic Mainnet deployment builder/network identity guard. Natural downstream-bounce proof, full TEP-74/TEP-64 conformance, metadata/logo finalization, Mainnet wallet-control proofs, fee/payload review and explicit approval of exact transaction data remain open. Testnet deployment remains intentionally excluded. No merge, deployment, mint, transfer, or wallet signing has occurred.
+
+**Next work package: Action 25 — deterministic Mainnet deployment package without broadcast.** See `docs/MAINNET_DEPLOYMENT_READINESS.md`.
+
+> Historical sections below are retained as an audit trail only. They may contain superseded designs (including Founder/Mining vesting or older PR candidates) and must not be treated as current implementation requirements. The current Charter, Allocation Enforcement Plan, and Mainnet Deployment Readiness document govern.
+
+---
+
 # V COIN–TON Jetton Deployment Inventory
 
 **Document ID:** VCT-JETTON-INV-001  

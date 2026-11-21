@@ -1,5 +1,5 @@
 import { Address, beginCell, internal, toNano } from "@ton/core";
-import { Blockchain, SandboxContract, TreasuryContract } from "@ton/sandbox";
+import { Blockchain, SandboxContract, TreasuryContract, createShardAccount } from "@ton/sandbox";
 import { VCoinMaster } from "../build/VCoinMaster_VCoinMaster";
 import { VCoinJettonWallet } from "../build/VCoinMaster_VCoinJettonWallet";
 import "@ton/test-utils";
@@ -237,6 +237,59 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
     expect((await (await walletFor(ecosystem.address)).getGetWalletData()).balance).toBe(1_000_000_000n * ONE_TOKEN);
     expect((await master.getGetJettonData()).total_supply).toBe(MAX_SUPPLY);
     expect((await master.getGetJettonData()).mintable).toBe(false);
+  });
+
+  test("rolls back a bounced category issuance and permits only that category to retry", async () => {
+    await configureAllocations();
+    const miningWalletAddress = await master.getGetWalletAddress(miningReserve.address);
+    const brokenWallet = await VCoinJettonWallet.fromInit(miningReserve.address, master.address);
+    await blockchain.setShardAccount(
+      miningWalletAddress,
+      createShardAccount({
+        address: miningWalletAddress,
+        code: brokenWallet.init!.code,
+        data: beginCell().endCell(),
+        balance: toNano("1"),
+      }),
+    );
+
+    const failedIssue = await master.send(
+      owner.getSender(),
+      { value: toNano("0.2") },
+      { ["$" + "$" + "type"]: "VCoinMintAllocation", category: 2 } as any,
+    );
+    expect(failedIssue.transactions).toHaveTransaction({
+      from: owner.address,
+      to: master.address,
+      success: true,
+    });
+    expect(failedIssue.transactions).toHaveTransaction({
+      from: master.address,
+      to: miningWalletAddress,
+      inMessageBounceable: true,
+      aborted: true,
+    });
+    expect(failedIssue.transactions).toHaveTransaction({
+      from: miningWalletAddress,
+      to: master.address,
+      inMessageBounced: true,
+      success: true,
+    });
+    expect((await master.getGetJettonData()).total_supply).toBe(0n);
+    expect((await master.getGetJettonData()).mintable).toBe(true);
+
+    // Repeating the category request must not be rejected as a duplicate:
+    // the bounce handler restored its one-time issuance flag.
+    const retry = await master.send(
+      owner.getSender(),
+      { value: toNano("0.2") },
+      { ["$" + "$" + "type"]: "VCoinMintAllocation", category: 2 } as any,
+    );
+    expect(retry.transactions).toHaveTransaction({
+      from: owner.address,
+      to: master.address,
+      success: true,
+    });
   });
 
   test("implements TEP-89 include_address as an optional referenced owner address", async () => {

@@ -19,7 +19,7 @@
 ## Current test evidence
 
 Latest PR-head CI evidence (2026-11-21):
-- GitHub Actions run #226 on current PR head `9ed093f5152d199a66994f38388efee8e200b51c`: build-and-test completed successfully with 28 tests passing, `npm ci` successful, and zero npm audit vulnerabilities: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44877646963. Backend #239 and Mining #241 also passed on this exact head.
+- GitHub Actions run #229 on current PR code head `6d9a7ebf6899d5872364ec8b37fc06f190c44f28`: build-and-test completed successfully with 29 tests passing, `npm ci` successful, and zero npm audit vulnerabilities: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44877792568. Backend #242 and Mining #244 also passed on this exact head.
 - Earlier GitHub Actions run #196 on commit `aa0391a09bc03f690367a53e7cae43f9030528ef`: build-and-test completed successfully.
 - The committed `contracts/jetton/package-lock.json` is present on the PR branch; the successful PR-head workflow includes the repository's install/build/test/audit pipeline.
 - Earlier full test evidence: run #191 passed 25 tests, build, `npm ci`, and npm audit with zero known vulnerabilities.

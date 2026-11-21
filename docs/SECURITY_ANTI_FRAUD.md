@@ -94,3 +94,12 @@ Before staging or production:
 ## 8. Release restrictions
 
 No real-value transfer, token issuance, Mainnet deployment, or public mining launch is authorized by this document. Each requires a separate readiness review and explicit approval.
+
+## 9. Jetton initial-issuance bounce protection
+
+- The initial fixed-supply issuance remains founder-authorized, one-time, and restricted to the founder's deterministic Jetton wallet.
+- The Master contract now accepts a bounced initial TokenTransferInternal message only when the actual sender equals the deterministic Jetton wallet derived for the configured owner.
+- The bounce amount must be positive and cannot exceed the Master contract's recorded supply before rollback.
+- The issuance gate is reopened only after the recorded supply returns to zero.
+- This sender-authentication guard is committed in contracts/jetton/src/vcoin.tact.
+- **Verification status:** source change committed; Tact compilation and sandbox Natural Bounce tests are still pending. Do not treat the guard as independently verified until those tests pass.

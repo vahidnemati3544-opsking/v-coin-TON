@@ -1,0 +1,37 @@
+name: V COIN TON Jetton verification
+
+on:
+  push:
+    paths:
+      - "contracts/jetton/**"
+      - ".github/workflows/vcoin-jetton-verify.yml"
+  pull_request:
+    paths:
+      - "contracts/jetton/**"
+      - ".github/workflows/vcoin-jetton-verify.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: contracts/jetton
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: contracts/jetton/package.json
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Compile Tact contracts
+        run: npm run build
+      - name: Run Jest tests
+        run: npm test

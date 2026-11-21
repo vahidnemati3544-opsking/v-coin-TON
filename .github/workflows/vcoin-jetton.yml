@@ -32,6 +32,8 @@ jobs:
         env:
           VCOIN_METADATA_URL: https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/d67f2549dfba8876cd4b0becc2bc8573bcc10c57/contracts/jetton/metadata.json
         run: npm run verify:metadata
+      - name: Verify TON Mainnet identity (read-only ConfigParam 19)
+        run: npm run verify:mainnet-network
       - name: Report dependency audit findings
         shell: bash
         run: |

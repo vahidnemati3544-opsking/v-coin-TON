@@ -69,6 +69,8 @@ async function main(): Promise<void> {
     network_label: "mainnet",
     source_commit: args.sourceCommit,
     network_connection_performed: false,
+    network_identity_verified: false,
+    network_identity_verification: "NOT_PERFORMED_BY_OFFLINE_BUILDER — separately verify TON Mainnet global network identity before assembling or signing any transaction",
     transaction_created: false,
     transaction_signed: false,
     transaction_broadcast: false,

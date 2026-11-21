@@ -42,7 +42,7 @@ jobs:
         run: npx tsc -p tsconfig.deploy.json
       - name: Smoke-test deterministic offline StateInit generation (no network/signing)
         env:
-          SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+          SOURCE_COMMIT: ${{ github.sha }}
         run: |
           node build-js/deploy/prepare-mainnet.js --network mainnet --owner UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy --metadata-uri https://example.invalid/vcoin-metadata.json --source-commit "$SOURCE_COMMIT" --out /tmp/vcoin-predeploy-a
           node build-js/deploy/prepare-mainnet.js --network mainnet --owner UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy --metadata-uri https://example.invalid/vcoin-metadata.json --source-commit "$SOURCE_COMMIT" --out /tmp/vcoin-predeploy-b

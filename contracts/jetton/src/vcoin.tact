@@ -43,6 +43,11 @@ contract VCoinMaster with JettonMaster {
         self.mintable = true;
         self.owner = owner;
         self.content = content;
+        self.founder_destination = owner;
+        self.mining_destination = owner;
+        self.treasury_destination = owner;
+        self.liquidity_destination = owner;
+        self.ecosystem_destination = owner;
         self.allocations_configured = false;
         self.founder_issued = false;
         self.mining_issued = false;

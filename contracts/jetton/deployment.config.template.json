@@ -41,12 +41,12 @@
     "ecosystem_marketing_wallet": null
   },
   "metadata": {
-    "uri": "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/9fd9f2b119a0f6b3d343a7a0670ba430c3864aa3/contracts/jetton/metadata.json",
+    "uri": "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/d67f2549dfba8876cd4b0becc2bc8573bcc10c57/contracts/jetton/metadata.json",
     "immutable": true,
     "approval_status": "pending_founder_approval",
-    "image_uri": "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/1dac91b520de6b9d3dbf7d615128ff2ec3e95f5e/contracts/jetton/assets/vcoin-canonical-logo.jpg",
+    "image_uri": "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/daed9f669acb2bf28449d6b02443e44aaf6f4969/contracts/jetton/assets/VCOIN-canonical-logo.png",
     "image_approval_status": "pending_founder_approval",
-    "note": "Metadata JSON and logo rendition use immutable commit-pinned HTTPS URLs. Founder approval remains pending; production release must confirm the displayed logo rendition and public retrieval before deployment."
+    "note": "Metadata JSON and exact canonical PNG use immutable commit-pinned HTTPS URLs. CI must verify public retrieval, MIME type, dimensions and SHA-256. Founder approval remains pending; no production release is authorized."
   },
   "deployment_authorized": false,
   "mainnet_authorized": false,

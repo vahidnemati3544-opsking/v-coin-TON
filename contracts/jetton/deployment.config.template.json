@@ -61,5 +61,12 @@
       "ecosystem_marketing": "pending",
       "mining_reserve": "pending"
     }
+  },
+  "network_fee_policy": {
+    "currency": "TON",
+    "max_total_deployment_network_fee": "3",
+    "hard_stop_if_estimated_fee_exceeds_limit": true,
+    "require_founder_review_of_exact_fee_before_signing": true,
+    "note": "This is a Founder-set maximum budget, not a guarantee of network acceptance. Do not sign or broadcast if the wallet or transaction preview indicates a total network fee above 3 TON. Re-estimate immediately before signing; do not split or retry transactions in a way that bypasses the cap."
   }
 }

@@ -52,14 +52,14 @@
   "mainnet_authorized": false,
   "notes": "Template only. Five allocation owner-wallet candidates are recorded in allocation_wallets; they are distinct from derived Jetton wallet contract addresses. Keep derived addresses null until the Jetton master is deployed and wallet addresses are derived and verified on TON Mainnet. The operational fee wallet is a separate TON-only funding address and is not part of VCOIN allocation. Verify network and wallet control before funding. Never commit secrets, seed phrases or private keys. The TEP-64 metadata JSON and exact canonical PNG are referenced by immutable commit-pinned HTTPS URLs and checked by CI for public retrieval and byte-level identity. Founder approval of the exact metadata/artwork pair remains pending. No deployment or transfer is authorized by this template.",
   "allocation_wallet_verification": {
-    "status": "pending_wallet_control_proof",
-    "note": "These are recorded owner wallet candidates, not derived Jetton wallet contract addresses. Verify control on the intended network before any transfer.",
+    "status": "founder_exclusive_control_declared_evidence_pending",
+    "note": "Founder has declared exclusive control of all five owner-wallet addresses as a binding project invariant. Before Mainnet operations, record non-spending per-address control evidence without exposing secrets. Evidence status does not alter or delegate the governance rule.",
     "destinations": {
-      "founder": "pending",
-      "treasury": "pending",
-      "liquidity_market": "pending",
-      "ecosystem_marketing": "pending",
-      "mining_reserve": "pending"
+      "founder": "founder_exclusive_control_declared_evidence_pending",
+      "treasury": "founder_exclusive_control_declared_evidence_pending",
+      "liquidity_market": "founder_exclusive_control_declared_evidence_pending",
+      "ecosystem_marketing": "founder_exclusive_control_declared_evidence_pending",
+      "mining_reserve": "founder_exclusive_control_declared_evidence_pending"
     }
   },
   "network_fee_policy": {
@@ -81,5 +81,17 @@
     ],
     "attached_message_value_is_not_network_fee": true,
     "implementation_status": "fee-cap-validator-added; exact wallet transaction estimation and integration pending"
+  },
+  "governance_authority": {
+    "policy_document": "docs/FOUNDER_EXCLUSIVE_FIVE_WALLET_CONTROL.md",
+    "rule": "founder_absolute_exclusive_control_all_five_allocation_wallets",
+    "authority_holder": "Founder only",
+    "wallet_separation": "accounting_and_reporting_only",
+    "third_party_signers_permitted": false,
+    "backend_or_telegram_signing_permitted": false,
+    "escrow_vesting_timelock_withdrawal_ceiling_permitted": false,
+    "founder_control_assertion": "explicitly_declared_by_founder_as_non_negotiable_project_invariant",
+    "non_spending_wallet_control_evidence": "pending_per_address_verification",
+    "implementation_boundary": "each_jetton_wallet_transfer_requires_signature_for_its_owner_address; master_owner_does_not_create_clawback"
   }
 }

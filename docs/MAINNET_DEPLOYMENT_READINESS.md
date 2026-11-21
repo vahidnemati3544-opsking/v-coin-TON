@@ -5,7 +5,7 @@
 **Checkpoint:** 2026-11-21  
 **Candidate:** Draft PR #6  
 **Branch:** `audit/pr5-bounce-guard-and-network-clarity-2026-11-21`  
-**Exact reviewed source head:** `b11346c18f2ad6a6339d98fb59affa64ef9c6707`  
+**Current PR #6 head:** `219abc794b337bc1f719a143d46ea3589cac0cc1` (Draft; no merge)  
 **Network target:** TON Mainnet only; Testnet deployment is excluded by Founder direction.
 
 ## 1. Current decision
@@ -41,7 +41,7 @@ This is CI evidence, not a third-party security audit or proof of Mainnet readin
 1. **Independent smart-contract audit:** obtain a qualified external review of the exact Tact source, compiler version, generated code, Jetton Master/Wallet behavior, bounce handling, issuance and supply invariants. Record auditor, report, source hash and findings.
 2. **Full TEP-74 / TEP-64 conformance:** close the outstanding source review against the current standards and official reference implementation, including message layouts, getters, wallet derivation, metadata serialization, gas/excess and bounce/replay behavior.
 3. **Natural downstream-bounce proof:** finish end-to-end Sandbox tests for a real downstream Jetton-wallet delivery failure and prove exact balance/supply restoration and safe retry across all five categories.
-4. **Deployment builder:** create a deterministic, offline-capable builder that compiles the reviewed source, emits StateInit/deployment BOC, records code/data/StateInit hashes, derives the expected Master address and prepares a wallet-signable transaction preview. It must not hold keys or broadcast.
+4. **Deployment builder (partially complete):** the offline StateInit generator is implemented in `contracts/jetton/deploy/prepare-mainnet.ts`. It emits `state-init.boc` and a manifest with source/toolchain/input/code/data/StateInit hashes and derived Master address. CI #273 passed the Tact build, TypeScript compilation, two-run byte-for-byte determinism smoke test, Jest/Sandbox tests, and high-severity dependency audit. The smoke test used a dummy `example.invalid` metadata URI; no production artifact or wallet-signable transaction preview has been prepared. Remaining: independently reproduce production inputs, verify generated master address/StateInit, and design/review any transaction-preview format without adding signing or broadcast.
 5. **Mainnet identity guard:** fail closed unless the network is positively identified as TON Mainnet. A text field saying "mainnet" is not proof. No Testnet fallback and no ambiguous network selection.
 6. **Metadata finalization:** review the exact TEP-64 metadata cell/URI, content availability, immutable hosting/pinning and canonical logo. The current public logo/metadata approval is not yet closed.
 7. **Wallet-control proof:** Founder must verify control of each of the five owner wallets on Mainnet in their own wallet interfaces. Never submit seed phrases or private keys.
@@ -50,17 +50,19 @@ This is CI evidence, not a third-party security audit or proof of Mainnet readin
 
 ## 5. Safe next work package
 
-**Action 25 — Prepare deterministic Mainnet deployment package (no broadcast):**
+**Action 25 — Prepare deterministic Mainnet deployment package (no broadcast): PARTIALLY IMPLEMENTED**
 
-- Pin the exact Tact compiler and dependency lockfile.
-- Add a reproducible build command and artifact manifest.
-- Generate and record Master code hash, data/StateInit hash, expected address and deployment BOC from explicit, reviewed initialization parameters.
-- Add a fail-closed Mainnet network identity check to any signing/broadcast wrapper.
-- Produce a human-readable transaction preview and post-deployment getter/balance verification checklist.
-- Keep all signing local in the Founder's wallet. Do not include keys, seed phrases or an automatic broadcast path.
-- Run CI and verify the artifacts are reproducible from the exact commit.
+- [x] Pinned Tact compiler/dependencies and committed lockfile.
+- [x] Added offline StateInit builder, source-commit guard, source/toolchain hashes, and manifest.
+- [x] CI #273 passed the build, generator type-check, two-run deterministic StateInit/manifest comparison, contract tests and dependency audit on exact head `219abc794b337bc1f719a143d46ea3589cac0cc1`.
+- [ ] Independently reproduce and verify production artifacts using Founder-approved immutable metadata/logo URI.
+- [ ] Independently verify master address and StateInit serialization.
+- [ ] Design and review a human-readable deployment transaction preview; do not sign or broadcast.
+- [ ] Add actual Mainnet network identity verification only to a separately reviewed verifier; the current builder is offline and its `mainnet` label is not proof of network identity.
+- [ ] Complete the post-deployment getter/balance verification checklist.
+- Keep signing local in the Founder's wallet. Do not include keys, seed phrases or automatic broadcast.
 
-**Status:** pending implementation and review. No transaction has been prepared for signing or broadcast at this checkpoint.
+**Status:** builder implementation and CI smoke verification complete; production artifact generation and independent review pending. No transaction has been prepared for signing or broadcast.
 
 ## 6. Release gate
 

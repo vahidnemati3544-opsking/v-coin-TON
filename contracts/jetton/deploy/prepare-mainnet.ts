@@ -4,7 +4,7 @@ import { dirname, resolve } from "node:path";
 import { Address, beginCell, storeStateInit } from "@ton/core";
 import { VCoinMaster } from "../build/VCoinMaster_VCoinMaster";
 
-type Args = { network?: string; owner?: string; metadataUri?: string; out?: string };
+type Args = { network?: string; owner?: string; metadataUri?: string; sourceCommit?: string; out?: string };
 
 function parseArgs(argv: string[]): Args {
   const result: Args = {};
@@ -12,11 +12,11 @@ function parseArgs(argv: string[]): Args {
     const key = argv[i];
     const value = argv[i + 1];
     if (!key.startsWith("--") || !value || value.startsWith("--")) {
-      throw new Error("Usage: --network mainnet --owner <raw-or-friendly-address> --metadata-uri <https-uri> [--out <directory>]");
+      throw new Error("Usage: --network mainnet --owner <raw-or-friendly-address> --metadata-uri <https-uri> --source-commit <40-char-git-sha> [--out <directory>]");
     }
     if (key === "--network") result.network = value;
     else if (key === "--owner") result.owner = value;
-    else if (key === "--metadata-uri") result.metadataUri = value;
+    else if (key === "--metadata-uri") result.metadataUri = value;\n    else if (key === "--source-commit") result.sourceCommit = value;
     else if (key === "--out") result.out = value;
     else throw new Error(`Unknown argument: ${key}`);
     i += 1;
@@ -31,7 +31,7 @@ function sha256(data: Buffer | string): string {
 async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
   if (args.network !== "mainnet") throw new Error("Fail-closed: only --network mainnet is accepted. This tool does not connect to any TON network.");
-  if (!args.owner || !args.metadataUri) throw new Error("Both --owner and --metadata-uri are required.");
+  if (!args.owner || !args.metadataUri || !args.sourceCommit) throw new Error("--owner, --metadata-uri, and --source-commit are required.");\n  if (!/^[0-9a-f]{40}$/i.test(args.sourceCommit)) throw new Error("--source-commit must be a full 40-character Git commit SHA.");
   const owner = Address.parse(args.owner);
   const uri = new URL(args.metadataUri);
   if (uri.protocol !== "https:") throw new Error("TEP-64 metadata URI must use HTTPS.");
@@ -48,7 +48,7 @@ async function main(): Promise<void> {
   const dataBoc = contract.init.data.toBoc({ idx: false, crc32: true });
 
   const packageJson = JSON.parse(await readFile(resolve(process.cwd(), "package.json"), "utf8"));
-  const source = await readFile(resolve(process.cwd(), "src/vcoin.tact"));
+  const sourcePaths = ["src/vcoin.tact", "src/jetton.tact", "src/messages.tact"];\n  const sourceParts = await Promise.all(sourcePaths.map(async (path) => ({ path, content: await readFile(resolve(process.cwd(), path)) })));\n  const sourceBundle = Buffer.concat(sourceParts.flatMap((part) => [Buffer.from(part.path + "\\0"), part.content, Buffer.from("\\0")]));
   const outputDir = resolve(process.cwd(), args.out ?? "artifacts/mainnet-predeploy");
   await mkdir(outputDir, { recursive: true });
   await writeFile(resolve(outputDir, "state-init.boc"), stateInitBoc);
@@ -56,7 +56,7 @@ async function main(): Promise<void> {
   const manifest = {
     artifact_type: "offline-mainnet-jetton-state-init",
     project: "V COIN – TON",
-    network_label: "mainnet",
+    network_label: "mainnet",\n    source_commit: args.sourceCommit,
     network_connection_performed: false,
     transaction_created: false,
     transaction_signed: false,
@@ -70,7 +70,7 @@ async function main(): Promise<void> {
     compiler: { package: "@tact-lang/compiler", version: packageJson.devDependencies["@tact-lang/compiler"] },
     ton_core_version: packageJson.devDependencies["@ton/core"],
     hashes: {
-      source_vcoin_tact_sha256: sha256(source),
+      source_bundle_sha256: sha256(sourceBundle),
       code_cell_sha256: contract.init.code.hash().toString("hex"),
       data_cell_sha256: contract.init.data.hash().toString("hex"),
       state_init_cell_sha256: stateInitCell.hash().toString("hex"),

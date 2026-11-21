@@ -9,6 +9,15 @@
         "external": false,
         "ipfsAbiGetter": true
       }
+    },
+    {
+      "name": "BounceRejector",
+      "path": "./tests/fixtures/bounce-rejector.tact",
+      "output": "./build-test",
+      "options": {
+        "debug": false,
+        "external": false
+      }
     }
   ]
 }

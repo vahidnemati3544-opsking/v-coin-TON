@@ -58,7 +58,7 @@ It creates `artifacts/mainnet-predeploy/state-init.boc` and `manifest.json` with
 
 1. Independent smart-contract security audit of the exact source and generated code; close all critical/high findings.
 2. Full TEP-74 / TEP-64 conformance review, including message layouts, getters, wallet derivation, metadata cell, gas/excess, bounce and replay behavior.
-3. Complete natural downstream-bounce proof for all five issuance categories, including exact supply rollback and retry.
+3. **Sandbox proof completed on PR head `cf362ef04990aebf928e17ebd380e0aef8b6f96f` (CI #302):** the parameterized integration test forces the derived destination Jetton wallet to fail, observes the bounce return to Master, verifies supply rollback, restores the deterministic wallet StateInit, and retries the exact category cap for all five categories. Independent reproduction/audit and full TEP-74/TEP-64 conformance review remain open.
 4. Approve and pin immutable metadata containing the canonical V COIN logo; verify public retrieval and exact TEP-64 content.
 5. Founder verifies control of all five Mainnet allocation wallets and the owner wallet in their own wallet interfaces. Never share seed phrases or private keys.
 6. Independently reproduce the production StateInit and all hashes from the exact reviewed commit; verify expected Master address with an independent implementation.
@@ -80,7 +80,8 @@ It creates `artifacts/mainnet-predeploy/state-init.boc` and `manifest.json` with
 
 - Offline StateInit generator and deterministic CI smoke test: implemented; CI #273 passed on PR head `219abc794b337bc1f719a143d46ea3589cac0cc1`.
 - CI smoke test uses `https://example.invalid` solely to test deterministic serialization; no production metadata or StateInit artifact has been approved.
-- Production metadata/logo approval, independent clean-room artifact reproduction, independent contract audit, full conformance review, wallet-control proofs, natural bounce evidence, transaction preview and actual Mainnet identity verification remain pending.
+- Five-category natural downstream-bounce Sandbox proof: passed on exact PR head `cf362ef04990aebf928e17ebd380e0aef8b6f96f` in CI #302. This closes the in-repository integration-test gate only; independent reproduction/audit remains pending.
+- Production metadata/logo approval, independent clean-room artifact reproduction, independent contract audit, full conformance review, wallet-control proofs, transaction preview and actual Mainnet identity verification remain pending.
 - PR #6 remains Draft and unmerged.
 - Master address: not deployed. Deployment transaction: none. Initial mint: none. Allocation transfers: none.
 

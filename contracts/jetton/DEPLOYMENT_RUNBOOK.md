@@ -120,7 +120,7 @@ Stop if any of the following is true:
 - Earlier full run #191 passed 25 Sandbox/policy tests, build, `npm ci` using the committed lockfile, and npm audit with zero known vulnerabilities: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44837612965.
 - The committed `contracts/jetton/package-lock.json` was used successfully by `npm ci` in runs #175, #176 and #177.
 - Source-level TEP-74 notes: `docs/TEP74_CONFORMANCE_REVIEW.md`. This is not an independent audit or full certification.
-- On a bounced `TokenTransferInternal`, the source Jetton wallet restores its token balance and emits the custom `JettonTransferBounce` callback to its owner. The founder vesting contract authenticates its configured escrow wallet and rolls back the matching `released` amount. Callback/forgery Sandbox tests have been added; natural TVM downstream-bounce and full balance/counter invariant tests remain mandatory before deployment.
+- On a bounced `TokenTransferInternal`, the source Jetton wallet restores its token balance and emits the custom `JettonTransferBounce` callback to its owner. The founder vesting contract authenticates its configured escrow wallet and rolls back the matching `released` amount. Sandbox tests now simulate bounced internal-transfer and burn-notification envelopes to exercise both wallet bounce handlers; natural TVM failure injection and full balance/counter invariants remain mandatory before deployment.
 - `@tact-lang/compiler@1.6.13` emits a deprecation warning; current build succeeds. No blind Tolk migration is authorized.
 - Jetton master address: not deployed.
 - Deployment transaction: none.

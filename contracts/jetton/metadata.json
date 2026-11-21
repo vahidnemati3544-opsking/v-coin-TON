@@ -3,5 +3,5 @@
   "symbol": "VCOIN",
   "description": "V COIN is a fixed-supply digital token designed for the V COIN ecosystem on The Open Network (TON). The token uses six decimal places. The published token supply and allocation policy are documented by the project. This metadata does not represent a promise of profit, redemption, or guaranteed market value.",
   "decimals": "6",
-  "image": "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/1dac91b520de6b9d3dbf7d615128ff2ec3e95f5e/contracts/jetton/assets/vcoin-canonical-logo.jpg"
+  "image": "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/daed9f669acb2bf28449d6b02443e44aaf6f4969/contracts/jetton/assets/VCOIN-canonical-logo.png"
 }

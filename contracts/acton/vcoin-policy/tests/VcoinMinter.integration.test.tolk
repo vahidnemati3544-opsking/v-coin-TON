@@ -579,7 +579,6 @@ get fun `test VCOIN wallet RichBounce restores escrow balance and delivers failu
     );
 }
 
-
 get fun `test escrow rejects forged success acknowledgement from an unrelated sender`() {
     testing.setNow(3000);
     val (minter, admin, outsider, _) = setupVcoinMinter(false);

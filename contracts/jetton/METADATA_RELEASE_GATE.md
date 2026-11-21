@@ -43,3 +43,10 @@ The deployment template references these version-pinned review URLs. The metadat
 ## Release boundary
 
 Do not generate production StateInit or approve Mainnet deployment while the exact master PNG is absent or the metadata/image approval fields remain pending. The offline builder does not sign or broadcast; this document authorizes no deployment, mint, transfer, or wallet signature.
+
+
+## Binding governance addendum — 2026-11-21
+
+This document is governed by [Founder Exclusive Five-Wallet Control](../../docs/FOUNDER_EXCLUSIVE_FIVE_WALLET_CONTROL.md). The Founder alone has absolute, exclusive operational control and signing authority over all five allocation wallets; separation is accounting-only. No third party, employee, backend, Telegram bot, CI process, multisig co-signer, escrow, vesting, time lock, withdrawal ceiling, or automated process may authorize, veto, delay, redirect, sign, or execute movements.
+
+Each TEP-74 Jetton Wallet authorizes transfers through its own `owner` address. Master ownership alone does not grant withdrawal or clawback rights over other wallets. The implementation therefore relies on Founder-exclusive signing control of all five recorded owner addresses, with transactions signed locally by the Founder. No hidden seizure path is permitted. Backend/Telegram may prepare unsigned proposals only. Never expose wallet secrets. Wallet-control evidence is recorded separately and must not be falsely marked complete. This addendum does not authorize any Mainnet transaction.

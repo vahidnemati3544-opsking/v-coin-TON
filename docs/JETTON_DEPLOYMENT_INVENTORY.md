@@ -237,3 +237,42 @@ This section supersedes older CI and readiness summaries above where commit IDs,
 - Added `docs/ONCHAIN_ALLOCATION_ENFORCEMENT_PLAN.md` (Document ID `VCT-ALLOC-ENF-001`) to define the required immutable five-destination allocation map, direct issuance to the Founder and Mining escrows plus the three recorded owner wallets, one-time exact allocation, bounced-message recovery, and mandatory Sandbox invariants.
 - This is an architecture/design checkpoint, not implementation of the escrow state machine. The current source remains unchanged and still does not enforce category caps. A multi-recipient TON issuance is not atomic by default; the new plan explicitly requires pending/confirmed accounting and natural bounce tests for each recipient before acceptance.
 - Release remains **HOLD**. No merge, deployment, mint, transfer, or wallet-signing action occurred. Testnet deployment remains omitted by owner direction. PR #6 remains Draft/unmerged.
+
+
+## Superseding implementation checkpoint — five-category issuance — 2026-11-21
+
+This checkpoint supersedes earlier statements in this inventory that the Tact master still mints the entire supply to the founder wallet and has no on-chain per-category issuance caps.
+
+### Code changes now present in Draft PR #6
+
+- `contracts/jetton/src/vcoin.tact`: removed the unrestricted full-supply founder issuance entrypoint. Added owner-only one-time configuration of five distinct allocation destination owner-addresses, then five separate category issuance paths with hard-coded exact caps:
+  - Founder: 2,000,000,000 VCOIN (20%)
+  - Mining: 5,000,000,000 VCOIN (50%)
+  - Treasury: 1,000,000,000 VCOIN (10%)
+  - Liquidity / Market: 1,000,000,000 VCOIN (10%)
+  - Ecosystem / Marketing: 1,000,000,000 VCOIN (10%)
+- Each destination map can be configured only once and only before issuance; all five destinations must be distinct.
+- Each category has its own one-time issued flag. The category amount and destination are selected by contract code, not by caller-supplied amount/address.
+- `contracts/jetton/src/jetton.tact`: the internal mint transfer now carries the category ID as its query ID.
+- The master bounce handler validates both the category ID and exact category amount, clears only the failed category flag, and subtracts only that category amount from recorded total supply. This permits retry of a failed category without reopening successful categories.
+- Minting becomes permanently disabled only when all five categories have been issued and total supply equals exactly 10,000,000,000 × 10^6 base units.
+- Sandbox integration tests now cover exact five-destination distribution, immutable configuration, non-owner issuance rejection, invalid category rejection, duplicate category rejection, and a naturally generated recipient-wallet bounce followed by an allowed retry.
+
+### Exact-head CI evidence
+
+- Current code/test head before documentation reconciliation: `f189e85278cfdb83a0e8c09b7251842513fbd623`.
+- Jetton workflow #248 passed on that exact head: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44888388766
+- Result: Tact build passed; **31/31 Jest/Sandbox tests passed**; `npm ci` passed; `npm audit --audit-level=high` passed with **zero known vulnerabilities**.
+- The CI pass validates this tested code revision. The subsequent inventory/plan updates are documentation-only and require a final head CI check before any merge decision.
+
+### Limitations that remain release blockers
+
+1. The five destination addresses are immutable after owner configuration, but the Tact master does not verify that the Founder and Mining destinations are the intended escrow contract types. The owner could configure arbitrary distinct addresses before issuance.
+2. The Founder vesting contract is a separate component. The current category issuance tests use the Founder owner wallet as the Founder destination and later vesting funding remains a separate transfer; direct issuance to the Founder escrow and its authenticated funding handshake are not yet integrated.
+3. A Mining escrow with bounded release logic and founder-only withdrawal authorization is not implemented in this Tact candidate.
+4. Category caps constrain the initial amount issued to each destination. They do not prevent a destination wallet owner from transferring tokens elsewhere after receipt; the Jetton wallet remains transferable.
+5. Full five-recipient adversarial bounce matrix, complete balance/property invariants, independent third-party audit, Mainnet wallet-control proofs, deterministic deployment transaction package, and explicit founder approval remain pending.
+
+### Current release decision
+
+**HOLD.** Per-category issuance caps are now implemented and CI-tested in the Tact candidate, but full escrow-recipient enforcement and custody policy are not complete. PR #6 remains Draft and unmerged. No Testnet or Mainnet deployment, mint, transfer, or wallet-signing action has occurred. The Testnet deployment omission remains the owner's direction and does not waive any other release gate.

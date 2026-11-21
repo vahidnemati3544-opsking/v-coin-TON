@@ -57,7 +57,7 @@ trait JettonMaster {
         return initOf VCoinJettonWallet(ownerAddress, myAddress());
     }
 
-    fun mintTo(receiver: Address, amount: Int, response: Address) {
+    fun mintTo(receiver: Address, amount: Int, response: Address, queryId: Int) {
         require(self.mintable, "Minting permanently disabled");
         require(amount > 0, "Mint amount must be positive");
         self.total_supply = self.total_supply + amount;
@@ -68,7 +68,7 @@ trait JettonMaster {
             bounce: true,
             mode: SendRemainingValue,
             body: TokenTransferInternal{
-                query_id: 0,
+                query_id: queryId,
                 amount: amount,
                 from: myAddress(),
                 response_destination: response,

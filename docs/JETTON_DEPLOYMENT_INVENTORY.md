@@ -1,3 +1,23 @@
+# CURRENT AUTHORITATIVE STATUS — 2026-11-21 (supersedes all historical sections below)
+
+**Active candidate:** Draft PR #6, branch `audit/pr5-bounce-guard-and-network-clarity-2026-11-21`. Verified contract/test source head: `8db80093487852e000fed85e77448a1f32181505`. The subsequent change to the allocation-enforcement plan is documentation-only.
+
+**Latest exact-code CI:** workflow #298 passed on the above source head: Tact build, offline deployment-generator TypeScript check, deterministic StateInit/manifest double-generation smoke test, 24/24 Sandbox/Jest tests, `npm ci`, and `npm audit --audit-level=high` with zero reported vulnerabilities. https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44908971540
+
+**Five-allocation issuance state machine:** implemented in `contracts/jetton/src/vcoin.tact`: owner-only one-time destination configuration, five immutable category caps, per-category one-time issuance flags, category-tagged mint messages, supply cap check, and category-specific bounce rollback. The Sandbox suite now has five independent bounce/recovery/retry cases, one for each destination. Each case verifies the bounced category can be retried and credits exactly its own cap after wallet StateInit restoration.
+
+**Binding governance:** all five allocation wallets are ordinary, fully transferable wallets under the Founder's sole authority. Founder 2B has no vesting, escrow, time lock, release schedule, or withdrawal restriction. The active Founder authority charter is `docs/FOUNDER_AUTHORITY_CHARTER.md`. No vesting contract is included in the active Tact build.
+
+**Action 25 correction (2026-11-21):** the canonical Library logo source has been re-identified and its SHA-256 confirmed as `08d71b17fecb86ae6006ba0fc498675dc4024b13d3f40459dcd578dfc09719d1`. The currently committed `vcoin-canonical-logo.png` is actually JPEG-signature data (194,115 bytes; Git blob `87a3e78313d26e36e500802e158827486bbc34c6`) and is not byte-identical to the canonical source. Its production use is blocked until exact bytes replace it and the public URI is verified.
+
+**Current deployment decision: NO-GO / HOLD.** The offline deterministic StateInit generator exists and has passed CI smoke tests only; no production artifact has been generated because final immutable metadata/logo URI approval is missing. Network identity must still be fail-closed verified at signing time. Full TEP-74/TEP-64 conformance review, independent smart-contract audit, regular Jetton transfer downstream-bounce review, Mainnet wallet-control proofs, fee/payload review, and explicit approval of exact transaction data remain open. Testnet deployment remains intentionally excluded. No merge, deployment, mint, transfer, or wallet signing has occurred.
+
+**Next work package: Action 25 — complete the deterministic Mainnet deployment package without broadcast**, including production metadata URI approval, final artifact generation/reproduction, hash inventory, and unsigned transaction/payload review. See `docs/MAINNET_DEPLOYMENT_READINESS.md`.
+
+> Historical sections below are retained as an audit trail only. They may contain superseded designs (including Founder/Mining vesting or older PR candidates) and must not be treated as current implementation requirements. The current Charter, Allocation Enforcement Plan, and Mainnet Deployment Readiness document govern.
+
+---
+
 # V COIN–TON Jetton Deployment Inventory
 
 **Document ID:** VCT-JETTON-INV-001  
@@ -197,3 +217,143 @@ The Founder schedule is four-year linear vesting; the Mining reserve schedule is
 | Five-allocation distribution | Not performed |
 
 **Release decision: HOLD — do not merge or broadcast yet.** The owner-directed Testnet omission is recorded, but it does not remove the other mandatory safety gates. The first irreversible on-chain action remains deployment of the reviewed VCOIN Master; allocation minting and transfers can only follow after its address and state are verified.
+
+
+## Superseding audit checkpoint — 2026-11-21 08:57 UTC
+
+This section supersedes older CI and readiness summaries above where commit IDs, test status, or the selected candidate differ.
+
+### Selected candidate and exact CI evidence
+
+- The active Tact Jetton candidate remains Draft PR #5 on branch `audit/issuance-readiness-2026-11-21`, head `a85d6d0d9cefd74b2e1163cdc03e3dc6ab03e6d0`.
+- Jetton workflow #237 passed on that exact PR #5 head: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44879121595.
+- Follow-up Draft PR #6 is based on PR #5 and adds vesting first-hop bounce hardening plus a regression test. Exact head: `542f5b4d83eb02b81a0a44bc64b51aa23c1285e5`.
+- Jetton workflow #238 passed on the exact PR #6 head: `npm ci`, Tact build, Jest/Sandbox tests, and `npm audit --audit-level=high`: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44887195430.
+- PR #6 remains Draft and unmerged; it is not yet part of PR #5 or `main`.
+
+### Corrections included in PR #6
+
+- Founder vesting's `bounced(TokenTransfer)` handler now rejects zero amounts and amounts greater than the currently released balance before rollback.
+- A new Sandbox regression test forces the first-hop vesting Jetton-wallet transaction to fail, verifies the protocol-generated bounce reaches vesting, and checks that `released` returns to zero while master total supply remains unchanged.
+- Allocation and deployment templates now identify `mainnet` as the intended target, matching the owner's explicit Testnet-omission direction. Both templates remain non-authorizing: deployment authorization is false, Mainnet authorization is false, and master/deployment transaction fields remain null. This is configuration clarity, not a network-identity guard or permission to broadcast.
+
+### Important implementation limitations — still release blockers
+
+1. The Tact master issues the full fixed supply once to the founder wallet. The five category amounts are currently distribution policy and manifest checks; the Tact contracts do **not** enforce separate on-chain per-category caps or automatically route the Founder and Mining allocations into vesting escrows. Distribution therefore requires separate reviewed transaction construction and founder signatures.
+2. The PR #5 Tact candidate does not contain a production Mainnet deployment/transaction builder or an on-chain Mainnet identity guard. A template field naming Mainnet is not a security guard.
+3. The independent smart-contract audit has not been completed.
+4. Wallet-control proofs for all five owner allocation destinations and the separate TON-fee wallet remain pending.
+5. Final metadata/logo approval, deterministic deployment payload, compiler/build/code hashes, fee budget, and exact founder-approved transaction previews remain pending.
+6. PR #5 and PR #6 are Draft and unmerged. PR #4 is a separate Acton/Tolk candidate and must not be silently mixed with the Tact implementation; selecting it would require a separate explicit architecture decision and full evidence reconciliation.
+
+### Release decision
+
+**HOLD — no Mainnet deployment, mint, or transfer.** The PR #6 CI pass verifies the tested source revision only; it is not an independent audit, wallet-control proof, or deployment authorization. Testnet deployment remains intentionally omitted by owner direction. Do not merge or broadcast until the remaining release blockers are independently closed and the founder approves the exact final build hashes and each irreversible transaction.
+
+
+## Superseding allocation-enforcement checkpoint — 2026-11-21
+
+- Source inspection confirmed that `contracts/jetton/src/vcoin.tact` mints the exact 10B supply to the founder wallet and then disables further minting. The five category amounts are not independently enforced by the master contract; ordinary Jetton wallet transfers are not category-aware.
+- Added `docs/ONCHAIN_ALLOCATION_ENFORCEMENT_PLAN.md` (Document ID `VCT-ALLOC-ENF-001`) to define the required immutable five-destination allocation map, direct issuance to the Founder and Mining escrows plus the three recorded owner wallets, one-time exact allocation, bounced-message recovery, and mandatory Sandbox invariants.
+- This is an architecture/design checkpoint, not implementation of the escrow state machine. The current source remains unchanged and still does not enforce category caps. A multi-recipient TON issuance is not atomic by default; the new plan explicitly requires pending/confirmed accounting and natural bounce tests for each recipient before acceptance.
+- Release remains **HOLD**. No merge, deployment, mint, transfer, or wallet-signing action occurred. Testnet deployment remains omitted by owner direction. PR #6 remains Draft/unmerged.
+
+
+## Superseding implementation checkpoint — five-category issuance — 2026-11-21
+
+This checkpoint supersedes earlier statements in this inventory that the Tact master still mints the entire supply to the founder wallet and has no on-chain per-category issuance caps.
+
+### Code changes now present in Draft PR #6
+
+- `contracts/jetton/src/vcoin.tact`: removed the unrestricted full-supply founder issuance entrypoint. Added owner-only one-time configuration of five distinct allocation destination owner-addresses, then five separate category issuance paths with hard-coded exact caps:
+  - Founder: 2,000,000,000 VCOIN (20%)
+  - Mining: 5,000,000,000 VCOIN (50%)
+  - Treasury: 1,000,000,000 VCOIN (10%)
+  - Liquidity / Market: 1,000,000,000 VCOIN (10%)
+  - Ecosystem / Marketing: 1,000,000,000 VCOIN (10%)
+- Each destination map can be configured only once and only before issuance; all five destinations must be distinct.
+- Each category has its own one-time issued flag. The category amount and destination are selected by contract code, not by caller-supplied amount/address.
+- `contracts/jetton/src/jetton.tact`: the internal mint transfer now carries the category ID as its query ID.
+- The master bounce handler validates both the category ID and exact category amount, clears only the failed category flag, and subtracts only that category amount from recorded total supply. This permits retry of a failed category without reopening successful categories.
+- Minting becomes permanently disabled only when all five categories have been issued and total supply equals exactly 10,000,000,000 × 10^6 base units.
+- Sandbox integration tests now cover exact five-destination distribution, immutable configuration, non-owner issuance rejection, invalid category rejection, duplicate category rejection, and a naturally generated recipient-wallet bounce followed by an allowed retry.
+
+### Exact-head CI evidence
+
+- Current code/test head before documentation reconciliation: `f189e85278cfdb83a0e8c09b7251842513fbd623`.
+- Jetton workflow #248 passed on that exact head: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44888388766
+- Result: Tact build passed; **31/31 Jest/Sandbox tests passed**; `npm ci` passed; `npm audit --audit-level=high` passed with **zero known vulnerabilities**.
+- The CI pass validates this tested code revision. The subsequent inventory/plan updates are documentation-only and require a final head CI check before any merge decision.
+
+### Limitations that remain release blockers
+
+1. The five destination addresses are immutable after owner configuration, but the Tact master does not verify that the Founder and Mining destinations are the intended escrow contract types. The owner could configure arbitrary distinct addresses before issuance.
+2. The Founder vesting contract is a separate component. The current category issuance tests use the Founder owner wallet as the Founder destination and later vesting funding remains a separate transfer; direct issuance to the Founder escrow and its authenticated funding handshake are not yet integrated.
+3. A Mining escrow with bounded release logic and founder-only withdrawal authorization is not implemented in this Tact candidate.
+4. Category caps constrain the initial amount issued to each destination. They do not prevent a destination wallet owner from transferring tokens elsewhere after receipt; the Jetton wallet remains transferable.
+5. Full five-recipient adversarial bounce matrix, complete balance/property invariants, independent third-party audit, Mainnet wallet-control proofs, deterministic deployment transaction package, and explicit founder approval remain pending.
+
+### Current release decision
+
+**HOLD.** Per-category issuance caps are now implemented and CI-tested in the Tact candidate, but full escrow-recipient enforcement and custody policy are not complete. PR #6 remains Draft and unmerged. No Testnet or Mainnet deployment, mint, transfer, or wallet-signing action has occurred. The Testnet deployment omission remains the owner's direction and does not waive any other release gate.
+
+
+### Final exact-head reconciliation and task record
+
+- Documentation reconciliation head: `e7758785f3a1b39cb611d12f3613f7deecdba30b`.
+- Jetton workflow #250 passed on this exact final PR #6 head: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44888533636
+- Final exact-head result: build passed; **31/31 Jest/Sandbox tests passed**; `npm ci` passed; `npm audit --audit-level=high` passed with zero known vulnerabilities.
+- **Action 22 — Implement five-category on-chain issuance caps:** source and integration tests committed to PR #6; implementation/test stage verified; remaining escrow integration and independent release gates remain open.
+- Files: `contracts/jetton/src/vcoin.tact`, `contracts/jetton/src/jetton.tact`, `contracts/jetton/tests/jetton-sandbox.integration.spec.ts`, `contracts/jetton/tests/founder-vesting.integration.spec.ts`, `docs/ONCHAIN_ALLOCATION_ENFORCEMENT_PLAN.md`, this inventory.
+- Status: **tested / committed in Draft PR #6; not merged**.
+- Next action: implement Founder direct-to-escrow issuance handshake and Mining escrow bounded-release/custody controls, then expand bounce/property invariants and independent review.
+
+
+## Binding governance correction — Founder authority and 2B-only vesting — 2026-11-21
+
+**This section and `docs/FOUNDER_AUTHORITY_CHARTER.md` supersede every earlier conflicting escrow/custody recommendation in this inventory, including earlier statements that Mining must be placed in an escrow or that all escrow withdrawals require a separate founder-only release controller.**
+
+The Founder has absolute and exclusive operational authority over deposits, withdrawals, and transfers from all five official allocation wallets. The Founder is the sole human decision-maker and signer. No backend, Telegram bot, employee, administrator, third party, co-signer, or automated service may independently authorize or execute wallet movements.
+
+**The only time-based lock is the Founder's own 2,000,000,000 VCOIN allocation (20%)**, which must be released to the Founder's immutable beneficiary wallet under the approved four-year, zero-cliff, daily-linear schedule (1,460 accrual days). This schedule does not grant custody or approval authority to anyone else.
+
+The other four allocations are not escrow-locked and have no mandatory vesting or release schedule:
+
+- Mining reserve — 5B VCOIN: ordinary transferable owner wallet, Founder-controlled.
+- Treasury — 1B VCOIN: ordinary transferable owner wallet, Founder-controlled.
+- Liquidity / market — 1B VCOIN: ordinary transferable owner wallet, Founder-controlled.
+- Ecosystem / marketing — 1B VCOIN: ordinary transferable owner wallet, Founder-controlled.
+
+A Mining escrow with a 730-day lock, a Mining release controller, and escrow restrictions on Treasury, Liquidity, or Ecosystem are explicitly rejected and must not be introduced. Wallet separation exists for accounting and reporting; it does not create independent custodians.
+
+### Corrected remaining implementation gate
+
+The remaining vesting integration is limited to the Founder 2B allocation: the initial issuance must route this allocation directly into the Founder vesting mechanism (or a proven atomic equivalent) so the unvested amount is never exposed in an unrestricted wallet. The other four categories must be credited to the five recorded owner-wallet destinations as applicable and remain transferable under the Founder's sole authority.
+
+The current PR #6 code has the five category caps, but its Founder destination still needs to be integrated with the dedicated vesting contract. This is a genuine outstanding implementation task; it must not be described as a need for Mining escrow. Verify the authentic funding notification, exact 2B amount, four-year schedule, beneficiary, and bounce-safe release accounting in Sandbox before release.
+
+**Action 23 — Nهادینه‌سازی اصل اختیار بنیان‌گذار و محدودیت صرفاً سهم ۲ میلیاردی:**  
+- Files: `docs/FOUNDER_AUTHORITY_CHARTER.md` (new), `docs/ONCHAIN_ALLOCATION_ENFORCEMENT_PLAN.md` (rewritten), this inventory (superseding governance addendum).
+- Status: committed to Draft PR #6; documentation policy recorded. Contract-level Founder 2B direct-to-vesting integration remains pending and must be tested.
+- Next action: implement direct Founder allocation-to-vesting funding and verify the other four wallets have no vesting/escrow restrictions.
+
+**Safety status remains HOLD.** This governance correction does not deploy, mint, transfer, or sign anything. PR #6 remains Draft and unmerged.
+
+
+## Superseding Founder-allocation correction — unrestricted 2B — 2026-11-21
+
+**This correction supersedes the preceding “2B-only vesting” addendum, Action 23 vesting language, and every earlier four-year Founder-release statement in this inventory.** The Founder explicitly removed every withdrawal and time-based restriction on the full 2,000,000,000 VCOIN Founder allocation.
+
+- Founder 2B is issued directly to the Founder's ordinary Jetton wallet and is fully transferable immediately; no four-year vesting, cliff, daily accrual, escrow, time lock, withdrawal ceiling, or release contract applies.
+- All five allocations are ordinary transferable Jetton balances under the Founder's sole authority. Wallet separation is for accounting only.
+- Updated `docs/FOUNDER_AUTHORITY_CHARTER.md` to v1.1.0 and rewrote `docs/ONCHAIN_ALLOCATION_ENFORCEMENT_PLAN.md` to reflect the new rule.
+- Updated `contracts/jetton/src/vcoin.tact` governance comments; Founder category already routes to the configured Founder destination, which must be the Founder owner wallet.
+- Removed `VCoinFounderVesting` from `contracts/jetton/tact.config.json` and deleted the obsolete vesting contract and its vesting-only test file from the active candidate.
+- Existing Sandbox coverage in `jetton-sandbox.integration.spec.ts` verifies the 2B balance is credited to the Founder wallet and that the Founder can transfer Jettons from that wallet. The complete suite must be rerun on the resulting exact head.
+
+**Action 24 — حذف کامل محدودیت آزادسازی و برداشت سهم ۲ میلیاردی بنیان‌گذار:**
+- Files: Founder charter, allocation enforcement plan, deployment inventory, `contracts/jetton/src/vcoin.tact`, `contracts/jetton/tact.config.json`; removed `contracts/jetton/src/founder-vesting.tact` and `contracts/jetton/tests/founder-vesting.integration.spec.ts`.
+- Status: committed to Draft PR #6; exact-head CI and remaining documentation consistency checks pending.
+- Next action: remove any remaining active four-year Founder vesting language from tokenomics/README/deployment docs, run full CI, and verify the final exact commit.
+
+**Safety remains HOLD.** No merge, deployment, mint, transfer, or wallet signing was performed or authorized.

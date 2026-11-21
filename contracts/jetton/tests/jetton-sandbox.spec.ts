@@ -18,7 +18,7 @@ async function deployMaster(
     owner.getSender(),
     { value: toNano('0.1') },
     {
-      $$$type: 'ProvideWalletAddress',
+      $$type: 'ProvideWalletAddress',
       query_id: 1n,
       owner_address: owner.address,
       include_address: false,
@@ -88,7 +88,7 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     const underfunded = await master.send(
       owner.getSender(),
       { value: toNano('0.01') },
-      { $type: 'VCoinMint', receiver: owner.address, amount: MAX_SUPPLY },
+      { $$type: 'VCoinMint', receiver: owner.address, amount: MAX_SUPPLY },
     );
     expect(underfunded.transactions).toHaveTransaction({
       to: master.address,

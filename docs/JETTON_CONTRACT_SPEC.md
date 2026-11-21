@@ -3,7 +3,7 @@
 **Document ID:** VCT-JETTON-SPEC-001  
 **Version:** 1.0.0  
 **Status:** Contract design draft — implementation, compilation, audit and deployment pending  
-**Network target for first rehearsal:** TON Testnet only  
+**Network target:** TON Mainnet only; Testnet deployment is excluded by Founder direction  
 **Token standard:** TEP-74 (Jettons), with TEP-64 metadata  
 **Repository scope:** V-Coin-TON
 
@@ -21,8 +21,8 @@
 | Additional minting | Permanently disabled after initial issuance |
 | Standard | TON Jetton, TEP-74 |
 | Metadata | TEP-64 compliant |
-| First deployment target | TON Testnet |
-| Mainnet | Disabled pending separate explicit approval |
+| Deployment target | TON Mainnet |
+| Testnet | No deployment; excluded by Founder direction |
 
 The total supply is 10^16 base units. All token arithmetic must use integer base units; floating-point arithmetic is prohibited.
 
@@ -114,7 +114,7 @@ Each destination and its controller must be owner-confirmed. All four allocation
 - No contract upgradeability or proxy mechanism is permitted unless separately justified, explicitly approved and independently audited.
 - The Master must not retain mint authority after initial issuance.
 - Any temporary deployment authority must be minimized and removed/locked as part of the verified issuance procedure.
-- Administrative keys must use an owner-approved secure wallet or multisig arrangement. The exact controller and threshold are deployment decisions still pending.
+- The Founder is the sole operational signer for all five allocation wallets. Wallet signing occurs locally in the Founder's wallet; no multisig co-signer, backend signer, or third-party custody authority is permitted.
 - Never request, store, log, transmit or paste seed phrases or private keys into the repository, backend, chat or deployment scripts.
 - Wallet transactions must be signed in the user's wallet interface.
 
@@ -141,7 +141,7 @@ Tests must include adversarial cases and must not be reported as passing unless 
 
 **Current state: NO-GO. No deployment is authorized by this document.**
 
-Before Testnet deployment:
+Before any Mainnet deployment:
 - Select and pin the contract language/compiler and a maintained TEP-74 implementation.
 - Complete Master and Wallet source code, build configuration, deployment scripts and automated tests.
 - Obtain owner approval for all five destination addresses and any distribution vault.
@@ -149,9 +149,10 @@ Before Testnet deployment:
 - Resolve treasury/liquidity/ecosystem custody and controller arrangements.
 - Reproducibly compile and verify contract artifacts.
 - Complete independent smart-contract review.
-- Prepare a Testnet-only deployment manifest and confirm the network in every wallet and explorer.
-- Deploy only after explicit owner approval of the exact transaction and destination addresses.
-- Verify Master address, getters, supply, metadata, wallet code and allocation balances on Testnet.
+- Prepare a deterministic Mainnet deployment manifest and positively verify the selected network as TON Mainnet.
+- Obtain independent smart-contract audit, natural downstream-bounce proof, reproducible build and wallet-control evidence.
+- Deploy only after explicit Founder approval of the exact transaction payload, hashes, fee and destination addresses.
+- Verify Master address, getters, supply, metadata, wallet code and allocation balances on Mainnet.
 
 Mainnet deployment, initial issuance on Mainnet, liquidity provision, irreversible admin changes and real-value transfers require separate explicit approval after independent security review.
 

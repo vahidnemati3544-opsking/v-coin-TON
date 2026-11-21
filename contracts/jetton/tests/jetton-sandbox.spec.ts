@@ -113,6 +113,26 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     expect(data.mintable).toBe(true);
   });
 
+  test('accepts the documented minimum TON funding threshold', async () => {
+    const blockchain = await Blockchain.create();
+    const owner = await blockchain.treasury('owner');
+    const { master } = await deployMaster(blockchain, owner);
+
+    const result = await master.send(
+      owner.getSender(),
+      { value: toNano('0.1') },
+      { $type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
+    );
+    expect(result.transactions).toHaveTransaction({
+      from: owner.address,
+      to: master.address,
+      success: true,
+    });
+    const walletAddress = await master.getGetWalletAddress(owner.address);
+    const wallet = blockchain.openContract(VCoinJettonWallet.fromAddress(walletAddress));
+    expect((await wallet.getGetWalletData()).balance).toBe(FOUNDER_ALLOCATION);
+  });
+
   test('rejects wrong amounts and unregistered recipient addresses', async () => {
     const blockchain = await Blockchain.create();
     const owner = await blockchain.treasury('owner');
@@ -191,46 +211,55 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     }
   });
 
-  test('rolls back only the bounced allocation after a natural wallet-credit bounce', async () => {
-    const blockchain = await Blockchain.create();
-    const owner = await blockchain.treasury('owner');
-    const { master } = await deployMaster(blockchain, owner);
-    const walletAddress = await master.getGetWalletAddress(owner.address);
+  test('rolls back each role-specific allocation after a natural wallet-credit bounce', async () => {
+    const roles = [
+      { statusField: 'founder_issued', select: (d: Awaited<ReturnType<typeof deployMaster>>, owner: SandboxContract<TreasuryContract>) => ({ address: owner.address, amount: FOUNDER_ALLOCATION }) },
+      { statusField: 'mining_reserve_issued', select: (d: Awaited<ReturnType<typeof deployMaster>>) => ({ address: d.miningReserve.address, amount: MINING_ALLOCATION }) },
+      { statusField: 'treasury_issued', select: (d: Awaited<ReturnType<typeof deployMaster>>) => ({ address: d.treasury.address, amount: ONE_BILLION_ALLOCATION }) },
+      { statusField: 'liquidity_issued', select: (d: Awaited<ReturnType<typeof deployMaster>>) => ({ address: d.liquidity.address, amount: ONE_BILLION_ALLOCATION }) },
+      { statusField: 'ecosystem_issued', select: (d: Awaited<ReturnType<typeof deployMaster>>) => ({ address: d.ecosystem.address, amount: ONE_BILLION_ALLOCATION }) },
+    ] as const;
 
-    // Put an intentionally rejecting contract at the deterministic founder
-    // wallet address. Its failed receipt causes a real protocol bounce.
-    const rejector = await BounceRejector.fromInit();
-    if (!rejector.init) {
-      throw new Error('BounceRejector StateInit was not generated');
+    for (const role of roles) {
+      const blockchain = await Blockchain.create();
+      const owner = await blockchain.treasury('owner');
+      const destinations = await deployMaster(blockchain, owner);
+      const target = role.select(destinations, owner);
+      const walletAddress = await destinations.master.getGetWalletAddress(target.address);
+
+      // An active rejecting account at the deterministic Jetton wallet address
+      // makes the real bounceable credit message fail and return naturally.
+      const rejector = await BounceRejector.fromInit();
+      if (!rejector.init) {
+        throw new Error('BounceRejector StateInit was not generated');
+      }
+      await blockchain.setShardAccount(
+        walletAddress,
+        createShardAccount({
+          address: walletAddress,
+          code: rejector.init.code,
+          data: rejector.init.data,
+          balance: toNano('1'),
+          workchain: 0,
+        }),
+      );
+
+      const mint = await destinations.master.send(
+        owner.getSender(),
+        { value: toNano('0.5') },
+        { $$type: 'VCoinMint', receiver: target.address, amount: target.amount },
+      );
+      expect(mint.transactions).toHaveTransaction({
+        from: walletAddress,
+        to: destinations.master.address,
+        inMessageBounced: true,
+        success: true,
+      });
+      expect((await destinations.master.getGetJettonData()).total_supply).toBe(0n);
+      expect((await destinations.master.getGetJettonData()).mintable).toBe(true);
+      const status = await destinations.master.getGetAllocationStatus();
+      expect(status[role.statusField]).toBe(false);
     }
-    await blockchain.setShardAccount(
-      walletAddress,
-      createShardAccount({
-        address: walletAddress,
-        code: rejector.init.code,
-        data: rejector.init.data,
-        balance: toNano('1'),
-        workchain: 0,
-      }),
-    );
-
-    const mint = await master.send(
-      owner.getSender(),
-      { value: toNano('0.5') },
-      { $$type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
-    );
-
-    expect(mint.transactions).toHaveTransaction({
-      from: walletAddress,
-      to: master.address,
-      inMessageBounced: true,
-      success: true,
-    });
-    const data = await master.getGetJettonData();
-    expect(data.total_supply).toBe(0n);
-    expect(data.mintable).toBe(true);
-    const status = await master.getGetAllocationStatus();
-    expect(status.founder_issued).toBe(false);
   });
 
   test('permits retry of only the allocation that was naturally bounced', async () => {

@@ -8,7 +8,7 @@
   "initial_supply_tokens": "10000000000",
   "initial_supply_base_units": "10000000000000000",
   "additional_minting": false,
-  "target_network": "testnet",
+  "target_network": "mainnet",
   "master_address": null,
   "deployment_transaction": null,
   "operational_fee_wallet": {
@@ -35,42 +35,63 @@
     "mining_reserve": "UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0"
   },
   "allocation_destinations": {
-    "founder_vesting_contract": null,
     "mining_reserve_wallet": null,
     "treasury_wallet": null,
     "liquidity_market_wallet": null,
     "ecosystem_marketing_wallet": null
   },
-  "founder_vesting": {
-    "duration_seconds": 126144000,
-    "start_timestamp": "set_on_chain_when_exact_2B_allocation_is_received",
-    "cliff_seconds": 0,
-    "release_frequency_seconds": 86400,
-    "allocation_tokens": "2000000000",
-    "allocation_base_units": "2000000000000000",
-    "beneficiary_wallet": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
-    "vesting_contract_source": "contracts/jetton/src/founder-vesting.tact",
-    "deployment_status": "not_deployed",
-    "wallet_configuration": "after deployment, derive this contract's Jetton wallet using the master get_wallet_address getter, then configure it once with founder signature",
-    "funding_trigger": "accept only one exact 2B VCOIN JettonNotification from the configured Jetton wallet and founder sender",
-    "claim_policy": "permissionless trigger; fixed founder beneficiary; daily linear accrual; no cliff"
-  },
   "metadata": {
-    "uri": "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/49c462124a082ef6c850079b35c6f77c5bda6ea2/contracts/jetton/metadata.json",
-    "immutable": true
+    "uri": "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/d67f2549dfba8876cd4b0becc2bc8573bcc10c57/contracts/jetton/metadata.json",
+    "immutable": true,
+    "approval_status": "pending_founder_approval",
+    "image_uri": "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/daed9f669acb2bf28449d6b02443e44aaf6f4969/contracts/jetton/assets/VCOIN-canonical-logo.png",
+    "image_approval_status": "pending_founder_approval",
+    "note": "Metadata JSON and exact canonical PNG use immutable commit-pinned HTTPS URLs. CI must verify public retrieval, MIME type, dimensions and SHA-256. Founder approval remains pending; no production release is authorized."
   },
   "deployment_authorized": false,
   "mainnet_authorized": false,
-  "notes": "Template only. The five allocation owner wallet candidates are recorded in allocation_wallets; the Treasury address has been corrected against the allocation register. These owner addresses are distinct from derived Jetton wallet contract addresses and the founder vesting contract. Keep derived contract addresses null until the Jetton master is deployed and wallet addresses are derived and verified on the intended network. The operational fee wallet is a separate TON-only funding address and is not part of VCOIN allocation. Verify network and wallet control before funding. Null contract/deployment fields require owner approval and verification. Never commit secrets, seed phrases or private keys. No deployment or transfer is authorized by this template. Metadata draft is committed at an immutable Git commit URL; it currently omits an image because no approved project logo asset is stored in this repository. The owner must approve the public metadata and image before deployment. Founder 2B VCOIN vesting contract source has been added but is not deployed. Its escrow Jetton wallet address must be derived from the deployed master after the vesting contract deployment and configured exactly once by founder signature. Vesting starts only after the exact 2B VCOIN allocation is received and verified; daily linear accrual over 1,460 days with zero cliff. The contract must pass its dedicated Sandbox tests and independent review before any deployment or funding.",
+  "notes": "Template only. Five allocation owner-wallet candidates are recorded in allocation_wallets; they are distinct from derived Jetton wallet contract addresses. Keep derived addresses null until the Jetton master is deployed and wallet addresses are derived and verified on TON Mainnet. The operational fee wallet is a separate TON-only funding address and is not part of VCOIN allocation. Verify network and wallet control before funding. Never commit secrets, seed phrases or private keys. The TEP-64 metadata JSON and exact canonical PNG are referenced by immutable commit-pinned HTTPS URLs and checked by CI for public retrieval and byte-level identity. Founder approval of the exact metadata/artwork pair remains pending. No deployment or transfer is authorized by this template.",
   "allocation_wallet_verification": {
-    "status": "pending_wallet_control_proof",
-    "note": "These are recorded owner wallet candidates, not derived Jetton wallet contract addresses. Verify control on the intended network before any transfer.",
+    "status": "founder_exclusive_control_declared_evidence_pending",
+    "note": "Founder has declared exclusive control of all five owner-wallet addresses as a binding project invariant. Before Mainnet operations, record non-spending per-address control evidence without exposing secrets. Evidence status does not alter or delegate the governance rule.",
     "destinations": {
-      "founder": "pending",
-      "treasury": "pending",
-      "liquidity_market": "pending",
-      "ecosystem_marketing": "pending",
-      "mining_reserve": "pending"
+      "founder": "founder_exclusive_control_declared_evidence_pending",
+      "treasury": "founder_exclusive_control_declared_evidence_pending",
+      "liquidity_market": "founder_exclusive_control_declared_evidence_pending",
+      "ecosystem_marketing": "founder_exclusive_control_declared_evidence_pending",
+      "mining_reserve": "founder_exclusive_control_declared_evidence_pending"
     }
+  },
+  "network_fee_policy": {
+    "currency": "TON",
+    "max_total_deployment_network_fee": "3",
+    "hard_stop_if_estimated_fee_exceeds_limit": true,
+    "require_founder_review_of_exact_fee_before_signing": true,
+    "note": "Target estimated total network fee is 1 TON. Absolute Founder-set maximum is 3 TON. Sum all source and destination fee components from a valid estimate; do not count attached deployment value as a fee. Missing, malformed, stale, or unsuccessful estimates must fail closed. Do not sign or broadcast if total estimated network fee exceeds 3 TON. Re-estimate immediately before signing; never split or retry transactions to bypass the cap.",
+    "target_estimated_deployment_network_fee": "1",
+    "fee_components_to_sum": [
+      "source_fees.in_fwd_fee",
+      "source_fees.storage_fee",
+      "source_fees.gas_fee",
+      "source_fees.fwd_fee",
+      "all destination_fees.in_fwd_fee",
+      "all destination_fees.storage_fee",
+      "all destination_fees.gas_fee",
+      "all destination_fees.fwd_fee"
+    ],
+    "attached_message_value_is_not_network_fee": true,
+    "implementation_status": "fee-cap-validator-added; exact wallet transaction estimation and integration pending"
+  },
+  "governance_authority": {
+    "policy_document": "docs/FOUNDER_EXCLUSIVE_FIVE_WALLET_CONTROL.md",
+    "rule": "founder_absolute_exclusive_control_all_five_allocation_wallets",
+    "authority_holder": "Founder only",
+    "wallet_separation": "accounting_and_reporting_only",
+    "third_party_signers_permitted": false,
+    "backend_or_telegram_signing_permitted": false,
+    "escrow_vesting_timelock_withdrawal_ceiling_permitted": false,
+    "founder_control_assertion": "explicitly_declared_by_founder_as_non_negotiable_project_invariant",
+    "non_spending_wallet_control_evidence": "pending_per_address_verification",
+    "implementation_boundary": "each_jetton_wallet_transfer_requires_signature_for_its_owner_address; master_owner_does_not_create_clawback"
   }
 }

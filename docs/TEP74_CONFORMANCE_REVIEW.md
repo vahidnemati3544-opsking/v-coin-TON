@@ -46,3 +46,10 @@ The founder vesting contract restores its `released` counter if the outgoing mes
 ## Conclusion
 
 The required-address mismatch was corrected and the source has passed the CI runs recorded above (those runs predate the natural-bounce test commit). Founder vesting source and callback tests exist; the custom owner callback now reconciles a bounced downstream transfer. The natural TVM failure-injection test passed Jetton workflow #234 (29/29 tests) on code commit `da556b64967c892510f2ab924daa5d603f29ecdd`; independent review and final wallet-control proofs remain release blockers. This document is a source-level checklist, not proof of complete TEP-74/TEP-64 compliance, independent security, or Mainnet readiness.
+
+
+## Binding governance addendum — 2026-11-21
+
+This project document is governed by [Founder Exclusive Five-Wallet Control](FOUNDER_EXCLUSIVE_FIVE_WALLET_CONTROL.md). The Founder alone has absolute, exclusive operational control and signing authority over all five V COIN–TON allocation wallets; wallet separation is for accounting only. No employee, administrator, backend, Telegram bot, CI process, third party, multisig co-signer, escrow, vesting, time lock, withdrawal ceiling, or automated process may authorize, veto, delay, redirect, sign, or execute a Founder-authorized movement.
+
+Each TEP-74 Jetton Wallet validates transfers against its own `owner` address. Master ownership alone does not grant withdrawal/clawback rights over other wallets. The approved design requires Founder-exclusive signing control of all five recorded owner addresses and local Founder signing; no hidden seizure path is permitted. Backend/Telegram may read, account, reconcile and prepare unsigned proposals only. Wallet-control evidence is tracked separately; never expose secrets. This addendum does not authorize deployment, minting, transfer, signing, or broadcast.

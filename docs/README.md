@@ -8,4 +8,14 @@ This directory contains the authoritative design and security documents for the 
 - [Security and Anti-Fraud](SECURITY_ANTI_FRAUD.md) — current controls, required safeguards, and release restrictions.
 - [Tokenomics](TOKENOMICS.md) — approved-for-design token supply and allocation.
 
+- [Founder Exclusive Five-Wallet Control](FOUNDER_EXCLUSIVE_FIVE_WALLET_CONTROL.md) — binding rule for exclusive Founder custody/signing authority over all five allocation wallets.
+- [Mainnet Release Action Tracker](MAINNET_RELEASE_ACTION_TRACKER.md) — current sequential release gates; Action 26 tracks per-address wallet-control evidence and exact-head deployment review.
+
 Architecture documents describe intended behavior unless a section explicitly identifies functionality as implemented. They do not certify production readiness or authorize TON Mainnet deployment.
+
+
+## Binding governance addendum — 2026-11-21
+
+This project document is governed by [Founder Exclusive Five-Wallet Control](FOUNDER_EXCLUSIVE_FIVE_WALLET_CONTROL.md). The Founder alone has absolute, exclusive operational control and signing authority over all five V COIN–TON allocation wallets; wallet separation is for accounting only. No employee, administrator, backend, Telegram bot, CI process, third party, multisig co-signer, escrow, vesting, time lock, withdrawal ceiling, or automated process may authorize, veto, delay, redirect, sign, or execute a Founder-authorized movement.
+
+Each TEP-74 Jetton Wallet validates transfers against its own `owner` address. Master ownership alone does not grant withdrawal/clawback rights over other wallets. The approved design requires Founder-exclusive signing control of all five recorded owner addresses and local Founder signing; no hidden seizure path is permitted. Backend/Telegram may read, account, reconcile and prepare unsigned proposals only. Wallet-control evidence is tracked separately; never expose secrets. This addendum does not authorize deployment, minting, transfer, signing, or broadcast.

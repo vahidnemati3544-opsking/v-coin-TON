@@ -29,6 +29,10 @@ contract VCoinMaster with JettonMaster {
         require(self.total_supply == 0, "Initial supply already issued");
         require(msg.receiver == self.owner, "Initial supply must go to owner wallet");
         require(msg.amount == VCOIN_MAX_SUPPLY, "Must issue exact fixed supply");
+        // Keep enough TON in the inbound message to deploy and execute the
+        // deterministic owner wallet. A low-value mint can otherwise fail
+        // before a bounce can be funded, leaving supply recorded but uncredited.
+        require(ctx.value >= ton("0.1"), "Insufficient TON for initial wallet deployment");
         self.mintTo(msg.receiver, msg.amount, self.owner);
         self.mintable = false;
     }

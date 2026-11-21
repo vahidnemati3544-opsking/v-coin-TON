@@ -115,7 +115,8 @@ Stop if any of the following is true:
 - TEP-64 metadata draft: `contracts/jetton/metadata.json`; URI pinned in `deployment.config.template.json` to immutable commit `49c462124a082ef6c850079b35c6f77c5bda6ea2`. The JSON contains name, symbol, description and six decimals; no image is included until the approved logo asset is committed.
 - TEP-74 required response-destination fields were corrected to mandatory addresses for transfer, internal transfer, burn and burn notification. Excesses are routed to the required response destination.
 - TEP-89 `include_address` behavior remains covered for both values.
-- Latest PR-head GitHub Actions run #196 on commit `aa0391a09bc03f690367a53e7cae43f9030528ef` completed successfully: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44837742976
+- Latest PR-head GitHub Actions run #214 on head `1ff1dbaddc5c6cc365a14ea1a7d4ed738a7ba9ca` passed build and all 27 tests, with `npm ci` and `npm audit --audit-level=high` successful and zero known vulnerabilities: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44877153157.
+- Backend CI #227 also passed on this exact head: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44877153108.
 - Earlier full run #191 passed 25 Sandbox/policy tests, build, `npm ci` using the committed lockfile, and npm audit with zero known vulnerabilities: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44837612965.
 - The committed `contracts/jetton/package-lock.json` was used successfully by `npm ci` in runs #175, #176 and #177.
 - Source-level TEP-74 notes: `docs/TEP74_CONFORMANCE_REVIEW.md`. This is not an independent audit or full certification.

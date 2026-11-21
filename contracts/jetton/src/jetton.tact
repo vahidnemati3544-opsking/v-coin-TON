@@ -197,7 +197,7 @@ contract VCoinJettonWallet {
         // balance. The vesting contract authenticates this wallet address and
         // rolls back the matching released amount.
         send(SendParameters{
-            to: msg.response_destination,
+            to: self.owner,
             value: 0,
             mode: SendRemainingValue,
             bounce: false,

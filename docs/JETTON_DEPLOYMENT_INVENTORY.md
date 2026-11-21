@@ -287,3 +287,34 @@ This checkpoint supersedes earlier statements in this inventory that the Tact ma
 - Files: `contracts/jetton/src/vcoin.tact`, `contracts/jetton/src/jetton.tact`, `contracts/jetton/tests/jetton-sandbox.integration.spec.ts`, `contracts/jetton/tests/founder-vesting.integration.spec.ts`, `docs/ONCHAIN_ALLOCATION_ENFORCEMENT_PLAN.md`, this inventory.
 - Status: **tested / committed in Draft PR #6; not merged**.
 - Next action: implement Founder direct-to-escrow issuance handshake and Mining escrow bounded-release/custody controls, then expand bounce/property invariants and independent review.
+
+
+## Binding governance correction — Founder authority and 2B-only vesting — 2026-11-21
+
+**This section and `docs/FOUNDER_AUTHORITY_AND_VESTING_CHARTER.md` supersede every earlier conflicting escrow/custody recommendation in this inventory, including earlier statements that Mining must be placed in an escrow or that all escrow withdrawals require a separate founder-only release controller.**
+
+The Founder has absolute and exclusive operational authority over deposits, withdrawals, and transfers from all five official allocation wallets. The Founder is the sole human decision-maker and signer. No backend, Telegram bot, employee, administrator, third party, co-signer, or automated service may independently authorize or execute wallet movements.
+
+**The only time-based lock is the Founder's own 2,000,000,000 VCOIN allocation (20%)**, which must be released to the Founder's immutable beneficiary wallet under the approved four-year, zero-cliff, daily-linear schedule (1,460 accrual days). This schedule does not grant custody or approval authority to anyone else.
+
+The other four allocations are not escrow-locked and have no mandatory vesting or release schedule:
+
+- Mining reserve — 5B VCOIN: ordinary transferable owner wallet, Founder-controlled.
+- Treasury — 1B VCOIN: ordinary transferable owner wallet, Founder-controlled.
+- Liquidity / market — 1B VCOIN: ordinary transferable owner wallet, Founder-controlled.
+- Ecosystem / marketing — 1B VCOIN: ordinary transferable owner wallet, Founder-controlled.
+
+A Mining escrow with a 730-day lock, a Mining release controller, and escrow restrictions on Treasury, Liquidity, or Ecosystem are explicitly rejected and must not be introduced. Wallet separation exists for accounting and reporting; it does not create independent custodians.
+
+### Corrected remaining implementation gate
+
+The remaining vesting integration is limited to the Founder 2B allocation: the initial issuance must route this allocation directly into the Founder vesting mechanism (or a proven atomic equivalent) so the unvested amount is never exposed in an unrestricted wallet. The other four categories must be credited to the five recorded owner-wallet destinations as applicable and remain transferable under the Founder's sole authority.
+
+The current PR #6 code has the five category caps, but its Founder destination still needs to be integrated with the dedicated vesting contract. This is a genuine outstanding implementation task; it must not be described as a need for Mining escrow. Verify the authentic funding notification, exact 2B amount, four-year schedule, beneficiary, and bounce-safe release accounting in Sandbox before release.
+
+**Action 23 — Nهادینه‌سازی اصل اختیار بنیان‌گذار و محدودیت صرفاً سهم ۲ میلیاردی:**  
+- Files: `docs/FOUNDER_AUTHORITY_AND_VESTING_CHARTER.md` (new), `docs/ONCHAIN_ALLOCATION_ENFORCEMENT_PLAN.md` (rewritten), this inventory (superseding governance addendum).
+- Status: committed to Draft PR #6; documentation policy recorded. Contract-level Founder 2B direct-to-vesting integration remains pending and must be tested.
+- Next action: implement direct Founder allocation-to-vesting funding and verify the other four wallets have no vesting/escrow restrictions.
+
+**Safety status remains HOLD.** This governance correction does not deploy, mint, transfer, or sign anything. PR #6 remains Draft and unmerged.

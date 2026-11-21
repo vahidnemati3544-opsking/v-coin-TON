@@ -111,6 +111,8 @@ contract VCoinFounderVesting {
 
     // Restore the counter if the initial owner-to-wallet message itself bounces.
     bounced(msg: bounced<TokenTransfer>) {
+        require(msg.amount > 0, "Invalid bounced transfer amount");
+        require(self.released >= msg.amount, "Bounce exceeds released amount");
         self.released = self.released - msg.amount;
     }
 

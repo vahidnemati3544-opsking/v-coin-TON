@@ -66,3 +66,25 @@
 **Current status:** specification prepared in Git; executable integration pending domain/manifest and implementation. This action does not authorize deployment, minting, transfer, signing, or broadcast.
 
 **After Action 27:** once the production hostname is selected, implement and test the proof service. Only after successful Founder verification should the other four wallet proofs be requested. Keep the release state HOLD until all existing independent readiness gates and the exact transaction approval process are complete.
+
+
+## Action 28 — Confirm Gram Wallet / WalletTg proof integration path
+
+**Requested scope:** Begin the Founder-only non-spending wallet-control verification from Gram Wallet using the documented TON Connect proof mechanism.
+
+### Completed
+
+- [x] Reviewed current official TON documentation identifying WalletTg as the wallet contract used by Telegram's native Gram wallet.
+- [x] Confirmed official TON WalletTg integration guidance describes TON Connect and ton_proof support.
+- [x] Added `docs/GRAM_WALLET_TON_PROOF_COMPATIBILITY.md` with the WalletTg trampoline code-hash gate, active-account validation, current-key lookup via `get_public_key()`, key-rotation handling, and Founder-first test procedure.
+- [x] Linked the compatibility note from `docs/README.md`.
+
+### Pending — no proof has been attempted yet
+
+- [ ] Register and configure a neutral production HTTPS domain; do not publish or use the GitHub username-based hostname for Founder identity verification.
+- [ ] Publish and verify the TON Connect manifest at the approved neutral domain.
+- [ ] Implement the live frontend and secure backend challenge/verification routes; the existing backend currently has no such routes.
+- [ ] Connect Gram Wallet from the approved dApp page and inspect its actual ton_proof response.
+- [ ] Verify the Founder proof cryptographically using the WalletTg-specific checks; do not proceed to the other four wallets before success.
+
+**Current status:** official protocol compatibility path documented; no live connection, proof request, signature, or cryptographic verification has occurred. No transaction, deployment, mint, or transfer is authorized. Release remains HOLD / NO-GO.

@@ -5,8 +5,8 @@
 **Checkpoint:** 2026-11-21  
 **Candidate:** Draft PR #6  
 **Branch:** `audit/pr5-bounce-guard-and-network-clarity-2026-11-21`  
-**Latest PR #6 head at this checkpoint:** `16245bffb38df4f473d210e6bf2017f685ba3c48` (Draft; no merge)
-**Exact head covered by CI #280:** `16245bffb38df4f473d210e6bf2017f685ba3c48`  
+**Latest PR #6 head at this checkpoint:** `d7daa5bb3c316123962d63bddc80c6a9c00abedd` (Draft; no merge)
+**Exact head covered by CI #281:** `d7daa5bb3c316123962d63bddc80c6a9c00abedd`  
 **Network target:** TON Mainnet only; Testnet deployment is excluded by Founder direction.
 
 ## 1. Current decision
@@ -27,13 +27,13 @@ Run: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44890261
 
 This is CI evidence, not a third-party security audit or proof of Mainnet readiness.
 
-Latest exact-head verification: GitHub Actions #280 passed on exact head `16245bffb38df4f473d210e6bf2017f685ba3c48`:
+Latest exact-head verification: GitHub Actions #281 passed on exact head `d7daa5bb3c316123962d63bddc80c6a9c00abedd`:
 - Tact build and deployment-generator TypeScript compilation: passed.
 - Offline StateInit generator smoke test executed twice; BOC and manifest compared byte-for-byte: passed (dummy `example.invalid` metadata URI only).
 - Jest / TON Sandbox: 20/20 tests passed.
 - `npm audit --audit-level=high`: passed; zero reported vulnerabilities.
 
-Run: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44891698418
+Run: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44891891263
 
 The smoke test verifies deterministic serialization for test inputs only. It does not verify or approve the final production metadata URI, logo, Mainnet network identity, or a signed deployment transaction.
 

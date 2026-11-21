@@ -51,13 +51,20 @@ The smoke test verifies deterministic serialization for test inputs only. It doe
 
 1. **Independent smart-contract audit:** obtain a qualified external review of the exact Tact source, compiler version, generated code, Jetton Master/Wallet behavior, bounce handling, issuance and supply invariants. Record auditor, report, source hash and findings.
 2. **Full TEP-74 / TEP-64 conformance:** close the outstanding source review against the current standards and official reference implementation, including message layouts, getters, wallet derivation, metadata serialization, gas/excess and bounce/replay behavior.
-3. **Natural downstream-bounce proof:** finish end-to-end Sandbox tests for a real downstream Jetton-wallet delivery failure and prove exact balance/supply restoration and safe retry across all five categories.
+3. **Natural downstream-bounce proof — Sandbox evidence completed on reviewed PR head `cf362ef04990aebf928e17ebd380e0aef8b6f96f` (CI #302):** the parameterized integration test exercises all five allocation categories. For each category, the derived destination Jetton wallet is made to fail TVM execution; the Master-to-wallet message is observed as bounceable and aborted; the bounced message returns to the Master successfully; total supply is verified restored to zero; the deterministic wallet StateInit is restored; and retry credits exactly that category cap with matching total supply. CI #302 passed the full contract test suite. This closes the project Sandbox bounce-test gate only; it is not a Mainnet transaction, external audit, or independent protocol-conformance review.
 4. **Deployment builder (partially complete):** the offline StateInit generator is implemented in `contracts/jetton/deploy/prepare-mainnet.ts`. It emits `state-init.boc` and a manifest with source/toolchain/input/code/data/StateInit hashes and derived Master address. CI #273 passed the Tact build, TypeScript compilation, two-run byte-for-byte determinism smoke test, Jest/Sandbox tests, and high-severity dependency audit. The smoke test used a dummy `example.invalid` metadata URI; no production artifact or wallet-signable transaction preview has been prepared. Remaining: independently reproduce production inputs, verify generated master address/StateInit, and design/review any transaction-preview format without adding signing or broadcast.
 5. **Mainnet identity guard:** fail closed unless the network is positively identified as TON Mainnet. A text field saying "mainnet" is not proof. No Testnet fallback and no ambiguous network selection.
 6. **Metadata finalization:** review the exact TEP-64 metadata cell/URI, content availability, immutable hosting/pinning and canonical logo. The current public logo/metadata approval is not yet closed.
 7. **Wallet-control proof:** Founder must verify control of each of the five owner wallets on Mainnet in their own wallet interfaces. Never submit seed phrases or private keys.
 8. **Deployment and issuance sequence:** independently verify exact initialization parameters, owner/admin address, all five distinct recipient addresses, category order, TON fee reserve, expected resulting wallet addresses, supply getters and post-deployment verification procedure.
 9. **Transaction review and approval:** present exact source/build hashes, network, master address derivation, StateInit hash, deployment BOC, fees and every later category issuance payload to the Founder. Each irreversible transaction requires explicit Founder approval and local signing.
+
+### Natural downstream-bounce evidence — 2026-11-21
+
+- [x] Five-category parameterized TON Sandbox test observes a real protocol bounce from a failing derived Jetton wallet back to the Master.
+- [x] Verifies supply rollback, restores the deterministic wallet StateInit, and retries only the affected category for the exact allocation cap.
+- [x] GitHub Actions workflow #302 passed on exact PR head `cf362ef04990aebf928e17ebd380e0aef8b6f96f`: `npm ci`, Tact build, deployment-generator type-check, deterministic offline StateInit smoke test, Jest/Sandbox suite, and high-severity dependency audit.
+- [ ] Independent reviewer must reproduce/review the test and contract behavior; external audit and complete TEP-74/TEP-64 conformance review remain open.
 
 ## 5. Safe next work package
 

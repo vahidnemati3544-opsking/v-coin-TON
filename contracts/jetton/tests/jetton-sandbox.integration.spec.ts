@@ -277,9 +277,11 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
     });
     expect((await master.getGetJettonData()).total_supply).toBe(0n);
     expect((await master.getGetJettonData()).mintable).toBe(true);
+    expect((await walletFor(miningReserve.address)).getGetWalletData()).resolves.toMatchObject({
+      balance: 0n,
+    });
 
-    // Repeating the category request must not be rejected as a duplicate:
-    // the bounce handler restored its one-time issuance flag.
+    // The restored category can be issued again and must credit the full cap.
     const retry = await master.send(
       owner.getSender(),
       { value: toNano("0.2") },
@@ -290,6 +292,28 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       to: master.address,
       success: true,
     });
+    expect(retry.transactions).toHaveTransaction({
+      from: master.address,
+      to: miningWalletAddress,
+      inMessageBounceable: true,
+    });
+    expect((await master.getGetJettonData()).total_supply).toBe(5_000_000_000n * ONE_TOKEN);
+    expect((await walletFor(miningReserve.address)).getGetWalletData()).resolves.toMatchObject({
+      balance: 5_000_000_000n * ONE_TOKEN,
+    });
+
+    // A second successful issuance of the same category must remain blocked.
+    const duplicate = await master.send(
+      owner.getSender(),
+      { value: toNano("0.2") },
+      { ["$" + "$" + "type"]: "VCoinMintAllocation", category: 2 } as any,
+    );
+    expect(duplicate.transactions).toHaveTransaction({
+      from: owner.address,
+      to: master.address,
+      aborted: true,
+    });
+    expect((await master.getGetJettonData()).total_supply).toBe(5_000_000_000n * ONE_TOKEN);
   });
 
   test("implements TEP-89 include_address as an optional referenced owner address", async () => {

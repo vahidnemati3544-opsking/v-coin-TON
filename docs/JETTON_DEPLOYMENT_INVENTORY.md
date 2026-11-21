@@ -318,3 +318,22 @@ The current PR #6 code has the five category caps, but its Founder destination s
 - Next action: implement direct Founder allocation-to-vesting funding and verify the other four wallets have no vesting/escrow restrictions.
 
 **Safety status remains HOLD.** This governance correction does not deploy, mint, transfer, or sign anything. PR #6 remains Draft and unmerged.
+
+
+## Superseding Founder-allocation correction — unrestricted 2B — 2026-11-21
+
+**This correction supersedes the preceding “2B-only vesting” addendum, Action 23 vesting language, and every earlier four-year Founder-release statement in this inventory.** The Founder explicitly removed every withdrawal and time-based restriction on the full 2,000,000,000 VCOIN Founder allocation.
+
+- Founder 2B is issued directly to the Founder's ordinary Jetton wallet and is fully transferable immediately; no four-year vesting, cliff, daily accrual, escrow, time lock, withdrawal ceiling, or release contract applies.
+- All five allocations are ordinary transferable Jetton balances under the Founder's sole authority. Wallet separation is for accounting only.
+- Updated `docs/FOUNDER_AUTHORITY_AND_VESTING_CHARTER.md` to v1.1.0 and rewrote `docs/ONCHAIN_ALLOCATION_ENFORCEMENT_PLAN.md` to reflect the new rule.
+- Updated `contracts/jetton/src/vcoin.tact` governance comments; Founder category already routes to the configured Founder destination, which must be the Founder owner wallet.
+- Removed `VCoinFounderVesting` from `contracts/jetton/tact.config.json` and deleted the obsolete vesting contract and its vesting-only test file from the active candidate.
+- Existing Sandbox coverage in `jetton-sandbox.integration.spec.ts` verifies the 2B balance is credited to the Founder wallet and that the Founder can transfer Jettons from that wallet. The complete suite must be rerun on the resulting exact head.
+
+**Action 24 — حذف کامل محدودیت آزادسازی و برداشت سهم ۲ میلیاردی بنیان‌گذار:**
+- Files: Founder charter, allocation enforcement plan, deployment inventory, `contracts/jetton/src/vcoin.tact`, `contracts/jetton/tact.config.json`; removed `contracts/jetton/src/founder-vesting.tact` and `contracts/jetton/tests/founder-vesting.integration.spec.ts`.
+- Status: committed to Draft PR #6; exact-head CI and remaining documentation consistency checks pending.
+- Next action: remove any remaining active four-year Founder vesting language from tokenomics/README/deployment docs, run full CI, and verify the final exact commit.
+
+**Safety remains HOLD.** No merge, deployment, mint, transfer, or wallet signing was performed or authorized.

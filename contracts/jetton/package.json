@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tact --config ./tact.config.json",
     "test": "jest --runInBand",
-    "verify": "npm run build && npm test"
+    "verify": "npm run build && npm test",
+    "prepare:mainnet": "npm run build && tsc -p tsconfig.deploy.json && node build-js/deploy/prepare-mainnet.js"
   },
   "devDependencies": {
     "@tact-lang/compiler": "1.6.13",

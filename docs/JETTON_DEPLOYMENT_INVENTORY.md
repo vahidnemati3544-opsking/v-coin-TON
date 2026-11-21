@@ -197,3 +197,35 @@ The Founder schedule is four-year linear vesting; the Mining reserve schedule is
 | Five-allocation distribution | Not performed |
 
 **Release decision: HOLD — do not merge or broadcast yet.** The owner-directed Testnet omission is recorded, but it does not remove the other mandatory safety gates. The first irreversible on-chain action remains deployment of the reviewed VCOIN Master; allocation minting and transfers can only follow after its address and state are verified.
+
+
+## Superseding audit checkpoint — 2026-11-21 08:57 UTC
+
+This section supersedes older CI and readiness summaries above where commit IDs, test status, or the selected candidate differ.
+
+### Selected candidate and exact CI evidence
+
+- The active Tact Jetton candidate remains Draft PR #5 on branch `audit/issuance-readiness-2026-11-21`, head `a85d6d0d9cefd74b2e1163cdc03e3dc6ab03e6d0`.
+- Jetton workflow #237 passed on that exact PR #5 head: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44879121595.
+- Follow-up Draft PR #6 is based on PR #5 and adds vesting first-hop bounce hardening plus a regression test. Exact head: `542f5b4d83eb02b81a0a44bc64b51aa23c1285e5`.
+- Jetton workflow #238 passed on the exact PR #6 head: `npm ci`, Tact build, Jest/Sandbox tests, and `npm audit --audit-level=high`: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44887195430.
+- PR #6 remains Draft and unmerged; it is not yet part of PR #5 or `main`.
+
+### Corrections included in PR #6
+
+- Founder vesting's `bounced(TokenTransfer)` handler now rejects zero amounts and amounts greater than the currently released balance before rollback.
+- A new Sandbox regression test forces the first-hop vesting Jetton-wallet transaction to fail, verifies the protocol-generated bounce reaches vesting, and checks that `released` returns to zero while master total supply remains unchanged.
+- Allocation and deployment templates now identify `mainnet` as the intended target, matching the owner's explicit Testnet-omission direction. Both templates remain non-authorizing: deployment authorization is false, Mainnet authorization is false, and master/deployment transaction fields remain null. This is configuration clarity, not a network-identity guard or permission to broadcast.
+
+### Important implementation limitations — still release blockers
+
+1. The Tact master issues the full fixed supply once to the founder wallet. The five category amounts are currently distribution policy and manifest checks; the Tact contracts do **not** enforce separate on-chain per-category caps or automatically route the Founder and Mining allocations into vesting escrows. Distribution therefore requires separate reviewed transaction construction and founder signatures.
+2. The PR #5 Tact candidate does not contain a production Mainnet deployment/transaction builder or an on-chain Mainnet identity guard. A template field naming Mainnet is not a security guard.
+3. The independent smart-contract audit has not been completed.
+4. Wallet-control proofs for all five owner allocation destinations and the separate TON-fee wallet remain pending.
+5. Final metadata/logo approval, deterministic deployment payload, compiler/build/code hashes, fee budget, and exact founder-approved transaction previews remain pending.
+6. PR #5 and PR #6 are Draft and unmerged. PR #4 is a separate Acton/Tolk candidate and must not be silently mixed with the Tact implementation; selecting it would require a separate explicit architecture decision and full evidence reconciliation.
+
+### Release decision
+
+**HOLD — no Mainnet deployment, mint, or transfer.** The PR #6 CI pass verifies the tested source revision only; it is not an independent audit, wallet-control proof, or deployment authorization. Testnet deployment remains intentionally omitted by owner direction. Do not merge or broadcast until the remaining release blockers are independently closed and the founder approves the exact final build hashes and each irreversible transaction.

@@ -24,7 +24,7 @@
       "zod": "4.6.7",
       "ipfs-unixfs-importer": "10.0.1"
     },
-    "ipfs-unixfs": "6.0.10",
+    "ipfs-unixfs": "13.1.2",
     "protobufjs": "7.6.6",
     "zod": "4.6.7"
   }

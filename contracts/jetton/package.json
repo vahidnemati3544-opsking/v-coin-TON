@@ -18,5 +18,14 @@
     "jest": "29.7.0",
     "ts-jest": "29.2.5",
     "typescript": "5.7.2"
+  },
+  "overrides": {
+    "@tact-lang/compiler": {
+      "zod": "4.6.7",
+      "ipfs-unixfs-importer": "10.0.1"
+    },
+    "ipfs-unixfs": "6.0.10",
+    "protobufjs": "7.6.6",
+    "zod": "4.6.7"
   }
 }

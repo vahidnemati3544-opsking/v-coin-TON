@@ -229,3 +229,11 @@ This section supersedes older CI and readiness summaries above where commit IDs,
 ### Release decision
 
 **HOLD — no Mainnet deployment, mint, or transfer.** The PR #6 CI pass verifies the tested source revision only; it is not an independent audit, wallet-control proof, or deployment authorization. Testnet deployment remains intentionally omitted by owner direction. Do not merge or broadcast until the remaining release blockers are independently closed and the founder approves the exact final build hashes and each irreversible transaction.
+
+
+## Superseding allocation-enforcement checkpoint — 2026-11-21
+
+- Source inspection confirmed that `contracts/jetton/src/vcoin.tact` mints the exact 10B supply to the founder wallet and then disables further minting. The five category amounts are not independently enforced by the master contract; ordinary Jetton wallet transfers are not category-aware.
+- Added `docs/ONCHAIN_ALLOCATION_ENFORCEMENT_PLAN.md` (Document ID `VCT-ALLOC-ENF-001`) to define the required immutable five-destination allocation map, direct issuance to the Founder and Mining escrows plus the three recorded owner wallets, one-time exact allocation, bounced-message recovery, and mandatory Sandbox invariants.
+- This is an architecture/design checkpoint, not implementation of the escrow state machine. The current source remains unchanged and still does not enforce category caps. A multi-recipient TON issuance is not atomic by default; the new plan explicitly requires pending/confirmed accounting and natural bounce tests for each recipient before acceptance.
+- Release remains **HOLD**. No merge, deployment, mint, transfer, or wallet-signing action occurred. Testnet deployment remains omitted by owner direction. PR #6 remains Draft/unmerged.

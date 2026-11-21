@@ -3,6 +3,12 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { once } = require('node:events');
+
+// The safety-route test does not query PostgreSQL, but server imports the
+// database module, which requires a syntactically valid connection URL.
+// Provide a test-only URL when CI has not configured one.
+process.env.DATABASE_URL ||= 'postgresql://test:test@127.0.0.1:5432/vcoin_test';
+
 const { app } = require('../src/server');
 
 test('public mining API remains fail-closed until verified wallet mining and payouts are implemented', async (t) => {

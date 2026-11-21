@@ -45,3 +45,7 @@ No Mainnet deployment is authorized. Allocation destination addresses, founder v
 ## Windows 10 development note
 
 Acton currently targets Linux and macOS. On Windows 10, use an Ubuntu WSL2 environment with Node.js 22+ and the official Acton installer. Run the build and test commands inside WSL from this folder. The Testnet deployment commands require a funded Testnet wallet and explicit wallet approval; do not put recovery phrases or private keys in shell commands or environment variables.
+
+
+## CI release gate
+A release candidate is blocked unless the Acton wrapper generation, contract compilation, and emulator test workflow completes successfully. Testnet deployment is a separate, manually wallet-approved step.

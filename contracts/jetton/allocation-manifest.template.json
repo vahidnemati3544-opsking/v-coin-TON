@@ -1,7 +1,7 @@
 {
   "project": "V COIN – TON",
   "status": "template_only_not_authorized",
-  "network": "testnet",
+  "network": "mainnet",
   "jetton_master_address": null,
   "decimals": 6,
   "total_supply_base_units": "10000000000000000",

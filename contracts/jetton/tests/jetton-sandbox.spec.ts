@@ -1,8 +1,9 @@
-import { Blockchain, SandboxContract, TreasuryContract } from '@ton/sandbox';
+import { Blockchain, SandboxContract, TreasuryContract, createShardAccount } from '@ton/sandbox';
 import { Cell, toNano } from '@ton/core';
 import '@ton/test-utils';
 import { VCoinMaster } from '../build/VCoinMaster_VCoinMaster';
 import { VCoinJettonWallet } from '../build/VCoinMaster_VCoinJettonWallet';
+import { BounceRejector } from '../build-test/BounceRejector_BounceRejector';
 
 const MAX_SUPPLY = 10_000_000_000_000_000n;
 
@@ -79,6 +80,25 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     expect((await master.getGetJettonData()).total_supply).toBe(MAX_SUPPLY);
   });
 
+  test('rejects an underfunded initial issuance before changing supply', async () => {
+    const blockchain = await Blockchain.create();
+    const owner = await blockchain.treasury('owner');
+    const master = await deployMaster(blockchain, owner);
+
+    const underfunded = await master.send(
+      owner.getSender(),
+      { value: toNano('0.01') },
+      { $type: 'VCoinMint', receiver: owner.address, amount: MAX_SUPPLY },
+    );
+    expect(underfunded.transactions).toHaveTransaction({
+      to: master.address,
+      success: false,
+    });
+    const data = await master.getGetJettonData();
+    expect(data.total_supply).toBe(0n);
+    expect(data.mintable).toBe(true);
+  });
+
   test('rejects partial and wrong-recipient initial issuance', async () => {
     const blockchain = await Blockchain.create();
     const owner = await blockchain.treasury('owner');
@@ -109,15 +129,35 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     const master = await deployMaster(blockchain, owner);
     const walletAddress = await master.getGetWalletAddress(owner.address);
 
+    // Place an intentionally rejecting contract at the deterministic wallet
+    // address. The Master's real bounceable wallet-credit message reaches it,
+    // fails in the compute phase, and is naturally bounced back by Sandbox.
+    const rejector = await BounceRejector.fromInit();
+    if (!rejector.init) {
+      throw new Error('BounceRejector StateInit was not generated');
+    }
+    await blockchain.setShardAccount(
+      walletAddress,
+      createShardAccount({
+        address: walletAddress,
+        code: rejector.init.code,
+        data: rejector.init.data,
+        balance: toNano('1'),
+        workchain: 0,
+      }),
+    );
+
     const mint = await master.send(
       owner.getSender(),
-      { value: toNano('0.01') },
+      { value: toNano('0.5') },
       { $$type: 'VCoinMint', receiver: owner.address, amount: MAX_SUPPLY },
     );
 
     expect(mint.transactions).toHaveTransaction({
       from: walletAddress,
       to: master.address,
+      inMessageBounced: true,
+      success: true,
     });
     const data = await master.getGetJettonData();
     expect(data.total_supply).toBe(0n);

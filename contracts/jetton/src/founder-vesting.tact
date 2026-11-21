@@ -91,7 +91,7 @@ contract VCoinFounderVesting {
                 query_id: msg.query_id,
                 amount: claimable,
                 destination: self.beneficiary,
-                response_destination: self.owner,
+                response_destination: myAddress(),
                 custom_payload: null,
                 forward_ton_amount: 0,
                 forward_payload: beginCell().endCell().asSlice()
@@ -99,9 +99,17 @@ contract VCoinFounderVesting {
         });
     }
 
-    // Restore the vesting counter if the vesting wallet itself rejects the
-    // outgoing transfer message. Downstream Jetton-wallet recovery is handled
-    // by the standard wallet bounce handler.
+    // The source Jetton wallet restores its token balance on a downstream
+    // bounce and reports that exact transfer here. Only the configured wallet
+    // can trigger the rollback; a duplicate/invalid amount cannot underflow.
+    receive(msg: JettonTransferBounce) {
+        require(context().sender == self.vesting_wallet, "Untrusted bounce notifier");
+        require(msg.amount > 0, "Invalid bounced amount");
+        require(self.released >= msg.amount, "Bounce exceeds released amount");
+        self.released = self.released - msg.amount;
+    }
+
+    // Restore the counter if the initial owner-to-wallet message itself bounces.
     bounced(msg: bounced<TokenTransfer>) {
         self.released = self.released - msg.amount;
     }

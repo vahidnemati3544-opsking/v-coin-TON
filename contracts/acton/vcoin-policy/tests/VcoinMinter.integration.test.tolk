@@ -226,6 +226,20 @@ get fun `test founder vesting release success failure rollback and retry`() {
     });
     testing.processSingleTraceStep(FOUNDER, secondRelease);
 
+    // A correctly authenticated wallet cannot clear pending state with a mismatched amount.
+    val mismatchedFailureAck = createMessage({
+        bounce: false,
+        value: grams("0.1"),
+        dest: founderEscrowAddress!,
+        body: VcoinTransferFailed {
+            queryId: 81,
+            jettonAmount: FOUNDER_AMOUNT / 4 + 1,
+            ownerAddress: founderEscrowAddress!,
+        },
+    });
+    testing.processSingleTraceStep(escrowJettonWallet, mismatchedFailureAck);
+    expect(founderEscrow.getVcoinVestingReleasedAmount()).toEqual(FOUNDER_AMOUNT / 2);
+
     val failedTransferAck = createMessage({
         bounce: false,
         value: grams("0.1"),

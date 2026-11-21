@@ -130,7 +130,9 @@ contract VCoinMaster with JettonMaster {
     // A failed Jetton-wallet deployment/credit returns the exact category
     // message. Re-open only that category; successful categories remain locked.
     bounced(msg: bounced<TokenTransferInternal>) {
-        require(self.mintable || self.total_supply == VCOIN_MAX_SUPPLY, "Unexpected issuance bounce");
+        // The category/query-id/cap checks below authenticate this mint bounce.
+        // A prior burn may make net total_supply lower than the fixed cap even
+        // after all five category flags have been set.
         if (msg.query_id == 1) {
             require(self.founder_issued && msg.amount == FOUNDER_CAP, "Invalid Founder bounce");
             self.founder_issued = false;

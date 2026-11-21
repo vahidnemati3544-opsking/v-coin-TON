@@ -42,17 +42,27 @@ jobs:
       - run: npm run build
       - name: Type-check offline Mainnet artifact generator
         run: npx tsc -p tsconfig.deploy.json
-      - name: Smoke-test deterministic offline StateInit generation (no network/signing)
+      - name: Prepare production-metadata StateInit candidate (offline; no signing or broadcast)
         env:
           SOURCE_COMMIT: ${{ github.sha }}
+          VCOIN_METADATA_URL: https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/d67f2549dfba8876cd4b0becc2bc8573bcc10c57/contracts/jetton/metadata.json
         run: |
-          node build-js/deploy/prepare-mainnet.js --network mainnet --owner UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy --metadata-uri https://example.invalid/vcoin-metadata.json --source-commit "$SOURCE_COMMIT" --out /tmp/vcoin-predeploy-a
-          node build-js/deploy/prepare-mainnet.js --network mainnet --owner UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy --metadata-uri https://example.invalid/vcoin-metadata.json --source-commit "$SOURCE_COMMIT" --out /tmp/vcoin-predeploy-b
-          cmp /tmp/vcoin-predeploy-a/state-init.boc /tmp/vcoin-predeploy-b/state-init.boc
-          cmp /tmp/vcoin-predeploy-a/manifest.json /tmp/vcoin-predeploy-b/manifest.json
+          test "$VCOIN_METADATA_URL" = "$(node -p "require('./deployment.config.template.json').metadata.uri")"
+          node build-js/deploy/prepare-mainnet.js --network mainnet --owner UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy --metadata-uri "$VCOIN_METADATA_URL" --source-commit "$SOURCE_COMMIT" --out artifacts/mainnet-predeploy
+          node build-js/deploy/prepare-mainnet.js --network mainnet --owner UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy --metadata-uri "$VCOIN_METADATA_URL" --source-commit "$SOURCE_COMMIT" --out /tmp/vcoin-predeploy-repeat
+          cmp artifacts/mainnet-predeploy/state-init.boc /tmp/vcoin-predeploy-repeat/state-init.boc
+          cmp artifacts/mainnet-predeploy/manifest.json /tmp/vcoin-predeploy-repeat/manifest.json
+          npm run audit:manifest
       - run: npm test
       - name: Enforce dependency security gate
         run: npm audit --audit-level=high
+      - name: Upload unsigned Mainnet predeployment review package
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: vcoin-mainnet-predeploy-candidate-${{ github.sha }}
+          path: contracts/jetton/artifacts/mainnet-predeploy/
+          if-no-files-found: error
+          retention-days: 30
       - name: Upload dependency lockfile for repository commit
         if: always() && hashFiles('contracts/jetton/package-lock.json') != ''
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

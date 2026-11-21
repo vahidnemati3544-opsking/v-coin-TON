@@ -33,6 +33,8 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Capture dependency audit report
         run: npm audit --json > npm-audit-report.json || true
+      - name: Enforce zero high or critical dependency advisories
+        run: npm audit --audit-level=high
       - name: Compile Tact contracts
         run: npm run build
       - name: Run Jest tests

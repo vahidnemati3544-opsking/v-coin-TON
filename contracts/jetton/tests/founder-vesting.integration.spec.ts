@@ -276,6 +276,38 @@ describe("VCOIN founder four-year daily linear vesting", () => {
     expect((await vesting.getGetVestingData()).released).toBe(0n);
   });
 
+  test("rejects an authenticated bounce amount larger than the released amount", async () => {
+    await fundVesting();
+    blockchain.now = blockchain.now! + 365 * DAY;
+    await vesting.send(
+      owner.getSender(),
+      { value: toNano("0.2") },
+      { ["$" + "$" + "type"]: "ClaimFounderVesting", query_id: 10n } as any,
+    );
+    const releasedBefore = (await vesting.getGetVestingData()).released;
+    expect(releasedBefore).toBe(FOUNDER_ALLOCATION / 4n);
+
+    const invalidBounce = beginCell()
+      .storeUint(0x4557784e, 32)
+      .storeUint(11, 64)
+      .storeCoins(FOUNDER_ALLOCATION / 2n)
+      .endCell();
+    const message = internal({
+      to: vesting.address,
+      value: toNano("0.05"),
+      bounce: false,
+      body: invalidBounce,
+    }) as any;
+    message.info.src = vestingWallet.address;
+    const result = await blockchain.sendMessage(message);
+    expect(result.transactions).toHaveTransaction({
+      from: vestingWallet.address,
+      to: vesting.address,
+      aborted: true,
+    });
+    expect((await vesting.getGetVestingData()).released).toBe(releasedBefore);
+  });
+
   test("rejects a forged downstream bounce callback", async () => {
     await fundVesting();
     blockchain.now = blockchain.now! + 365 * DAY;

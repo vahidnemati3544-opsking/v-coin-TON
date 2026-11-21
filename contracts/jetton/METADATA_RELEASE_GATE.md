@@ -47,3 +47,12 @@ The canonical source file in the project Library was independently materialized 
 The repository logo blob currently has Git blob SHA `87a3e78313d26e36e500802e158827486bbc34c6` and size 194,115 bytes. Its Git blob SHA does not match the source file's Git blob SHA. Therefore the uploaded file is **not byte-identical** to the canonical source. This does not prove the visible artwork is wrong (it may have been re-encoded/resized), but visual equivalence has not been established. Do not mark the logo approved or generate a production artifact until the repository image is visually checked against the canonical source or replaced with the exact original bytes.
 
 The metadata JSON parses successfully and contains all five required fields: `name`, `symbol`, `description`, `decimals`, and `image`. This is a structural check only; public HTTP MIME/retrieval validation and Founder approval remain pending.
+
+
+## Logo source correction — Action 25 review, 2026-11-21
+
+The Founder-selected canonical artwork has been identified in the project Library as **“سکه لوکس طلایی V کوین.png”**. It is the 1254 × 1254 PNG (2,728,338 bytes) with the gold V, crown, the founder diamond above the crown, world map, and V COIN / BLOCKCHAIN lettering. Its verified SHA-256 is:
+
+`08d71b17fecb86ae6006ba0fc498675dc4024b13d3f40459dcd578dfc09719d1`
+
+The existing repository file `contracts/jetton/assets/vcoin-canonical-logo.png` is **not this exact source**: its Git blob SHA is `87a3e78313d26e36e500802e158827486bbc34c6`, it is 194,115 bytes, and its byte signature is JPEG (`FF D8 FF`) despite the `.png` suffix. The pinned image URL currently recorded above therefore must remain a review candidate only; it is not approved as the canonical production image. The original Library image is preserved unchanged. The exact binary replacement/publication and re-hashing must be completed before generating production StateInit. Do not treat a resized/re-encoded derivative as the canonical master file.

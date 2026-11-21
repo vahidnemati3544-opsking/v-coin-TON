@@ -58,12 +58,15 @@ contract VCoinMaster with JettonMaster {
 
     receive() {}
 
-    // GOVERNANCE INVARIANT (VCT-GOV-FOUNDER-001 v1.1.0):
-    // Founder alone has unrestricted transfer authority over all five
-    // ordinary allocation wallets. No category is subject to vesting,
-    // escrow, time locks, withdrawal ceilings, or third-party approvals.
-    // The five destinations are distinct and immutable after configuration;
-    // this is an accounting/issuance control, not a restriction on transfers.
+    // GOVERNANCE INVARIANT (VCT-GOV-5W-001 v1.0.0):
+    // Founder has exclusive signing authority over all five allocation owner
+    // wallets. The five destinations are separate for accounting only.
+    // TEP-74 Jetton Wallet transfers are authorized by each wallet's own
+    // owner address; Master ownership alone grants no clawback/withdrawal
+    // right over other wallets. Founder-only control is therefore a custody
+    // and key-control requirement across all five owner addresses, not a
+    // Master-level forced-transfer feature. No vesting, escrow, timelock,
+    // withdrawal ceiling, third-party signer, or delegated authority applies.
     receive(msg: VCoinConfigureAllocations) {
         require(context().sender == self.owner, "Unauthorized allocation configuration");
         require(!self.allocations_configured, "Allocations already configured");

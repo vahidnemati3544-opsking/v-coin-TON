@@ -25,7 +25,7 @@
 - The TEP-74 response destination fields were corrected from optional to required addresses in transfer, internal-transfer, burn and burn-notification message layouts. The master and wallet now route excesses to those required destinations.
 - TEP-89 `take_wallet_address.owner_address` uses the optional referenced-cell representation; tests cover `include_address=false` and `true`.
 - Four additional adversarial tests cover insufficient Jetton balance, insufficient TON, forged internal transfer sender and forged burn notification sender.
-- The wallet bounce handlers exist, but explicit bounce/recovery tests are still outstanding.
+- The Jetton wallet restores its balance on a bounced `TokenTransferInternal` and now emits a VCOIN-specific `JettonTransferBounce` callback to that wallet's owner. The founder vesting contract authenticates the configured vesting wallet and rolls back `released`. New Sandbox tests cover authenticated rollback and forged-callback rejection; the natural TVM downstream-bounce path still requires an end-to-end test.
 - TEP-74 source-level review notes are recorded in `docs/TEP74_CONFORMANCE_REVIEW.md`. This is not an independent audit or full certification.
 - `@tact-lang/compiler@1.6.13` still emits a deprecation warning. The current compiler builds; a Tolk migration must not be attempted without equivalent tests and code-hash review.
 
@@ -47,7 +47,7 @@
 - GitHub Actions run #191 passed the build, all 25 Sandbox/policy tests, `npm ci` and the npm audit gate with zero known vulnerabilities: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44837612965
 - Founder vesting tests cover exact funding, start-clock behavior, forged notification rejection, one-time wallet configuration, daily linear accrual, no release before day one, full release at day 1,460 and prevention of duplicate claims.
 - Run #191 passed on the vesting implementation/test commit. Later documentation-only commits have their own CI runs; check the current PR head before any release decision.
-- The vesting contract remains undeployed and unfunded. The escrow wallet address must be configured after deployment using the master getter. The independent audit and Testnet verification remain mandatory.
+- The vesting contract remains undeployed and unfunded. The escrow wallet address must be configured after deployment using the master getter. Independent audit and complete reproducible Sandbox verification remain mandatory; Testnet deployment is intentionally omitted by owner direction.
 
 ## TEP-64 metadata
 
@@ -82,19 +82,19 @@ These recorded addresses are candidates only. Recording an address does not prov
 - Anyone may trigger a claim, but the contract can send tokens only to that fixed beneficiary.
 - The vesting contract source is `contracts/jetton/src/founder-vesting.tact`; dedicated integration tests are in `contracts/jetton/tests/founder-vesting.integration.spec.ts`.
 - The escrow Jetton wallet address is configured once after deployment, using the deployed master’s `get_wallet_address` getter and a founder-signed configuration message. It cannot be changed after configuration.
-- The vesting contract has not been deployed or funded. The approved schedule is implemented in source but remains subject to passing CI, code review, independent audit and Testnet verification.
+- The vesting contract has not been deployed or funded. The approved schedule is implemented in source; downstream bounce accounting now has an authenticated owner callback and dedicated callback tests. The natural downstream-bounce end-to-end test, CI on the final head, code review and independent audit remain mandatory.
 
 ## Remaining release blockers
 
-1. **Bounce and recovery tests:** explicitly test failed destination-wallet delivery, bounce recovery, failed burn notification recovery and supply/balance invariants.
+1. **Bounce and recovery tests:** the source Jetton wallet now notifies its owner after restoring tokens on a bounced internal transfer; founder vesting authenticates this callback and rolls back `released`. Authenticated callback and forged-callback Sandbox tests were added. Still required: natural end-to-end destination-wallet bounce, failed burn-notification recovery, and supply/balance invariants.
 2. **Replay/idempotency:** complete adversarial review and tests; distinguish TON message replay protection from application-level duplicate transaction handling.
 3. **Full TEP-74 / TEP-64 review:** complete comparison of every message bit layout, getter stack order, wallet behavior, gas assumptions, metadata serialization and wallet derivation against the active standards and official reference implementation.
-4. **Founder vesting recovery:** the four-year daily-linear vesting source and dedicated Sandbox tests exist. Do not deploy or fund it until downstream Jetton-wallet delivery-bounce recovery is implemented, tested, and independently reviewed; preserve the approved zero-cliff schedule and founder beneficiary.
+4. **Founder vesting recovery:** the four-year daily-linear vesting source, authenticated Jetton-wallet owner callback, and callback Sandbox tests exist. Do not deploy or fund it until the natural downstream bounce path and balance/counter invariants pass end-to-end tests and the exact code is independently reviewed; preserve the approved zero-cliff schedule and founder beneficiary.
 5. **Wallet ownership:** prove control of all five destination wallets on the intended network.
 6. **Independent security review:** obtain a third-party smart-contract audit and record the exact reviewed source/compiler/build hashes.
 7. **Deployment workflow:** add a deterministic deploy/transaction builder that encodes the TEP-64 URI, records StateInit/code hashes and prepares exact wallet-signable transactions without custody of private keys.
-8. **Testnet:** deploy only after code gates pass; verify master state, wallet derivation, metadata, one-time issuance, transfers, fees, bounce behavior and finality on-chain.
-9. **Mainnet:** only after Testnet evidence and independent review, prepare exact reviewed build hashes, network, master deployment payload, recipient addresses, amounts, fees and transfer payloads for founder inspection and signature.
+8. **Testnet:** intentionally omitted by owner direction. Do not deploy to Testnet; replace this gate with reproducible build evidence, adversarial Sandbox tests, independent audit and explicit founder approval. If a critical property cannot be verified without live Testnet, stop for owner decision.
+9. **Mainnet:** only after all non-Testnet gates and independent review, prepare exact reviewed build hashes, network, master deployment payload, recipient addresses, amounts, fees and transfer payloads for founder inspection and signature.
 
 ## Evidence status
 
@@ -108,14 +108,15 @@ These recorded addresses are candidates only. Recording an address does not prov
 | TEP-74 required response-destination correction | Implemented; build and tests passed |
 | TEP-89 optional owner-address behavior | Implemented and tested |
 | Committed package lockfile | Committed and verified by subsequent `npm ci` runs #175–#177 |
-| Bounce/replay recovery tests | Pending |
+| Bounce callback rollback / forgery Sandbox tests | Added; final-head CI pending |
+| Natural downstream TVM bounce and balance invariants | Pending |
 | Full TEP-74 / TEP-64 conformance audit | Pending |
 | Metadata URI/content draft | Committed; logo approval pending |
 | Four-year founder vesting source and schedule | Implemented; downstream bounce recovery blocks release |
 | Recipient wallet-control proofs | Pending |
 | Independent smart-contract audit | Pending |
 | Deployment transaction builder | Pending |
-| Testnet master / deployment transaction | None |
+| Testnet deployment | Intentionally omitted by owner direction |
 | Mainnet master / deployment transaction | None |
 | Initial mint transaction | None |
 | Mainnet allocation transfers | None |

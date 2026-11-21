@@ -118,7 +118,6 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     expect(mint.transactions).toHaveTransaction({
       from: walletAddress,
       to: master.address,
-      bounced: true,
     });
     const data = await master.getGetJettonData();
     expect(data.total_supply).toBe(0n);

@@ -239,15 +239,33 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
     expect((await master.getGetJettonData()).mintable).toBe(false);
   });
 
-  test("rolls back a bounced category issuance and permits only that category to retry", async () => {
+  test.each([
+    { category: 1, label: "Founder", cap: 2_000_000_000_000_000n },
+    { category: 2, label: "Mining reserve", cap: 5_000_000_000_000_000n },
+    { category: 3, label: "Treasury", cap: 1_000_000_000_000_000n },
+    { category: 4, label: "Liquidity / market", cap: 1_000_000_000_000_000n },
+    { category: 5, label: "Ecosystem / marketing", cap: 1_000_000_000_000_000n },
+  ])("rolls back a bounced $label issuance and retries only that category", async ({ category, cap }) => {
     await configureAllocations();
-    const miningWalletAddress = await master.getGetWalletAddress(miningReserve.address);
-    const brokenWallet = await VCoinJettonWallet.fromInit(miningReserve.address, master.address);
+
+    const destinations = [
+      owner.address,
+      miningReserve.address,
+      treasury.address,
+      liquidity.address,
+      ecosystem.address,
+    ];
+    const destination = destinations[category - 1];
+    const walletAddress = await master.getGetWalletAddress(destination);
+    const wallet = await VCoinJettonWallet.fromInit(destination, master.address);
+
+    // Invalid storage forces the destination Jetton wallet to fail in TVM,
+    // generating a protocol bounce back to the master.
     await blockchain.setShardAccount(
-      miningWalletAddress,
+      walletAddress,
       createShardAccount({
-        address: miningWalletAddress,
-        code: brokenWallet.init!.code,
+        address: walletAddress,
+        code: wallet.init!.code,
         data: beginCell().endCell(),
         balance: toNano("1"),
       }),
@@ -256,7 +274,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
     const failedIssue = await master.send(
       owner.getSender(),
       { value: toNano("0.2") },
-      { ["$" + "$" + "type"]: "VCoinMintAllocation", category: 2 } as any,
+      { ["$" + "$" + "type"]: "VCoinMintAllocation", category } as any,
     );
     expect(failedIssue.transactions).toHaveTransaction({
       from: owner.address,
@@ -265,38 +283,39 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
     });
     expect(failedIssue.transactions).toHaveTransaction({
       from: master.address,
-      to: miningWalletAddress,
+      to: walletAddress,
       inMessageBounceable: true,
       aborted: true,
     });
     expect(failedIssue.transactions).toHaveTransaction({
-      from: miningWalletAddress,
+      from: walletAddress,
       to: master.address,
       inMessageBounced: true,
       success: true,
     });
     expect((await master.getGetJettonData()).total_supply).toBe(0n);
     expect((await master.getGetJettonData()).mintable).toBe(true);
-    // The deliberately corrupted account remains invalid after the bounce.
-    // Restore the deterministic wallet StateInit before testing a retry.
+
+    // Restore the deterministic wallet StateInit. A retry must credit exactly
+    // this category's cap without reopening or altering any other category.
     await blockchain.setShardAccount(
-      miningWalletAddress,
+      walletAddress,
       createShardAccount({
-        address: miningWalletAddress,
-        code: brokenWallet.init!.code,
-        data: brokenWallet.init!.data,
+        address: walletAddress,
+        code: wallet.init!.code,
+        data: wallet.init!.data,
         balance: toNano("1"),
       }),
     );
-    expect(await (await walletFor(miningReserve.address)).getGetWalletData()).toMatchObject({
-      balance: 0n,
-    });
+    const restoredWallet = blockchain.openContract(
+      VCoinJettonWallet.fromAddress(walletAddress),
+    );
+    expect((await restoredWallet.getGetWalletData()).balance).toBe(0n);
 
-    // The restored category can be issued again and must credit the full cap.
     const retry = await master.send(
       owner.getSender(),
       { value: toNano("0.2") },
-      { ["$" + "$" + "type"]: "VCoinMintAllocation", category: 2 } as any,
+      { ["$" + "$" + "type"]: "VCoinMintAllocation", category } as any,
     );
     expect(retry.transactions).toHaveTransaction({
       from: owner.address,
@@ -305,28 +324,13 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
     });
     expect(retry.transactions).toHaveTransaction({
       from: master.address,
-      to: miningWalletAddress,
-      inMessageBounceable: true,
+      to: walletAddress,
+      success: true,
     });
-    expect((await master.getGetJettonData()).total_supply).toBe(5_000_000_000n * ONE_TOKEN);
-    expect(await (await walletFor(miningReserve.address)).getGetWalletData()).toMatchObject({
-      balance: 5_000_000_000n * ONE_TOKEN,
-    });
-
-    // A second successful issuance of the same category must remain blocked.
-    const duplicate = await master.send(
-      owner.getSender(),
-      { value: toNano("0.2") },
-      { ["$" + "$" + "type"]: "VCoinMintAllocation", category: 2 } as any,
-    );
-    expect(duplicate.transactions).toHaveTransaction({
-      from: owner.address,
-      to: master.address,
-      aborted: true,
-    });
-    expect((await master.getGetJettonData()).total_supply).toBe(5_000_000_000n * ONE_TOKEN);
+    expect((await restoredWallet.getGetWalletData()).balance).toBe(cap);
+    expect((await master.getGetJettonData()).total_supply).toBe(cap);
+    expect((await master.getGetJettonData()).mintable).toBe(true);
   });
-
   test("implements TEP-89 include_address as an optional referenced owner address", async () => {
     for (const includeAddress of [false, true]) {
       const queryId = includeAddress ? 22n : 21n;

@@ -2,7 +2,7 @@
 
 **Scope:** Initial fixed-supply issuance and the Natural Bounce rollback guard.
 
-**Current state:** The source-level sender-authentication fix is committed. This document is a test specification, not evidence that tests have passed. Mainnet release remains blocked until the cases below are implemented in the TON Sandbox harness and the full verification command passes.
+**Current state:** The source-level sender-authentication and exact-rollback guards are committed. This document is a test specification, not evidence that tests have passed. Mainnet release remains blocked until these cases are implemented in the TON Sandbox harness and the full verification command passes.
 
 ## Required automated cases
 
@@ -11,10 +11,11 @@
 3. **Exact issuance constraints:** reject a non-owner receiver, a partial amount, and an amount above the fixed 10,000,000,000 VCOIN supply (10^16 base units).
 4. **One-time issuance:** accept exactly one owner-authorized issuance to the owner's deterministic Jetton wallet; verify the wallet balance and Master total supply equal 10^16 base units and minting is disabled.
 5. **Repeat issuance:** reject a second issuance after successful initial issuance without changing supply or balances.
-6. **Natural Bounce rollback:** cause the initial wallet-credit message to bounce naturally in Sandbox; verify the Master supply is rolled back by exactly the bounced amount and the issuance gate reopens only when supply reaches zero.
+6. **Natural Bounce rollback:** cause the initial wallet-credit message to bounce naturally in Sandbox; verify the Master supply is rolled back from exactly 10^16 to zero and the issuance gate reopens.
 7. **Forged/untrusted bounce:** send a bounced-message-shaped payload from an address other than the owner's deterministic Jetton wallet; verify the Master rejects it and does not alter supply or mintability.
-8. **Invalid rollback amount:** verify zero or greater-than-recorded amounts cannot roll back supply.
-9. **Retry after valid rollback:** after a valid full rollback, allow one retry of the exact fixed issuance; verify that the successful retry closes the issuance gate permanently.
+8. **Invalid rollback amount:** verify zero, partial, or greater-than-fixed-supply bounced amounts are rejected.
+9. **Stale or duplicate bounce:** verify a bounce received while minting is already enabled is rejected.
+10. **Retry after valid rollback:** after a valid full rollback, allow one retry of the exact fixed issuance; verify that the successful retry closes the issuance gate permanently.
 
 ## Acceptance criteria
 

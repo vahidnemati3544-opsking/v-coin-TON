@@ -276,3 +276,14 @@ This checkpoint supersedes earlier statements in this inventory that the Tact ma
 ### Current release decision
 
 **HOLD.** Per-category issuance caps are now implemented and CI-tested in the Tact candidate, but full escrow-recipient enforcement and custody policy are not complete. PR #6 remains Draft and unmerged. No Testnet or Mainnet deployment, mint, transfer, or wallet-signing action has occurred. The Testnet deployment omission remains the owner's direction and does not waive any other release gate.
+
+
+### Final exact-head reconciliation and task record
+
+- Documentation reconciliation head: `e7758785f3a1b39cb611d12f3613f7deecdba30b`.
+- Jetton workflow #250 passed on this exact final PR #6 head: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44888533636
+- Final exact-head result: build passed; **31/31 Jest/Sandbox tests passed**; `npm ci` passed; `npm audit --audit-level=high` passed with zero known vulnerabilities.
+- **Action 22 — Implement five-category on-chain issuance caps:** source and integration tests committed to PR #6; implementation/test stage verified; remaining escrow integration and independent release gates remain open.
+- Files: `contracts/jetton/src/vcoin.tact`, `contracts/jetton/src/jetton.tact`, `contracts/jetton/tests/jetton-sandbox.integration.spec.ts`, `contracts/jetton/tests/founder-vesting.integration.spec.ts`, `docs/ONCHAIN_ALLOCATION_ENFORCEMENT_PLAN.md`, this inventory.
+- Status: **tested / committed in Draft PR #6; not merged**.
+- Next action: implement Founder direct-to-escrow issuance handshake and Mining escrow bounded-release/custody controls, then expand bounce/property invariants and independent review.

@@ -114,12 +114,13 @@ No real-value transfer, token issuance, Mainnet deployment, or public mining lau
 - The current Tact compiler package is upstream-deprecated in favor of Tolk. This is a toolchain-maintenance risk, not a demonstrated flaw in the compiled contract bytecode.
 - Before Mainnet release, an independent reviewer must assess the Tact toolchain and either approve its continued use for this fixed contract or require a Tolk migration. No Mainnet deployment is authorized by the CI result alone.
 
-## 11. Founder vesting release gate
+## 11. Founder immediate full-withdrawal authority
 
-- The approved tokenomics specifies a four-year founder vesting period.
-- The current VCoinMaster fixed-allocation logic credits the founder's 2,000,000,000 VCOIN allocation directly to the configured founder wallet; it does not itself lock or vest those tokens.
-- The vesting schedule, beneficiary custody model, and vesting contract must be specified, implemented, and independently reviewed before any Mainnet issuance.
-- Until that work is complete, the current source must not be treated as Mainnet-ready, even though fixed allocation and Sandbox tests pass.
+- The project owner explicitly approved the founder's right to receive and withdraw the entire 2,000,000,000 VCOIN allocation at once.
+- No vesting, time lock, monthly installments, or staged release applies to the founder allocation.
+- The current VCoinMaster credits the exact founder allocation to the founder's configured Jetton wallet as one issuance operation.
+- Once the Jetton wallet credit is confirmed, the founder may transfer or withdraw the full amount using the standard Jetton wallet owner authorization.
+- This is the founder's fixed 20% allocation, not permission to mint beyond the approved total supply.
 
 ## 12. Separate operational gas reserve
 

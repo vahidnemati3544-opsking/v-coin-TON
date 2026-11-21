@@ -33,18 +33,17 @@ contract VCoinMaster with JettonMaster {
         self.mintable = false;
     }
 
-    // Accept a bounce only from the deterministic Jetton wallet belonging to
-    // the owner. This prevents an unrelated contract from forging a rollback
-    // and reopening the one-time issuance gate.
+    // Only the owner's deterministic Jetton wallet may report a failed
+    // initial wallet-credit message. The only valid rollback is the complete
+    // fixed-supply issuance; partial or stale bounce payloads are rejected.
     bounced(msg: bounced<TokenTransferInternal>) {
         let ctx: Context = context();
         let expectedOwnerWallet: Address = contractAddress(self.walletInit(self.owner));
         require(ctx.sender == expectedOwnerWallet, "Untrusted issuance bounce sender");
-        require(msg.amount > 0, "Invalid bounced issuance amount");
-        require(self.total_supply >= msg.amount, "Bounced issuance exceeds recorded supply");
-        self.total_supply = self.total_supply - msg.amount;
-        if (self.total_supply == 0) {
-            self.mintable = true;
-        }
+        require(!self.mintable, "No issuance is awaiting rollback");
+        require(msg.amount == VCOIN_MAX_SUPPLY, "Invalid bounced issuance amount");
+        require(self.total_supply == VCOIN_MAX_SUPPLY, "Unexpected supply during issuance rollback");
+        self.total_supply = 0;
+        self.mintable = true;
     }
 }

@@ -47,6 +47,12 @@ message(0x7bdd97de) TokenBurnNotification {
     response_destination: Address;
 }
 message(0xd53276db) TokenExcesses { query_id: Int as uint64; }
+// Custom VCOIN wallet-to-owner callback emitted only when an outgoing
+// TokenTransferInternal bounces and the source wallet restores its balance.
+message JettonTransferBounce {
+    query_id: Int as uint64;
+    amount: Int as coins;
+}
 message(0x2c76b973) ProvideWalletAddress {
     query_id: Int as uint64;
     owner_address: Address;

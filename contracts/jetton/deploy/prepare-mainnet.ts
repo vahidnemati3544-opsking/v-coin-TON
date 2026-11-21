@@ -105,7 +105,7 @@ async function main(): Promise<void> {
       "Rebuild twice from the same reviewed commit and compare every hash.",
       "Independently verify the master address derivation and TEP-64 metadata cell.",
       "Confirm the metadata URI is immutable, publicly accessible, and contains the Founder-approved logo and token metadata.",
-      "Complete independent smart-contract audit and all Mainnet readiness gates.",
+      "Founder-waived paid external audit is not a release requirement; complete the documented internal engineering verification and exact-head CI gates instead.",
       "Founder reviews this exact manifest and deployment payload, then signs locally in the Founder-controlled wallet."
     ]
   };

@@ -5,7 +5,8 @@
 **Checkpoint:** 2026-11-21  
 **Candidate:** Draft PR #6  
 **Branch:** `audit/pr5-bounce-guard-and-network-clarity-2026-11-21`  
-**Current PR #6 head:** `d8dc4046ed2f8bc8db7e1f4abd900b148889a730` (Draft; no merge)  
+**Latest PR #6 head:** `4887bb64279ffe8d3d9e7c9ee91d7bacf0c40ee4` (documentation-only follow-up; Draft; no merge)
+**Exact implementation head covered by CI #275:** `d8dc4046ed2f8bc8db7e1f4abd900b148889a730`  
 **Network target:** TON Mainnet only; Testnet deployment is excluded by Founder direction.
 
 ## 1. Current decision

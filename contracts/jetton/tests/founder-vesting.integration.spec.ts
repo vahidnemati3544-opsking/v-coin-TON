@@ -249,13 +249,14 @@ describe("VCOIN founder four-year daily linear vesting", () => {
       .storeUint(8, 64)
       .storeCoins(FOUNDER_ALLOCATION / 4n)
       .endCell();
-    const recovered = await blockchain.sendMessage(internal({
-      from: vestingWallet.address,
+    const recoveredMessage = internal({
       to: vesting.address,
       value: toNano("0.05"),
       bounce: false,
       body: bounceBody,
-    }));
+    }) as any;
+    recoveredMessage.info.src = vestingWallet.address;
+    const recovered = await blockchain.sendMessage(recoveredMessage);
     expect(recovered.transactions).toHaveTransaction({
       from: vestingWallet.address,
       to: vesting.address,
@@ -277,13 +278,14 @@ describe("VCOIN founder four-year daily linear vesting", () => {
       .storeUint(9, 64)
       .storeCoins(FOUNDER_ALLOCATION / 4n)
       .endCell();
-    const forged = await blockchain.sendMessage(internal({
-      from: attacker.address,
+    const forgedMessage = internal({
       to: vesting.address,
       value: toNano("0.05"),
       bounce: false,
       body: bounceBody,
-    }));
+    }) as any;
+    forgedMessage.info.src = attacker.address;
+    const forged = await blockchain.sendMessage(forgedMessage);
     expect(forged.transactions).toHaveTransaction({
       from: attacker.address,
       to: vesting.address,

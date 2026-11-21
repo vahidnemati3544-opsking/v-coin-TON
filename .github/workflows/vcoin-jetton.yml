@@ -1,6 +1,6 @@
 name: VCOIN TON Jetton
 permissions:
-  contents: write
+  contents: read
 on:
   push:
     branches: [main]
@@ -21,19 +21,12 @@ jobs:
       run:
         working-directory: contracts/jetton
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.ref || github.ref }}
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: contracts/jetton/package.json
-      - name: Bootstrap a lockfile only when one is absent
-        run: |
-          if [ ! -f package-lock.json ]; then
-            npm install --package-lock-only --ignore-scripts
-          fi
       - run: npm ci
       - name: Report dependency audit findings
         shell: bash
@@ -54,25 +47,11 @@ jobs:
       - run: npm test
       - name: Enforce dependency security gate
         run: npm audit --audit-level=high
-      - name: Commit generated lockfile on the pull request branch
-        if: success() && github.event_name == 'pull_request'
-        env:
-          HEAD_REF: ${{ github.head_ref }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package-lock.json
-          if git diff --cached --quiet; then
-            echo "package-lock.json is already committed"
-            exit 0
-          fi
-          git commit -m "build(jetton): commit npm lockfile"
-          git push origin "HEAD:${HEAD_REF}"
       - name: Upload dependency lockfile for repository commit
         if: always() && hashFiles('contracts/jetton/package-lock.json') != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: vcoin-jetton-package-lock
+          name: vcoin-jetton-test-lockfile
           path: contracts/jetton/package-lock.json
           if-no-files-found: error
           retention-days: 7

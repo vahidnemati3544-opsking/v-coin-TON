@@ -33,7 +33,7 @@ The founder vesting contract restores its `released` counter if the outgoing mes
 
 ## Remaining review and release gates
 
-- Current Sandbox suite injects a bounced `TokenTransferInternal` envelope to exercise the real source-wallet/vesting callback path. A separate test naturally bounces a `TokenBurnNotification` to an inactive master address and verifies wallet balance restoration. Still run a natural end-to-end downstream Jetton-wallet delivery failure test and full balance/supply invariants.
+- A new Sandbox test now causes a recipient-side TVM execution failure at the deterministic beneficiary Jetton-wallet address (using the actual VCoin Jetton-wallet code with intentionally invalid test storage), so TON Sandbox should generate the downstream `TokenTransferInternal` bounce itself. The test asserts recipient failure, bounced inbound message at the source wallet, source-wallet balance restoration, authenticated vesting rollback, and unchanged master supply. It is committed on PR head `da556b64967c892510f2ab924daa5d603f29ecdd`, but CI has not yet run on that exact head; treat it as pending evidence until the Jetton workflow passes. A separate test naturally bounces a `TokenBurnNotification` to an inactive master address and verifies wallet-balance restoration.
 - Complete replay/idempotency analysis and additional adversarial transaction tests.
 - Compare every TEP-74 message bit layout, getter stack order, storage/gas assumptions and wallet derivation against the official reference implementation.
 - Complete TEP-64 metadata validation, including the final approved icon. The current off-chain JSON provides name, symbol, description and six decimals, but intentionally has no image field.
@@ -45,4 +45,4 @@ The founder vesting contract restores its `released` counter if the outgoing mes
 
 ## Conclusion
 
-The required-address mismatch was corrected and the source has passed the CI runs recorded above. Founder vesting source and callback tests exist; the custom owner callback now reconciles a bounced downstream transfer. Natural TVM bounce-path verification, full invariants and independent review still block deployment/funding. This document is a source-level checklist, not proof of complete TEP-74/TEP-64 compliance, independent security, or Mainnet readiness.
+The required-address mismatch was corrected and the source has passed the CI runs recorded above (those runs predate the natural-bounce test commit). Founder vesting source and callback tests exist; the custom owner callback now reconciles a bounced downstream transfer. The natural TVM failure-injection test is committed but awaits CI on the exact current head; independent review and final wallet-control proofs also remain release blockers. This document is a source-level checklist, not proof of complete TEP-74/TEP-64 compliance, independent security, or Mainnet readiness.

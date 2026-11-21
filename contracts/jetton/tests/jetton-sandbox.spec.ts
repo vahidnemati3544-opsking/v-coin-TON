@@ -151,11 +151,11 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     ];
 
     const config = await master.getGetAllocationConfig();
-    expect(config.founder_wallet).toEqual(owner.address);
-    expect(config.mining_reserve_wallet).toEqual(miningReserve.address);
-    expect(config.treasury_wallet).toEqual(treasury.address);
-    expect(config.liquidity_wallet).toEqual(liquidity.address);
-    expect(config.ecosystem_wallet).toEqual(ecosystem.address);
+    expect(config.founder_wallet.toString()).toBe(owner.address.toString());
+    expect(config.mining_reserve_wallet.toString()).toBe(miningReserve.address.toString());
+    expect(config.treasury_wallet.toString()).toBe(treasury.address.toString());
+    expect(config.liquidity_wallet.toString()).toBe(liquidity.address.toString());
+    expect(config.ecosystem_wallet.toString()).toBe(ecosystem.address.toString());
 
     for (const allocation of expected) {
       const result = await master.send(

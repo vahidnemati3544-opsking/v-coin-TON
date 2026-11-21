@@ -105,7 +105,7 @@ Contract implementation must be reviewed against the applicable TON standards an
 
 11. Testing and deployment restrictions
 
-The implementation must undergo local testing, TON Testnet deployment, functional verification, and independent security review before any Mainnet deployment.
+The implementation must pass local TON Sandbox testing, functional verification, and independent security review before any Mainnet deployment. TON Testnet deployment is excluded by Founder direction; Sandbox testing does not deploy to Testnet.
 Mainnet deployment requires a separate, explicit approval.
 No Mainnet deployment, initial issuance, liquidity commitment, or irreversible administrative action is authorized by this document.
 
@@ -113,11 +113,11 @@ No Mainnet deployment, initial issuance, liquidity commitment, or irreversible a
 
 Any change to the total supply, allocation percentages, unrestricted Founder authority, or prohibition on additional minting requires explicit approval from the project owner and an updated version of this document.
 
-Document status: Approved tokenomics design — implementation pending.
+Document status: Approved tokenomics design — contract implementation and Sandbox test suite are present in the Draft review branch; independent audit and Mainnet release gates remain pending.
 
 13. Smart contract specification
 
-The technical specification for the VCOIN TON Jetton Master and Wallet contracts is maintained in docs/JETTON_CONTRACT_SPEC.md. This is a design specification, not compiled contract source code or deployment evidence. Implementation, compilation, tests, independent security review and Testnet deployment remain pending. The deployment parameter template is contracts/jetton/deployment.config.template.json. Null allocation addresses must be explicitly approved before deployment; no Founder vesting parameters exist.
+The technical specification for the VCOIN TON Jetton Master and Wallet contracts is maintained in docs/JETTON_CONTRACT_SPEC.md. This is a design specification, not compiled contract source code or deployment evidence. Contract implementation, compilation and Sandbox tests are present in the review branch; independent security review remains pending. Testnet deployment is excluded by Founder direction. The deployment parameter template is contracts/jetton/deployment.config.template.json. Null allocation addresses must be explicitly approved before deployment; no Founder vesting parameters exist.
 
 14. Official wallet allocation register
 

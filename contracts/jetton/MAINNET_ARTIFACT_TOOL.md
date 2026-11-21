@@ -43,3 +43,10 @@ The output is not a signed external message and is not itself a wallet-ready tra
 ## Reproducible audit inventory
 
 CI runs the offline generator twice using the pinned production metadata URI and compares the StateInit BOC and builder manifest byte-for-byte. It then creates `audit-manifest.json` with SHA-256 and Git blob IDs for reviewed sources, configuration, canonical PNG, generated compiler outputs and candidate artifacts. The resulting ZIP is uploaded as an unsigned review artifact. This does not create, sign or broadcast a deployment transaction.
+
+
+## Binding governance addendum — 2026-11-21
+
+This document is governed by [Founder Exclusive Five-Wallet Control](../../docs/FOUNDER_EXCLUSIVE_FIVE_WALLET_CONTROL.md). The Founder alone has absolute, exclusive operational control and signing authority over all five allocation wallets; separation is accounting-only. No third party, employee, backend, Telegram bot, CI process, multisig co-signer, escrow, vesting, time lock, withdrawal ceiling, or automated process may authorize, veto, delay, redirect, sign, or execute movements.
+
+Each TEP-74 Jetton Wallet authorizes transfers through its own `owner` address. Master ownership alone does not grant withdrawal or clawback rights over other wallets. The implementation therefore relies on Founder-exclusive signing control of all five recorded owner addresses, with transactions signed locally by the Founder. No hidden seizure path is permitted. Backend/Telegram may prepare unsigned proposals only. Never expose wallet secrets. Wallet-control evidence is recorded separately and must not be falsely marked complete. This addendum does not authorize any Mainnet transaction.

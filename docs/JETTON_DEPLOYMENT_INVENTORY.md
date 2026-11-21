@@ -291,7 +291,7 @@ This checkpoint supersedes earlier statements in this inventory that the Tact ma
 
 ## Binding governance correction — Founder authority and 2B-only vesting — 2026-11-21
 
-**This section and `docs/FOUNDER_AUTHORITY_AND_VESTING_CHARTER.md` supersede every earlier conflicting escrow/custody recommendation in this inventory, including earlier statements that Mining must be placed in an escrow or that all escrow withdrawals require a separate founder-only release controller.**
+**This section and `docs/FOUNDER_AUTHORITY_CHARTER.md` supersede every earlier conflicting escrow/custody recommendation in this inventory, including earlier statements that Mining must be placed in an escrow or that all escrow withdrawals require a separate founder-only release controller.**
 
 The Founder has absolute and exclusive operational authority over deposits, withdrawals, and transfers from all five official allocation wallets. The Founder is the sole human decision-maker and signer. No backend, Telegram bot, employee, administrator, third party, co-signer, or automated service may independently authorize or execute wallet movements.
 
@@ -313,7 +313,7 @@ The remaining vesting integration is limited to the Founder 2B allocation: the i
 The current PR #6 code has the five category caps, but its Founder destination still needs to be integrated with the dedicated vesting contract. This is a genuine outstanding implementation task; it must not be described as a need for Mining escrow. Verify the authentic funding notification, exact 2B amount, four-year schedule, beneficiary, and bounce-safe release accounting in Sandbox before release.
 
 **Action 23 — Nهادینه‌سازی اصل اختیار بنیان‌گذار و محدودیت صرفاً سهم ۲ میلیاردی:**  
-- Files: `docs/FOUNDER_AUTHORITY_AND_VESTING_CHARTER.md` (new), `docs/ONCHAIN_ALLOCATION_ENFORCEMENT_PLAN.md` (rewritten), this inventory (superseding governance addendum).
+- Files: `docs/FOUNDER_AUTHORITY_CHARTER.md` (new), `docs/ONCHAIN_ALLOCATION_ENFORCEMENT_PLAN.md` (rewritten), this inventory (superseding governance addendum).
 - Status: committed to Draft PR #6; documentation policy recorded. Contract-level Founder 2B direct-to-vesting integration remains pending and must be tested.
 - Next action: implement direct Founder allocation-to-vesting funding and verify the other four wallets have no vesting/escrow restrictions.
 
@@ -326,7 +326,7 @@ The current PR #6 code has the five category caps, but its Founder destination s
 
 - Founder 2B is issued directly to the Founder's ordinary Jetton wallet and is fully transferable immediately; no four-year vesting, cliff, daily accrual, escrow, time lock, withdrawal ceiling, or release contract applies.
 - All five allocations are ordinary transferable Jetton balances under the Founder's sole authority. Wallet separation is for accounting only.
-- Updated `docs/FOUNDER_AUTHORITY_AND_VESTING_CHARTER.md` to v1.1.0 and rewrote `docs/ONCHAIN_ALLOCATION_ENFORCEMENT_PLAN.md` to reflect the new rule.
+- Updated `docs/FOUNDER_AUTHORITY_CHARTER.md` to v1.1.0 and rewrote `docs/ONCHAIN_ALLOCATION_ENFORCEMENT_PLAN.md` to reflect the new rule.
 - Updated `contracts/jetton/src/vcoin.tact` governance comments; Founder category already routes to the configured Founder destination, which must be the Founder owner wallet.
 - Removed `VCoinFounderVesting` from `contracts/jetton/tact.config.json` and deleted the obsolete vesting contract and its vesting-only test file from the active candidate.
 - Existing Sandbox coverage in `jetton-sandbox.integration.spec.ts` verifies the 2B balance is credited to the Founder wallet and that the Founder can transfer Jettons from that wallet. The complete suite must be rerun on the resulting exact head.

@@ -266,6 +266,11 @@ describe("VCOIN founder four-year daily linear vesting", () => {
     });
     expect(claim.transactions).toHaveTransaction({
       from: founderWallet.address,
+      to: founderWallet.address,
+      aborted: true,
+    });
+    expect(claim.transactions).toHaveTransaction({
+      from: founderWallet.address,
       to: vestingWallet.address,
       inMessageBounced: true,
       success: true,

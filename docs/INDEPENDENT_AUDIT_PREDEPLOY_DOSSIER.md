@@ -46,8 +46,8 @@ The generated `audit-manifest.json` records the exact checked-out commit, SHA-25
 ## 4. CI evidence already recorded
 
 - Workflow run #365 passed the metadata/image public retrieval and SHA-256 gate, Mainnet ConfigParam 19 check, Tact build, TypeScript generator check, deterministic double-generation smoke test, 26/26 Sandbox tests, and `npm audit --audit-level=high` with zero reported vulnerabilities.
-- Workflow run #367 passed on commit `37dfb0b443a0248e9f13c964e1bb103eb1b90e1d`, before the production-metadata candidate artifact packaging and audit-manifest workflow additions in this revision. Its result is historical evidence only for that exact commit.
-- The CI run triggered by the candidate-package workflow changes must pass before the new artifact is accepted as the current review candidate.
+- Workflow run #367 passed on commit `37dfb0b443a0248e9f13c964e1bb103eb1b90e1d`; this is historical evidence only for that exact commit.
+- Candidate-package workflow run #375 passed on PR head `51421af667b47f7eb64e75a4dec792399aa11187` and merge commit `8b66e9bef50918e18c4995ef9b4032989babeea6`. It produced an unsigned package containing `state-init.boc`, the builder manifest and a 36-file SHA-256 inventory. StateInit BOC SHA-256: `b5318a2cef495a8e9421093a570aaeb604786147413d3d59967d5580901e8374`; candidate Master address: `UQD2yDIaHQ_uO2MxJBrQ2s_dMJrXA7OKRjb0J8IEUuPMGU38`; archive SHA-256: `2106fff283e21144e6e42192ca8b77a7742a729c4f82fe75fd53f857b9675e30`. Run #375 is the first completed production-metadata candidate package; a subsequent run on any changed PR head supersedes it.
 
 ## 5. Independent auditor's required review scope
 

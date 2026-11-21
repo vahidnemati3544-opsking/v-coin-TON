@@ -106,3 +106,18 @@ The following code and documentation corrections were committed to the review br
 7. **Metadata validation:** added scripts/verify-metadata.cjs and npm run verify:metadata, wired into the Jetton workflow against immutable commit-pinned metadata and image URLs. The validator compares public JSON with the checked-in metadata and validates the canonical image bytes.
 
 **Remaining release blockers:** exact-head CI must pass; the Mainnet network-identity verifier is implemented but must be executed at the point of any future transaction and independently confirmed in the wallet; Founder approval of the exact metadata/artwork pair remains pending; independent smart-contract audit and independent TEP-74/TEP-64 review remain outstanding; all five wallet-control proofs, independent artifact reproduction, fee/payload review, and explicit approval of any exact Mainnet transaction remain outstanding. The Draft PR must not be merged or deployed until these are closed. No transaction has been signed or broadcast.
+
+
+## 8. Latest exact-head verification — 2026-11-21
+
+GitHub Actions run #365 passed on exact PR head e75560a1e8c18f06027e1787badfe4ea50263afd (run: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44929249279):
+
+- npm ci: passed.
+- Public pinned TEP-64 metadata and canonical PNG verification: passed; 2,728,338 bytes, 1254×1254, SHA-256 08d71b17fecb86ae6006ba0fc498675dc4024b13d3f40459dcd578dfc09719d1.
+- Live read-only TON Mainnet identity check: passed; ConfigParam 19 global ID -239.
+- Tact build and offline artifact-generator TypeScript check: passed.
+- Two-run deterministic offline StateInit/manifest comparison: passed.
+- Jest / TON Sandbox: 26/26 tests passed, including burn-before-final-allocation and final-category bounce recovery after a prior burn.
+- npm audit --audit-level=high: passed; zero reported vulnerabilities.
+
+This is project CI/emulator and read-only endpoint evidence, not an independent external smart-contract audit, wallet-control proof, signed transaction, or authorization to deploy. The PR remains Draft and unmerged; Mainnet release remains NO-GO pending independent audit/conformance review, Founder approval, wallet-control verification, independent artifact reproduction and exact transaction review.

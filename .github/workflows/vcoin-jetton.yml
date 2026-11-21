@@ -28,6 +28,10 @@ jobs:
           cache: npm
           cache-dependency-path: contracts/jetton/package.json
       - run: npm ci
+      - name: Verify pinned public TEP-64 metadata and canonical PNG
+        env:
+          VCOIN_METADATA_URL: https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/d67f2549dfba8876cd4b0becc2bc8573bcc10c57/contracts/jetton/metadata.json
+        run: npm run verify:metadata
       - name: Report dependency audit findings
         shell: bash
         run: |

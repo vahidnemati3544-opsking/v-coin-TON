@@ -368,6 +368,22 @@ get fun `test VCOIN deploys both vesting escrows and confirms founder mint only 
     expect(founderEscrow.getVcoinVestingDeposited()).toEqual(true);
     expect(minter.getVcoinFounderAllocationStatus()).toEqual(2);
 
+    // Replaying the escrow deposit acknowledgement must not credit issuance twice.
+    val duplicateDepositAck = createMessage({
+        bounce: false,
+        value: grams("0.1"),
+        dest: minter.address,
+        body: VcoinEscrowDepositAccepted {
+            queryId: 78,
+            vestingKind: 1,
+            jettonAmount: FOUNDER_AMOUNT,
+            escrowAddress: founderEscrowAddress!,
+        },
+    });
+    testing.processSingleTraceStep(founderEscrowAddress!, duplicateDepositAck);
+    expect(minter.getVcoinFounderAllocationStatus()).toEqual(2);
+    expect(minter.getJettonData().totalSupply).toEqual(FOUNDER_AMOUNT);
+
     val miningEscrowAddress = minter.getVcoinMiningEscrowAddress();
     expect(miningEscrowAddress).toBeNotNull();
     if (miningEscrowAddress == null) {

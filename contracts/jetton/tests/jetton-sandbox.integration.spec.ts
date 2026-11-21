@@ -326,7 +326,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       to: founderWallet.address,
       aborted: true,
     });
-    expect((await founderWallet.getGetWalletData()).balance).toBe(MAX_SUPPLY);
+    expect((await founderWallet.getGetWalletData()).balance).toBe(FOUNDER_CAP);
     expect((await master.getGetJettonData()).total_supply).toBe(MAX_SUPPLY);
   });
 
@@ -352,7 +352,7 @@ describe("VCOIN Jetton master and wallet — TON Sandbox integration", () => {
       to: founderWallet.address,
       aborted: true,
     });
-    expect((await founderWallet.getGetWalletData()).balance).toBe(MAX_SUPPLY);
+    expect((await founderWallet.getGetWalletData()).balance).toBe(FOUNDER_CAP);
   });
 
   test("rejects forged internal transfers from an untrusted wallet address", async () => {

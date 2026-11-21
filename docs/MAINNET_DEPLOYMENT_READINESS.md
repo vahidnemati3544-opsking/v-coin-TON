@@ -53,8 +53,8 @@ The smoke test verifies deterministic serialization for test inputs only. It doe
 2. **Full TEP-74 / TEP-64 conformance:** close the outstanding source review against the current standards and official reference implementation, including message layouts, getters, wallet derivation, metadata serialization, gas/excess and bounce/replay behavior.
 3. **Natural downstream-bounce proof — Sandbox evidence completed on reviewed PR head `cf362ef04990aebf928e17ebd380e0aef8b6f96f` (CI #302):** the parameterized integration test exercises all five allocation categories. For each category, the derived destination Jetton wallet is made to fail TVM execution; the Master-to-wallet message is observed as bounceable and aborted; the bounced message returns to the Master successfully; total supply is verified restored to zero; the deterministic wallet StateInit is restored; and retry credits exactly that category cap with matching total supply. CI #302 passed the full contract test suite. This closes the project Sandbox bounce-test gate only; it is not a Mainnet transaction, external audit, or independent protocol-conformance review.
 4. **Deployment builder (partially complete):** the offline StateInit generator is implemented in `contracts/jetton/deploy/prepare-mainnet.ts`. It emits `state-init.boc` and a manifest with source/toolchain/input/code/data/StateInit hashes and derived Master address. CI #273 passed the Tact build, TypeScript compilation, two-run byte-for-byte determinism smoke test, Jest/Sandbox tests, and high-severity dependency audit. The smoke test used a dummy `example.invalid` metadata URI; no production artifact or wallet-signable transaction preview has been prepared. Remaining: independently reproduce production inputs, verify generated master address/StateInit, and design/review any transaction-preview format without adding signing or broadcast.
-5. **Mainnet identity guard:** fail closed unless the network is positively identified as TON Mainnet. A text field saying "mainnet" is not proof. No Testnet fallback and no ambiguous network selection.
-6. **Metadata finalization (partially implemented):** TEP-64 JSON is committed at `9fd9f2b119a0f6b3d343a7a0670ba430c3864aa3` with a commit-pinned image URL to the correctly suffixed JPEG rendition at `1dac91b520de6b9d3dbf7d615128ff2ec3e95f5e`. Deployment template references the pinned JSON URL. Founder approval, independent public retrieval/content verification, and exact master-PNG binary replacement remain open.
+5. **Mainnet identity guard (implemented):** `scripts/verify-mainnet-network.cjs` reads TON Center ConfigParam 19 and fails closed unless global ID is -239. CI #365 executed it successfully. Run again immediately before any future transaction and independently confirm the active network in the signing wallet.
+6. **Metadata finalization (technical verification implemented):** TEP-64 JSON is pinned in the deployment template and references the exact canonical PNG at `contracts/jetton/assets/VCOIN-canonical-logo.png`. CI #365 fetched the pinned JSON/image and verified the image MIME, PNG signature, 1254×1254 dimensions, 2,728,338-byte length and canonical SHA-256. Founder approval of the exact metadata/artwork pair remains pending.
 7. **Wallet-control proof:** Founder must verify control of each of the five owner wallets on Mainnet in their own wallet interfaces. Never submit seed phrases or private keys.
 8. **Deployment and issuance sequence:** independently verify exact initialization parameters, owner/admin address, all five distinct recipient addresses, category order, TON fee reserve, expected resulting wallet addresses, supply getters and post-deployment verification procedure.
 9. **Transaction review and approval:** present exact source/build hashes, network, master address derivation, StateInit hash, deployment BOC, fees and every later category issuance payload to the Founder. Each irreversible transaction requires explicit Founder approval and local signing.
@@ -68,19 +68,20 @@ The smoke test verifies deterministic serialization for test inputs only. It doe
 
 ## 5. Safe next work package
 
-**Action 25 — Prepare deterministic Mainnet deployment package (no broadcast): PARTIALLY IMPLEMENTED — asset path and TEP-64 metadata URI corrected; exact master PNG replacement and approvals remain pending**
+**Action 25 — Prepare deterministic Mainnet deployment package (no broadcast): IMPLEMENTED FOR REVIEW — canonical asset and metadata verified; independent approvals/release gates remain pending**
 
 - [x] Pinned Tact compiler/dependencies and committed lockfile.
 - [x] Added offline StateInit builder, source-commit guard, source/toolchain hashes, and manifest.
 - [x] CI #275 passed the build, generator type-check, two-run deterministic StateInit/manifest comparison, 20/20 contract tests and dependency audit on exact head `d8dc4046ed2f8bc8db7e1f4abd900b148889a730`.
 - [x] Corrected the repository display asset's MIME/extension mismatch: the 194,115-byte JPEG is now stored as `contracts/jetton/assets/vcoin-canonical-logo.jpg` (commit `1dac91b520de6b9d3dbf7d615128ff2ec3e95f5e`). It visually represents the approved V COIN artwork but is not byte-identical to the 1254×1254 Library PNG (SHA-256 `08d71b17fecb86ae6006ba0fc498675dc4024b13d3f40459dcd578dfc09719d1`).
 - [x] Published TEP-64 metadata JSON at the commit-pinned URL in commit `9fd9f2b119a0f6b3d343a7a0670ba430c3864aa3`; updated deployment template to reference the pinned metadata and image URLs.
-- [ ] Replace the JPEG rendition with the exact Founder-selected PNG binary in the public repository; confirm the image rendered from the pinned URL matches the master file byte-for-byte.
-- [ ] Founder approval and independent public retrieval/content verification of the final metadata/logo URI.
+- [x] Confirm exact Founder-selected PNG is committed in the public repository and the pinned public image matches the canonical source SHA-256; CI #365 passed the metadata/image retrieval and hash validator.
+- [x] Automated public retrieval/content verification of the pinned metadata/logo URI passed in CI #365.
+- [ ] Founder approval of the exact metadata/logo pair.
 - [ ] Independently reproduce and verify production artifacts using Founder-approved immutable metadata/logo URI.
 - [ ] Independently verify master address and StateInit serialization.
 - [ ] Design and review a human-readable deployment transaction preview; do not sign or broadcast.
-- [ ] Add actual Mainnet network identity verification only to a separately reviewed verifier; the current builder is offline and its `mainnet` label is not proof of network identity.
+- [x] Added read-only Mainnet network identity verifier; CI #365 confirmed ConfigParam 19 global ID -239. Re-run immediately before any future transaction and confirm the wallet network independently.
 - [ ] Complete the post-deployment getter/balance verification checklist.
 - Keep signing local in the Founder's wallet. Do not include keys, seed phrases or automatic broadcast.
 

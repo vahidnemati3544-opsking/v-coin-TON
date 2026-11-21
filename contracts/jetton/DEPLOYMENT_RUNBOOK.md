@@ -55,24 +55,21 @@ Allocation sums must be checked in base units before every batch. No category ma
 - Build reproducibly; record compiler/toolchain versions and code hashes.
 - Run unit, sandbox, negative, replay, authorization, transfer, burn, and supply-cap tests.
 
-### Gate B — Testnet
-- Verify founder wallet proof on Testnet.
-- Deploy master and verify get_jetton_data.
-- Verify wallet address derivation and wallet code.
-- Mint exactly the approved initial supply once.
-- Attempt a second mint and prove it fails.
-- Transfer small test amounts to separate wallets; verify notifications, balances, fees, and transaction finality.
-- Verify metadata and explorer presentation.
-- Record all addresses, transaction hashes, code hashes, and test outputs.
+### Gate B — Owner-directed Testnet omission
+- The owner has directed that no Testnet deployment be performed.
+- This omits only the Testnet deployment stage; it does not waive reproducible builds, Sandbox/adversarial tests, independent security review, wallet-control proofs, deterministic transaction simulation, or explicit founder approval.
+- Before Mainnet, verify the exact reviewed build, code hashes, master/wallet derivation, metadata serialization, supply cap, one-time issuance, all transfer/bounce paths, and fee assumptions using reproducible local/Sandbox evidence.
+- Record the evidence and unresolved risks. If any critical path cannot be verified without a live Testnet transaction, stop and obtain the owner's explicit decision rather than silently weakening the gate.
 
 ### Gate C — Mainnet approval
-- Complete independent smart-contract review.
+- Complete independent smart-contract security review and close every critical/high finding.
 - Review token distribution, consumer disclosures, sanctions/AML obligations, tax and securities/financial-services considerations with qualified counsel in relevant jurisdictions.
 - Confirm all recipient addresses and custody/vesting arrangements.
 - Confirm TON for deployment and transfer fees.
 - Obtain explicit founder approval of the final build hashes, metadata, supply, and destinations.
 
 ### Gate D — Mainnet deployment and distribution
+- Proceed only after the owner-directed Testnet omission has been compensated by complete reproducible Sandbox evidence and independent review.
 - Deploy only the exact reviewed build.
 - Verify deployed code and state on-chain.
 - Issue the initial supply exactly once and verify total supply.
@@ -128,12 +125,12 @@ Stop if any of the following is true:
 - Deployment transaction: none.
 - Initial mint transaction: none.
 - Mainnet allocation transfers: none.
-- Founder four-year vesting/escrow source: implemented in `contracts/jetton/src/founder-vesting.tact` with dedicated Sandbox tests. Approved schedule is 1,460 daily linear accrual steps over four 365-day years, zero cliff; clock starts only after the exact 2B VCOIN allocation is received from the founder through the configured authentic Jetton wallet.
+- Founder four-year vesting/escrow source: implemented in `contracts/jetton/src/founder-vesting.tact` with dedicated Sandbox tests. Approved schedule is 1,460 daily linear accrual steps over four 365-day years, zero cliff; clock starts only after the exact 2B VCOIN allocation is received from the founder through the configured authentic Jetton wallet. Downstream delivery-bounce recovery remains unresolved and is a hard blocker; do not deploy or fund the vesting contract.
 - Escrow Jetton wallet address is configured once after vesting-contract deployment using the master `get_wallet_address` getter and a founder-signed message. It cannot be replaced after configuration.
 - Vesting contract deployment, funding, final CI verification, independent security audit and Testnet verification: pending.
 - Recipient wallet-control proofs on the intended network: pending.
 - Independent smart-contract audit: pending.
 - Deterministic deploy/transaction builder: pending.
-- Testnet deployment and on-chain verification: pending.
+- Testnet deployment: intentionally omitted by owner direction; no Testnet transaction has been broadcast.
 
 This runbook is an execution control document, not evidence that any token has been deployed or transferred.

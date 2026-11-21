@@ -6,9 +6,9 @@ Branch: main
 
 ## Locked asset
 
-- Repository path: `contracts/jetton/assetss/vcoin-canonical-logo.png`
+- Repository path: `contracts/jetton/assets/vcoin-canonical-logo.png`
 - Git blob SHA-1: `87a3e78313d26e36e500802e158827486bbc34c6`
-- GitHub URL: https://github.com/vahidnemati3544-opsking/v-coin-TON/blob/main/contracts/jetton/assetss/vcoin-canonical-logo.png
+- GitHub URL: https://github.com/vahidnemati3544-opsking/v-coin-TON/blob/main/contracts/jetton/assets/vcoin-canonical-logo.png
 
 ## Preservation rules
 
@@ -21,4 +21,8 @@ Branch: main
 
 The repository file is named with a `.png` extension, but its fetched Base64 payload begins with the JPEG signature (`FF D8 FF`). The file has therefore **not** been converted or renamed in this lock operation. Its visual appearance and full image integrity have not been independently verified here.
 
-The containing directory is currently named `assetss` (two trailing s characters). It has intentionally not been renamed to avoid breaking any existing references.
+The directory typo has been corrected: the canonical assets directory is `contracts/jetton/assets/`.
+
+## Founder emblem meaning
+
+The diamond positioned above the crown represents the founder (the user/founder of V COIN). Preserve this meaning in all future uses of the canonical logo; do not reinterpret or remove the diamond.

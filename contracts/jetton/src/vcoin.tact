@@ -119,8 +119,10 @@ contract VCoinMaster with JettonMaster {
             require(false, "Unknown allocation category");
         }
 
+        // Burn notifications may reduce total_supply at any time, including
+        // between allocation messages. Completion is determined by the five
+        // immutable issuance flags, never by net circulating supply.
         if (self.founder_issued && self.mining_issued && self.treasury_issued && self.liquidity_issued && self.ecosystem_issued) {
-            require(self.total_supply == VCOIN_MAX_SUPPLY, "Allocation sum mismatch");
             self.mintable = false;
         }
     }

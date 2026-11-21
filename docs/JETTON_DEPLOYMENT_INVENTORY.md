@@ -3,7 +3,7 @@
 **Document ID:** VCT-JETTON-INV-001  
 **Reviewed:** 2026-11-21  
 **Scope:** `vahidnemati3544-opsking/v-coin-TON` only  
-**Current result:** **BUILD + 25 SANDBOX TESTS + NPM CI INSTALL + ZERO-VULNERABILITY AUDIT PASSED; NOT READY FOR TESTNET OR MAINNET DEPLOYMENT.**
+**Current result (superseded by the 2026-11-21 Acton/Tolk review below): legacy Tact checks passed; no Mainnet deployment, mint, or transfer has occurred.**
 
 ## Verified repository state
 
@@ -125,3 +125,64 @@ These recorded addresses are candidates only. Recording an address does not prov
 The founder remains the sole operational signer for distributions from the five founder-controlled wallets. No backend role or database flag can authorize token movement. Never request or store a recovery phrase or private key. A confirmed TON transfer to an independently controlled address cannot be reversed.
 
 This inventory records source, test and release evidence. It does not claim VCOIN has been deployed, minted or transferred.
+
+
+## Current decision and Acton/Tolk Mainnet readiness review — 2026-11-21
+
+This section supersedes earlier readiness statements where they conflict with the newer Acton/Tolk implementation review.
+
+### Owner's deployment direction
+
+- The owner has directed the project to proceed toward **TON Mainnet** and not use Testnet as a deployment stage.
+- This is a deployment preference, not evidence of production safety and not a waiver of code correctness, adversarial testing, independent review, or explicit transaction approval.
+- No Testnet or Mainnet transaction has been broadcast. No VCOIN Jetton Master is deployed; no VCOIN has been minted or transferred.
+
+### Current candidate implementation
+
+- Candidate: Draft PR #4, branch `security/acton-tolk-jetton-remediation-v2`.
+- Reviewed head: `9ee140fe7ea2894e48d63f9b790701e1d1d3e6bf`.
+- PR: https://github.com/vahidnemati3544-opsking/v-coin-TON/pull/4
+- PR description reports Acton build, wrapper generation, static checks, formatting, local emulated deployment, and 89 emulator tests passing; CI runs: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44736561687 and https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44736561797.
+- **Evidence discrepancy to resolve:** `contracts/acton/README.md` at the reviewed branch still says 87 tests, while the PR description says 89. The exact current test inventory and count must be reconciled before release.
+- PR #4 is Draft, open, unmerged, and must not be treated as approved production code.
+
+### Allocation behavior that must be understood before signing
+
+The Acton/Tolk candidate does **not** credit all five ordinary owner wallets directly:
+
+| Allocation | Amount | Candidate destination |
+|---|---:|---|
+| Founder | 2,000,000,000 VCOIN | Deterministic Founder vesting escrow; beneficiary remains the Founder wallet |
+| Mining reserve | 5,000,000,000 VCOIN | Deterministic Mining vesting escrow; beneficiary remains the Mining Reserve wallet |
+| Treasury | 1,000,000,000 VCOIN | Treasury Jetton wallet |
+| Liquidity / market | 1,000,000,000 VCOIN | Liquidity owner Jetton wallet |
+| Ecosystem / marketing | 1,000,000,000 VCOIN | Ecosystem owner Jetton wallet |
+
+The Founder schedule is four-year linear vesting; the Mining reserve schedule is 730-day linear vesting. The escrow addresses are deterministic but are not yet deployed or independently verified. This preserves the approved vesting intent; it means the Founder and Mining amounts are escrow-held rather than immediately spendable in their ordinary owner wallets.
+
+### Mandatory blockers before any Mainnet broadcast
+
+1. Add and verify a reliable **Mainnet network identity guard** in the deployment workflow. The current script checks the payer allowlist in broadcast mode but does not prove that the selected network is Mainnet.
+2. Complete the outstanding natural downstream TVM bounce test and adversarial tests for replayed/forged acknowledgements, amount mismatch, pending-state cleanup, and balance/query-ID invariants.
+3. Reconcile the 87-versus-89 test evidence and rerun CI on the exact final source commit.
+4. Obtain an independent smart-contract security audit against pinned source, compiler/toolchain, generated code, and code hashes.
+5. Confirm final metadata (including canonical logo decision), exact escrow start timestamp, derived escrow addresses, TON fee budget, and wallet-control proof for all five owner wallets on Mainnet.
+6. Produce a deterministic, reviewable deployment and issuance transaction package. Verify every recipient, allocation amount, destination (including both escrows), network, and code hash before the Founder signs.
+7. Obtain the Founder's explicit approval and signature for each irreversible Mainnet transaction. No private key or recovery phrase is to be shared.
+
+### Current release status
+
+| Gate | Status |
+|---|---|
+| Candidate Acton/Tolk implementation | Draft PR #4; not merged |
+| CI build and emulator suite | Reported passed; test-count documentation mismatch remains |
+| Mainnet network guard | Missing |
+| Natural downstream bounce test and remaining adversarial cases | Pending |
+| Independent smart-contract audit | Pending |
+| Mainnet wallet-control proofs | Pending |
+| Final metadata, escrow start time, gas budget | Pending |
+| Mainnet deployment | Not performed |
+| Initial 10B issuance | Not performed |
+| Five-allocation distribution | Not performed |
+
+**Release decision: HOLD — do not merge or broadcast yet.** The owner-directed Testnet omission is recorded, but it does not remove the other mandatory safety gates. The first irreversible on-chain action remains deployment of the reviewed VCOIN Master; allocation minting and transfers can only follow after its address and state are verified.

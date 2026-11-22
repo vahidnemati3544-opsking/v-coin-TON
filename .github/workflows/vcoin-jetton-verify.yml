@@ -68,12 +68,16 @@ jobs:
             "verifyInput.disabled = false",
             "deployButton.dataset.submitted = 'true'",
             "preview.signing.signer_raw",
-            "preview.signing.allocation_issuance_signer_raw"
+            "preview.signing.allocation_issuance_signer_raw",
+            "tonToNano(preview.unsigned_deploy_message.attached_ton)",
+            "preview.unsigned_deploy_message.network_fee_quote_required"
           ];
           for (const guard of required) {
             if (!html.includes(guard)) throw new Error('Missing issuer safety guard: ' + guard);
           }
           if (html.includes("walletRole() !== 'gas'")) throw new Error('Obsolete separate GAS signer guard remains');
+          if (html.includes("amount: '750000000'")) throw new Error('Hard-coded deployment TON value must not override the release preview');
+          if (html.includes("amount: '1000000000'")) throw new Error('Hard-coded deployment TON value must not override the release preview');
           console.log('TonConnect issuer syntax and safety guards passed.');
           NODE
       - name: Commit generated dependency lockfile when missing or changed

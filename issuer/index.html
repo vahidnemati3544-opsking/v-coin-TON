@@ -131,7 +131,7 @@
     });
     if (role === 'disconnected') setStatus('No wallet connected. Connect the registered Founder wallet.');
     else if (role === 'wrong-network') setStatus('Wrong network. This release console accepts TON Mainnet only.');
-    else if (role === 'founder-operator' && nextAllocationIndex >= allocationCount) setStatus('All five allocations are marked verified. Independently confirm Master total_supply equals 2,100,000,000,000,000 base units and mintable is false.');
+    else if (role === 'founder-operator' && allocationCount > 0 && nextAllocationIndex >= allocationCount) setStatus('All five allocations are marked verified. Independently confirm Master total_supply equals 2,100,000,000,000,000 base units and mintable is false.');
     else if (role === 'founder-operator') setStatus('Founder wallet connected on Mainnet. Deployment is enabled; only the next unverified allocation can be requested after Master confirmation.');
     else setStatus('Connected wallet does not match the approved Founder signer. Disconnect and connect the registered wallet.');
   }
@@ -224,7 +224,7 @@
     updateControls();
 
     deployButton.addEventListener('click', async () => {
-      if (walletRole() !== 'gas') return;
+      if (walletRole() !== 'founder-operator') return;
       deployButton.disabled = true;
       try {
         await ui.sendTransaction({

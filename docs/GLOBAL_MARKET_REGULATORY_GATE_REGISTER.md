@@ -57,7 +57,7 @@ These are programme decisions, not findings that any market has approved VCOIN.
 
 - “V COIN – TON is an independent project under development on The Open Network (TON).”
 - “The project has documented a proposed TON Jetton design and a tokenomics model.”
-- “The design specifies a planned initial supply of 10,000,000,000 VCOIN, six decimal places and no additional minting; this is a design specification, not proof of issuance.”
+- “The design specifies a planned initial supply of 2,100,000,000 VCOIN, six decimal places and no additional minting; this is a design specification, not proof of issuance.”
 - “Wallet-based mining, Jetton deployment, payouts and production operations remain subject to implementation, testing and review.”
 - “The project is developing security, accounting and transparency controls.”
 
@@ -91,7 +91,7 @@ Do not claim absolute anonymity. Public-chain transactions and balances may be o
 | Gate | Required evidence before the next activity | Current status from reviewed repository evidence |
 |---|---|---|
 | Corporate accountability | Responsible entity, beneficial-owner/control records, legal contact, governance and signatory policy | **Pending** |
-| Token identity | Implemented Jetton Master/Wallet contracts, reproducible build, approved parameters, Testnet deployment and independently verified Master address | **Pending; no verified deployment established** |
+| Token identity | Implemented Jetton Master/Wallet contracts, reproducible build, approved parameters, Founder-approved Mainnet deployment and independently verified Master address | **Pending; no verified deployment established** |
 | Supply and treasury | On-chain supply verification, allocation reconciliation, vesting rules, treasury custody and dual-control/approval evidence | **Design only; implementation/evidence pending** |
 | Wallet and mining | TON wallet ownership proof, exact Jetton Master/network validation, trusted balance reader, immutable snapshots, reserve controls and end-to-end payout reconciliation | **Not verified; public mining endpoint remains blocked** |
 | Database and backend | Successful isolated PostgreSQL setup, ordered migration evidence, non-skipped integration tests, access controls and recovery test | **Local verification pending** |
@@ -122,7 +122,7 @@ Passing CI or having source files in GitHub is not proof of production operation
 >
 > V COIN – TON is an independent project under development on The Open Network (TON). The project is documenting a TON Jetton architecture and a proposed tokenomics model, with an emphasis on security, transparent accounting and user-controlled wallet connectivity.
 >
-> The current design specifies a planned initial supply of 10,000,000,000 VCOIN, six decimal places and no additional minting. These are design parameters only; they do not confirm that tokens have been issued or deployed.
+> The current design specifies a planned initial supply of 2,100,000,000 VCOIN, six decimal places and no additional minting. These are design parameters only; they do not confirm that tokens have been issued or deployed.
 >
 > Jetton implementation and deployment, verified wallet-based mining, production payouts, independent security audits and market-specific legal reviews remain pending. No public sale, exchange listing, guaranteed liquidity, price or financial return is being represented.
 >

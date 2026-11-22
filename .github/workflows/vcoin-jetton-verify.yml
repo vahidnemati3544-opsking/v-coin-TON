@@ -5,6 +5,7 @@ on:
     paths:
       - "contracts/jetton/**"
       - ".github/workflows/vcoin-jetton-verify.yml"
+      - "issuer/**"
   pull_request:
     paths:
       - "contracts/jetton/**"
@@ -43,12 +44,16 @@ jobs:
         run: npx tsx scripts/prepare-mainnet-deployment.ts
       - name: Run Jest tests
         run: npm test
+      - name: Prepare TonConnect issuer site assets
+        run: |
+          python ../../issuer/generate_icon.py
+          cp build/mainnet-deployment-preview.json ../../issuer/deployment-preview.json
       - name: Commit generated dependency lockfile when missing or changed
         if: success()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package-lock.json
+          git add package-lock.json ../../issuer/deployment-preview.json
           if git diff --cached --quiet; then
             echo "Dependency lockfile is already current."
           else
@@ -56,6 +61,11 @@ jobs:
             git pull --rebase origin main
             git push origin HEAD:main
           fi
+      - name: Upload TonConnect issuer site
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: issuer/
       - name: Preserve exact-head release artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -68,3 +78,20 @@ jobs:
             contracts/jetton/npm-audit-report.json
           if-no-files-found: warn
           retention-days: 30
+
+  deploy-issuer:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Deploy TonConnect issuer
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -102,10 +102,12 @@ The Founder personally reviews and signs in the wallet only after explicit readi
 
 - Five allocation destinations and separate fee wallet: recorded in `docs/WALLET_ALLOCATION_REGISTER.md`.
 - Five-role allocation logic and natural-bounce/retry test cases: present in current main source and Sandbox test file.
-- Exact-head CI: passed on commit `9d3364b767aecdf0df038b9bf600435f6662c225` in [GitHub Actions run #93](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44990283919); clean `npm ci`, dependency audit (zero vulnerabilities), Tact build, TEP-64 content-cell generation, and all Sandbox tests completed successfully.
-- `package-lock.json`: committed to `main`; lockfile-backed clean install is now part of the authoritative workflow.
-- Master and Jetton Wallet BOCs plus the metadata content-cell BOC: retained in the exact-head CI artifact; file checksums and the generated content-cell hash are recorded in `VERIFICATION_STATUS.md`. Independent StateInit and cell-hash reproduction remains pending.
-- TEP-64 metadata JSON and immutable commit-pinned URI: present. The metadata content cell is generated in CI. The canonical logo is not yet embedded because its stored `.png` file has JPEG signature bytes and the locked original must not be altered.
+- Exact-head CI: passed on commit `618e397a8a6f97ce76a45043af78acbedbd5ea72` in [GitHub Actions run #111](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44990981787); clean `npm ci`, strict dependency audit (zero advisories at all severities), Tact build, TEP-64 content-cell generation, unsigned Mainnet StateInit preview, and all Sandbox tests completed successfully.
+- `package-lock.json`: committed to `main`; authoritative CI uses `npm ci` and fails on moderate, high, or critical dependency advisories.
+- Master and Jetton Wallet BOCs, five deterministic Jetton Wallet StateInit BOCs, and the metadata content-cell BOC are retained in the exact-head CI artifact. Their file checksums and independently reproduced cell hashes are recorded in `VERIFICATION_STATUS.md`.
+- TEP-64 metadata JSON and immutable commit-pinned URI are present. The canonical logo is not embedded because its stored `.png` file has JPEG signature bytes and the locked original must not be altered.
+- Predicted Master address and five recipient Jetton Wallet addresses are generated in the unsigned deployment preview; the Master StateInit hash and all five Jetton Wallet StateInit hashes were independently recomputed from their BOCs and matched the address hash bytes.
+- Deployment transaction is prepared to be signed by GAS & OPERATIONS wallet with StateInit + VCoinFund body and 0.75 TON minimum attached value. Founder signs five separate VCoinMint allocations after on-chain getter verification. Neither deployment nor issuance has been broadcast.
 - Independent security audit: pending.
 - Founder review of the exact five owner-provided TON addresses and post-deployment deterministic Jetton Wallet address derivation: pending.
 - Predicted Mainnet Master address from the verified StateInit: `EQCvOZBRDK51sk2k1qSWksk6jnhXT11MHquhD06FFLOKrh77`; it is not deployed yet.

@@ -17,7 +17,8 @@
     "@types/node": "22.10.2",
     "jest": "29.7.0",
     "ts-jest": "29.2.5",
-    "typescript": "5.7.2"
+    "typescript": "5.7.2",
+    "tsx": "4.19.2"
   },
   "overrides": {
     "@tact-lang/compiler": {

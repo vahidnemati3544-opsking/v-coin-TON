@@ -13,9 +13,9 @@
       "base_units": "420000000000000",
       "destination": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
       "requires_founder_signature": true,
-      "destination_verification": "Regenerated from exact-head CI artifact for source commit 502c20e2d979a42dc10cd58e0874be60e8e5ba5f (run 148); clean-room independent reproduction and on-chain get_wallet_address confirmation remain pending.",
-      "predicted_jetton_wallet_address": "EQB8AerdUs4kIiwgXYNXn97vInNGz1i6mM82aRz6Qk-yLXT8",
-      "predicted_jetton_wallet_state_init_hash": "7c01eadd52ce24222c205d83579fdeef227346cf58ba98cf36691cfa424fb22d"
+      "destination_verification": "Regenerated from exact-head CI artifact 14744567066 (run 158), source commit c4a9831f8d751a0a714054014dcf9135622c9cce; independent clean-room reproduction and on-chain getter confirmation pending.",
+      "predicted_jetton_wallet_address": "EQBPEJoPfi8Fo6qGxLreAJ33Wp35q7QhMytb0ddZ2T9INTaa",
+      "predicted_jetton_wallet_state_init_hash": "4f109a0f7e2f05a3aa86c4bade009df75a9df9abb421332b5bd1d759d93f4835"
     },
     {
       "allocation": "mining_reserve",
@@ -23,9 +23,9 @@
       "base_units": "1050000000000000",
       "destination": "UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0",
       "requires_founder_signature": true,
-      "destination_verification": "Regenerated from exact-head CI artifact for source commit 502c20e2d979a42dc10cd58e0874be60e8e5ba5f (run 148); clean-room independent reproduction and on-chain get_wallet_address confirmation remain pending.",
-      "predicted_jetton_wallet_address": "EQDSRCdDD6aozmwM7RIHyt9D-RyayizOMu5xENy0SPXwnWqd",
-      "predicted_jetton_wallet_state_init_hash": "d24427430fa6a8ce6c0ced1207cadf43f91c9aca2cce32ee7110dcb448f5f09d"
+      "destination_verification": "Regenerated from exact-head CI artifact 14744567066 (run 158), source commit c4a9831f8d751a0a714054014dcf9135622c9cce; independent clean-room reproduction and on-chain getter confirmation pending.",
+      "predicted_jetton_wallet_address": "EQAueLQWL3It9CUgzjqJcbkqqGUW6_ci72uSpdm5Fd_wJhc8",
+      "predicted_jetton_wallet_state_init_hash": "2e78b4162f722df42520ce3a8971b92aa86516ebf722ef6b92a5d9b915dff026"
     },
     {
       "allocation": "treasury",
@@ -33,9 +33,9 @@
       "base_units": "210000000000000",
       "destination": "UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ",
       "requires_founder_signature": true,
-      "destination_verification": "Regenerated from exact-head CI artifact for source commit 502c20e2d979a42dc10cd58e0874be60e8e5ba5f (run 148); clean-room independent reproduction and on-chain get_wallet_address confirmation remain pending.",
-      "predicted_jetton_wallet_address": "EQDVyMsB_lGSxbI9-GSfr_Np3NohePKdYpaBEUitvAYFGsy-",
-      "predicted_jetton_wallet_state_init_hash": "d5c8cb01fe5192c5b23df8649faff369dcda2178f29d6296811148adbc06051a"
+      "destination_verification": "Regenerated from exact-head CI artifact 14744567066 (run 158), source commit c4a9831f8d751a0a714054014dcf9135622c9cce; independent clean-room reproduction and on-chain getter confirmation pending.",
+      "predicted_jetton_wallet_address": "EQCHEiMqe6U_SbiIsK-QURoNAIlyPNkDGTdV69QiyG3MsD6X",
+      "predicted_jetton_wallet_state_init_hash": "8712232a7ba53f49b888b0af90511a0d0089723cd903193755ebd422c86dccb0"
     },
     {
       "allocation": "liquidity_market",
@@ -43,9 +43,9 @@
       "base_units": "210000000000000",
       "destination": "UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn",
       "requires_founder_signature": true,
-      "destination_verification": "Regenerated from exact-head CI artifact for source commit 502c20e2d979a42dc10cd58e0874be60e8e5ba5f (run 148); clean-room independent reproduction and on-chain get_wallet_address confirmation remain pending.",
-      "predicted_jetton_wallet_address": "EQAnRjBQl3D9c0s5GV0t8RlTMReOFQRNNXoc3oyVVgjzl5MH",
-      "predicted_jetton_wallet_state_init_hash": "274630509770fd734b39195d2df1195331178e15044d357a1cde8c955608f397"
+      "destination_verification": "Regenerated from exact-head CI artifact 14744567066 (run 158), source commit c4a9831f8d751a0a714054014dcf9135622c9cce; independent clean-room reproduction and on-chain getter confirmation pending.",
+      "predicted_jetton_wallet_address": "EQCD8fnJoad9jE543l5o9KH71TGkinQEk4MgmrECavxRu_6N",
+      "predicted_jetton_wallet_state_init_hash": "83f1f9c9a1a77d8c4e78de5e68f4a1fbd531a48a74049383209ab1026afc51bb"
     },
     {
       "allocation": "ecosystem_marketing",
@@ -53,9 +53,9 @@
       "base_units": "210000000000000",
       "destination": "UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE",
       "requires_founder_signature": true,
-      "destination_verification": "Regenerated from exact-head CI artifact for source commit 502c20e2d979a42dc10cd58e0874be60e8e5ba5f (run 148); clean-room independent reproduction and on-chain get_wallet_address confirmation remain pending.",
-      "predicted_jetton_wallet_address": "EQCtNm8cneWOwU_JFfK_rf9Os7_Y8yItALCtI0ZYvoHQX8xs",
-      "predicted_jetton_wallet_state_init_hash": "ad366f1c9de58ec14fc915f2bfadff4eb3bfd8f3222d00b0ad234658be81d05f"
+      "destination_verification": "Regenerated from exact-head CI artifact 14744567066 (run 158), source commit c4a9831f8d751a0a714054014dcf9135622c9cce; independent clean-room reproduction and on-chain getter confirmation pending.",
+      "predicted_jetton_wallet_address": "EQCDG9Bz_yAP0qZ34lH_vHhj_2eLbCVHPu-dHnG5BtBC7nPR",
+      "predicted_jetton_wallet_state_init_hash": "831bd073ff200fd2a677e251ffbc7863ff678b6c25473eef9d1e71b906d042ee"
     }
   ],
   "safeguards": [
@@ -81,8 +81,8 @@
     "Project owner confirmed the complete 2,100,000,000 VCOIN supply is to be allocated across all five registered wallets, with the Founder wallet included as one of the five. This is not authorization to deploy or broadcast transactions; exact Mainnet signing approval remains separate.",
     "Predicted Master address and deterministic recipient Jetton Wallet addresses are derived from the unsigned Mainnet StateInit preview. They are not deployed/on-chain addresses until Mainnet deployment is confirmed.",
     "The Founder wallet signs the deployment/funding transaction as GAS & OPERATIONS (0.75 TON minimum attached value with VCoinFund body), and signs the five exact VCoinMint issuance messages after deployment.",
-    "The predicted Jetton wallet addresses and StateInit hashes in this manifest were refreshed from exact-head CI artifact 14743262138 on source commit 502c20e2d979a42dc10cd58e0874be60e8e5ba5f; this fixes stale addresses from an earlier Master preview. They remain predictions only until the deployed Master's get_wallet_address getters confirm them.",
-    "The previously configured inaccessible GAS wallet is retired and must never be funded or used."
+    "The previously configured inaccessible GAS wallet is retired and must never be funded or used.",
+    "Master and five deterministic Jetton Wallet predictions were regenerated from exact-head CI artifact 14744567066 (run 158), source commit c4a9831f8d751a0a714054014dcf9135622c9cce. They remain predictions until independent hash reproduction and deployed-Master get_wallet_address checks."
   ],
   "founder_confirmed_release_intent": {
     "scope": "all_five_wallets_full_supply",
@@ -91,17 +91,17 @@
     "confirmation_status": "confirmed_by_project_owner",
     "mainnet_transaction_authorized": false
   },
-  "predicted_jetton_master_address": "EQAriHkG8kqO0GQwwX6ODgqpJCV-oUDKwalDK8lAzYGBWHvV",
-  "predicted_master_state_init_hash": "2b887906f24a8ed06430c17e8e0e0aa924257ea140cac1a9432bc940cd818158",
+  "predicted_jetton_master_address": "EQBDbY_0r9XTVCQjH3aw8bfQtF4eoOV6QdFJEJTBMtw6_pIJ",
+  "predicted_master_state_init_hash": "436d8ff4afd5d35424231f76b0f1b7d0b45e1ea0e57a41d1491094c132dc3afe",
   "metadata_content_cell_hash": "6dc0e0c3a9ec89e72fc8402a13915bb425032a0e57dfa955ba5579eab28c940c",
   "price_reference": {
     "initial_price_usd": "0.008",
     "currency": "USD",
     "price_type": "modelled_reference_not_market_price"
   },
-  "preview_source_commit": "502c20e2d979a42dc10cd58e0874be60e8e5ba5f",
-  "preview_workflow_run_id": 44994317905,
-  "preview_artifact_id": 14743262138,
-  "preview_artifact_sha256": "d3cf96ad22e1efdfa19c38b8d7075da19f602593ec8fe089def250569d7e2c6f",
+  "preview_source_commit": "c4a9831f8d751a0a714054014dcf9135622c9cce",
+  "preview_workflow_run_id": 44998281809,
+  "preview_artifact_id": 14744567066,
+  "preview_artifact_sha256": "184128083f3cfd62a77ee7f6f5bd7a34835ed0664588dba50cf62516faa75089",
   "gas_wallet_unification_status": "owner_approved; implementation pending CI"
 }

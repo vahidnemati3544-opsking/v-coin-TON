@@ -5,13 +5,13 @@
 **Network:** TON  
 **Token:** VCOIN, Jetton (TEP-74)  
 **Founder allocation destination:** `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy`  
-**Separate operational fee wallet:** `UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB`
+**GAS & OPERATIONS wallet:** Same as Founder allocation destination (shared role; not a sixth wallet)
 
 ## 1. Purpose and scope
 
 This document defines the founder's operational authority over VCOIN issuance, custody, allocation and treasury distributions. It applies only to the independent TON project and does not modify or reuse the legacy BNB project.
 
-The founder allocation destination and the operational fee wallet are distinct addresses with different purposes. The operational fee wallet is not the founder's VCOIN allocation destination and is not included in the five-wallet token allocation.
+The Founder allocation destination is also the sole GAS & OPERATIONS wallet. It is one of the five VCOIN allocation destinations; the GAS & OPERATIONS designation is a shared operational role, not a sixth wallet.
 
 ## 2. Fixed supply
 
@@ -63,13 +63,11 @@ The exact five allocation owner addresses are maintained in `docs/WALLET_ALLOCAT
 
 ## 6. Operational TON network-fee funding
 
-The project owner has explicitly selected the separate Tonkeeper address `UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB` as **V COIN – TON GAS & OPERATIONS**.
+The Founder allocation wallet is also the sole GAS & OPERATIONS wallet, deployment signer and Master reserve funder. Its address is recorded in the Founder row of `docs/WALLET_ALLOCATION_REGISTER.md`. No separate operational-fee address or sixth wallet exists.
 
-The owner's funding instruction is that TON deposits intended for TON network fees and authorized operational transaction costs will be made to this wallet only. It is not a VCOIN allocation wallet, does not receive any share of the initial VCOIN supply, and must not be treated as the founder allocation address.
+TON deposits intended for deployment, Master reserve funding and authorized network fees must use this same Founder wallet. Verify the exact address in Tonkeeper and confirm TON Mainnet before funding or signing. Transaction-specific fee requirements must be checked against the exact payload and live network estimate; never assume that one attached amount covers every operation.
 
-Do not request routine TON fee deposits into all five VCOIN allocation wallets. Some TON transaction flows may technically require the wallet that signs a Jetton transfer to hold TON. If that occurs, document the exact operation and required amount, then obtain explicit owner approval before moving any TON from the designated fee wallet. Do not assume universal fee sponsorship is technically available.
-
-The address is owner-provided and must be verified in the wallet app and against the intended network before funding. Never request or store seed phrases or private keys.
+Never request, store, log or transmit seed phrases, private keys, PINs or recovery codes.
 
 ## 7. Transaction lifecycle
 
@@ -96,7 +94,7 @@ A transaction must remain pending or failed until independently verified on-chai
 - Use integer base units only; never use floating-point arithmetic for token amounts.
 - Enforce allocation caps in transactional database operations.
 - Require unique idempotency keys and append-only audit history.
-- Separate Testnet and Mainnet credentials, endpoints and databases.
+- Separate local-development and Mainnet credentials, endpoints and databases. Testnet deployment and transactions are not authorized.
 - Keep distribution disabled when chain data is stale, inconsistent or unavailable.
 - Perform independent smart-contract review and deployment verification before Mainnet use.
 
@@ -105,7 +103,7 @@ A transaction must remain pending or failed until independently verified on-chai
 The following are not yet established by this document:
 - a completed Jetton master and wallet contract implementation;
 - passing local contract tests and reproducible build artifacts;
-- successful Testnet deployment and end-to-end Jetton transfers;
+- completed local TON Sandbox deployment/allocation/transfer tests;
 - verified founder wallet proof;
 - verified Mainnet deployment address and transaction;
 - independent security review;
@@ -115,4 +113,4 @@ No token should be represented as issued, transferable or available for extracti
 
 ## 10. Operational record
 
-The founder allocation address and separate TON operational-fee wallet are recorded for distinct purposes. Before deployment or funding, each must be verified by a fresh wallet/network check. The Jetton master address, deployment transaction, code hash, metadata and allocation transfers must be added here only after independently verified.
+The Founder allocation address is also the sole GAS & OPERATIONS address. Before deployment or funding, verify this single address and TON Mainnet network in Tonkeeper. The Jetton master address, deployment transaction, code hash, metadata and allocation transfers must be added here only after independently verified.

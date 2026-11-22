@@ -25,14 +25,14 @@ The current `contracts/jetton/tests/jetton-sandbox.spec.ts` includes tests for:
 
 These are committed test cases, not by themselves proof that CI passed on the latest main commit. Exact-head GitHub Actions results must be checked and recorded before this status can be upgraded to tested.
 
-## Latest exact-head CI evidence — 2026-11-22
+## Latest exact-head CI evidence — 2026-11-22 (refreshed)
 
-- Commit: `a53ba80f5655b44acdf51420a683f9c3a4a2334e`.
-- GitHub Actions run: [run #74](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44988760989), event `push`, conclusion `success`.
+- Latest reviewed source/config commit: `eedb618add19a7305ef7b3f3caeccfbd6a8b97bd`.
+- GitHub Actions verification: [run #79](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44989067270), event `push`, conclusion `success`; legacy workflow [run #392](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44989067279) also succeeded.
 - All verification steps completed successfully: lockfile generation, clean `npm ci`, dependency audit gate, Tact compilation, and Jest Sandbox suite.
 - The audit report in the uploaded CI artifact reports 0 vulnerabilities (0 info, 0 low, 0 moderate, 0 high, 0 critical).
-- The CI artifact contains Master and Jetton Wallet code BOCs. SHA-256 of the serialized artifact files (not TON cell hashes): Master `149044c6850f4a8116c0673a02a72247660831ad4fbf87fd486958a3eddfcaf1`; Jetton Wallet `8373d9e5318314563ea6d140e1bbb3aa18240cf8f261bdeb5b94d73c903778a0`.
-- Generated `package-lock.json` SHA-256: `e386d60a3a83b1d3fc033264cc422c7bc3f5d1f4507ee373d1d939c82953d4ba`. It is preserved in the CI artifact; it is not yet committed to `main`.
+- The latest CI artifact `vcoin-jetton-build-44989067270` contains Master and Jetton Wallet code BOCs. SHA-256 of the serialized artifact files (not TON cell hashes): Master `149044c6850f4a8116c0673a02a72247660831ad4fbf87fd486958a3eddfcaf1`; Jetton Wallet `8373d9e5318314563ea6d140e1bbb3aa18240cf8f261bdeb5b94d73c903778a0`.
+- Generated `package-lock.json` SHA-256: `e386d60a3a83b1d3fc033264cc422c7bc3f5d1f4507ee373d1d939c82953d4ba`. It is preserved in the latest CI artifact; it is not yet committed to `main`.
 
 ## Remaining Mainnet release gates
 

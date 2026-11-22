@@ -2,7 +2,7 @@
   "project": "V COIN – TON",
   "status": "unsigned_mainnet_deployment_preview_only",
   "network": "mainnet",
-  "source_commit": "403dac6ab37aced947b6a3016cf15631b533d339",
+  "source_commit": "6455cc0c7bf41b8e2fe0cb6552817129ce078aa8",
   "master_address": "EQAriHkG8kqO0GQwwX6ODgqpJCV-oUDKwalDK8lAzYGBWHvV",
   "workchain": 0,
   "state_init_hash": "2b887906f24a8ed06430c17e8e0e0aa924257ea140cac1a9432bc940cd818158",
@@ -65,9 +65,9 @@
       "recipient_owner_address": "UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ",
       "recipient_jetton_wallet_address": "EQDVyMsB_lGSxbI9-GSfr_Np3NohePKdYpaBEUitvAYFGsy-",
       "token_amount": "210000000",
-      "base_units": "22100000000000",
+      "base_units": "210000000000000",
       "attached_ton": "0.01",
-      "payload_boc_base64": "te6cckEBAQEALgAAV6glJEmACIty2WM3VpkqGdFNBL0/Sy2hI7K16tJy3pavlj163MDMKDMdTJABVz3e9g==",
+      "payload_boc_base64": "te6cckEBAQEALgAAV6glJEmACIty2WM3VpkqGdFNBL0/Sy2hI7K16tJy3pavlj163MDNffzezkAB0GuPXQ==",
       "requires_separate_founder_signature": true
     },
     "liquidity_market": {
@@ -77,9 +77,9 @@
       "recipient_owner_address": "UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn",
       "recipient_jetton_wallet_address": "EQAnRjBQl3D9c0s5GV0t8RlTMReOFQRNNXoc3oyVVgjzl5MH",
       "token_amount": "210000000",
-      "base_units": "22100000000000",
+      "base_units": "210000000000000",
       "attached_ton": "0.01",
-      "payload_boc_base64": "te6cckEBAQEALgAAV6glJEmABp/bDFvMuz1GLKOOC/PlGrMu1kjvDYNjyeFxv++CcnmsKDMdTJABZJBbSw==",
+      "payload_boc_base64": "te6cckEBAQEALgAAV6glJEmABp/bDFvMuz1GLKOOC/PlGrMu1kjvDYNjyeFxv++CcnmtffzezkAB48YK4A==",
       "requires_separate_founder_signature": true
     },
     "ecosystem_marketing": {
@@ -89,9 +89,9 @@
       "recipient_owner_address": "UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE",
       "recipient_jetton_wallet_address": "EQCtNm8cneWOwU_JFfK_rf9Os7_Y8yItALCtI0ZYvoHQX8xs",
       "token_amount": "210000000",
-      "base_units": "22100000000000",
+      "base_units": "210000000000000",
       "attached_ton": "0.01",
-      "payload_boc_base64": "te6cckEBAQEALgAAV6glJEmACgG33uGssYNPiJXv2nZUykUbeqcF6YZhJejMax7qWTUMKDMdTJAByUZz7A==",
+      "payload_boc_base64": "te6cckEBAQEALgAAV6glJEmACgG33uGssYNPiJXv2nZUykUbeqcF6YZhJejMax7qWTUNffzezkABThAiRw==",
       "requires_separate_founder_signature": true
     }
   },

@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { Address, beginCell, Cell, storeStateInit } from '@ton/core';
-import { VCoinMaster, storeVCoinFund } from '../build/VCoinMaster_VCoinMaster';
+import { VCoinMaster, storeVCoinFund, storeVCoinMint } from '../build/VCoinMaster_VCoinMaster';
 import { VCoinJettonWallet } from '../build/VCoinMaster_VCoinJettonWallet';
 
 const root = path.resolve(__dirname, '..');
@@ -56,6 +56,35 @@ async function main() {
     throw new Error('Derived StateInit address does not match Tact-generated Master address');
   }
 
+  const allocationAmounts: Record<string, { tokens: string; baseUnits: string }> = {
+    founder: { tokens: '2000000000', baseUnits: '2000000000000000' },
+    mining_reserve: { tokens: '5000000000', baseUnits: '5000000000000000' },
+    treasury: { tokens: '1000000000', baseUnits: '1000000000000000' },
+    liquidity_market: { tokens: '1000000000', baseUnits: '1000000000000000' },
+    ecosystem_marketing: { tokens: '1000000000', baseUnits: '1000000000000000' },
+  };
+  const issuanceTransactions: Record<string, unknown> = {};
+  for (const [role, ownerAddress] of Object.entries(allocationOwners)) {
+    const allocation = allocationAmounts[role];
+    const mintBody = beginCell().store(storeVCoinMint({
+      $type: 'VCoinMint',
+      receiver: Address.parse(ownerAddress),
+      amount: BigInt(allocation.baseUnits),
+    })).endCell();
+    issuanceTransactions[role] = {
+      network: 'mainnet',
+      signer: wallets.founder,
+      master_address: master.address.toString({ bounceable: true, urlSafe: true, testOnly: false }),
+      recipient_owner_address: ownerAddress,
+      recipient_jetton_wallet_address: jettonWallets[role],
+      token_amount: allocation.tokens,
+      base_units: allocation.baseUnits,
+      attached_ton: '0.01',
+      payload_boc_base64: mintBody.toBoc().toString('base64'),
+      requires_separate_founder_signature: true,
+    };
+  }
+
   const preview = {
     project: 'V COIN – TON',
     status: 'unsigned_mainnet_deployment_preview_only',
@@ -79,6 +108,7 @@ async function main() {
       ecosystem_marketing: wallets.ecosystem_marketing,
       gas_operations_only: gasWallet,
     },
+    issuance_transactions: issuanceTransactions,
     allocations: {
       founder: '2000000000',
       mining_reserve: '5000000000',

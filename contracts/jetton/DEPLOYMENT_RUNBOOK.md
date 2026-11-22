@@ -1,3 +1,36 @@
+# CURRENT CONTROLLING RELEASE ADDENDUM — 2026-11-22
+
+> This addendum governs this runbook. Older historical statements below that conflict with it are superseded and must not be used for signing or funding decisions.
+
+## Current verified repository state
+
+- Reviewed main commit: `86e71916f442bc9f24d343fea15b9080bc5238e8` (PR #12 merge).
+- GitHub Actions run #214 (`45028973747`) on that exact commit: the `build-and-test` job succeeded. It completed lockfile installation, dependency audit enforcement, Tact compilation, TEP-64 metadata-cell build, unsigned Mainnet preview generation, Jest tests, issuer syntax/sequence guards, and artifact upload.
+- The overall workflow is marked failed solely because the separate `deploy-issuer` job could not create the repository Pages site. Its log reports `Get Pages site failed: Not Found`, followed by `Create Pages site failed: Resource not accessible by integration`. The issuer deployment step was skipped. This is a repository Pages administration/enablement permission issue, not a contract compilation or test failure.
+- Do not describe the Pages site as deployed. The repository owner must enable GitHub Pages with **Settings → Pages → Build and deployment → Source = GitHub Actions** (if the owner UI permits it), then rerun the workflow. The connected GitHub App cannot perform this administrative setup.
+- The single approved signer, deployment sender, and TON reserve funder is the Founder wallet. `gasOperatorWallet` must equal `owner`. There is no separate GAS wallet and no sixth VCOIN allocation destination.
+- Fixed supply remains exactly 2,100,000,000 VCOIN, six decimals, allocated 20% Founder / 50% Mining Reserve / 10% Treasury / 10% Liquidity-Market / 10% Ecosystem-Marketing. No additional minting is permitted.
+- The deployment preview is unsigned and is not evidence of deployment. No Mainnet deployment, issuance, or transfer has been broadcast or confirmed.
+
+## Material reserve limitation
+
+The current Master accepts the authorized `VCoinFund` reserve-funding message but has **no TON withdrawal method**. TON attached to the Master may therefore be irrecoverable through the current contract. Do not send reserve TON or sign a deployment transaction on the assumption that unused TON can later be withdrawn. This limitation requires an explicit architecture decision and informed Founder acceptance, or a separately reviewed contract redesign and complete rebuild/audit before deployment.
+
+## Release gates remain mandatory
+
+Mainnet remains **NO-GO** until all of the following are evidenced:
+1. Pages issuer site is enabled and its published build is checked (or an explicitly approved alternative signing workflow is reviewed).
+2. **No Testnet deployment or Testnet rehearsal is part of the approved plan.** Use local compilation, automated tests, Sandbox simulations, and independent review instead; these do not send transactions to Testnet.
+3. An independent qualified smart-contract audit covers the Master, Jetton Wallet implementation, bounce/retry logic, TEP-74 behavior, and TEP-64 metadata; all critical/high findings are resolved.
+4. The exact reviewed source commit is rebuilt independently and all BOC, StateInit, cell, metadata, and address hashes are reproduced.
+5. The five destination addresses and Founder signer/network are checked in the exact deployment preview; post-deployment getters and deterministic Jetton Wallet addresses are independently checked before issuance.
+6. Current network fees and reserve requirements are simulated against the exact payloads. The documented 0.75 TON minimum is not a live fee quote.
+7. The Founder receives and approves the complete transaction review for each irreversible Mainnet operation.
+
+Never request or store a seed phrase, private key, PIN, or recovery code. The Founder signs in their own wallet. This addendum does not authorize any transaction.
+
+---
+
 # V COIN – TON Jetton Deployment Runbook
 
 **Status:** Implementation candidate; NOT deployed  

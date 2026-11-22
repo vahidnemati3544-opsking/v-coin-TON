@@ -212,6 +212,17 @@
     if (preview.status !== 'unsigned_mainnet_deployment_preview_only' || preview.network !== 'mainnet') {
       throw new Error('Preview status or network is not approved for this Mainnet console.');
     }
+    if (!preview.unsigned_deploy_message ||
+        preview.unsigned_deploy_message.network_fee_quote_required !== true ||
+        !preview.unsigned_deploy_message.attached_ton) {
+      throw new Error('Exact deployment amount or live fee-quote requirement is missing from the release preview.');
+    }
+    const deployAmountNano = tonToNano(preview.unsigned_deploy_message.attached_ton);
+    if (BigInt(deployAmountNano) < 750000000n) {
+      throw new Error('Release preview does not meet the Master minimum reserve-funding value.');
+    }
+    $('deploy-attached-ton').textContent =
+      preview.unsigned_deploy_message.attached_ton + ' TON + live wallet/network fees (quote required)';
     $('master-address').textContent = preview.master_address;
     $('master-hash').textContent = preview.state_init_hash;
     $('metadata-hash').textContent = preview.metadata_content_cell_hash;

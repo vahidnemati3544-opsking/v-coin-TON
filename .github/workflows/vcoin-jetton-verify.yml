@@ -57,7 +57,7 @@ jobs:
           node <<'NODE'
           const fs = require('node:fs');
           const html = fs.readFileSync('../../issuer/index.html', 'utf8');
-          const scripts = [...html.matchAll(/<script>([\\s\\S]*?)<\\/script>/g)].map((match) => match[1]);
+          const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((match) => match[1]);
           if (scripts.length !== 1) throw new Error('Expected exactly one inline issuer script');
           new Function(scripts[0]);
           const required = [

@@ -34,7 +34,7 @@ jobs:
       - name: Capture dependency audit report
         run: npm audit --json > npm-audit-report.json || true
       - name: Enforce zero high or critical dependency advisories
-        run: npm audit --audit-level=high
+        run: npm audit --audit-level=moderate
       - name: Compile Tact contracts
         run: npm run build
       - name: Build immutable TEP-64 metadata content cell

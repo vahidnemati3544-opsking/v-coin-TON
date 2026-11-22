@@ -48,3 +48,9 @@ These are committed test cases, not by themselves proof that CI passed on the la
 No Testnet deployment is included in the current execution path; local TON Sandbox testing is permitted and required. No Mainnet transaction may be signed or broadcast until the exact build, destinations, amounts, fees, network, simulation, and independent review have been presented for explicit Founder approval.
 
 Never request or store seed phrases, private keys, wallet PINs, or recovery codes.
+
+## Founder-confirmed issuance scope — 2026-11-22
+
+The project owner explicitly confirmed that the full fixed supply of 10,000,000,000 VCOIN is to be issued and allocated directly across all five registered Mainnet allocation wallets: Founder 2,000,000,000; Mining Reserve 5,000,000,000; Treasury 1,000,000,000; Liquidity/Market 1,000,000,000; Ecosystem/Marketing 1,000,000,000. The Founder wallet is one of these five allocation wallets, not an additional destination. The separate GAS & OPERATIONS wallet is not an allocation wallet. Do not ask the owner to choose between partial Founder-only issuance and five-wallet allocation again.
+
+This is confirmation of the intended allocation plan, not a signature authorization. Deployment, issuance, and each Mainnet transaction remain blocked until technical release gates pass and exact transaction details are presented for the Founder's informed approval and wallet signature.

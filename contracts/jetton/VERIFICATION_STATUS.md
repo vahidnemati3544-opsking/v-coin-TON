@@ -140,7 +140,7 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 
 ## Action #36 — Owner-approved supply and reference-price revision
 
-**Status:** Source, tests, templates and economic documentation updated; exact-head CI and regenerated Mainnet artifacts pending.
+**Status:** Source, allocation templates, economic documents, mining reserve migration and new unsigned Mainnet preview updated; build and Jest tests passed in exact-head CI. Independent review/hash reproduction and Mainnet authorization remain pending.
 
 - Owner-approved fixed supply: 2,100,000,000 VCOIN, six decimals, 2,100,000,000,000,000 base units.
 - Shares remain 20/50/10/10/10: Founder 420,000,000; Mining Reserve 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN.
@@ -150,3 +150,14 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 - The same migration resets the active modelled reference price to 0.008 while retaining historical candles.
 - The tracked old issuer preview is marked superseded and cannot be used for signing. CI must pass before a fresh preview replaces it.
 - No Mainnet deployment, minting, or transfer is authorized or broadcast by this revision.
+
+
+### Regenerated unsigned preview evidence
+
+- CI run #137 on source commit c45b3ed7ea3f73993d3ab31e8dbedf850cb89278 completed the npm audit gate, Tact compilation, TEP-64 cell generation, Mainnet preview generation, Jest tests, and artifact upload successfully. The GitHub Pages deploy job remains blocked by missing repository administration permission.
+- Predicted Master: EQAriHkG8kqO0GQwwX6ODgqpJCV-oUDKwalDK8lAzYGBWHvV.
+- Master StateInit hash: 2b887906f24a8ed06430c17e8e0e0aa924257ea140cac1a9432bc940cd818158.
+- Master code cell hash: 3f90f875f2f62e8c80414b34b87bfbe421754bc622f72d8cddebb6537d2232ea.
+- Predicted Jetton Wallets: Founder EQB8AerdUs4kIiwgXYNXn97vInNGz1i6mM82aRz6Qk-yLXT8; Mining EQDSRCdDD6aozmwM7RIHyt9D-RyayizOMu5xENy0SPXwnWqd; Treasury EQDVyMsB_lGSxbI9-GSfr_Np3NohePKdYpaBEUitvAYFGsy-; Liquidity EQAnRjBQl3D9c0s5GV0t8RlTMReOFQRNNXoc3oyVVgjzl5MH; Ecosystem EQCtNm8cneWOwU_JFfK_rf9Os7_Y8yItALCtI0ZYvoHQX8xs.
+- Preview amounts are confirmed as 420,000,000 / 1,050,000,000 / 210,000,000 / 210,000,000 / 210,000,000 VCOIN, totaling exactly 2,100,000,000. The corresponding base-unit values are generated from the canonical deployment config and validated against its total supply.
+- These are predicted addresses and unsigned payloads only. Independent clean-room hash reproduction, third-party contract audit, fee simulation, deployed-Master getter checks, and owner signatures remain outstanding.

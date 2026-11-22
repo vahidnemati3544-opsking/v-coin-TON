@@ -60,13 +60,13 @@ These are committed test cases, not by themselves proof that CI passed on the la
 
 ## Safety boundary
 
-No Testnet deployment is included in the current execution path; local TON Sandbox testing is permitted and required. No Mainnet transaction may be signed or broadcast until the exact build, destinations, amounts, fees, network, simulation, and independent review have been presented for explicit Founder approval.
+Local TON Sandbox testing is required, followed by a real TON Testnet deployment and full issuance rehearsal before Mainnet. No Mainnet transaction may be signed or broadcast until the exact build, destinations, amounts, fees, network, successful Testnet rehearsal, and independent review have been presented for explicit Founder approval.
 
 Never request or store seed phrases, private keys, wallet PINs, or recovery codes.
 
 ## Founder-confirmed issuance scope — 2026-11-22
 
-The project owner explicitly confirmed that the full fixed supply of 2,100,000,000 VCOIN is to be issued and allocated directly across all five registered Mainnet allocation wallets: Founder 420,000,000; Mining Reserve 1,050,000,000; Treasury 210,000,000; Liquidity/Market 1,000,000,000; Ecosystem/Marketing 1,000,000,000. The Founder wallet is one of these five allocation wallets, not an additional destination. The separate GAS & OPERATIONS wallet is not an allocation wallet. Do not ask the owner to choose between partial Founder-only issuance and five-wallet allocation again.
+The project owner explicitly confirmed that the full fixed supply of 2,100,000,000 VCOIN is to be issued and allocated directly across all five registered Mainnet allocation wallets: Founder 420,000,000; Mining Reserve 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000. The Founder wallet is one of these five allocation wallets, not an additional destination. The separate GAS & OPERATIONS wallet is not an allocation wallet. Do not ask the owner to choose between partial Founder-only issuance and five-wallet allocation again.
 
 This is confirmation of the intended allocation plan, not a signature authorization. Deployment, issuance, and each Mainnet transaction remain blocked until technical release gates pass and exact transaction details are presented for the Founder's informed approval and wallet signature.
 
@@ -140,6 +140,8 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 
 ## Action #36 — Owner-approved supply and reference-price revision
 
+**Correction to earlier historical entries:** Any old 10B allocation/address/hash records above are historical and superseded. Current source and fresh CI artifact are the sole 2.1B candidate release.
+
 **Status:** Source, allocation templates, economic documents, mining reserve migration and new unsigned Mainnet preview updated; build and Jest tests passed in exact-head CI. Independent review/hash reproduction and Mainnet authorization remain pending.
 
 - Owner-approved fixed supply: 2,100,000,000 VCOIN, six decimals, 2,100,000,000,000,000 base units.
@@ -155,9 +157,9 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 ### Regenerated unsigned preview evidence
 
 - CI run #137 on source commit c45b3ed7ea3f73993d3ab31e8dbedf850cb89278 completed the npm audit gate, Tact compilation, TEP-64 cell generation, Mainnet preview generation, Jest tests, and artifact upload successfully. The GitHub Pages deploy job remains blocked by missing repository administration permission.
-- Predicted Master: EQAriHkG8kqO0GQwwX6ODgqpJCV-oUDKwalDK8lAzYGBWHvV.
+- Predicted Master: EQAriHkG8kqO0GQwwX6ODgqpJCV-oUDKwalDK8lAzYGBWHvV (unsigned; derived by current CI).
 - Master StateInit hash: 2b887906f24a8ed06430c17e8e0e0aa924257ea140cac1a9432bc940cd818158.
 - Master code cell hash: 3f90f875f2f62e8c80414b34b87bfbe421754bc622f72d8cddebb6537d2232ea.
 - Predicted Jetton Wallets: Founder EQB8AerdUs4kIiwgXYNXn97vInNGz1i6mM82aRz6Qk-yLXT8; Mining EQDSRCdDD6aozmwM7RIHyt9D-RyayizOMu5xENy0SPXwnWqd; Treasury EQDVyMsB_lGSxbI9-GSfr_Np3NohePKdYpaBEUitvAYFGsy-; Liquidity EQAnRjBQl3D9c0s5GV0t8RlTMReOFQRNNXoc3oyVVgjzl5MH; Ecosystem EQCtNm8cneWOwU_JFfK_rf9Os7_Y8yItALCtI0ZYvoHQX8xs.
 - Preview amounts are confirmed as 420,000,000 / 1,050,000,000 / 210,000,000 / 210,000,000 / 210,000,000 VCOIN, totaling exactly 2,100,000,000. The corresponding base-unit values are generated from the canonical deployment config and validated against its total supply.
-- These are predicted addresses and unsigned payloads only. Independent clean-room hash reproduction, third-party contract audit, fee simulation, deployed-Master getter checks, and owner signatures remain outstanding.
+- These are predicted addresses and unsigned payloads only. Independent clean-room hash reproduction of this revised build, third-party contract audit, live fee simulation, successful Testnet rehearsal, deployed-Master getter checks, and owner signatures remain outstanding.

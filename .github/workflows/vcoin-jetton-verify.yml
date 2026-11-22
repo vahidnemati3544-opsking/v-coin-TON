@@ -52,6 +52,30 @@ jobs:
         run: |
           python ../../issuer/generate_icon.py
           cp build/mainnet-deployment-preview.json ../../issuer/deployment-preview.json
+      - name: Validate TonConnect issuer syntax and transaction sequencing guards
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const html = fs.readFileSync('issuer/index.html', 'utf8');
+          const scripts = [...html.matchAll(/<script>([\\s\\S]*?)<\\/script>/g)].map((match) => match[1]);
+          if (scripts.length !== 1) throw new Error('Expected exactly one inline issuer script');
+          new Function(scripts[0]);
+          const required = [
+            "walletRole() !== 'founder-operator'",
+            "wallet.account.chain !== '-239'",
+            "button.dataset.sequence",
+            "nextAllocationIndex",
+            "verifyInput.disabled = false",
+            "deployButton.dataset.submitted = 'true'",
+            "preview.signing.signer_raw",
+            "preview.signing.allocation_issuance_signer_raw"
+          ];
+          for (const guard of required) {
+            if (!html.includes(guard)) throw new Error('Missing issuer safety guard: ' + guard);
+          }
+          if (html.includes("walletRole() !== 'gas'")) throw new Error('Obsolete separate GAS signer guard remains');
+          console.log('TonConnect issuer syntax and safety guards passed.');
+          NODE
       - name: Commit generated dependency lockfile when missing or changed
         if: success()
         run: |

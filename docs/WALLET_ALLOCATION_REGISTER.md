@@ -56,10 +56,10 @@ Before any real VCOIN issuance or transfer:
 
 1. Confirm the intended network (Testnet or Mainnet) and never mix their addresses or balances.
 2. Validate each address format and network representation.
-3. Independently verify control/authorization for each destination using a safe wallet-signature or confirmation procedure; never request seed phrases or private keys.
+3. Founder reviews the five owner-provided TON addresses in the final constructor preview; the deterministic Jetton wallet addresses are derived from the Master and checked against the manifest. Never request seed phrases or private keys.
 4. Confirm the deployed VCOIN Jetton master address and derive the correct Jetton wallet for each owner address using the master contract.
 5. Verify the total supply, six decimals, allocation caps and founder vesting design.
-6. Perform a Testnet rehearsal and reconcile each transaction on-chain.
+6. Perform the full allocation rehearsal in local TON Sandbox and reconcile all simulated balances; the current plan does not include a Testnet deployment.
 7. Obtain the project owner's explicit approval before any Mainnet issuance or transfer.
 8. Before depositing TON into the fee wallet, verify its address in Tonkeeper and confirm the intended network.
 

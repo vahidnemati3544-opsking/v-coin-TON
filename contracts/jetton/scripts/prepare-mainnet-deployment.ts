@@ -83,7 +83,7 @@ async function main() {
 
   fs.writeFileSync(
     path.join(root, 'build/mainnet-deployment-preview.json'),
-    JSON.stringify(preview, null, 2) + '\\n',
+    JSON.stringify(preview, null, 2) + '\n',
   );
   fs.writeFileSync(path.join(root, 'build/VCoinMaster.state-init.boc'), stateInitBoc);
   console.log(JSON.stringify({

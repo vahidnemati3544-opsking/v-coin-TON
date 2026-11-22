@@ -47,7 +47,7 @@ The Founder must verify this same address in Tonkeeper on the intended TON netwo
 
 ## 5. Contract initialization mapping
 
-The VCoinMaster constructor reads these addresses in the following role order: founder as owner; mining reserve; treasury; liquidity and market; ecosystem and marketing. Do not pass the register's table order directly as positional constructor arguments. The exact constructor argument order and pre-deployment checks are documented in contracts/jetton/allocation/INIT_PARAMETERS.md. The separate GAS & OPERATIONS wallet is excluded.
+The VCoinMaster constructor reads the five allocation addresses in this role order: founder as owner; mining reserve; treasury; liquidity and market; ecosystem and marketing. The final `gasOperatorWallet` constructor argument must repeat the exact Founder address (same as `owner`). Do not pass the register's table order directly as positional constructor arguments. The exact constructor argument order and pre-deployment checks are documented in contracts/jetton/allocation/INIT_PARAMETERS.md. There is no separate GAS wallet.
 
 ## 6. Required pre-transfer verification
 

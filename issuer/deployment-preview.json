@@ -2,7 +2,7 @@
   "project": "V COIN – TON",
   "status": "unsigned_mainnet_deployment_preview_only",
   "network": "mainnet",
-  "source_commit": "c4a9831f8d751a0a714054014dcf9135622c9cce",
+  "source_commit": "0a4a777207249488cad2b21ae655c62ade67d877",
   "master_address": "EQBDbY_0r9XTVCQjH3aw8bfQtF4eoOV6QdFJEJTBMtw6_pIJ",
   "workchain": 0,
   "state_init_hash": "436d8ff4afd5d35424231f76b0f1b7d0b45e1ea0e57a41d1491094c132dc3afe",

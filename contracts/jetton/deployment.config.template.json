@@ -12,14 +12,14 @@
   "master_address": null,
   "deployment_transaction": null,
   "operational_fee_wallet": {
-    "purpose": "TON network fees and authorized operational transaction costs only",
-    "wallet_type": "Tonkeeper — Founder wallet (shared GAS & OPERATIONS role)",
+    "purpose": "TON network fees and authorized operational transaction costs",
+    "wallet_type": "Founder allocation wallet — shared GAS & OPERATIONS role",
     "owner_provided_address": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
-    "is_vcoin_allocation_wallet": false,
-    "owner_deposit_instruction": "Founder wallet is the only approved GAS & OPERATIONS signer; fund this same Founder wallet with TON for deployment and network fees. Do not fund the retired inaccessible GAS wallet.",
+    "is_vcoin_allocation_wallet": true,
+    "owner_deposit_instruction": "Use only the Founder allocation wallet for deployment, Master reserve funding, and authorized network fees. No separate GAS address or sixth wallet exists.",
     "network_verification_required_before_funding": true,
     "address_control_verification_status": "founder_wallet_address_previously_provided; network/control verification pending",
-    "role_sharing": "same address as allocation_wallets.founder; no sixth VCOIN recipient"
+    "role_sharing": "identical address to allocation_wallets.founder"
   },
   "allocation_base_units": {
     "founder": "420000000000000",
@@ -52,7 +52,7 @@
   },
   "deployment_authorized": false,
   "mainnet_authorized": false,
-  "notes": "Owner-approved fixed supply is 2,100,000,000 VCOIN at 6 decimals, allocated across the five registered wallets in shares 20/50/10/10/10. Founder receives 420,000,000 VCOIN in one operation, without vesting or time lock. Founder wallet also serves as GAS & OPERATIONS fee payer and deployment signer. The former inaccessible GAS wallet is retired and must never receive TON. This is an unsigned template; deployment_authorized and mainnet_authorized remain false. Regenerate all predicted addresses from the revised StateInit. Never commit secrets.",
+  "notes": "Owner-approved fixed supply is 2,100,000,000 VCOIN at 6 decimals, allocated across exactly five wallets in shares 20/50/10/10/10. Founder receives 420,000,000 VCOIN and is also the sole GAS & OPERATIONS wallet, deployment signer, and Master reserve funder. No separate GAS address or sixth wallet exists. This is an unsigned template; deployment_authorized and mainnet_authorized remain false. Regenerate predicted addresses from the reviewed StateInit. Never commit secrets.",
   "allocation_wallet_verification": {
     "status": "founder_address_review_pending_before_mainnet_signature",
     "note": "All five recipient TON addresses were supplied by the Founder and are embedded in the deterministic StateInit. Their corresponding Jetton wallet addresses are derived from the predicted Master StateInit. After deployment, confirm the on-chain get_wallet_address result for each role before issuing tokens.",
@@ -76,8 +76,9 @@
       "ecosystem_marketing": "210000000"
     },
     "founder_is_one_of_five_wallets": true,
-    "gas_operations_wallet_is_not_an_allocation_wallet": true,
-    "mainnet_transaction_authorized": false
+    "gas_operations_wallet_is_not_an_allocation_wallet": false,
+    "mainnet_transaction_authorized": false,
+    "gas_operations_wallet_is_founder_wallet": true
   },
   "predicted_master_address": "EQBmjwr-Bc2_wNKcZHjTr8KtPGQgN-ltRhTIXqK0zM89O0Xt",
   "predicted_master_state_init_hash": "668f0afe05cdbfc0d29c6478d3afc2ad3c642037e96d4614c85ea2b4cccf3d3b",

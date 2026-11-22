@@ -135,7 +135,7 @@ Documentation corrections and source/CI changes were committed individually to `
 - `contracts/jetton/allocation/allocation-plan.json`
 - `contracts/jetton/tests/allocation-plan.spec.ts`
 - `contracts/jetton/DEPLOYMENT_RUNBOOK.md`
-- `contracts/jetton/INIT_PARAMETERS.md`
+- `contracts/jetton/allocation/INIT_PARAMETERS.md`
 - `contracts/jetton/FOUNDER_ONLY_WITHDRAWAL.md`
 - `contracts/mining/backend/README.md` and `contracts/mining/README.md`
 - `docs/JETTON_CONTRACT_SPEC.md`

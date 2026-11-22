@@ -200,10 +200,27 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 
 ## Action #40 — Founder / GAS & OPERATIONS role unification (2026-11-22)
 
-**Status:** Implementation changes committed; exact-head CI and regenerated address artifacts pending. This is not a deployment or Mainnet authorization.
+**Status:** Implemented, committed, compiled, Sandbox-tested, and exact-head CI verified in run #161. This is not a deployment or Mainnet authorization.
 
 - Founder and GAS & OPERATIONS use the same owner-approved Mainnet address: `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy`.
 - Old inaccessible GAS address is retired; never fund or use it.
 - Five allocation recipients and amounts are unchanged. GAS & OPERATIONS is a role, not a sixth VCOIN recipient.
-- Required verification: Tact build, Sandbox tests for shared-signer funding, regenerated Mainnet preview and five Jetton Wallet addresses, issuer signer guard, and exact-head CI.
+- Exact-head run #161 build-and-test passed on commit `5e27d36d6a92f0140d249baab7b08ae275539fbe`; all 16 Jest tests passed, Tact compile passed, npm audit reported zero vulnerabilities, and Mainnet preview was generated.
+- The generated Mainnet preview is artifact `14744513956` (SHA-256 `35a2331b99a73ddb40b511b26b4a436ff6566181d63194c0c8e825df7c31da53`).
 - Mainnet deployment, minting, and token credits remain unperformed.
+
+## Action #41 — Regenerate and independently reproduce Mainnet address package
+
+**Status:** CI generation and independent local hash reproduction passed; addresses remain unsigned predictions until deployed-Master getters confirm them.
+
+- Exact-head source commit: `5e27d36d6a92f0140d249baab7b08ae275539fbe`; GitHub Actions run #161 build-and-test succeeded.
+- Master address: `EQBDbY_0r9XTVCQjH3aw8bfQtF4eoOV6QdFJEJTBMtw6_pIJ`.
+- Master StateInit hash: `436d8ff4afd5d35424231f76b0f1b7d0b45e1ea0e57a41d1491094c132dc3afe`; Master code cell hash: `e14ced14f81b69dae82e893c5ec1874b77b870d2ebfce31d5c5b8320566ecbf5`.
+- Jetton Wallet code cell hash: `94121c0e077e93e7405c7f3cfe0567cb094e1c42bb4d87d0a6cdb3860ea750f1`.
+- Founder Jetton Wallet: `EQBPEJoPfi8Fo6qGxLreAJ33Wp35q7QhMytb0ddZ2T9INTaa`; hash `4f109a0f7e2f05a3aa86c4bade009df75a9df9abb421332b5bd1d759d93f4835`.
+- Mining Reserve Jetton Wallet: `EQAueLQWL3It9CUgzjqJcbkqqGUW6_ci72uSpdm5Fd_wJhc8`; hash `2e78b4162f722df42520ce3a8971b92aa86516ebf722ef6b92a5d9b915dff026`.
+- Treasury Jetton Wallet: `EQCHEiMqe6U_SbiIsK-QURoNAIlyPNkDGTdV69QiyG3MsD6X`; hash `8712232a7ba53f49b888b0af90511a0d0089723cd903193755ebd422c86dccb0`.
+- Liquidity / Market Jetton Wallet: `EQCD8fnJoad9jE543l5o9KH71TGkinQEk4MgmrECavxRu_6N`; hash `83f1f9c9a1a77d8c4e78de5e68f4a1fbd531a48a74049383209ab1026afc51bb`.
+- Ecosystem / Marketing Jetton Wallet: `EQCDG9Bz_yAP0qZ34lH_vHhj_2eLbCVHPu-dHnG5BtBC7nPR`; hash `831bd073ff200fd2a677e251ffbc7863ff678b6c25473eef9d1e71b906d042ee`.
+- An independent Python BOC parser recalculated the Master StateInit hash, Master code cell hash, Jetton Wallet code cell hash, and all five Jetton Wallet StateInit hashes; all matched the CI artifact. The hash bytes embedded in all six friendly addresses and all six CRC16-XMODEM checksums also verified.
+- This is deterministic build/hash verification, not a third-party security audit or on-chain verification. Testnet rehearsal, external audit, live fee simulation, Mainnet deployment, and five allocation mints remain pending.

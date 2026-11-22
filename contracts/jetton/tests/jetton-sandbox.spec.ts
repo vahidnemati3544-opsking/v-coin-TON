@@ -61,6 +61,37 @@ async function deployMaster(
 }
 
 describe('VCOIN Jetton Sandbox release gates', () => {
+  test('rejects a deployment that assigns GAS & OPERATIONS to a different wallet', async () => {
+    const blockchain = await Blockchain.create();
+    const owner = await blockchain.treasury('owner');
+    const miningReserve = await blockchain.treasury('mining-reserve');
+    const treasury = await blockchain.treasury('treasury');
+    const liquidity = await blockchain.treasury('liquidity');
+    const ecosystem = await blockchain.treasury('ecosystem');
+    const separateGas = await blockchain.treasury('separate-gas');
+    const master = blockchain.openContract(
+      await VCoinMaster.fromInit(
+        owner.address,
+        Cell.EMPTY,
+        miningReserve.address,
+        treasury.address,
+        liquidity.address,
+        ecosystem.address,
+        separateGas.address,
+      ),
+    );
+
+    const rejected = await master.send(
+      separateGas.getSender(),
+      { value: toNano('0.75') },
+      { $type: 'VCoinFund' },
+    );
+    expect(rejected.transactions).toHaveTransaction({
+      to: master.address,
+      success: false,
+    });
+  });
+
   test('allows only the owner to issue each exact fixed allocation once', async () => {
     const blockchain = await Blockchain.create();
     const owner = await blockchain.treasury('owner');

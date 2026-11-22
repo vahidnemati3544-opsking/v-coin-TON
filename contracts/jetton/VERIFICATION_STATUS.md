@@ -1,3 +1,19 @@
+# CURRENT MAINNET ADDRESS RECONCILIATION — 2026-11-23 (Action #54; supersedes older predicted-address references for current build)
+
+**Latest exact-head CI run:** [#282 / 45066224453](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45066224453) — build-and-test, Pages deployment and published endpoint verification succeeded.  
+**Exact source commit:** `d6c4f1cdd5618aa0eaa7b7ab31e58a998cb00bbe`  
+**Full source artifact:** `14771790593` — SHA-256 `482b913daeda2a4c482c08ca47c3748a40befbe32eebb1dd1ec7d256d12beb0d`  
+**Contract release artifact:** `14771606988` — SHA-256 `fbeebdd60c32d4269951c06130882b999c7a501f3b991818f6712b192426a8c8`  
+**Current preview Master (predicted, not deployed):** `EQBn4hW8bKhFTSz9riY5q3Pr3SfJmv2VYKZQl_NWMbK--5fP`  
+**Current StateInit hash:** `67e215bc6ca8454d2cfdae2639ab73ebdd27c99afd9560a65097f35631b2befb`  
+**Release disposition: NO-GO for Mainnet deployment and issuance until live chain reconciliation and independent release gates pass.**
+
+The Founder-supplied address `UQAo1TAGqSw6oUaMmpBtgQyRtCGEbSJNiGGy2Use04lRCVSR` decodes to account ID `28d53006a92c3aa1468c9a906d810c91b421846d224d8861b2d94b1ed3895109`, exactly matching the earlier unsigned preview StateInit `28d53006a92c3aa1468c9a906d810c91b421846d224d8861b2d94b1ed3895109`. It is therefore the earlier predicted Master address, not the current build's predicted Master. The current preview's metadata content cell changed after canonical logo integration, producing a different Master data/StateInit hash and predicted address. This does not prove that the earlier address was deployed. Both addresses must be checked on TON Mainnet before any deployment or issuance; do not treat either prediction as on-chain evidence.
+
+The 32-byte hash supplied for the transaction/contract call remains unresolved as a transaction hash versus an external message hash. A wallet submission hash alone is not proof of transaction success. See [Action #54 reconciliation](../../docs/MAINNET_ADDRESS_RECONCILIATION_ACTION_54.md) for the exact artifact digests, decoded account IDs, current preview hashes, and required live getter/trace checks.
+
+---
+
 # CURRENT MAINNET RELEASE PREFLIGHT — 2026-11-22 (Action #53; supersedes prior status entries below)
 
 **Last full exact-head release verification:** run `45064239418` — build-and-test and deploy-issuer both succeeded  

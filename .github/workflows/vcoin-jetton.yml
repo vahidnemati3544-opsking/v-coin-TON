@@ -1,17 +1,13 @@
-name: VCOIN TON Jetton
+name: VCOIN TON Jetton manual verification
+
 on:
-  push:
-    branches: [main]
-    paths:
-      - "contracts/jetton/**"
-      - ".github/workflows/vcoin-jetton.yml"
-  pull_request:
-    paths:
-      - "contracts/jetton/**"
-      - ".github/workflows/vcoin-jetton.yml"
   workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
-  build-and-test:
+  manual-build-and-test:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -21,8 +17,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: contracts/jetton/package.json
-      - run: npm install
-      - run: npm run build
-      - run: npm test
+      - name: Generate dependency lockfile
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Install cleanly from lockfile
+        run: npm ci --no-audit --no-fund
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
+      - name: Compile contracts
+        run: npm run build
+      - name: Run Sandbox tests
+        run: npm test

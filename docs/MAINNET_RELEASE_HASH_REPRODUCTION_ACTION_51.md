@@ -88,3 +88,18 @@ TON's Jetton deployment guide explicitly warns that Mainnet deployment and minti
 - Mainnet activation: **not established**.
 - Testnet transactions: **none**, in accordance with the project's Mainnet-only execution instruction.
 - Mainnet release disposition: **NO-GO pending the remaining independent review and Founder-signed release gates**.
+
+
+## 7. Follow-up exact-head build after manifest refresh
+
+After the initial reproduction report, the allocation manifest was refreshed from the regenerated preview and committed at `22534f7d03d896ea45fbe330a7a5a9940d44d419`.
+
+GitHub Actions run #252 (ID `45060524086`) on that exact commit completed:
+- `build-and-test`: **success** — dependency audit, Tact compile, metadata content build, unsigned Mainnet preview, Jest, issuer syntax/sequence guards, and artifact upload all passed.
+- Release artifact ID: `14768219639`.
+- Artifact SHA-256: `800946828268df7e1b522c9da5d162f878814711c02a7525dff1eafbc99fa853`.
+- The downloaded run #252 artifact was independently rechecked: Master StateInit, Master code, metadata content cell, all five Jetton Wallet StateInit hashes, friendly-address embedded account IDs and CRC16 checksums all matched.
+- npm audit report: **0 vulnerabilities** (0 info, 0 low, 0 moderate, 0 high, 0 critical).
+- `deploy-issuer`: **failure** at `actions/configure-pages@v5`; GitHub returned `Resource not accessible by integration` while creating the Pages site. The Pages deploy step was skipped. The contract build/test job succeeded independently of this Pages administration failure.
+
+The latest downloadable contract artifact is the run #252 ZIP. It remains an unsigned Mainnet preview and does not authorize or perform deployment or issuance.

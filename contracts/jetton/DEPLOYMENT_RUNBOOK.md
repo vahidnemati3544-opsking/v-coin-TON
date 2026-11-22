@@ -16,7 +16,8 @@
 - Ecosystem / marketing: 1,000,000,000 VCOIN (10%).
 - Six decimals; total supply is 10^16 base units.
 - No additional minting after the five exact allocations have completed.
-- The five approved allocation destinations are recorded only in `docs/WALLET_ALLOCATION_REGISTER.md`.
+- The five approved allocation destinations are recorded in `docs/WALLET_ALLOCATION_REGISTER.md`; the Founder wallet is one of those five.
+- The project owner explicitly confirmed the complete 10,000,000,000 VCOIN supply is to be issued and allocated across all five destinations (Founder 2B, Mining Reserve 5B, Treasury 1B, Liquidity/Market 1B, Ecosystem/Marketing 1B). Do not ask the owner to choose this allocation path again.
 - The separate GAS & OPERATIONS wallet is a TON-fee funding source only; it is not a sixth VCOIN allocation destination.
 
 The implementation must enforce the cap and per-role amounts in contract code, not merely in deployment scripts. No hidden freeze, confiscation, arbitrary clawback, or post-transfer seizure functionality is permitted.
@@ -109,6 +110,6 @@ The Founder personally reviews and signs in the wallet only after explicit readi
 - Wallet-control proofs: pending.
 - Jetton Master address and deployment transaction: none recorded.
 - Initial mint and allocation transactions: none recorded.
-- Mainnet deployment or issuance: not performed; not authorized.
+- Mainnet deployment or issuance: not performed; the owner has confirmed the five-wallet full-supply allocation intent, but no Mainnet transaction is authorized until all release gates pass and the exact transaction is separately approved.
 
 This runbook records implementation and release controls. It is not evidence of deployment, wallet ownership, token issuance, or transaction approval.

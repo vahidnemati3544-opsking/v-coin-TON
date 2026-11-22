@@ -1,3 +1,13 @@
+# CURRENT OWNER EXECUTION DECISION — 2026-11-22 (supersedes conflicting historical gates below)
+
+- The owner requires **real TON Mainnet execution only**. No Testnet deployment, Testnet transaction, or Testnet allocation rehearsal is authorized or required.
+- Permitted pre-deployment validation: local compilation, automated tests, local Sandbox simulation, offline payload inspection, independent third-party audit, and clean-room reproducible build/hash verification. These activities must not broadcast network transactions.
+- **Mainnet release remains NO-GO.** This decision does not waive security or release controls. Before any Mainnet signature: resolve and document the Master TON reserve withdrawal limitation; complete an independent qualified audit and resolve critical/high findings; reproduce the exact current BOC/StateInit/metadata/address hashes independently; validate all five allocation addresses and Founder signer; complete fee/payload simulation; confirm the issuer/signing workflow or an approved alternative; and obtain the Founder's explicit approval for each irreversible transaction.
+- The current Master has no TON withdrawal method. Do not fund it or deploy on the assumption that unused TON can later be recovered. Any redesign requires explicit architecture approval followed by complete rebuild, tests, and audit.
+- No Mainnet deployment, issuance, or transfer is claimed by this status update.
+
+---
+
 # CURRENT AUTHORITATIVE RELEASE STATUS — 2026-11-22 (Action #44)
 
 > This section supersedes any older conflicting deployment, signer, wallet-role, CI, or preview statements later in this historical log. Read this section first.

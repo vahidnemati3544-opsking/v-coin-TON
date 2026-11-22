@@ -8,7 +8,7 @@
 
 - Tact VCoinMaster fixes the five allocation destinations in StateInit and rejects duplicate allocation addresses and any overlap with the separate GAS & OPERATIONS wallet.
 - The Founder wallet is the sole VCoinMint authority.
-- The contract accepts only the exact amount assigned to the matching configured destination: Founder 2B, Mining Reserve 5B, Treasury 1B, Liquidity/Market 1B, Ecosystem/Marketing 1B VCOIN.
+- Current 2.1B contract cap accepts only the exact amount assigned to each configured destination: Founder 420M, Mining Reserve 1.05B, Treasury 210M, Liquidity/Market 210M, Ecosystem/Marketing 210M VCOIN.
 - Each allocation has a one-time issued flag. The Master disables further issuance only after all five allocation roles have completed.
 - A bounced wallet-credit message is checked against the deterministic Jetton wallet for that role and its exact allocation amount; only that role is reset for retry.
 - GAS & OPERATIONS can fund the Master reserve through VCoinFund but cannot issue VCOIN.
@@ -113,7 +113,7 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 - Ecosystem / Marketing Jetton Wallet: EQCRa4bOU5yZaYaEqFhb5qa-pcbIyegjg6AEwGTVQVOECMQ4; StateInit hash 916b86ce539c99698684a8585be6a6bea5c6c8c9e82383a004c064d541538408.
 - A separate parser independently recomputed all five Jetton Wallet StateInit hashes from their BOCs; each matched both the generated hash and the address hash bytes.
 - Deployment transaction design: GAS & OPERATIONS wallet sends the first message to the predicted Master with StateInit, VCoinFund body, and 0.75 TON minimum attached value. This deploys the contract and funds its reserve in one transaction. Network/wallet fee quote is additional and still required.
-- After the Master is active and getters confirm the five destinations, the Founder wallet signs five separate VCoinMint requests: 2B, 5B, 1B, 1B, 1B VCOIN. Each transaction is separately reviewed; mintable becomes false after all five successful credits.
+- Historical 10B plan only (superseded by Action #36): the Founder wallet would sign five separate VCoinMint requests of 2B, 5B, 1B, 1B, 1B VCOIN. Do not use those old amounts. The current 2.1B requests are 420M, 1.05B, 210M, 210M, 210M VCOIN.
 - No Mainnet transaction has been signed or broadcast. The Master address and Jetton Wallet addresses remain predicted until on-chain deployment and getter checks.
 - Independent third-party smart-contract security audit and live Mainnet fee simulation remain outstanding; do not describe this as an audited or deployed token.
 ## Action #34 — Dependency advisory remediation and strict audit gate

@@ -107,8 +107,9 @@ Contract implementation must be reviewed against the applicable TON standards an
 
 11. Testing and deployment restrictions
 
-The implementation must undergo local testing, TON Testnet deployment, functional verification, and independent security review before any Mainnet deployment.
-Mainnet deployment requires a separate, explicit approval.
+The implementation must undergo reproducible local builds, comprehensive TON Sandbox testing, functional verification, and independent smart-contract security review before any Mainnet deployment.
+No Testnet deployment is included in the current execution path; local TON Sandbox testing remains required and is not a Testnet deployment.
+Mainnet deployment requires a separate, explicit approval after the exact source commit, compiled artifacts, code-cell and StateInit hashes, metadata, wallet-control proofs, independent audit, and transaction details have been reviewed.
 No Mainnet deployment, initial issuance, liquidity commitment, or irreversible administrative action is authorized by this document.
 
 12. Change control

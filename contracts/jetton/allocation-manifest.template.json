@@ -82,7 +82,7 @@
     "Predicted Master address and deterministic recipient Jetton Wallet addresses are derived from the unsigned Mainnet StateInit preview. They are not deployed/on-chain addresses until Mainnet deployment is confirmed.",
     "The Founder wallet signs the deployment/funding transaction as GAS & OPERATIONS (0.75 TON minimum attached value with VCoinFund body), and signs the five exact VCoinMint issuance messages after deployment.",
     "The previously configured inaccessible GAS wallet is retired and must never be funded or used.",
-    "Master and five deterministic Jetton Wallet predictions were regenerated from exact-head CI artifact 14744567066 (run 158), source commit c4a9831f8d751a0a714054014dcf9135622c9cce. They remain predictions until independent hash reproduction and deployed-Master get_wallet_address checks."
+    "Exact-head run 161 build-and-test passed for source commit 5e27d36d6a92f0140d249baab7b08ae275539fbe. Independent BOC cell-hash reproduction and friendly-address hash/CRC16 checks passed for the Master and all five deterministic Jetton Wallets. These remain unsigned predictions until Mainnet deployment and on-chain getter checks."
   ],
   "founder_confirmed_release_intent": {
     "scope": "all_five_wallets_full_supply",
@@ -99,9 +99,26 @@
     "currency": "USD",
     "price_type": "modelled_reference_not_market_price"
   },
-  "preview_source_commit": "c4a9831f8d751a0a714054014dcf9135622c9cce",
-  "preview_workflow_run_id": 44998281809,
-  "preview_artifact_id": 14744567066,
-  "preview_artifact_sha256": "184128083f3cfd62a77ee7f6f5bd7a34835ed0664588dba50cf62516faa75089",
-  "gas_wallet_unification_status": "owner_approved; implementation pending CI"
+  "preview_source_commit": "5e27d36d6a92f0140d249baab7b08ae275539fbe",
+  "preview_workflow_run_id": 44998509995,
+  "preview_artifact_id": 14744513956,
+  "preview_artifact_sha256": "35a2331b99a73ddb40b511b26b4a436ff6566181d63194c0c8e825df7c31da53",
+  "gas_wallet_unification_status": "implemented; exact-head build-and-test passed; Founder wallet is the single GAS & OPERATIONS signer",
+  "clean_room_hash_reproduction": {
+    "status": "passed",
+    "source_commit": "5e27d36d6a92f0140d249baab7b08ae275539fbe",
+    "artifact_id": 14744513956,
+    "method": "Independent Python BOC parser and SHA-256 cell-hash implementation; decoded TON friendly addresses and independently verified embedded account hashes and CRC16-XMODEM checksums.",
+    "master_state_init_hash": "436d8ff4afd5d35424231f76b0f1b7d0b45e1ea0e57a41d1491094c132dc3afe",
+    "master_code_cell_hash": "e14ced14f81b69dae82e893c5ec1874b77b870d2ebfce31d5c5b8320566ecbf5",
+    "jetton_wallet_code_cell_hash": "94121c0e077e93e7405c7f3cfe0567cb094e1c42bb4d87d0a6cdb3860ea750f1",
+    "jetton_wallet_state_init_hashes": {
+      "founder": "4f109a0f7e2f05a3aa86c4bade009df75a9df9abb421332b5bd1d759d93f4835",
+      "mining_reserve": "2e78b4162f722df42520ce3a8971b92aa86516ebf722ef6b92a5d9b915dff026",
+      "treasury": "8712232a7ba53f49b888b0af90511a0d0089723cd903193755ebd422c86dccb0",
+      "liquidity_market": "83f1f9c9a1a77d8c4e78de5e68f4a1fbd531a48a74049383209ab1026afc51bb",
+      "ecosystem_marketing": "831bd073ff200fd2a677e251ffbc7863ff678b6c25473eef9d1e71b906d042ee"
+    },
+    "address_hash_and_checksum_verification": "passed for Master and all five Jetton Wallet addresses"
+  }
 }

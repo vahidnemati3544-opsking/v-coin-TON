@@ -9,7 +9,9 @@ const { Pool } = require('pg');
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
 
-async function applyTestMigrations(pool) {
+let migrationSetupPromise = null;
+
+async function applyTestMigrationsOnce(pool) {
   const databaseDir = path.resolve(__dirname, '../database');
   await pool.query(
     'CREATE TABLE IF NOT EXISTS test_schema_migrations (' +
@@ -47,6 +49,17 @@ async function applyTestMigrations(pool) {
     );
   }
 }
+
+async function applyTestMigrations(pool) {
+  if (!migrationSetupPromise) {
+    migrationSetupPromise = applyTestMigrationsOnce(pool).catch((error) => {
+      migrationSetupPromise = null;
+      throw error;
+    });
+  }
+  return migrationSetupPromise;
+}
+
 
 test('owner-approved supply migration applies the 1.05B mining cap and USD 0.008 reference baseline', {
   skip: !databaseUrl

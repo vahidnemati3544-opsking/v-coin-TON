@@ -5,6 +5,7 @@
 **Initial supply:** 2,100,000,000 VCOIN  
 **Decimals:** 6  
 **Modelled USD reference price:** 0.008 per VCOIN (not a market quote or guarantee)  
+**Modelled reference schedule:** 50% annual compound target; 72-hour steps at approximately 0.3338149181% (off-chain model only)  
 **Initial supply in base units:** 2100000000000000  
 **Release disposition:** **NO-GO for Mainnet** until all gates below are evidenced and separately approved.
 

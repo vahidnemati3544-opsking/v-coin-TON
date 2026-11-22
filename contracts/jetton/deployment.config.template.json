@@ -8,7 +8,7 @@
   "initial_supply_tokens": "10000000000",
   "initial_supply_base_units": "10000000000000000",
   "additional_minting": false,
-  "target_network": "testnet",
+  "target_network": "mainnet",
   "master_address": null,
   "deployment_transaction": null,
   "operational_fee_wallet": {
@@ -35,28 +35,23 @@
     "mining_reserve": "UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0"
   },
   "allocation_destinations": {
-    "founder_vesting_contract": null,
-    "mining_reserve_wallet": null,
-    "treasury_wallet": null,
-    "liquidity_market_wallet": null,
-    "ecosystem_marketing_wallet": null
-  },
-  "founder_vesting": {
-    "duration_seconds": 126144000,
-    "start_timestamp": null,
-    "cliff_seconds": null,
-    "release_frequency_seconds": null
+    "founder_jetton_wallet": null,
+    "mining_reserve_jetton_wallet": null,
+    "treasury_jetton_wallet": null,
+    "liquidity_market_jetton_wallet": null,
+    "ecosystem_marketing_jetton_wallet": null
   },
   "metadata": {
     "uri": null,
-    "immutable": true
+    "immutable": true,
+    "status": "pending_metadata_package_and_content_cell"
   },
   "deployment_authorized": false,
   "mainnet_authorized": false,
-  "notes": "Template only. The five allocation owner wallet candidates are recorded in allocation_wallets; the Treasury address has been corrected against the allocation register. These owner addresses are distinct from derived Jetton wallet contract addresses and the founder vesting contract. Keep derived contract addresses null until the Jetton master is deployed and wallet addresses are derived and verified on the intended network. The operational fee wallet is a separate TON-only funding address and is not part of VCOIN allocation. Verify network and wallet control before funding. Null contract/deployment fields require owner approval and verification. Never commit secrets, seed phrases or private keys. No deployment or transfer is authorized by this template.",
+  "notes": "Template only. Mainnet is the intended release network, but deployment_authorized and mainnet_authorized remain false until all release gates pass and the Founder explicitly approves the exact transaction. The five owner allocation addresses are recorded in allocation_wallets; these are not derived Jetton wallet contract addresses. Derive each Jetton wallet from the deployed Master and verify it before issuance. Founder receives the full 2,000,000,000 VCOIN allocation in one operation with no vesting or time lock. The separate GAS & OPERATIONS wallet is a TON-fee funding source only, not a VCOIN allocation. Metadata URI/content cell and all derived contract addresses remain null until approved and verified. Never commit secrets, seed phrases or private keys.",
   "allocation_wallet_verification": {
     "status": "pending_wallet_control_proof",
-    "note": "These are recorded owner wallet candidates, not derived Jetton wallet contract addresses. Verify control on the intended network before any transfer.",
+    "note": "Owner-designated addresses only; recording does not prove control. Verify each address on TON Mainnet before any deployment or issuance.",
     "destinations": {
       "founder": "pending",
       "treasury": "pending",

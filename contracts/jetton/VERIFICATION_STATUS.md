@@ -191,3 +191,9 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 - Backend CI run #267 and Mining CI run #269 passed on commit `1ec62162246080a6357c5cda8a637a05349a8f40`; the preceding exact-policy test runs #266 and #268 also passed.
 - This price schedule is an off-chain modelled reference only; it does not set an exchange price, guarantee value, or change the fixed 2.1B on-chain supply or five-wallet allocations.
 - No Mainnet transaction has been signed or broadcast.
+
+
+### Latest release pipeline note — 2026-11-22
+
+- Exact-head build-and-test job in Jetton CI run #146 passed, including npm audit (zero advisories), Tact compile, TEP-64 content generation, Mainnet preview generation, and Jest Sandbox tests. The separate Pages job failed only at Configure GitHub Pages due repository administration permission.
+- A concurrent run #147 reached the generated-lockfile commit step while run #146 was committing the same lockfile and failed that commit step. The authoritative lockfile is now committed on main at commit `1795fb4ccdba6cbbffa09ec032af15ba7e7103f6`; this was a workflow race, not a contract compile or test failure. A fresh exact-head CI run is required to re-confirm the now-committed main head.

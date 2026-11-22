@@ -9,7 +9,7 @@
 
 **NO-GO — extraction must remain disabled.** The public mining API is intentionally fail-closed with HTTP 503 until the wallet-balance implementation is complete and tested. This is a safety control, not a completed extraction feature.
 
-The first rehearsal target remains the owner's own Telegram account on TON Testnet. This does not authorize Mainnet deployment, public launch, token issuance, or real-value transfers.
+The approved execution policy is Mainnet-only. No TON Testnet deployment or Testnet transaction is authorized. Local TON Sandbox simulations and isolated integration tests are the permitted rehearsal environment. Mainnet mining remains disabled until the release gates pass.
 
 ## Binding reward policy
 
@@ -47,7 +47,7 @@ Status is based on repository evidence, not on the existence of documentation or
 | 17 | TON Jetton identity | Confirm VCOIN master address and network from owner-controlled deployment evidence | BLOCKED | Do not guess or use another token's address |
 | 18 | Chain data | Read fresh verified balance and validate owner/master/network/source context | BLOCKED | Select trusted provider and implement fail-closed reader |
 | 19 | Payout | Send Jettons and reconcile transaction, finality, bounce and retries | BLOCKED | Approve sender/signing custody architecture; never collect seed phrases |
-| 20 | Controlled rehearsal | Use owner's Telegram account and TON Testnet; compare chain snapshot, reward and ledger | BLOCKED | All preceding technical gates must pass |
+| 20 | Controlled rehearsal | Use local TON Sandbox and isolated PostgreSQL; compare simulated wallet snapshot, reward and ledger | BLOCKED | All preceding technical gates must pass; no Testnet deployment/transaction |
 | 21 | Go / No-Go | Review evidence, security, reserve, backup and owner approval | BLOCKED | Explicit owner approval after evidence review |
 
 ## Mandatory gates before first controlled claim
@@ -61,8 +61,8 @@ Status is based on repository evidence, not on the existence of documentation or
 7. `npm run check` passes and `npm test` passes, including PostgreSQL integration tests against an isolated PostgreSQL 18 database (not skipped).
 8. All 400 levels are proven to use the same 1%/24h formula.
 9. Reserve exhaustion, rollback, concurrency, double-counting and payout replay tests pass.
-10. The owner's local database and Telegram/Testnet flow are verified; no seed phrase or private key is collected.
-11. Owner reviews evidence and explicitly authorizes the controlled Testnet rehearsal.
+10. The owner's local database, Telegram authentication and local Sandbox wallet-flow simulations are verified; no seed phrase or private key is collected.
+11. Owner reviews evidence and explicitly authorizes any later Mainnet operation; no Testnet rehearsal is authorized.
 
 ## Known discrepancies and restrictions
 

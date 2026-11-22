@@ -129,8 +129,10 @@ async function main() {
     },
     signing: {
       signer: gasWallet,
+      signer_raw: Address.parse(gasWallet).toRawString(),
       method: 'GAS & OPERATIONS wallet deploys Master and funds its reserve in one Tonkeeper-signed transaction',
       allocation_issuance_signer: wallets.founder,
+      allocation_issuance_signer_raw: Address.parse(wallets.founder).toRawString(),
       private_key_or_seed_phrase_required_by_assistant: false,
       broadcasted: false,
     },

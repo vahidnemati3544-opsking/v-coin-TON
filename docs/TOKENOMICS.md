@@ -1,6 +1,6 @@
 V COIN – TON Tokenomics
 
-Document version: 1.3
+Document version: 1.4
 Status: Owner-approved economic design
 Network: TON Blockchain
 Token standard: Jetton (TEP-74)

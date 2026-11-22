@@ -70,6 +70,11 @@ const migrations = [
     version: '005_vcoin_supply_and_price_reset',
     description: 'Apply the owner-approved 2.1B VCOIN mining cap and USD 0.008 reference baseline',
     file: path.resolve(__dirname, '../database/migrations/005-vcoin-supply-and-price-reset.sql')
+  },
+  {
+    version: '006_annual_compound_price_policy',
+    description: 'Apply the owner-approved 50% annual compound model in 72-hour periods',
+    file: path.resolve(__dirname, '../database/migrations/006-annual-compound-price-policy.sql')
   }
 ];
 

@@ -135,3 +135,13 @@ The canonical five-wallet allocation map is maintained in docs/WALLET_ALLOCATION
 - The annualized multiplier is approximately 1.5 over 365 days.
 - This is an internal modelled reference schedule only. It is not a market quote, exchange price, guaranteed value, or promise of returns.
 - This price model does not change the fixed on-chain supply, allocation percentages, or holder control of the Jetton balances.
+
+
+16. TON purchase, level calculation, and final mining payout policy
+
+- A user purchase exchanges TON for already-issued VCOIN. The TON consideration is directed to the Founder allocation wallet; the corresponding VCOIN is transferred from the Founder Jetton wallet to the user's verified Jetton wallet. Purchases never invoke minting.
+- The user's level-qualifying amount is the sum of eligible purchased VCOIN and eligible mining rewards. Ledger history must continue to distinguish purchased and mining-origin balances.
+- Mining rewards remain internal eligible claims during the mining period. They must not be represented as VCOIN already held in the user's TON wallet.
+- Following the Founder's formal announcement that mining has ended, the project reconciles all claims against the fixed 1,050,000,000 VCOIN mining allocation and transfers each user's approved reward from the mining-reserve Jetton wallet to the user's verified Jetton wallet.
+- A payout is complete only after successful on-chain confirmation. Unique idempotency keys, anti-replay controls, bounce/failure handling, and immutable accounting are mandatory.
+- This policy does not increase the 2,100,000,000 VCOIN total supply and does not permit additional minting.

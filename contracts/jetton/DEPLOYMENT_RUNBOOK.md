@@ -2,22 +2,23 @@
 
 **Status:** Implementation candidate; NOT deployed  
 **Standard:** TEP-74 Jetton; metadata TEP-64  
-**Initial supply:** 10,000,000,000 VCOIN  
+**Initial supply:** 2,100,000,000 VCOIN  
 **Decimals:** 6  
+**Modelled USD reference price:** 0.008 per VCOIN (not a market quote or guarantee)  
 **Initial supply in base units:** 10000000000000000  
 **Release disposition:** **NO-GO for Mainnet** until all gates below are evidenced and separately approved.
 
 ## 1. Approved fixed design
 
-- Founder: 2,000,000,000 VCOIN (20%), credited in one operation; no vesting, time lock, or staged release.
-- Mining reserve: 5,000,000,000 VCOIN (50%).
-- Treasury: 1,000,000,000 VCOIN (10%).
-- Liquidity / market: 1,000,000,000 VCOIN (10%).
-- Ecosystem / marketing: 1,000,000,000 VCOIN (10%).
-- Six decimals; total supply is 10^16 base units.
+- Founder: 420,000,000 VCOIN (20%), credited in one operation; no vesting, time lock, or staged release.
+- Mining reserve: 1,050,000,000 VCOIN (50%).
+- Treasury: 210,000,000 VCOIN (10%).
+- Liquidity / market: 210,000,000 VCOIN (10%).
+- Ecosystem / marketing: 210,000,000 VCOIN (10%).
+- Six decimals; total supply is 2.1 × 10^15 base units.
 - No additional minting after the five exact allocations have completed.
 - The five approved allocation destinations are recorded in `docs/WALLET_ALLOCATION_REGISTER.md`; the Founder wallet is one of those five.
-- The project owner explicitly confirmed the complete 10,000,000,000 VCOIN supply is to be issued and allocated across all five destinations (Founder 2B, Mining Reserve 5B, Treasury 1B, Liquidity/Market 1B, Ecosystem/Marketing 1B). Do not ask the owner to choose this allocation path again.
+- The project owner explicitly confirmed the complete 2,100,000,000 VCOIN supply is to be issued and allocated across all five destinations (Founder 2B, Mining Reserve 5B, Treasury 1B, Liquidity/Market 1B, Ecosystem/Marketing 1B). Do not ask the owner to choose this allocation path again.
 - The separate GAS & OPERATIONS wallet is a TON-fee funding source only; it is not a sixth VCOIN allocation destination.
 
 The implementation must enforce the cap and per-role amounts in contract code, not merely in deployment scripts. No hidden freeze, confiscation, arbitrary clawback, or post-transfer seizure functionality is permitted. After a successful credit, the Master contract has no method to pull tokens back from a recipient Jetton Wallet. Normal TEP-74 transfers remain under the holder's wallet authority; the Founder cannot reverse a completed transfer or confiscate a holder's balance.
@@ -66,7 +67,7 @@ After deployment, the Founder wallet is the only VCoinMint authority. Each of th
 
 The Master reserve is intended to fund 0.1 TON for each deterministic destination Jetton-wallet credit. Confirm the actual required reserve and fee behavior in the exact-build simulation and transaction preview; do not rely on these documented nominal values as a substitute for a live fee estimate.
 
-After each confirmed credit, reconcile the corresponding Jetton wallet balance and role status. After all five credits succeed, verify total supply equals exactly 10^16 base units and mintable=false. If a natural bounce occurs, verify only the affected role rolled back before retrying it.
+After each confirmed credit, reconcile the corresponding Jetton wallet balance and role status. After all five credits succeed, verify total supply equals exactly 2.1 × 10^15 base units and mintable=false. If a natural bounce occurs, verify only the affected role rolled back before retrying it.
 
 ## 5. Build and verification gates
 

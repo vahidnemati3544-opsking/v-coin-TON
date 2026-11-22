@@ -78,20 +78,22 @@ The initial PWA shell is in ../../client. It currently provides static shell cac
 
 See [the offline lease and wallet trust protocol](../../../docs/OFFLINE_LEASE_AND_WALLET_TRUST_PROTOCOL.md) and [the implementation checkpoints](../../../docs/OFFLINE_MINING_AND_DIAGNOSTICS_PLAN.md).
 
-## What remains before Testnet extraction rehearsal
+## What remains before wallet-balance mining can be enabled
 
-- Confirm the official VCOIN Jetton master address and Testnet/Mainnet identity from deployment evidence.
-- Implement TON wallet ownership proof and wallet-link lifecycle.
-- Implement a trusted Jetton balance reader with freshness and master/owner/network validation.
-- Persist immutable wallet snapshots and source context.
-- Refactor reward accrual to use only verified wallet snapshots.
+The approved execution policy is Mainnet-only. Do not deploy or transact on TON Testnet. Local TON Sandbox tests and offline integration tests are permitted.
+
+- Confirm the official VCOIN Jetton Master address only after a Founder-approved Mainnet deployment and on-chain evidence.
+- Implement TON wallet ownership proof and wallet-link lifecycle without collecting seed phrases or private keys.
+- Implement a trusted Mainnet Jetton balance reader with freshness, finality, Master-address, owner-address and network validation.
+- Persist immutable wallet snapshots and source context; reject stale, unfinalized, mismatched-network or mismatched-Master observations.
+- Refactor reward accrual to use only verified on-chain wallet snapshots, with explicit interval snapshots and anti-replay controls.
 - Separate pending reward accounting from on-chain payout and finality reconciliation.
-- Add idempotent payout, bounce, replay, concurrency and reserve tests.
-- Run syntax/unit tests and non-skipped PostgreSQL 18 integration tests.
-- Verify the owner's Telegram Mini App and TON Testnet wallet flow.
+- Implement idempotent payout requests, exact reserve controls, natural-bounce recovery, replay protection, concurrency tests and post-payout reconciliation.
+- Implement and test offline lease issuance, browser-side signature verification, IndexedDB event queue, ordered sync, replay rejection and reconciliation before claiming offline mining is supported.
+- Run syntax/unit tests and non-skipped PostgreSQL 18 integration tests against an isolated local database.
+- Verify Telegram Mini App authentication and wallet-link UX without asking for identity documents or wallet recovery secrets.
 
-Never request or store a user's seed phrase or private key. Wallet signing must remain in the wallet interface. Mainnet and real-value payouts require separate explicit approval and security review.
-
+Public mining must remain HTTP 503 until every wallet-balance and payout gate above is implemented, tested and independently reviewed. Enabling internal-balance mining as a shortcut is prohibited. Mainnet mining and real-value payouts require separate Founder approval and qualified security review.
 
 ## Modelled 72-hour VCOIN reference price
 

@@ -97,3 +97,24 @@ Use stable machine-readable error codes. Do not return SQL messages, credentials
 ## 6. Implementation gates
 
 The authenticated mining routes are present, but they cannot start sessions until the user's level and positive mining rate are configured. Before real-user operation, complete the approved 400-level schedule, PostgreSQL session/claim/end integration tests, rate limiting, monitoring, and full reserve/ledger reconciliation. A successful claim credits an internal application balance only; it does not transfer Jettons to a TON wallet.
+
+
+## 7. Owner-approved purchase and payout business flow (design; implementation pending)
+
+### TON purchase
+
+- The buyer initiates a purchase from the Telegram Mini App/wallet flow and supplies a verified TON wallet destination.
+- The backend creates a unique pending order with the quoted VCOIN amount, TON amount, expiry, network, and recipient. The quote and any fees must be shown before wallet approval.
+- Only after the exact TON payment is confirmed final on the intended network is the order eligible for settlement.
+- The TON consideration is received at the Founder allocation wallet. The corresponding already-issued VCOIN is transferred from the Founder Jetton wallet to the buyer's verified Jetton wallet. No minting is allowed for purchases.
+- Both legs are reconciled by transaction hash, amount, sender/recipient, Jetton master, and idempotency key. Partial completion is not reported as a completed purchase; failed/bounced delivery enters a controlled retry/refund exception workflow.
+
+### Level balance
+
+The level engine calculates eligible level balance as purchased VCOIN plus eligible mining rewards. It must retain separate purchased/mining ledger categories, exclude rejected/reversed/pending-ineligible entries, prevent double counting after payout, and atomically charge the approved next-level cost and update the user's level.
+
+### Mining close and payout
+
+The mining allocation is 1,050,000,000 VCOIN maximum (six-decimal base units: 1,050,000,000,000,000). During the mining period, rewards are internal eligible claims, not on-chain wallet balances. After the Founder formally announces completion, a close process freezes reward accrual, reconciles the reserve and all user claims, validates verified wallet destinations, and produces a payout manifest. Payouts are sent from the designated mining-reserve Jetton wallet. Each is marked paid only after verified successful TON finality; bounced/failed transfers remain unpaid and retryable under idempotent controls. The 1,050,000,000 cap cannot be exceeded and no replacement minting is allowed.
+
+These are approved business rules, not claims that purchase settlement, level aggregation, or on-chain mining payouts are already implemented. They remain release blockers until code, integration tests, and Testnet rehearsal evidence exist.

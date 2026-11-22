@@ -5,6 +5,8 @@
 **Scope:** `vahidnemati3544-opsking/v-coin-TON` only  
 **Result:** **TACT BUILD PASSED; LIMITED ARITHMETIC TESTS PASSED; NOT DEPLOYABLE.**
 
+> **Current-state addendum — 2026-11-22:** This inventory's original 2026-11-20 findings are a historical snapshot and are superseded where they conflict with the addendum below. The current `main` source now includes fixed five-role allocation enforcement and natural-bounce/retry Sandbox coverage. Exact-head GitHub Actions run #78 on commit `4458760becbd9f7a37b1ffa85695999bdf73cfe4` passed lockfile generation, clean `npm ci`, dependency audit (0 vulnerabilities), Tact build, and the full Jest Sandbox suite. The generated lockfile is preserved as a CI artifact but is not yet committed to `main`. The Founder allocation is now 2B VCOIN in one immediate operation with no vesting or time lock. The current execution path is local Sandbox only, then Mainnet after independent review; no Testnet deployment is planned. Mainnet remains NO-GO: metadata/content cell, committed lockfile and exact-head rerun, independent TEP-74/TEP-64/security review, independent TON cell/StateInit hash reproduction, wallet-control proofs, and explicit transaction approvals remain outstanding. No deployment or issuance has occurred.
+
 ## Verified CI result
 
 - Commit `ad54496b45cac115285a21ce0ef9be4147da6f02` — [GitHub Actions run 44716041416](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44716041416) completed successfully.

@@ -47,6 +47,7 @@ contract VCoinMaster with JettonMaster {
         require(owner != treasuryWallet, "Duplicate allocation wallet");
         require(owner != liquidityWallet, "Duplicate allocation wallet");
         require(owner != ecosystemWallet, "Duplicate allocation wallet");
+        require(gasOperatorWallet == owner, "GAS & OPERATIONS must be Founder");
         require(miningReserveWallet != treasuryWallet, "Duplicate allocation wallet");
         require(miningReserveWallet != liquidityWallet, "Duplicate allocation wallet");
         require(miningReserveWallet != ecosystemWallet, "Duplicate allocation wallet");

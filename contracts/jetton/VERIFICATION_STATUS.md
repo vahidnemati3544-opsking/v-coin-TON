@@ -1,22 +1,28 @@
-# CURRENT MAINNET RELEASE PREFLIGHT — 2026-11-22 (Action #52; supersedes prior status entries below)
+# CURRENT MAINNET RELEASE PREFLIGHT — 2026-11-22 (Action #53; supersedes prior status entries below)
 
-**Latest exact-head contract artifact:** GitHub Actions run #252 / artifact `14768219639`  
-**Artifact source commit:** `22534f7d03d896ea45fbe330a7a5a9940d44d419`  
-**Artifact SHA-256:** `800946828268df7e1b522c9da5d162f878814711c02a7525dff1eafbc99fa853`  
-**Repository baseline before Action #52 documentation corrections:** `7af2ee4f6e51cd4ed5eb3a32854d70fefbb649d9`  
+**Latest exact-head CI run:** `45063673730` — build-and-test and deploy-issuer both succeeded  
+**Exact source commit:** `90c0d71adbfb3dbe8b645958eda0e4deb598bd86`  
+**Contract build artifact ID:** `14769907918`  
+**Contract build ZIP SHA-256:** `349ab278406927a12e6ea7ded99e2ed85649c8133d13cd6bbd1124dad0e0d4f2`  
+**Full source artifact ID:** `14770701121`  
+**Full source ZIP SHA-256:** `ead200093f24898084cd6535b9500024d845510c3eca60c97c9f5160fd13a2f1`  
+**Predicted Master address (not deployed):** `EQAo1TAGqSw6oUaMmpBtgQyRtCGEbSJNiGGy2Use04lRCQlU`  
+**Master StateInit hash:** `28d53006a92c3aa1468c9a906d810c91b421846d224d8861b2d94b1ed3895109`  
 **Release disposition: NO-GO for Mainnet deployment and issuance.**
 
-- Run #252 `build-and-test` passed: dependency audit, Tact compilation, TEP-64 metadata content-cell build, unsigned Mainnet preview generation, Jest tests, issuer syntax/sequence guards and artifact upload.
-- The ZIP artifact was independently inspected locally. Its SHA-256 matches the recorded CI artifact digest. It contains 32 contract-build files (compiled Master/Wallet outputs, StateInit BOCs, preview, metadata, lockfile and audit report); it is not a complete project/backend/mining-source ZIP.
-- Artifact preview confirms 2,100,000,000 VCOIN, six decimals, five allocations of 420M / 1,050M / 210M / 210M / 210M, and the five registered owner addresses. Allocation arithmetic sums exactly to 2.1B.
-- The commit-pinned metadata URI resolves to the same `metadata.json` content currently on main; the content-cell hash remains `6dc0e0c3a9ec89e72fc8402a13915bb425032a0e57dfa955ba5579eab28c940c`.
-- The latest branch commit after the artifact source commit changes only `docs/MAINNET_RELEASE_HASH_REPRODUCTION_ACTION_51.md`; the contract source, deployment inputs, metadata and package lock were not changed after the run #252 artifact.
-- Pages job `137327106113` failed at `actions/configure-pages@v5`: Pages site lookup returned 404, and the GitHub Actions integration was denied permission to create the Pages site (`Resource not accessible by integration`). TonConnect issuer publication is therefore not confirmed.
-- Mainnet deployment, issuance and transfers have not been sent. The ZIP is unsigned and the predicted Master/Jetton Wallet addresses are not on-chain evidence.
-- Remaining gates: qualified independent smart-contract/TEP-74/TEP-64 audit; independent clean-room source rebuild; live fee and reserve review; Founder verification of network, signer, metadata, addresses and exact payloads; explicit Founder signature for deployment and each separate allocation.
-- Current execution policy is Mainnet-only. No Testnet deployment or Testnet transaction is authorized. The Founder allocation wallet is also the sole GAS & OPERATIONS wallet; no separate fee wallet or sixth allocation destination exists.
+- Run `45063673730` passed dependency installation/audit enforcement, Tact compilation, TEP-64 metadata-cell generation, unsigned Mainnet preview generation, Jest Sandbox tests, issuer safety/sequence guards, full source snapshot upload and Pages deployment.
+- The generated preview confirms fixed supply **2,100,000,000 VCOIN**, six decimals, five allocations **420M / 1,050M / 210M / 210M / 210M**, and five registered owner addresses.
+- The preview's Master reserve attachment is **1.00 TON**. The contract's minimum `VCoinFund` request is 0.75 TON; the issuer now reads the amount from the exact preview rather than hard-coding it. A live network fee quote is still required.
+- The full source artifact includes all source/documentation files, the safe `.env.example`, and `.gitignore`; no `.git`, `node_modules` or secrets are included. The combined source-and-release bundle is integrity-tested and linked in Action #53.
+- GitHub Pages deployment succeeded and the environment URL is `https://vahidnemati3544-opsking.github.io/v-coin-TON/`.
+- Founder is the sole deployment/issuance signer and the shared GAS & OPERATIONS wallet. No separate fee wallet or sixth allocation destination exists.
+- The Master source includes the Founder-only `VCoinWithdraw` path, protected by a 0.25 TON minimum reserve plus a 0.10 TON fee buffer. The issuer does not expose a withdrawal control; a withdrawal requires a separate reviewed payload.
+- Public mining remains HTTP 503 until verified Mainnet Jetton wallet ownership, balance snapshots, payout and reconciliation are implemented.
+- No Mainnet deployment, issuance, transfer or payout has been sent. The predicted Master/Jetton Wallet addresses are not on-chain evidence.
+- Remaining gates: qualified independent smart-contract/TEP-74/TEP-64 audit; independent clean-room rebuild; live fee/reserve review; Founder review of network, signer, metadata, addresses and exact payloads; explicit Founder signature for deployment and each separate allocation.
+- Current execution policy is Mainnet-only. No Testnet deployment or Testnet transaction is authorized.
 
-See [Action #52 repository and ZIP review](../../docs/PROJECT_REVIEW_ACTION_52.md).
+See [Action #53 repository and ZIP review](../../docs/PROJECT_REVIEW_ACTION_53.md).
 
 ---
 

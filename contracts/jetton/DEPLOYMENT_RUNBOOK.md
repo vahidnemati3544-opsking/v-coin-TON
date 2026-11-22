@@ -20,7 +20,7 @@
 - The project owner explicitly confirmed the complete 10,000,000,000 VCOIN supply is to be issued and allocated across all five destinations (Founder 2B, Mining Reserve 5B, Treasury 1B, Liquidity/Market 1B, Ecosystem/Marketing 1B). Do not ask the owner to choose this allocation path again.
 - The separate GAS & OPERATIONS wallet is a TON-fee funding source only; it is not a sixth VCOIN allocation destination.
 
-The implementation must enforce the cap and per-role amounts in contract code, not merely in deployment scripts. No hidden freeze, confiscation, arbitrary clawback, or post-transfer seizure functionality is permitted.
+The implementation must enforce the cap and per-role amounts in contract code, not merely in deployment scripts. No hidden freeze, confiscation, arbitrary clawback, or post-transfer seizure functionality is permitted. After a successful credit, the Master contract has no method to pull tokens back from a recipient Jetton Wallet. Normal TEP-74 transfers remain under the holder's wallet authority; the Founder cannot reverse a completed transfer or confiscate a holder's balance.
 
 ## 2. Current source behavior
 
@@ -49,7 +49,7 @@ A failed wallet credit is expected to return as a natural bounce from the determ
 - Set `miningReserveWallet`, `treasuryWallet`, `liquidityWallet`, and `ecosystemWallet` to their corresponding registered addresses.
 - Set `gasOperatorWallet` to the separately registered GAS & OPERATIONS address.
 - Confirm all six addresses are distinct and use the intended network representation.
-- Do not infer ownership from an address label. Complete a safe wallet-control proof for every allocation destination before issuance.
+- Do not infer ownership from an address label. Founder must review and confirm the exact five destination addresses in the deployment preview before signing. No seed phrase, private key, PIN, or recovery code is needed. Each destination Jetton Wallet address must be derived from the deployed Master and compared against the final allocation manifest before issuance.
 - After deployment, compare `get_allocation_config` and `get_gas_operator_wallet` against the approved register.
 
 No seed phrase, private key, PIN, or recovery code may be requested or stored.

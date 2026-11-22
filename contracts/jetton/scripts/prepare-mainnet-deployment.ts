@@ -13,6 +13,14 @@ const contentCell = Cell.fromBoc(contentBoc)[0];
 
 const wallets = config.allocation_wallets;
 const gasWallet = config.operational_fee_wallet.owner_provided_address;
+if (gasWallet !== config.allocation_wallets.founder) {
+  throw new Error('GAS & OPERATIONS signer must be the registered Founder wallet');
+}
+for (const role of ['mining_reserve', 'treasury', 'liquidity_market', 'ecosystem_marketing']) {
+  if (gasWallet === config.allocation_wallets[role]) {
+    throw new Error('Founder/GAS signer must not overlap another allocation wallet: ' + role);
+  }
+}
 
 async function main() {
   const master = await VCoinMaster.fromInit(
@@ -114,7 +122,7 @@ async function main() {
       treasury: wallets.treasury,
       liquidity_market: wallets.liquidity_market,
       ecosystem_marketing: wallets.ecosystem_marketing,
-      gas_operations_only: gasWallet,
+      gas_operations_founder_shared: gasWallet,
     },
     issuance_transactions: issuanceTransactions,
     allocations: {
@@ -138,7 +146,7 @@ async function main() {
     signing: {
       signer: gasWallet,
       signer_raw: Address.parse(gasWallet).toRawString(),
-      method: 'GAS & OPERATIONS wallet deploys Master and funds its reserve in one Tonkeeper-signed transaction',
+      method: 'Founder wallet, also serving as GAS & OPERATIONS, deploys Master and funds its reserve in one Tonkeeper-signed transaction',
       allocation_issuance_signer: wallets.founder,
       allocation_issuance_signer_raw: Address.parse(wallets.founder).toRawString(),
       private_key_or_seed_phrase_required_by_assistant: false,

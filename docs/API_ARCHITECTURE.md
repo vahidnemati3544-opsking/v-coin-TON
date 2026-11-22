@@ -101,6 +101,8 @@ The authenticated mining routes are present, but they cannot start sessions unti
 
 ## 7. Owner-approved purchase and payout business flow (design; implementation pending)
 
+The fixed total VCOIN supply is 2,100,000,000 VCOIN; the mining payout ceiling is 1,050,000,000 VCOIN. No purchase or reward endpoint may mint additional tokens.
+
 ### TON purchase
 
 - The buyer initiates a purchase from the Telegram Mini App/wallet flow and supplies a verified TON wallet destination.

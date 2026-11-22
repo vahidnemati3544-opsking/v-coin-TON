@@ -15,9 +15,11 @@ The founder allocation destination and the operational fee wallet are distinct a
 
 ## 2. Fixed supply
 
-- Initial supply: 10,000,000,000 VCOIN.
+- USD reference price: 0.008 per VCOIN (modelled reference only; not a market quote or guarantee).
+
+- Initial supply: 2,100,000,000 VCOIN.
 - Decimals: 6.
-- Base units: 10,000,000,000,000,000.
+- Base units: 2,100,000,000,000,000.
 - Additional minting: permanently disabled after the single initial issuance.
 - No replacement minting after burns.
 - The Jetton master and wallet implementation must conform to TEP-74 and pass local tests and independent review before deployment.
@@ -50,14 +52,14 @@ If stronger custody controls are required for a particular allocation, use a dis
 
 | Allocation | Share | Amount |
 |---|---:|---:|
-| Founder | 20% | 2,000,000,000 VCOIN |
-| User mining reserve | 50% | 5,000,000,000 VCOIN |
-| Project treasury | 10% | 1,000,000,000 VCOIN |
-| Liquidity and market | 10% | 1,000,000,000 VCOIN |
-| Ecosystem and marketing | 10% | 1,000,000,000 VCOIN |
-| **Total** | **100%** | **10,000,000,000 VCOIN** |
+| Founder | 20% | 420,000,000 VCOIN |
+| User mining reserve | 50% | 1,050,000,000 VCOIN |
+| Project treasury | 10% | 210,000,000 VCOIN |
+| Liquidity and market | 10% | 210,000,000 VCOIN |
+| Ecosystem and marketing | 10% | 210,000,000 VCOIN |
+| **Total** | **100%** | **2,100,000,000 VCOIN** |
 
-The exact five allocation owner addresses are maintained in `docs/WALLET_ALLOCATION_REGISTER.md`. Founder allocation remains subject to the approved four-year vesting design. The exact vesting contract and schedule must be specified before implementation. The mining reserve is a pre-existing allocation; mining rewards must be paid from this reserve and must never mint new tokens.
+The exact five allocation owner addresses are maintained in `docs/WALLET_ALLOCATION_REGISTER.md`. Founder allocation remains subject to the approved no vesting or time lock. The exact vesting contract and schedule must be specified before implementation. The mining reserve is a pre-existing allocation; mining rewards must be paid from this reserve and must never mint new tokens.
 
 ## 6. Operational TON network-fee funding
 

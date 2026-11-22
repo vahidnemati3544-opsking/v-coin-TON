@@ -3,6 +3,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const {
+  INCREASE_RATE_PERCENT,
   increasePriceScaled,
   scaledPriceToDecimal,
   decimalPriceToScaled
@@ -12,9 +13,10 @@ test('initial reference price is exactly USD 0.008', () => {
   assert.equal(decimalPriceToScaled('0.008000000000').toString(), '8000000000');
 });
 
-test('72-hour increase compounds by exactly 0.2041 percent', () => {
+test('72-hour increase implements the approved 50 percent annual compound target', () => {
+  assert.equal(INCREASE_RATE_PERCENT, '0.33381492');
   const first = increasePriceScaled(decimalPriceToScaled('0.008000000000'));
-  assert.equal(scaledPriceToDecimal(first), '0.008016328000');
+  assert.equal(scaledPriceToDecimal(first), '0.008026705193');
 });
 
 test('price arithmetic remains integer-based across repeated periods', () => {

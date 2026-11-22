@@ -79,14 +79,19 @@
     "gas_operations_wallet_is_not_an_allocation_wallet": true,
     "mainnet_transaction_authorized": false
   },
-  "predicted_master_address": "EQBDbY_0r9XTVCQjH3aw8bfQtF4eoOV6QdFJEJTBMtw6_pIJ",
-  "predicted_master_state_init_hash": "436d8ff4afd5d35424231f76b0f1b7d0b45e1ea0e57a41d1491094c132dc3afe",
+  "predicted_master_address": "EQBmjwr-Bc2_wNKcZHjTr8KtPGQgN-ltRhTIXqK0zM89O0Xt",
+  "predicted_master_state_init_hash": "668f0afe05cdbfc0d29c6478d3afc2ad3c642037e96d4614c85ea2b4cccf3d3b",
   "price_reference": {
     "initial_price_usd": "0.008",
     "currency": "USD",
     "price_type": "modelled_reference_not_market_price",
     "not_a_market_quote": true
   },
-  "preview_source_commit": "c4a9831f8d751a0a714054014dcf9135622c9cce",
-  "preview_status": "unsigned CI-generated preview; independent reproduction and Testnet review pending"
+  "preview_source_commit": "08fe61fd46fcf83b730512be80e2276acad3e139",
+  "preview_status": "unsigned preview; independent BOC hash and friendly-address checksum reproduction passed; third-party audit and Testnet rehearsal pending",
+  "predicted_master_code_cell_hash": "383823efc716ed7aab1efe58536aca94f476d6a42d0e6a3041ef56c1f598f846",
+  "predicted_jetton_wallet_code_cell_hash": "786a569e6ba80af26a148a1634a18b1f1959a590682aba5f0ca855b7a38332ea",
+  "preview_workflow_run_id": 44999045441,
+  "preview_artifact_id": 14744952085,
+  "preview_artifact_sha256": "99ad2ebca586fefa56927e4b831eef72f71f906ca583d9cccb3da256e14385d6"
 }

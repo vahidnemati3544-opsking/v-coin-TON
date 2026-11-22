@@ -22,12 +22,12 @@ VCoinMaster(
 
 | Constructor argument | Allocation role | Canonical source |
 |---|---|---|
-| owner | Founder — 20% / 2,000,000,000 VCOIN | docs/WALLET_ALLOCATION_REGISTER.md, Founder row |
+| owner | Founder — 20% / 420,000,000 VCOIN | docs/WALLET_ALLOCATION_REGISTER.md, Founder row |
 | content | Jetton metadata cell | Approved token metadata package; not a wallet address |
-| miningReserveWallet | Mining reserve — 50% / 5,000,000,000 VCOIN | docs/WALLET_ALLOCATION_REGISTER.md, Mining reserve and extraction row |
-| treasuryWallet | Treasury — 10% / 1,000,000,000 VCOIN | docs/WALLET_ALLOCATION_REGISTER.md, Treasury row |
-| liquidityWallet | Liquidity and market — 10% / 1,000,000,000 VCOIN | docs/WALLET_ALLOCATION_REGISTER.md, Liquidity and market row |
-| ecosystemWallet | Ecosystem and marketing — 10% / 1,000,000,000 VCOIN | docs/WALLET_ALLOCATION_REGISTER.md, Ecosystem and marketing row |
+| miningReserveWallet | Mining reserve — 50% / 1,050,000,000 VCOIN | docs/WALLET_ALLOCATION_REGISTER.md, Mining reserve and extraction row |
+| treasuryWallet | Treasury — 10% / 210,000,000 VCOIN | docs/WALLET_ALLOCATION_REGISTER.md, Treasury row |
+| liquidityWallet | Liquidity and market — 10% / 210,000,000 VCOIN | docs/WALLET_ALLOCATION_REGISTER.md, Liquidity and market row |
+| ecosystemWallet | Ecosystem and marketing — 10% / 210,000,000 VCOIN | docs/WALLET_ALLOCATION_REGISTER.md, Ecosystem and marketing row |
 | gasOperatorWallet | GAS & OPERATIONS — TON fee funding only; not a VCOIN allocation | docs/WALLET_ALLOCATION_REGISTER.md, Separate operational network-fee wallet section |
 
 ## Mandatory pre-deployment checks
@@ -46,4 +46,4 @@ First, the separate GAS & OPERATIONS wallet sends a VCoinFund message with at le
 
 ## Release caveat
 
-The founder allocation is directed to the founder's Jetton wallet as one exact 2,000,000,000 VCOIN issuance. The project owner has explicitly approved the founder's right to withdraw or transfer the full amount at once. No founder vesting contract, time lock, or installment schedule is required. This does not waive independent contract review, Testnet rehearsal, or explicit Mainnet authorization.
+The founder allocation is directed to the founder's Jetton wallet as one exact 420,000,000 VCOIN issuance. The project owner has explicitly approved the founder's right to withdraw or transfer the full amount at once. No founder vesting contract, time lock, or installment schedule is required. This does not waive independent contract review, Testnet rehearsal, or explicit Mainnet authorization.

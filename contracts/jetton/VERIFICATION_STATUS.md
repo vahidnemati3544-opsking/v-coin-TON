@@ -178,3 +178,16 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 - Jetton CI run #141 passed Tact compilation, npm audit (0 advisories), Mainnet preview generation, and Jest Sandbox tests on the 2.1B source. Its only failed job was GitHub Pages creation because the GitHub App lacks repository administration permission.
 - The latest 2.1B Master preview remains `EQAriHkG8kqO0GQwwX6ODgqpJCV-oUDKwalDK8lAzYGBWHvV`, StateInit hash `2b887906f24a8ed06430c17e8e0e0aa924257ea140cac1a9432bc940cd818158`. This is unsigned and not deployed.
 - No Mainnet deployment, mint, or wallet credit has occurred. Testnet rehearsal, independent third-party security audit, and clean-room hash reproduction for the revised build remain outstanding.
+
+
+## Action #38 — Restore the approved 50% annual compound reference policy
+
+**Status:** Backend and PostgreSQL mining CI passed; policy recorded in tokenomics, backend documentation, and deployment runbook.
+
+- Retrieved the latest owner-approved price policy: 0.008 USD starting reference with a 50% annual compound target, gradually applied. The earlier 0.2041% per 72-hour implementation did not match that approved target and has been corrected.
+- The 72-hour cadence now uses fixed-point multiplier `1.003338149181`, equivalent to approximately 0.3338149181% per 72-hour period and approximately 1.5x over 365 days.
+- Added forward-only migration `006-annual-compound-price-policy.sql`; setup runner and PostgreSQL integration tests apply it after migrations 004 and 005.
+- Unit tests verify the first 72-hour step from USD 0.008 is USD 0.008026705193. PostgreSQL integration tests verify the active database rate is 0.33381492 percent.
+- Backend CI run #267 and Mining CI run #269 passed on commit `1ec62162246080a6357c5cda8a637a05349a8f40`; the preceding exact-policy test runs #266 and #268 also passed.
+- This price schedule is an off-chain modelled reference only; it does not set an exchange price, guarantee value, or change the fixed 2.1B on-chain supply or five-wallet allocations.
+- No Mainnet transaction has been signed or broadcast.

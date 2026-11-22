@@ -487,9 +487,12 @@ describe('VCOIN Jetton Sandbox release gates', () => {
       to: master.address,
       success: false,
     });
-    expect(underfunded.transactions).not.toHaveTransaction({
+    // The rejected inbound request is bounced back to the sender; this is
+    // a refund, not a successful operational withdrawal to the owner.
+    expect(underfunded.transactions).toHaveTransaction({
       from: master.address,
       to: owner.address,
+      inMessageBounced: true,
     });
     const after = (await blockchain.getContract(master.address)).account.account?.storage.balance.coins ?? 0n;
     expect(after).toBeGreaterThan(toNano('0.25'));

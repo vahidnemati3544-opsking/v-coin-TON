@@ -59,8 +59,8 @@ Before any real VCOIN issuance or transfer:
 2. Validate each address format and network representation.
 3. Founder reviews the five owner-provided TON addresses in the final constructor preview; the deterministic Jetton wallet addresses are derived from the Master and checked against the manifest. Never request seed phrases or private keys.
 4. Confirm the deployed VCOIN Jetton master address and derive the correct Jetton wallet for each owner address using the master contract.
-5. Verify the total supply, six decimals, allocation caps and founder vesting design.
-6. Perform the full allocation rehearsal in local TON Sandbox and reconcile all simulated balances; the current plan does not include a Testnet deployment.
+5. Verify the total supply, six decimals, allocation caps and one-time Founder allocation.
+6. Perform the full allocation rehearsal in local TON Sandbox and reconcile all simulated balances, then deploy and exercise the exact contract on TON Testnet before Mainnet.
 7. Obtain the project owner's explicit approval before any Mainnet issuance or transfer.
 8. Before depositing TON into the fee wallet, verify its address in Tonkeeper and confirm the intended network.
 
@@ -69,7 +69,7 @@ Before any real VCOIN issuance or transfer:
 All amounts must be stored and calculated as integer base units. With six decimals:
 
 - 420,000,000 VCOIN = 420,000,000,000,000 base units.
-- 210,000,000 VCOIN = 22,100,000,000,000 base units.
+- 210,000,000 VCOIN = 210,000,000,000,000 base units.
 - 1,050,000,000 VCOIN = 1,050,000,000,000,000 base units.
 - Total 2,100,000,000 VCOIN = 2,100,000,000,000,000 base units.
 

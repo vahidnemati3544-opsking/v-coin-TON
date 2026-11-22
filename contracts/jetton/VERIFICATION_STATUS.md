@@ -125,3 +125,14 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 - Changed the authoritative npm audit gate to fail at moderate severity, not only high severity.
 - Exact-head run #111 passed; the audit report contains zero advisories at every severity.
 - The release package remains unsigned; no Mainnet transaction was broadcast.
+## Action #35 — TonConnect signing console and Pages publication
+
+**Status:** TonConnect console, manifest, signer guards, and generated Mainnet preview are committed; site artifact builds; GitHub Pages publication awaits one repository-owner setting.
+
+- Added issuer/index.html using pinned @tonconnect/ui 5.0.3, Mainnet-only network selection, and exact raw-address guards for the GAS & OPERATIONS signer and Founder issuance signer.
+- The deployment button sends one StateInit + VCoinFund message to the predicted Master with 0.75 TON attached. Five separate mint buttons submit the exact VCoinMint payloads from the deployment preview, each with 0.01 TON attached.
+- The console never stores keys or requests recovery material. It requires the Founder to manually confirm that the Master is active and its getters match before enabling issuance buttons. It does not claim finality; each transaction must be checked on-chain before proceeding.
+- The CI run #118 build-and-test job passed and produced the GitHub Pages site artifact ID 14741409791 (artifact digest df0d5e43a1c84e143213d75ce2ff2ee2dd8612239d634ee6ac023ae915ad5625). The release build/audit artifact ID is 14742370638.
+- GitHub Pages publication was blocked because the connected GitHub App lacks repository administration permission to create the Pages site; configure-pages returned 'Resource not accessible by integration' even with enablement=true.
+- One-time Founder action required: open https://github.com/vahidnemati3544-opsking/v-coin-TON/settings/pages and set Build and deployment -> Source to GitHub Actions. The next push to issuer/** or the verification workflow will publish the site at https://vahidnemati3544-opsking.github.io/v-coin-TON/.
+- No Mainnet deployment, mint, or token transfer has been broadcast. The predicted Master address and five Jetton Wallet addresses remain unsigned previews until Mainnet confirmation.

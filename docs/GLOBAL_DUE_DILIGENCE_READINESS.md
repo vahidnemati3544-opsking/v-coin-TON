@@ -1,7 +1,7 @@
 # V COIN – TON | Global Due Diligence Readiness Register
 
 **Document ID:** VCT-GDD-001  
-**Version:** 1.0.1  
+**Version:** 1.0.2  
 **Review date:** 2026-11-18  
 **Repository:** vahidnemati3544-opsking/v-coin-TON  
 **Branch:** main  
@@ -25,7 +25,7 @@ Repository paths previously inspected on `main`:
 |---|---|---|
 | `README.md` | Project overview; development status | Live service or deployed token |
 | `docs/TON_ARCHITECTURE.md` | TON architecture and limitations | Mainnet deployment |
-| `docs/TOKENOMICS.md` | 10B supply design, 6 decimals, proposed allocation | Minted supply, balances, vesting or custody |
+| `docs/TOKENOMICS.md` | 2.1B supply design, 6 decimals, proposed allocation | Minted supply, balances, vesting or custody |
 | `docs/JETTON_CONTRACT_SPEC.md` | TEP-74/TEP-64 design requirements | Implemented Master/Wallet contracts |
 | `docs/JETTON_DEPLOYMENT_INVENTORY.md` | Deployment evidence inventory | A verified deployed Master address |
 | `docs/MINING_READINESS_PLAN.md` | Mining readiness decision and work register | Live extraction |
@@ -79,20 +79,20 @@ This is a repository evidence inventory, not a complete source-code review. Rech
 
 ## 5. Tokenomics arithmetic check
 
-The current design totals 10,000,000,000 VCOIN:
+The current owner-approved design totals 2,100,000,000 VCOIN:
 
 | Allocation | Share | Planned VCOIN |
 |---|---:|---:|
-| Founder | 20% | 2,000,000,000 |
-| Mining rewards | 50% | 5,000,000,000 |
-| Treasury | 10% | 1,000,000,000 |
-| Liquidity / market | 10% | 1,000,000,000 |
-| Ecosystem / marketing | 10% | 1,000,000,000 |
-| **Total** | **100%** | **10,000,000,000** |
+| Founder | 20% | 420,000,000 |
+| Mining rewards | 50% | 1,050,000,000 |
+| Treasury | 10% | 210,000,000 |
+| Liquidity / market | 10% | 210,000,000 |
+| Ecosystem / marketing | 10% | 210,000,000 |
+| **Total** | **100%** | **2,100,000,000** |
 
-At six decimals, the planned total is 10,000,000,000,000,000 base units. This is arithmetic for the design only, not proof of on-chain issuance.
+At six decimals, the planned total is 2,100,000,000,000,000 base units. This is arithmetic for the design only, not proof of on-chain issuance.
 
-Before implementation, approve: founder vesting start/cliff/release schedule; mining reserve custody and payout model; treasury wallet controls; liquidity release controls; ecosystem budget controls; and a reconciliation method preventing double-counting.
+The Founder allocation is 420,000,000 VCOIN, payable in one immediate allocation with no vesting or time lock. Continue to define and verify mining reserve custody and payout model; treasury wallet controls; liquidity release controls; ecosystem budget controls; and a reconciliation method preventing double-counting.
 
 The proposed referral terms (100 VCOIN per qualifying invitation and 2% of referred-user activity while active) remain unapproved for implementation until the activity definition, eligibility, caps, anti-abuse rules, accounting and legal review are complete.
 

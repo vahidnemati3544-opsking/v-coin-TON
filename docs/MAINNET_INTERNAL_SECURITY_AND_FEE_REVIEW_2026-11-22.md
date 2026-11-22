@@ -18,24 +18,24 @@ Scope: internal source-level review of the compiled FunC output, CI evidence, an
 
 ## Internal review observations / operational risks
 
-1. The Master has no TON withdrawal method. The 0.75 TON reserve is not recoverable through the current contract. Treat it as committed operating liquidity, not refundable deposit.
+1. The Master implements an owner-only `VCoinWithdraw` message. It can send TON only to `self.owner`, requires a positive amount and a request carrying at least 0.01 TON, and protects a 0.25 TON minimum Master reserve plus a 0.10 TON fee buffer. Sandbox tests cover successful Founder withdrawal, non-Founder rejection, zero amount, reserve-floor enforcement and underfunded requests. This is not a live fee quote; the current TonConnect issuer does not expose a withdrawal control.
 2. Five issuance messages each attach 0.01 TON (0.05 TON total in attached issuance values), while the Master also sends 0.1 TON to each newly initialized Jetton Wallet (0.5 TON total sourced from Master reserve). These are distinct flows and must not be added together as if all came from the founder wallet. The Master reserve must remain above the 0.15 TON issuance guard and cover execution/forwarding fees.
-3. The exact network fee cannot be fixed from the artifact. TON fees depend on live network config, message size, compute, storage, and forwarding. The preview correctly leaves `network_fee_quote_required=true`. The fixed minimum amounts are 0.75 TON for the VCoinFund message and five 0.01 TON issuance message attachments; actual wallet debit also includes live transaction fees. Do not promise an exact final TON debit without simulating the exact BOCs against current Mainnet config.
-4. Contract has no emergency pause, owner transfer, or reserve withdrawal path. This is a deliberate immutability/authority tradeoff, but means mistakes in constructor parameters and committed TON are not administratively reversible.
+3. The exact network fee cannot be fixed from the artifact. TON fees depend on live network config, message size, compute, storage, and forwarding. The preview correctly leaves `network_fee_quote_required=true`. The contract accepts a VCoinFund message with at least 0.75 TON, but the current generated unsigned preview requests 1.00 TON to add a reserve margin. The issuer now reads the amount from that exact preview rather than hard-coding 0.75 TON. Each issuance request attaches 0.01 TON; actual wallet debit also includes live network fees. Do not promise an exact final TON debit without simulating the exact BOCs against current Mainnet config.
+4. Contract has no emergency pause or owner-transfer path. It does have the guarded Founder-only reserve withdrawal described above. Mistakes in constructor parameters and completed Jetton transfers are not administratively reversible.
 5. The metadata URI is pinned to a separate immutable commit hash. Confirm that the raw GitHub URL is publicly retrievable and its content matches the metadata cell before deployment.
 
 ## What this review does NOT certify
 
 - This is an internal code review, not an independent third-party security audit or formal verification.
-- CI Sandbox/Jest success is not evidence of a live Testnet deployment or real wallet issuance rehearsal.
+- CI Sandbox/Jest success is not evidence of a live Mainnet deployment or real wallet issuance. Testnet deployment and transactions are not authorized under the current Mainnet-only execution policy.
 - No live Mainnet fee simulation has been run against the exact deployment and issuance BOCs at the current block/config.
 - No Mainnet transaction has been signed or broadcast. Master remains undeployed; no VCOIN has been minted.
 
 ## Mainnet decision
 
 Internal review and CI checks are complete. The release remains **NOT CLEARED FOR MAINNET SIGNING** until:
-- the owner explicitly resolves the previously stated no-Testnet policy if a Testnet rehearsal is to be performed;
+- no Testnet rehearsal is required or authorized; complete local Sandbox testing and the independent audit instead;
 - an independent qualified auditor reviews the exact source and compiled artifact (or the owner explicitly accepts deployment without that assurance);
 - exact-B0C Mainnet fee simulation is completed against live configuration and the final wallet balance is confirmed.
 
-Never present internal review as third-party audit or CI Sandbox as Testnet rehearsal.
+Never present internal review as a third-party audit or CI Sandbox as a live Mainnet deployment.

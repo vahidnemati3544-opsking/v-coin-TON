@@ -9,57 +9,59 @@ const { Pool } = require('pg');
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
 
-let migrationSetupPromise = null;
-
-async function applyTestMigrationsOnce(pool) {
-  const databaseDir = path.resolve(__dirname, '../database');
-  await pool.query(
-    'CREATE TABLE IF NOT EXISTS test_schema_migrations (' +
-    'version VARCHAR(100) PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp())'
-  );
-
-  const migrations = [
-    ['000_core_schema', path.join(databaseDir, 'schema.sql')],
-    ['001_mining_reserve', path.join(databaseDir, 'migrations/001-mining-reserve.sql')],
-    ['002_mining_ledger_settlement', path.join(databaseDir, 'migrations/002-mining-ledger-settlement.sql')],
-    ['003_balance_based_mining', path.join(databaseDir, 'migrations/003-balance-based-mining.sql')],
-    ['004_price_reference_candles', path.join(databaseDir, 'migrations/004-price-reference-candles.sql')],
-    ['005_vcoin_supply_and_price_reset', path.join(databaseDir, 'migrations/005-vcoin-supply-and-price-reset.sql')]
-  ];
-
-  for (const [version, file] of migrations) {
-    const applied = await pool.query(
-      'SELECT 1 FROM test_schema_migrations WHERE version = $1',
-      [version]
-    );
-    if (applied.rowCount === 1) continue;
-
-    const sql = await fs.readFile(file, 'utf8');
-    if (version === '003_balance_based_mining') {
-      // Migration 003 predates the checksum-based setup runner and its CHECK
-      // constraint is not idempotent. Apply it once in this isolated test DB.
-      await pool.query(
-        'ALTER TABLE mining_sessions DROP CONSTRAINT IF EXISTS mining_sessions_rate_balance_nonnegative'
-      );
-    }
-    await pool.query(sql);
-    await pool.query(
-      'INSERT INTO test_schema_migrations (version) VALUES ($1)',
-      [version]
-    );
-  }
-}
-
 async function applyTestMigrations(pool) {
-  if (!migrationSetupPromise) {
-    migrationSetupPromise = applyTestMigrationsOnce(pool).catch((error) => {
-      migrationSetupPromise = null;
-      throw error;
-    });
-  }
-  return migrationSetupPromise;
-}
+  const client = await pool.connect();
+  const databaseDir = path.resolve(__dirname, '../database');
+  let lockAcquired = false;
+  try {
+    // Serialize migration setup when node:test runs integration cases in parallel.
+    await client.query('SELECT pg_advisory_lock(741230017)');
+    lockAcquired = true;
 
+    const schema = await fs.readFile(path.join(databaseDir, 'schema.sql'), 'utf8');
+    await client.query(schema);
+
+    const reserveExists = await client.query(
+      "SELECT to_regclass('public.mining_reserve') IS NOT NULL AS present"
+    );
+    if (!reserveExists.rows[0].present) {
+      const reserveMigration = await fs.readFile(
+        path.join(databaseDir, 'migrations/001-mining-reserve.sql'), 'utf8'
+      );
+      await client.query(reserveMigration);
+    }
+
+    const ledgerMigration = await fs.readFile(
+      path.join(databaseDir, 'migrations/002-mining-ledger-settlement.sql'), 'utf8'
+    );
+    await client.query(ledgerMigration);
+
+    // Migration 003 predates the checksum-based setup runner and its CHECK
+    // constraint is not idempotent. Reset only this test-owned constraint.
+    await client.query(
+      'ALTER TABLE mining_sessions DROP CONSTRAINT IF EXISTS mining_sessions_rate_balance_nonnegative'
+    );
+    const balanceMiningMigration = await fs.readFile(
+      path.join(databaseDir, 'migrations/003-balance-based-mining.sql'), 'utf8'
+    );
+    await client.query(balanceMiningMigration);
+
+    const priceMigration = await fs.readFile(
+      path.join(databaseDir, 'migrations/004-price-reference-candles.sql'), 'utf8'
+    );
+    await client.query(priceMigration);
+
+    const supplyMigration = await fs.readFile(
+      path.join(databaseDir, 'migrations/005-vcoin-supply-and-price-reset.sql'), 'utf8'
+    );
+    await client.query(supplyMigration);
+  } finally {
+    if (lockAcquired) {
+      try { await client.query('SELECT pg_advisory_unlock(741230017)'); } catch (_) { /* preserve original error */ }
+    }
+    client.release();
+  }
+}
 
 test('owner-approved supply migration applies the 1.05B mining cap and USD 0.008 reference baseline', {
   skip: !databaseUrl

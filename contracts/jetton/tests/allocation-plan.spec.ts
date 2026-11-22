@@ -40,4 +40,12 @@ describe('VCOIN five-wallet allocation manifest', () => {
       expect(destination).toMatch(/^VCOIN_[A-Z_]+_WALLET$/);
     }
   });
+
+  test('Founder is the shared GAS & OPERATIONS wallet, not a sixth destination', () => {
+    expect(config.operational_fee_wallet.owner_provided_address).toBe(config.allocation_wallets.founder);
+    expect(config.operational_fee_wallet.is_vcoin_allocation_wallet).toBe(true);
+    expect(config.release_intent.gas_operations_wallet_is_founder_wallet).toBe(true);
+    expect(config.release_intent.gas_operations_wallet_is_not_an_allocation_wallet).toBe(false);
+    expect(plan.releaseConstraints.some((item: string) => /separate GAS & OPERATIONS wallet/i.test(item))).toBe(false);
+  });
 });

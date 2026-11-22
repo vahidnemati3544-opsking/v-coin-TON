@@ -66,9 +66,9 @@
 
   <section class="panel">
     <h2>Step 1 — Deploy Master and fund reserve</h2>
-    <p class="small">Connect the registered Founder wallet (also GAS &amp; OPERATIONS). The deployment message carries the Master StateInit, a VCoinFund body, and 0.75 TON minimum attached value. Wallet/network fees are additional.</p>
+    <p class="small">Connect the registered Founder wallet (also GAS &amp; OPERATIONS). The deployment message carries the Master StateInit, a VCoinFund body, and the exact attached TON amount recorded in the signed-off release preview. Wallet/network fees are additional.</p>
     <div class="kv"><strong>Required signer — Founder / GAS &amp; OPERATIONS</strong><code id="gas-signer">Loading…</code></div>
-    <div class="kv" style="margin-top:8px"><strong>Attached value</strong>0.75 TON minimum + wallet/network fees</div>
+    <div class="kv" style="margin-top:8px"><strong>Attached value</strong><span id="deploy-attached-ton">Loading exact preview amount…</span></div>
     <button id="deploy-button" disabled>Deploy VCOIN Master from Founder wallet</button>
     <p id="deploy-result" class="small muted"></p>
   </section>
@@ -114,6 +114,15 @@
   let allocationCount = 0;
 
   function setStatus(message) { status.textContent = message; }
+
+  function tonToNano(value) {
+    const text = String(value);
+    if (!/^\d+(?:\.\d{1,9})?$/.test(text)) {
+      throw new Error('Invalid deployment TON amount in release preview.');
+    }
+    const [whole, fraction = ''] = text.split('.');
+    return (BigInt(whole) * 1000000000n + BigInt(fraction.padEnd(9, '0'))).toString();
+  }
 
   function walletRole() {
     if (!wallet || !preview) return 'disconnected';
@@ -233,7 +242,7 @@
           from: wallet.account.address,
           messages: [{
             address: preview.unsigned_deploy_message.destination,
-            amount: '750000000',
+            amount: tonToNano(preview.unsigned_deploy_message.attached_ton),
             stateInit: preview.unsigned_deploy_message.state_init_boc_base64,
             payload: preview.unsigned_deploy_message.body_boc_base64
           }]

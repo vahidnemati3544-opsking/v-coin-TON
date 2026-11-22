@@ -163,3 +163,18 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 - Predicted Jetton Wallets: Founder EQB8AerdUs4kIiwgXYNXn97vInNGz1i6mM82aRz6Qk-yLXT8; Mining EQDSRCdDD6aozmwM7RIHyt9D-RyayizOMu5xENy0SPXwnWqd; Treasury EQDVyMsB_lGSxbI9-GSfr_Np3NohePKdYpaBEUitvAYFGsy-; Liquidity EQAnRjBQl3D9c0s5GV0t8RlTMReOFQRNNXoc3oyVVgjzl5MH; Ecosystem EQCtNm8cneWOwU_JFfK_rf9Os7_Y8yItALCtI0ZYvoHQX8xs.
 - Preview amounts are confirmed as 420,000,000 / 1,050,000,000 / 210,000,000 / 210,000,000 / 210,000,000 VCOIN, totaling exactly 2,100,000,000. The corresponding base-unit values are generated from the canonical deployment config and validated against its total supply.
 - These are predicted addresses and unsigned payloads only. Independent clean-room hash reproduction of this revised build, third-party contract audit, live fee simulation, successful Testnet rehearsal, deployed-Master getter checks, and owner signatures remain outstanding.
+
+
+## Action #37 — 2.1B release reconciliation and database migration repair
+
+**Status:** Source/document corrections committed; exact 2.1B Jetton build remains passing; PostgreSQL migration and integration tests passed on commit `691399c11d8a12734869b31c917bc07fa208a280`. A docs-only clarification commit followed.
+
+- Corrected the 210,000,000 VCOIN base-unit typo in the official wallet register to 210,000,000,000,000.
+- Corrected current allocation summaries that still listed the old 1B Treasury/Liquidity/Ecosystem amounts.
+- Corrected the deployment runbook base-unit total to 2,100,000,000,000,000 and removed the old 2B/5B/1B/1B/1B issuance instructions from current release guidance.
+- Added migration 004 and 005 to the local database setup runner. Migration 005 lowers the mining reserve to 1,050,000,000 VCOIN only if existing pending plus distributed rewards fit the new cap, and resets the modelled USD reference baseline to 0.008.
+- Updated PostgreSQL integration setup to apply migrations 001–005 in order, serialize migration execution, and assert the 1.05B reserve and 0.008 price baseline.
+- Backend CI run #260 and Mining CI run #262 passed on commit `691399c11d8a12734869b31c917bc07fa208a280`; PostgreSQL tests report 24 passed and 0 failed.
+- Jetton CI run #141 passed Tact compilation, npm audit (0 advisories), Mainnet preview generation, and Jest Sandbox tests on the 2.1B source. Its only failed job was GitHub Pages creation because the GitHub App lacks repository administration permission.
+- The latest 2.1B Master preview remains `EQAriHkG8kqO0GQwwX6ODgqpJCV-oUDKwalDK8lAzYGBWHvV`, StateInit hash `2b887906f24a8ed06430c17e8e0e0aa924257ea140cac1a9432bc940cd818158`. This is unsigned and not deployed.
+- No Mainnet deployment, mint, or wallet credit has occurred. Testnet rehearsal, independent third-party security audit, and clean-room hash reproduction for the revised build remain outstanding.

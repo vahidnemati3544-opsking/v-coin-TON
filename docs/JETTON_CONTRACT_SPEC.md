@@ -34,9 +34,9 @@ All token arithmetic must use integer base units. Floating-point token arithmeti
 | Treasury | 10% | 210,000,000 | 210,000,000,000,000 |
 | Liquidity / market | 10% | 210,000,000 | 210,000,000,000,000 |
 | Ecosystem / marketing | 10% | 210,000,000 | 210,000,000,000,000 |
-| **Total** | **100%** | **10,000,000,000** | **10,000,000,000,000,000** |
+| **Total** | **100%** | **2,100,000,000** | **2,100,000,000,000,000** |
 
-The Founder receives the full 420,000,000 VCOIN allocation in one operation. No vesting, time lock, or installment schedule applies to the Founder allocation. The five owner-designated allocation addresses are recorded in `docs/WALLET_ALLOCATION_REGISTER.md`. The separate GAS & OPERATIONS wallet is for TON fees only and is not a VCOIN allocation recipient.
+The Founder receives the full 420,000,000 VCOIN allocation in one operation. No vesting, time lock, or installment schedule applies to the Founder allocation. The five owner-designated allocation addresses are recorded in `docs/WALLET_ALLOCATION_REGISTER.md`. The Founder wallet is one of the five allocation recipients and also serves as the sole GAS & OPERATIONS wallet; there is no separate fee wallet or sixth address.
 
 ## 3. Current Master contract behavior
 
@@ -46,7 +46,7 @@ The current implementation is in `contracts/jetton/src/vcoin.tact` and `contract
 - The Founder wallet is the sole `VCoinMint` authority.
 - Each configured destination can receive only its exact fixed allocation, once.
 - The Master rejects unknown destinations, wrong amounts, duplicate issuance, unauthorized senders, and issuance above the fixed supply.
-- A separate GAS & OPERATIONS wallet may fund the Master reserve through `VCoinFund`; it cannot issue VCOIN.
+- The Founder wallet, also serving as GAS & OPERATIONS, may fund the Master reserve through `VCoinFund`; it is the sole `VCoinMint` authority.
 - The Master sets `mintable=false` after all five allocation credits complete.
 - A natural bounce from a deterministic destination Jetton Wallet is authenticated by sender address and exact amount; only the affected role is rolled back and eligible for retry.
 - The Jetton Wallet implementation contains owner-authorized transfer and burn paths, validates internal wallet relationships, and restores balances after applicable bounced operations.
@@ -69,13 +69,13 @@ VCoinMaster(
 )
 ```
 
-Use `contracts/jetton/allocation/INIT_PARAMETERS.md` and `docs/WALLET_ALLOCATION_REGISTER.md` as the canonical mapping. The five owner addresses and the separate fee wallet must be pairwise distinct, correctly represented for TON Mainnet, and verified before any transaction. The owner addresses are not the derived Jetton Wallet contract addresses. Derive each holder Jetton Wallet from the deployed Master and verify it before issuance.
+Use `contracts/jetton/allocation/INIT_PARAMETERS.md` and `docs/WALLET_ALLOCATION_REGISTER.md` as the canonical mapping. The five allocation owner addresses must be pairwise distinct, correctly represented for TON Mainnet, and verified before any transaction. `gasOperatorWallet` must equal the Founder/owner address exactly; it is not a sixth wallet. The owner addresses are not the derived Jetton Wallet contract addresses. Derive each holder Jetton Wallet from the deployed Master and verify it before issuance.
 
 Recording an address does not prove wallet control. Use a safe signed wallet-control proof or equivalent verification; never request or store a seed phrase, private key, PIN, or recovery code.
 
 ## 5. Metadata
 
-The Master stores a TEP-64 content cell. The approved name, symbol, six decimals, canonical icon, and metadata URI/content must be assembled into a reviewed metadata package before deployment. Current deployment template metadata URI is intentionally null; metadata packaging, content-cell construction, and immutable URI verification are release blockers. The canonical logo is documented under `contracts/jetton/assets/`.
+The Master stores a TEP-64 content cell. The current build generates the metadata content cell from `contracts/jetton/metadata.json` and a commit-pinned raw GitHub URI recorded in `deployment.config.template.json`. The metadata cell hash and URI are included in the unsigned preview. The canonical logo is not embedded in the current metadata because the locked `.png` asset has JPEG signature bytes; image-format normalization and final icon inclusion remain a separate metadata release decision. Verify the URI and content cell before signing.
 
 Do not deploy with empty or placeholder metadata. Verify the resulting metadata through the deployed Master getter and an independent TEP-64 parser.
 
@@ -126,7 +126,7 @@ Deployment, gas-reserve funding, and each of the five allocation issuance messag
 - Contract source and Sandbox tests: present.
 - Exact-head CI: passed on the recorded commit.
 - Generated lockfile: in CI artifact; not yet committed to `main`.
-- Metadata package and content cell: pending.
+- Metadata JSON, immutable commit-pinned URI and content cell: generated in CI; canonical logo inclusion/format review remains pending.
 - Independent security / standards review: pending.
 - Independent TON cell and StateInit hash reproduction: pending.
 - Mainnet wallet-control proofs: pending.

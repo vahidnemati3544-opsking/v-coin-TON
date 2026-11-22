@@ -59,7 +59,7 @@ If stronger custody controls are required for a particular allocation, use a dis
 | Ecosystem and marketing | 10% | 210,000,000 VCOIN |
 | **Total** | **100%** | **2,100,000,000 VCOIN** |
 
-The exact five allocation owner addresses are maintained in `docs/WALLET_ALLOCATION_REGISTER.md`. Founder allocation remains subject to the approved no vesting or time lock. The exact vesting contract and schedule must be specified before implementation. The mining reserve is a pre-existing allocation; mining rewards must be paid from this reserve and must never mint new tokens.
+The exact five allocation owner addresses are maintained in `docs/WALLET_ALLOCATION_REGISTER.md`. The Founder allocation is immediate and has no vesting, time lock, monthly installments or staged release. No Founder vesting contract or schedule is required or authorized. The mining reserve is a pre-existing allocation; mining rewards must be paid from this reserve and must never mint new tokens.
 
 ## 6. Operational TON network-fee funding
 

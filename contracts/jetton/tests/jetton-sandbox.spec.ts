@@ -447,7 +447,7 @@ describe('VCOIN Jetton Sandbox release gates', () => {
       to: owner.address,
       success: true,
     });
-    expect((await blockchain.getContract(master.address)).account.balance).toBeGreaterThan(toNano('0.25'));
+    expect((await blockchain.getContract(master.address)).account.account.storage.balance.coins).toBeGreaterThan(toNano('0.25'));
   });
 
   test('rejects withdrawals that breach the protected reserve and rejects zero amount', async () => {

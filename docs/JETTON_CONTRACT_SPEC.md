@@ -16,8 +16,8 @@
 | Name | V COIN |
 | Symbol | VCOIN |
 | Decimals | 6 |
-| Total initial supply | 10,000,000,000 VCOIN |
-| Total supply in base units | 10,000,000,000,000,000 |
+| Total initial supply | 2,100,000,000 VCOIN |
+| Total supply in base units | 2,100,000,000,000,000 |
 | Standard | TON Jetton, TEP-74 |
 | Metadata | TEP-64 |
 | Additional minting | Disabled after all five allocations complete |
@@ -135,3 +135,18 @@ Deployment, gas-reserve funding, and each of the five allocation issuance messag
 - Mainnet authorization: false.
 
 No Testnet deployment is included in the current execution path. This specification does not authorize deployment, issuance, or transfer.
+
+
+## 10. Purchase and mining distribution policy (owner-approved)
+
+### TON-to-VCOIN purchase
+
+A purchase is a transfer of existing VCOIN, not a mint operation. After the TON payment is verified as final and attributable to the purchase, the corresponding VCOIN amount is transferred from the Founder allocation Jetton wallet to the buyer's verified TON Jetton wallet. The TON consideration is directed to the Founder allocation wallet. The backend must bind payment and delivery using a unique order/idempotency key, verify exact amounts and recipient addresses, and reconcile both legs. A failed or bounced VCOIN delivery must remain unresolved/refundable or retryable under an explicit reviewed policy; it must never be recorded as completed delivery.
+
+### Level-qualifying balance
+
+For level calculation, the user's eligible purchased VCOIN and eligible mining rewards are added together. Their source classifications remain separate in the ledger and user balance history. The backend must prevent pending, reversed, rejected, or already-paid mining rewards from being counted twice. Level upgrade costs and the resulting level update must be atomic.
+
+### Final mining payout
+
+The mining allocation is capped at 1,050,000,000 VCOIN (1,050,000,000,000,000 base units). During mining, eligible rewards remain internal accounting claims and are not described as on-chain holdings. Only after the Founder formally declares mining complete and a full reserve/user reconciliation passes may the backend prepare on-chain payouts from the designated mining-reserve Jetton wallet to each user's verified Jetton wallet. A payout becomes paid only after the TON transaction is verified final and successful. Idempotency, replay protection, bounce handling, reserve exhaustion controls, and audit logs are mandatory. No additional minting is permitted.

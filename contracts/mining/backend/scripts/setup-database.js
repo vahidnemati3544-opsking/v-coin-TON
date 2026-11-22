@@ -75,6 +75,11 @@ const migrations = [
     version: '006_annual_compound_price_policy',
     description: 'Apply the owner-approved 50% annual compound model in 72-hour periods',
     file: path.resolve(__dirname, '../database/migrations/006-annual-compound-price-policy.sql')
+  },
+  {
+    version: '007_purchase_and_mining_payout_settlement',
+    description: 'Add idempotent TON purchase records and Founder-approved mining payout batches',
+    file: path.resolve(__dirname, '../database/migrations/007-purchase-and-mining-payout-settlement.sql')
   }
 ];
 

@@ -3,8 +3,8 @@
 **Date:** 2026-11-22  
 **Repository:** `vahidnemati3544-opsking/v-coin-TON`  
 **Branch:** `main`  
-**Exact source snapshot / CI commit:** `fa4f904cb9135a1fc4a1ea94181290b55b662772`  
-**CI run:** [45063344479](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45063344479)  
+**Exact source snapshot / CI commit:** `90c0d71adbfb3dbe8b645958eda0e4deb598bd86`  
+**CI run:** [45063673730](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45063673730)  
 **Disposition:** Corrections committed; full source + build bundle assembled and integrity-tested; Pages deployment succeeded; Mainnet remains NO-GO.
 
 ## 1. Critical implementation corrections
@@ -52,7 +52,7 @@ The legacy internal-balance engine is explicitly marked as test-only and not com
 
 ## 2. GitHub Pages and CI verification
 
-The exact-head run `45063344479` completed successfully:
+The exact-head run `45063673730` completed successfully:
 
 - `build-and-test`: success.
 - Dependency lockfile install and audit enforcement: success.
@@ -80,24 +80,24 @@ These are isolated CI test environments; they do not mean a production database 
 
 ### Full source snapshot
 
-- Artifact ID: `14770815613`
-- Source commit: `fa4f904cb9135a1fc4a1ea94181290b55b662772`
-- Source ZIP SHA-256: `fe1b33685759d8b50d75df0f19c4b4e48d6d9d966ec55ed706d7ef91cc3dee72`
-- 94 repository source/documentation files; no `.git`, `node_modules` or secrets.
+- Artifact ID: `14770701121`
+- Source commit: `90c0d71adbfb3dbe8b645958eda0e4deb598bd86`
+- Source ZIP SHA-256: `ead200093f24898084cd6535b9500024d845510c3eca60c97c9f5160fd13a2f1`
+- 100 source/configuration entries, including the safe `.env.example` and `.gitignore`; no `.git`, `node_modules` or secrets.
 
 ### Exact-head contract build artifact
 
-- Artifact ID: `14770282616`
-- ZIP SHA-256: `961bce8e1a11441fa0a959710a7197fd2b7f65174eb79a50602301883e75c163`
+- Artifact ID: `14769907918`
+- ZIP SHA-256: `349ab278406927a12e6ea7ded99e2ed85649c8133d13cd6bbd1124dad0e0d4f2`
 - 32 build outputs including Master and Jetton Wallet BOCs, five predicted Jetton Wallet StateInit BOCs, Sandbox test build outputs, metadata cell, unsigned preview, dependency lockfile and npm audit report.
 
 ### Combined complete project ZIP
 
 The combined archive merges the full 94-file source snapshot with the exact-head contract build outputs, generated deployment preview and a release manifest:
 
-- File: `VCOIN-TON-COMPLETE-SOURCE-AND-RELEASE-fa4f904c.zip`
-- SHA-256: `90d313a00197fae58332335d04c6dff02fdcd485c76af6263f66d34aff231d70`
-- 126 entries.
+- File: `VCOIN-TON-COMPLETE-SOURCE-AND-RELEASE-90c0d71a.zip`
+- SHA-256: `fc2dcb9d9e80657a505e2e1b21be2fbc473e7b43595eba8ecfce7d685a8bfc40`
+- 133 entries.
 - ZIP integrity test: PASS.
 - Required source, backend, mining, issuer, compiled contract and preview files: present.
 

@@ -34,9 +34,9 @@ The system must support:
 
 Mining calculations must be deterministic and auditable.
 
-### Approved balance-based reward rule
+### Legacy internal-balance reward model — not approved for public extraction
 
-For every account at every level from 1 through 400, the daily reward is 1% of the user's eligible available internal VCOIN balance. Level number does not multiply, reduce, or otherwise change the reward rate.
+The legacy engine currently calculates 1% per 24 hours from the user's eligible available internal VCOIN balance at every level 1–400. This model is retained for isolated unit/integration tests only. It is superseded for public extraction by the owner-approved rule below, which requires verified on-chain Jetton wallet balance snapshots.
 
 With six token decimals, calculations use integer base units:
 - Daily reward: eligible balance / 100.
@@ -45,7 +45,7 @@ With six token decimals, calculations use integer base units:
 
 The USD interpretation is 1% of the account's VCOIN value per day. Since the same VCOIN market price values both the balance and the reward, the price cancels when converting the rule back into VCOIN units. Therefore no hard-coded USD price or unverified price feed is used by the reward engine. If the VCOIN price changes, the user's USD balance value and the USD value of the reward change proportionally, while the token reward remains 1% of the eligible token balance per 24 hours.
 
-The engine snapshots eligible available balance at session start and after each successful claim. A later deposit is applied to the next accrual interval and is not retroactively rewarded. Reserved balances are excluded. Rewards are credited to the internal account and remain subject to the 1,050,000,000 VCOIN mining reserve. This rule is identical for levels 1–400.
+The legacy engine snapshots the internal eligible balance at session start and after each successful claim. Rewards are credited only to the internal accounting balance; this is not an on-chain holding or payout. Do not expose this engine as live extraction. The 1,050,000,000 VCOIN reserve remains a hard cap.
 
 4. Level Progression System
 
@@ -128,13 +128,13 @@ Before production:
 - Reward calculations must be tested.
 - Security tests must be completed.
 - Distribution limits must be verified.
-- TON testnet integration must be validated.
+- Local TON Sandbox integration and wallet-state simulations must be validated. No Testnet deployment or transaction is authorized.
 
 11. Development Status
 
 Implemented in code: deterministic balance-based 1% daily reward calculation, session balance snapshots, reserve enforcement, internal ledger settlement, authenticated API status estimates, and unit tests for the reward formula. Database migration and full CI/local PostgreSQL verification remain required.
 
-Pending: approved 400-level rates/costs, local PostgreSQL verification, complete Telegram Mini App onboarding, additional abuse controls, wallet signature verification, and TON Jetton Testnet integration.
+Pending: approved 400-level rates/costs, local PostgreSQL verification, complete Telegram Mini App onboarding, additional abuse controls, wallet signature verification, and TON Mainnet wallet-balance adapter design and local Sandbox verification.
 
 The system is not production-ready. Internal mining credits are not on-chain tokens and do not authorize Mainnet deployment or public reward distribution.
 
@@ -152,7 +152,7 @@ The source of truth for the next mining interval is the user's **verified on-cha
 
 The current engine still uses the internal `balances.available_base_units` field and credits rewards back to that internal balance. It is therefore not yet compliant with the approved wallet-balance rule and must not be used for owner extraction. See `docs/WALLET_BALANCE_MINING_SPEC.md` for the required wallet proof, Jetton master validation, immutable balance snapshot, pending reward, confirmed payout, anti-double-counting, and fail-closed rules.
 
-Wallet balance reader, ownership proof, Jetton payout, and on-chain reconciliation are not implemented/verified by the current code. Keep extraction disabled until these components and their TON Testnet integration tests pass.
+Wallet balance reader, ownership proof, Jetton payout, and on-chain reconciliation are not implemented/verified by the current code. Keep extraction disabled until these components and their local Sandbox/integration tests pass, followed by independent security review and explicit Founder approval for Mainnet.
 
 
-**Safety gate:** The public `/api/v1/mining` endpoints currently return HTTP 503 (`WALLET_BALANCE_MINING_NOT_IMPLEMENTED`). The previous internal-balance engine is not exposed as an extraction API. This guard must remain until the verified TON wallet-balance implementation and payout reconciliation have passed tests.
+**Safety gate:** The public `/api/v1/mining` endpoints currently return HTTP 503 (`WALLET_BALANCE_MINING_NOT_IMPLEMENTED`). The previous internal-balance engine is not exposed as an extraction API. This guard must remain until the verified TON wallet-balance implementation and payout reconciliation have passed local Sandbox and isolated integration tests. Testnet deployment and transactions are not authorized.

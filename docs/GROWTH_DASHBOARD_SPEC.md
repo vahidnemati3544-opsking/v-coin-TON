@@ -10,9 +10,9 @@ Provide a public, read-only dashboard that displays the project's internally def
 
 ## 2. Approved display parameters
 
-- Initial reference index: **USD 0.004000 per VCOIN**.
-- Target growth rate: **1% compounded per 72 hours**.
-- Mathematical model: `P(t) = 0.004 × 1.01^(elapsed_seconds / 259200)`.
+- Initial reference index: **USD 0.008000 per VCOIN**.
+- Target growth rate: **1% compounded per 72 hours** (dashboard specification). The current backend price-reference API uses 0.2041% per 72 hours; this discrepancy must be reconciled before the dashboard schedule is treated as operational.
+- Mathematical model: `P(t) = 0.008 × 1.01^(elapsed_seconds / 259200)`.
 - The dashboard is intended to update its display every second.
 - Candlesticks should use a green visual treatment.
 - The index clock begins only when an authorized project administrator starts the extraction period and stops only when an authorized administrator declares that period finished.

@@ -75,7 +75,7 @@ Recording an address does not prove wallet control. Use a safe signed wallet-con
 
 ## 5. Metadata
 
-The Master stores a TEP-64 content cell. The current build generates the metadata content cell from `contracts/jetton/metadata.json` and a commit-pinned raw GitHub URI recorded in `deployment.config.template.json`. The metadata cell hash and URI are included in the unsigned preview. The canonical logo is not embedded in the current metadata because the locked `.png` asset has JPEG signature bytes; image-format normalization and final icon inclusion remain a separate metadata release decision. Verify the URI and content cell before signing.
+The Master stores a TEP-64 content cell. The current build generates the metadata content cell from `contracts/jetton/metadata.json` and the immutable commit-pinned raw GitHub URI recorded in `deployment.config.template.json`. Metadata includes the canonical Founder-approved V COIN logo through the public GitHub Pages JPEG URL. The original image bytes are preserved, and the repository asset uses the correct `.jpg` extension. The exact-head CI preview records the metadata URI and content-cell hash; verify both before signing.
 
 Do not deploy with empty or placeholder metadata. Verify the resulting metadata through the deployed Master getter and an independent TEP-64 parser.
 
@@ -126,7 +126,7 @@ Deployment, gas-reserve funding, and each of the five allocation issuance messag
 - Contract source and Sandbox tests: present.
 - Exact-head CI: passed on the recorded commit.
 - Generated lockfile: in CI artifact; not yet committed to `main`.
-- Metadata JSON, immutable commit-pinned URI and content cell: generated in CI; canonical logo inclusion/format review remains pending.
+- Metadata JSON, immutable commit-pinned URI, content cell, and canonical logo URL: generated and verified in exact-head CI; external TEP-64 parser review remains a release gate.
 - Independent security / standards review: pending.
 - Independent TON cell and StateInit hash reproduction: pending.
 - Mainnet wallet-control proofs: pending.

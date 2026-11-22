@@ -36,7 +36,7 @@ VCoinMaster(
 4. Confirm the five allocation addresses are pairwise distinct.
 5. Confirm the intended TON network and address control without requesting or storing seed phrases.
 6. Confirm get_allocation_config and get_gas_operator_wallet both report the Founder address in their respective roles.
-7. Do not issue VCOIN until independent review, Testnet rehearsal, and explicit Mainnet approval are complete.
+7. Do not issue VCOIN until independent qualified review, clean-room rebuild, live fee/reserve review, local Sandbox tests, and explicit Founder approval are complete. No Testnet deployment or transaction is authorized.
 
 ## Issuance procedure
 
@@ -44,4 +44,4 @@ The Founder wallet, serving as both owner and GAS & OPERATIONS, funds the Master
 
 ## Founder allocation
 
-The Founder receives exactly 420,000,000 VCOIN as one allocation. This release design has no vesting contract or time lock. This does not waive independent contract review, Testnet rehearsal, or explicit Mainnet authorization.
+The Founder receives exactly 420,000,000 VCOIN as one allocation. This release design has no vesting contract or time lock. This does not waive independent contract review, clean-room rebuild, local Sandbox tests, live fee/reserve review, or explicit Mainnet authorization. Testnet deployment and transactions are not authorized.

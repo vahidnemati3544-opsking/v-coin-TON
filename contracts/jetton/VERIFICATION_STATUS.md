@@ -1,3 +1,25 @@
+# CURRENT MAINNET RELEASE PREFLIGHT — 2026-11-22 (Action #52; supersedes prior status entries below)
+
+**Latest exact-head contract artifact:** GitHub Actions run #252 / artifact `14768219639`  
+**Artifact source commit:** `22534f7d03d896ea45fbe330a7a5a9940d44d419`  
+**Artifact SHA-256:** `800946828268df7e1b522c9da5d162f878814711c02a7525dff1eafbc99fa853`  
+**Current repository HEAD after documentation-only review:** `7af2ee4f6e51cd4ed5eb3a32854d70fefbb649d9`  
+**Release disposition: NO-GO for Mainnet deployment and issuance.**
+
+- Run #252 `build-and-test` passed: dependency audit, Tact compilation, TEP-64 metadata content-cell build, unsigned Mainnet preview generation, Jest tests, issuer syntax/sequence guards and artifact upload.
+- The ZIP artifact was independently inspected locally. Its SHA-256 matches the recorded CI artifact digest. It contains 32 contract-build files (compiled Master/Wallet outputs, StateInit BOCs, preview, metadata, lockfile and audit report); it is not a complete project/backend/mining-source ZIP.
+- Artifact preview confirms 2,100,000,000 VCOIN, six decimals, five allocations of 420M / 1,050M / 210M / 210M / 210M, and the five registered owner addresses. Allocation arithmetic sums exactly to 2.1B.
+- The commit-pinned metadata URI resolves to the same `metadata.json` content currently on main; the content-cell hash remains `6dc0e0c3a9ec89e72fc8402a13915bb425032a0e57dfa955ba5579eab28c940c`.
+- The latest branch commit after the artifact source commit changes only `docs/MAINNET_RELEASE_HASH_REPRODUCTION_ACTION_51.md`; the contract source, deployment inputs, metadata and package lock were not changed after the run #252 artifact.
+- Pages job `137327106113` failed at `actions/configure-pages@v5`: Pages site lookup returned 404, and the GitHub Actions integration was denied permission to create the Pages site (`Resource not accessible by integration`). TonConnect issuer publication is therefore not confirmed.
+- Mainnet deployment, issuance and transfers have not been sent. The ZIP is unsigned and the predicted Master/Jetton Wallet addresses are not on-chain evidence.
+- Remaining gates: qualified independent smart-contract/TEP-74/TEP-64 audit; independent clean-room source rebuild; live fee and reserve review; Founder verification of network, signer, metadata, addresses and exact payloads; explicit Founder signature for deployment and each separate allocation.
+- Current execution policy is Mainnet-only. No Testnet deployment or Testnet transaction is authorized. The Founder allocation wallet is also the sole GAS & OPERATIONS wallet; no separate fee wallet or sixth allocation destination exists.
+
+See [Action #52 repository and ZIP review](../../docs/PROJECT_REVIEW_ACTION_52.md).
+
+---
+
 # CURRENT MAINNET RELEASE PREFLIGHT — 2026-11-22 (Action #51; supersedes prior status entries below)
 
 **Artifact:** run #249 / artifact `14767013070`  

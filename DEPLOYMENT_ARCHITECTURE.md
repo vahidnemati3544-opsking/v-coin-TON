@@ -95,7 +95,7 @@ Redis may be used for caching, temporary sessions, and background job coordinati
 Blockchain services must support:
 
 - TON network connectivity.
-- Mainnet and testnet separation.
+- Mainnet-only release controls; no Testnet deployment or transaction is authorized.
 - Smart contract deployment.
 - Transaction monitoring.
 - Wallet address verification.
@@ -258,7 +258,7 @@ Production launch requires verification of:
 
 - Backend functionality.
 - Database integrity.
-- TON testnet integration.
+- Local TON Sandbox integration and gated Mainnet readiness.
 - Smart contract security.
 - Wallet functionality.
 - Mining accuracy.

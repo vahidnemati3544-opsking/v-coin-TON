@@ -12,7 +12,7 @@
 
 This is the canonical register of the five wallet addresses designated by the project owner for the five approved VCOIN allocation categories. These five addresses are the only approved allocation destinations in the current design. Do not substitute, add, or silently reassign any wallet.
 
-This register records owner-provided addresses and intended allocations. It does not prove address ownership or control, establish a deployed Jetton balance, or evidence that any transfer has occurred.
+This register records owner-provided addresses and intended allocations. The project owner has explicitly confirmed that the entire 10,000,000,000 VCOIN supply is to be issued and allocated across these five wallets; the Founder wallet is one of the five, not an additional sixth destination. This confirmation does not prove address ownership or control, establish a deployed Jetton balance, or evidence that any transfer has occurred.
 
 ## 2. Approved five-wallet allocation
 

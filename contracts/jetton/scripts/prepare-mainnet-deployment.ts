@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { Address, beginCell, Cell, storeStateInit } from '@ton/core';
-import { VCoinMaster } from '../build/VCoinMaster_VCoinMaster';
+import { VCoinMaster, storeVCoinFund } from '../build/VCoinMaster_VCoinMaster';
 import { VCoinJettonWallet } from '../build/VCoinMaster_VCoinJettonWallet';
 
 const root = path.resolve(__dirname, '..');
@@ -48,6 +48,7 @@ async function main() {
   }
 
   const stateInitCell = beginCell().store(storeStateInit(master.init)).endCell();
+  const deployFundingBody = beginCell().store(storeVCoinFund({ $type: 'VCoinFund' })).endCell();
   const stateInitBoc = stateInitCell.toBoc();
   const stateInitHash = stateInitCell.hash().toString('hex');
   const derivedAddress = new Address(0, stateInitCell.hash());
@@ -90,13 +91,16 @@ async function main() {
     unsigned_deploy_message: {
       destination: master.address.toString({ bounceable: true, urlSafe: true, testOnly: false }),
       state_init_boc_base64: stateInitBoc.toString('base64'),
-      body_boc_base64: Cell.EMPTY.toBoc().toString('base64'),
-      attached_ton: null,
-      fee_quote_required: true,
+      body_boc_base64: deployFundingBody.toBoc().toString('base64'),
+      body_type: 'VCoinFund',
+      attached_ton: '0.75',
+      attached_ton_purpose: 'minimum Master gas reserve funding required by VCoinFund',
+      network_fee_quote_required: true,
     },
     signing: {
-      signer: wallets.founder,
-      method: 'Founder reviews and signs in Tonkeeper',
+      signer: gasWallet,
+      method: 'GAS & OPERATIONS wallet deploys Master and funds its reserve in one Tonkeeper-signed transaction',
+      allocation_issuance_signer: wallets.founder,
       private_key_or_seed_phrase_required_by_assistant: false,
       broadcasted: false,
     },

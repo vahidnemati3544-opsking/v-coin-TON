@@ -37,6 +37,8 @@ jobs:
         run: npm audit --audit-level=high
       - name: Compile Tact contracts
         run: npm run build
+      - name: Build immutable TEP-64 metadata content cell
+        run: node scripts/build-metadata-cell.cjs "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${GITHUB_SHA}/contracts/jetton/metadata.json"
       - name: Run Jest tests
         run: npm test
       - name: Commit generated dependency lockfile when missing or changed

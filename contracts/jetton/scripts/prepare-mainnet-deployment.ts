@@ -57,11 +57,11 @@ async function main() {
   }
 
   const allocationAmounts: Record<string, { tokens: string; baseUnits: string }> = {
-    founder: { tokens: '2000000000', baseUnits: '2000000000000000' },
-    mining_reserve: { tokens: '5000000000', baseUnits: '5000000000000000' },
-    treasury: { tokens: '1000000000', baseUnits: '1000000000000000' },
-    liquidity_market: { tokens: '1000000000', baseUnits: '1000000000000000' },
-    ecosystem_marketing: { tokens: '1000000000', baseUnits: '1000000000000000' },
+    founder: { tokens: '420000000', baseUnits: '420000000000000' },
+    mining_reserve: { tokens: '1050000000', baseUnits: '1050000000000000' },
+    treasury: { tokens: '210000000', baseUnits: '22100000000000' },
+    liquidity_market: { tokens: '210000000', baseUnits: '22100000000000' },
+    ecosystem_marketing: { tokens: '210000000', baseUnits: '22100000000000' },
   };
   const issuanceTransactions: Record<string, unknown> = {};
   for (const [role, ownerAddress] of Object.entries(allocationOwners)) {
@@ -110,12 +110,12 @@ async function main() {
     },
     issuance_transactions: issuanceTransactions,
     allocations: {
-      founder: '2000000000',
-      mining_reserve: '5000000000',
-      treasury: '1000000000',
-      liquidity_market: '1000000000',
-      ecosystem_marketing: '1000000000',
-      total_supply: '10000000000',
+      founder: '420000000',
+      mining_reserve: '1050000000',
+      treasury: '210000000',
+      liquidity_market: '210000000',
+      ecosystem_marketing: '210000000',
+      total_supply: '2100000000',
       decimals: 6,
     },
     unsigned_deploy_message: {

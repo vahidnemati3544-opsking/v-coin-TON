@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { Address, beginCell, Cell, storeStateInit } from '@ton/core';
-import { VCoinMaster, VCoinJettonWallet } from '../build/VCoinMaster_VCoinMaster';
+import { VCoinMaster } from '../build/VCoinMaster_VCoinMaster';
+import { VCoinJettonWallet } from '../build/VCoinMaster_VCoinJettonWallet';
 
 const root = path.resolve(__dirname, '..');
 const readJson = (file: string) => JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'));

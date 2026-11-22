@@ -48,6 +48,25 @@ jobs:
         run: npx tsx scripts/prepare-mainnet-deployment.ts
       - name: Run Jest tests
         run: npm test
+      - name: Preserve complete V COIN–TON source snapshot
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vcoin-ton-full-source-${{ github.sha }}
+          path: |
+            .github/
+            contracts/
+            docs/
+            issuer/
+            README.md
+            BACKEND-ARCHITECTURE.md
+            DEPLOYMENT_ARCHITECTURE.md
+            !**/node_modules/**
+            !contracts/jetton/build/**
+            !contracts/jetton/build-test/**
+            !**/.env
+          if-no-files-found: error
+          retention-days: 30
       - name: Prepare TonConnect issuer site assets
         run: |
           python ../../issuer/generate_icon.py

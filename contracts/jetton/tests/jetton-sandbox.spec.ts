@@ -5,10 +5,10 @@ import { VCoinMaster } from '../build/VCoinMaster_VCoinMaster';
 import { VCoinJettonWallet } from '../build/VCoinMaster_VCoinJettonWallet';
 import { BounceRejector } from '../build-test/BounceRejector_BounceRejector';
 
-const FOUNDER_ALLOCATION = 2_000_000_000_000_000n;
-const MINING_ALLOCATION = 5_000_000_000_000_000n;
-const ONE_BILLION_ALLOCATION = 1_000_000_000_000_000n;
-const MAX_SUPPLY = 10_000_000_000_000_000n;
+const FOUNDER_ALLOCATION = 420_000_000_000_000n;
+const MINING_ALLOCATION = 1_050_000_000_000_000n;
+const ONE_BILLION_ALLOCATION = 210_000_000_000_000n;
+const MAX_SUPPLY = 2_100_000_000_000_000n;
 
 async function deployMaster(
   blockchain: Blockchain,

@@ -1,0 +1,8 @@
+:root{color-scheme:dark;font-family:Inter,system-ui,sans-serif;background:#090909;color:#f4f0e7}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at top,#292015 0,#090909 48rem)}
+.shell{width:min(100% - 2rem,42rem);margin:0 auto;padding:3rem 0}header{text-align:center;padding:1.5rem 0 2rem}
+.eyebrow{color:#c69a43;letter-spacing:.25em;font-size:.75rem}h1{margin:.25rem 0;font-size:clamp(2.5rem,12vw,4rem);letter-spacing:.12em;color:#d5ad5d}
+.subtitle{color:#b8b1a4}.status,.panel{border:1px solid #55452a;border-radius:1rem;background:#11100e;padding:1rem 1.25rem;margin:1rem 0}
+.status{display:flex;justify-content:space-between;gap:1rem;color:#d5ad5d}h2{margin-top:0;font-size:1.1rem}p{line-height:1.6;color:#d0c9bc}
+.notice{color:#e1b85f;font-size:.9rem}button{border:1px solid #bd9140;border-radius:.6rem;padding:.8rem 1rem;color:#111;background:#d5ad5d;font-weight:700;cursor:pointer}
+button:focus-visible{outline:2px solid white;outline-offset:3px}footer{text-align:center;color:#82796a;font-size:.8rem;padding:2rem 0}

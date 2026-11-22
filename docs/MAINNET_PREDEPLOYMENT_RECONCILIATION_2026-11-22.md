@@ -1,5 +1,7 @@
 # V COIN–TON Mainnet Pre-deployment Reconciliation
 
+> **Current correction (2026-11-22; supersedes stale gate statements below):** The approved policy is Mainnet-only; no Testnet deployment or transaction is authorized. Founder is also the sole GAS & OPERATIONS wallet (not a sixth address). The Master source contains the Founder-only `VCoinWithdraw` message, protected by a 0.25 TON reserve and 0.10 TON fee buffer. GitHub Pages deployment later succeeded in Actions run `45062813801`; the hosted issuer URL is `https://vahidnemati3544-opsking.github.io/v-coin-TON/`. This historical Action #45 reconciliation remains evidence for its stated older artifact only; use the current Action #52/#53 records for present release status.
+
 **Action:** 45  
 **Date:** 2026-11-22  
 **Scope:** Reconciliation of source/build provenance, TON hashes and deterministic addresses, and the five allocation destinations for the selected 2.1B VCOIN Mainnet release candidate.  
@@ -55,10 +57,10 @@ The Founder address is also the sole GAS & OPERATIONS address, as confirmed by t
 
 ## 4. Remaining release gates — NOT PASSED
 
-1. No real TON Testnet deployment and five-wallet issuance rehearsal is evidenced. The project owner previously directed that Testnet not be used; this conflicts with the project's documented deployment safety gate and must be explicitly resolved before Mainnet.
+1. TON Testnet deployment and transactions are not authorized under the current Mainnet-only execution policy. Local Sandbox tests are the permitted simulation path; the historical Testnet rehearsal requirement is superseded.
 2. Independent third-party smart-contract, TEP-74 and TEP-64 security audit remains outstanding.
-3. Live fee simulation and final Master reserve funding review remain outstanding. The current Master has no TON withdrawal method; unused TON sent to it is not recoverable through the current contract.
-4. GitHub Pages issuer deployment remains blocked by repository administration permission. This is separate from the successful contract build/test job.
+3. Live fee simulation and final Master reserve funding review remain outstanding. The Master includes an owner-only `VCoinWithdraw` path to the Founder address, protected by a 0.25 TON minimum reserve and 0.10 TON fee buffer; this is not a live fee quote and the issuer does not expose a withdrawal control.
+4. GitHub Pages issuer deployment subsequently succeeded in Actions run `45062813801` on commit `e3f1ed4f0150dc21bb901862b78d4d0fe5473971`; the deployment log confirms the published URL `https://vahidnemati3544-opsking.github.io/v-coin-TON/`. The latest issuer reserve-amount correction is being validated by the newer Actions run.
 5. After any deployment, verify Master getters, all five `get_wallet_address` results, total supply and allocation status before any issuance signature.
 
 ## 5. Final disposition

@@ -39,30 +39,28 @@ The rate is exactly 1% per 24 hours at every level 1–400. Use integer base uni
 
 ## 6. Network and release gates
 
-Development, Testnet and Mainnet configurations must be separate. Testnet deployment and wallet-based extraction require completed local tests, verified contract identity, wallet proof, chain reader, payout reconciliation and owner approval. Mainnet deployment, initial issuance and real-value transfers require separate explicit approval and independent security review.
+The current execution policy is Mainnet-only. Local development, deterministic builds, offline inspection and TON Sandbox tests are permitted. No TON Testnet deployment or Testnet transaction is authorized. Never mix Testnet and Mainnet addresses, balances, payloads or wallet sessions.
 
-## 7. Operational TON network-fee wallet
+Mainnet deployment, initial issuance and real-value transfers remain NO-GO until the exact source and artifacts are reviewed, local Sandbox tests pass, an independent qualified smart-contract/TEP-74/TEP-64 audit is completed, a clean-room rebuild and live fee/reserve review pass, and the Founder explicitly approves and signs each transaction.
 
-The project owner has approved the separate Tonkeeper address below as the sole designated wallet for depositing TON intended for network fees and authorized operational transaction costs:
+## 7. Founder / GAS & OPERATIONS wallet
 
-`UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB`
+The Founder allocation wallet is also the sole GAS & OPERATIONS wallet and the only authorized deployment and issuance signer. This is the same address recorded for the Founder in `docs/WALLET_ALLOCATION_REGISTER.md`; there is no separate operational-fee address and no sixth wallet.
 
-The owner has explicitly instructed that TON deposits for network fees be made to this wallet. It is separate from the five VCOIN allocation wallets and is not a VCOIN allocation destination. Do not instruct the owner to distribute routine fee deposits across the five allocation wallets.
-
-Technical limitation: Jetton transfers and contract calls have transaction-specific TON requirements. Depending on the transaction flow, the signing/initiating wallet may itself need TON. The architecture must establish and test a supported fee-funding or transaction-sponsorship flow. If a specific signing wallet requires a TON top-up, record the exact need and obtain owner approval before any transfer from the designated fee wallet. Never assume the separate wallet can sponsor every transaction type.
-
-Before the owner deposits TON, verify the address in Tonkeeper and confirm the intended network. Never request or store recovery phrases or private keys.
+TON needed for deployment, Master reserve funding and authorized operational fees must be handled through this Founder wallet. Verify the address and TON Mainnet network in Tonkeeper before any funding or signature. Never request or store recovery phrases or private keys.
 
 ## 8. Current evidence-based status
 
-- PostgreSQL schema, internal reserve/ledger code and Telegram HMAC authentication code exist in the repository.
-- The current mining engine still uses internal PostgreSQL balances; it is not compliant with the approved wallet-balance policy.
-- The public mining API is intentionally blocked with HTTP 503 until wallet-based mining is implemented.
-- The repository review has not established a deployed VCOIN Jetton master address or a complete deployable Jetton contract package. See `docs/JETTON_DEPLOYMENT_INVENTORY.md`.
-- PostgreSQL execution, non-skipped integration tests, CI success, Telegram end-to-end login, TON wallet proof, Testnet deployment and on-chain payout have not been demonstrated by the evidence currently available.
+- The repository contains the VCoinMaster and Jetton Wallet source, allocation guards, deployment preview generator, Sandbox tests, and TonConnect issuer assets.
+- GitHub Actions run #252 on source commit `22534f7d03d896ea45fbe330a7a5a9940d44d419` passed the build-and-test job, including Tact compilation, metadata-cell generation, unsigned Mainnet preview generation, Jest tests, issuer syntax/sequence guards, dependency audit and artifact upload.
+- The exact run #252 contract artifact SHA-256 is `800946828268df7e1b522c9da5d162f878814711c02a7525dff1eafbc99fa853`. Independent BOC/hash/address checks were recorded in Action #51. This is not a clean-room source rebuild or external security audit.
+- The GitHub Pages issuer deployment job remains blocked: the Pages site lookup returned 404 and the GitHub Actions integration was denied permission to create the Pages site. The hosted issuer URL is not confirmed deployed.
+- The public mining API remains intentionally blocked with HTTP 503 until wallet-based mining, verified chain balance reads, reconciliation and payout controls are complete.
+- No Mainnet Jetton master deployment, initial issuance, allocation transfer, deployed-Master getter check or on-chain payout has been demonstrated.
+- Independent smart-contract audit, clean-room rebuild, live fee/reserve review and Founder transaction approval remain outstanding.
 
-The project must not be described as performing real on-chain mining or as extraction-ready until all release gates pass.
+The project must not be described as deployed, issued, extraction-ready or performing real on-chain mining until the relevant release gates and on-chain evidence exist.
 
 ## 9. Founder authority and allocation controls
 
-Founder authority over distribution approvals, custody operations and transaction signing is specified in `docs/FOUNDER_CONTROL_AND_ALLOCATION.md`. The founder allocation destination and operational fee wallet are distinct addresses. Founder authority does not override TON consensus or reverse confirmed transfers from independently controlled recipient wallets. Initial supply remains fixed and additional minting is prohibited.
+Founder authority over distribution approvals, custody operations and transaction signing is specified in `docs/FOUNDER_CONTROL_AND_ALLOCATION.md`. The Founder allocation destination is also the sole GAS & OPERATIONS wallet; no separate operational-fee address or sixth wallet exists. Founder authority does not override TON consensus or reverse confirmed transfers from independently controlled recipient wallets. Initial supply remains fixed and additional minting is prohibited.

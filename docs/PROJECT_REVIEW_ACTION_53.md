@@ -96,12 +96,12 @@ These are isolated CI test environments; they do not mean a production database 
 The combined archive merges the full 94-file source snapshot with the exact-head contract build outputs, generated deployment preview and a release manifest:
 
 - File: `VCOIN-TON-COMPLETE-SOURCE-AND-RELEASE-90c0d71a.zip`
-- SHA-256: `fc2dcb9d9e80657a505e2e1b21be2fbc473e7b43595eba8ecfce7d685a8bfc40`
-- 133 entries.
+- SHA-256: `3fcd4c9b4b8c5ba193a68a92561dba1da99a5d5079dbda0544f883e5eb1a636f`
+- 134 entries.
 - ZIP integrity test: PASS.
 - Required source, backend, mining, issuer, compiled contract and preview files: present.
 
-The combined archive is a source snapshot at the exact Git commit plus CI build outputs. It does not include Git history or a `.git` directory.
+The combined archive is a source snapshot at the exact Git commit plus CI build outputs and a final Action #53 artifact addendum. It does not include Git history or a `.git` directory.
 
 ## 4. Current unsigned Mainnet preview
 

@@ -116,7 +116,7 @@ No real-value transfer, token issuance, Mainnet deployment, or public mining lau
 
 ## 11. Founder immediate full-withdrawal authority
 
-- The project owner explicitly approved the founder's right to receive and withdraw the entire 2,000,000,000 VCOIN allocation at once.
+- The project owner explicitly approved the founder's right to receive and withdraw the entire 420,000,000 VCOIN allocation at once.
 - No vesting, time lock, monthly installments, or staged release applies to the founder allocation.
 - The current VCoinMaster credits the exact founder allocation to the founder's configured Jetton wallet as one issuance operation.
 - Once the Jetton wallet credit is confirmed, the founder may transfer or withdraw the full amount using the standard Jetton wallet owner authorization.

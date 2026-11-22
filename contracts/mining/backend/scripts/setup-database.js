@@ -80,6 +80,11 @@ const migrations = [
     version: '007_purchase_and_mining_payout_settlement',
     description: 'Add idempotent TON purchase records and Founder-approved mining payout batches',
     file: path.resolve(__dirname, '../database/migrations/007-purchase-and-mining-payout-settlement.sql')
+  },
+  {
+    version: '008_wallet_snapshots_and_offline_mining',
+    description: 'Add verified Jetton balance snapshot and offline lease/sync persistence foundations',
+    file: path.resolve(__dirname, '../database/migrations/008-wallet-snapshots-and-offline-mining.sql')
   }
 ];
 

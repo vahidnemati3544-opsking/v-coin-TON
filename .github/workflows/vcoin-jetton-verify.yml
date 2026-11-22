@@ -74,11 +74,13 @@ jobs:
         run: |
           python ../../issuer/generate_icon.py
           cp build/mainnet-deployment-preview.json ../../issuer/deployment-preview.json
+          cp assets/vcoin-canonical-logo.jpg ../../issuer/vcoin-canonical-logo.jpg
           touch ../../issuer/.nojekyll
           test -s ../../issuer/index.html
           test -s ../../issuer/tonconnect-manifest.json
           test -s ../../issuer/deployment-preview.json
           test -s ../../issuer/icon-180.png
+          test -s ../../issuer/vcoin-canonical-logo.jpg
           test -f ../../issuer/.nojekyll
           echo "Verified Pages artifact entry files at issuer/ root."
       - name: Validate TonConnect issuer syntax and transaction sequencing guards
@@ -168,7 +170,7 @@ jobs:
         run: |
           set -euo pipefail
           base="${PAGES_URL%/}/"
-          for path in index.html tonconnect-manifest.json deployment-preview.json icon-180.png; do
+          for path in index.html tonconnect-manifest.json deployment-preview.json icon-180.png vcoin-canonical-logo.jpg; do
             echo "Checking ${base}${path}"
             curl --fail --silent --show-error --location \
               --retry 20 --retry-all-errors --retry-delay 10 --max-time 20 \

@@ -13,12 +13,13 @@
   "deployment_transaction": null,
   "operational_fee_wallet": {
     "purpose": "TON network fees and authorized operational transaction costs only",
-    "wallet_type": "Tonkeeper",
-    "owner_provided_address": "UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB",
+    "wallet_type": "Tonkeeper — Founder wallet (shared GAS & OPERATIONS role)",
+    "owner_provided_address": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
     "is_vcoin_allocation_wallet": false,
-    "owner_deposit_instruction": "Owner deposits TON intended for network fees into this wallet only.",
+    "owner_deposit_instruction": "Founder wallet is the only approved GAS & OPERATIONS signer; fund this same Founder wallet with TON for deployment and network fees. Do not fund the retired inaccessible GAS wallet.",
     "network_verification_required_before_funding": true,
-    "address_control_verification_status": "pending"
+    "address_control_verification_status": "founder_wallet_address_previously_provided; network/control verification pending",
+    "role_sharing": "same address as allocation_wallets.founder; no sixth VCOIN recipient"
   },
   "allocation_base_units": {
     "founder": "420000000000000",
@@ -51,7 +52,7 @@
   },
   "deployment_authorized": false,
   "mainnet_authorized": false,
-  "notes": "Owner-approved fixed supply is 2,100,000,000 VCOIN at 6 decimals, allocated across the five registered wallets in shares 20/50/10/10/10. Founder receives 420,000,000 VCOIN in one operation, without vesting or time lock. Modelled USD reference price is 0.008 per VCOIN; it is not a market quote or guarantee. GAS & OPERATIONS is for TON fees only. This is an unsigned template; deployment_authorized and mainnet_authorized remain false. Regenerate all predicted addresses from the revised StateInit. Never commit secrets.",
+  "notes": "Owner-approved fixed supply is 2,100,000,000 VCOIN at 6 decimals, allocated across the five registered wallets in shares 20/50/10/10/10. Founder receives 420,000,000 VCOIN in one operation, without vesting or time lock. Founder wallet also serves as GAS & OPERATIONS fee payer and deployment signer. The former inaccessible GAS wallet is retired and must never receive TON. This is an unsigned template; deployment_authorized and mainnet_authorized remain false. Regenerate all predicted addresses from the revised StateInit. Never commit secrets.",
   "allocation_wallet_verification": {
     "status": "founder_address_review_pending_before_mainnet_signature",
     "note": "All five recipient TON addresses were supplied by the Founder and are embedded in the deterministic StateInit. Their corresponding Jetton wallet addresses are derived from the predicted Master StateInit. After deployment, confirm the on-chain get_wallet_address result for each role before issuing tokens.",

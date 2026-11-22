@@ -20,13 +20,13 @@ V COIN – TON is an independent TON implementation. It must not import, reuse, 
 
 ## 3. Approved token design
 
-The approved design in `docs/TOKENOMICS.md` specifies an initial supply of 10,000,000,000 VCOIN, six decimals, no additional minting, and a 5,000,000,000 VCOIN mining allocation. These are design decisions, not evidence of an issued token or deployed contract.
+The approved design in `docs/TOKENOMICS.md` specifies an initial supply of 2,100,000,000 VCOIN, six decimals, no additional minting, and a 1,050,000,000 VCOIN mining allocation. These are design decisions, not evidence of an issued token or deployed contract.
 
 ## 4. Balance authority and mining
 
 The next mining interval is calculated from the user's verified on-chain VCOIN Jetton balance in the linked TON wallet. Internal pending rewards, unconfirmed payouts and PostgreSQL internal balances are not wallet holdings.
 
-The rate is exactly 1% per 24 hours at every level 1–400. Use integer base units and an immutable wallet snapshot. After a payout is confirmed on-chain, obtain a fresh snapshot for the next interval. The 5B mining allocation is a hard reserve, not minting authority.
+The rate is exactly 1% per 24 hours at every level 1–400. Use integer base units and an immutable wallet snapshot. After a payout is confirmed on-chain, obtain a fresh snapshot for the next interval. The 1.05B mining allocation is a hard reserve, not minting authority.
 
 ## 5. Security and payout
 

@@ -1,3 +1,44 @@
+# CURRENT MAINNET ISSUANCE PREFLIGHT — 2026-11-22 (Action #45; supersedes older conflicting status notes below)
+
+**Reviewed exact source commit:** `1f10257faedf8e4cc454955621c10e9f3afccc83`  
+**Release disposition: NO-GO for Mainnet signature/deployment/issuance.** This is a preflight record, not authorization to broadcast.
+
+## Exact-head build and release package
+
+- GitHub Actions run #243 (run ID `45054362871`): `build-and-test` completed successfully. Tact compilation, metadata cell generation, unsigned Mainnet preview generation, Jest tests, issuer syntax/sequence checks, and Pages artifact upload all passed.
+- The `deploy-issuer` job failed at `actions/configure-pages@v5`: GitHub returned `Resource not accessible by integration` while attempting to create the Pages site. The deploy-pages step was skipped. Owner must enable Pages in repository Settings > Pages and select GitHub Actions, or grant the required Pages administration capability through GitHub's supported owner settings.
+- Exact-head release artifact: `vcoin-jetton-release-1f10257faedf8e4cc454955621c10e9f3afccc83`; artifact ID `14765749850`; size 172,970 bytes; SHA-256 `225b76dc64c6fb616b1c8575ca68a95d5435b0a5ec952836050f5163ba9cb0c4`.
+- Dependency audit report in that artifact: 0 moderate, 0 high, 0 critical advisories (0 total).
+- Deployment preview remains explicitly `unsigned_mainnet_deployment_preview_only`. Predicted Master address: `EQAo1TAGqSw6oUaMmpBtgQyRtCGEbSJNiGGy2Use04lRCQlU`; StateInit hash: `28d53006a92c3aa1468c9a906d810c91b421846d224d8861b2d94b1ed3895109`; metadata content cell hash: `6dc0e0c3a9ec89e72fc8402a13915bb425032a0e57dfa955ba5579eab28c940c`. These are build predictions, not on-chain deployment evidence.
+
+## Fixed issuance configuration verified against source and exact-head preview
+
+- Initial supply: **2,100,000,000 VCOIN**, 6 decimals, represented by **2,100,000,000,000,000 base units**.
+- Founder: 420,000,000 VCOIN; Mining Reserve: 1,050,000,000; Treasury: 210,000,000; Liquidity/Market: 210,000,000; Ecosystem/Marketing: 210,000,000.
+- The five constructor owner addresses in the preview match the approved five-wallet register. Founder is also the single GAS & OPERATIONS signer. Each allocation requires a separate Founder signature.
+- The generated Jetton wallet addresses are deterministic predictions only and must be checked with the deployed Master's `get_wallet_address` getter before credit verification.
+- No Mainnet deployment, issuance, or transfer is evidenced by this build artifact or workflow run.
+
+## Important source/documentation reconciliation
+
+- At this exact source commit, `contracts/jetton/src/vcoin.tact` **does include** a Founder-only `VCoinWithdraw` method. It sends only to the fixed `owner`, and enforces a 0.25 TON minimum reserve plus a 0.10 TON fee buffer.
+- `contracts/jetton/tests/jetton-sandbox.spec.ts` includes tests for Founder-only withdrawal, unauthorized withdrawal rejection, reserve-protection rejection, and insufficient request value. Therefore, older statements below saying the current Master has no withdrawal method are stale and must not be treated as current source facts.
+- **Remaining reserve proof:** the deployment preview currently attaches 0.75 TON. Each of the five allocation calls causes the Master to send 0.10 TON to create/credit the corresponding Jetton wallet, in addition to execution fees. The committed tests cover each allocation and separately cover withdrawals against a freshly funded Master, but do not establish that at least 0.35 TON remains after all five real allocation credits and fees. A fee/reserve simulation and an explicit post-five-allocation reserve assertion are required before Mainnet.
+- The Issuer's allocation sequence checkboxes are manual operator acknowledgements, not automatic blockchain verification. The operator must inspect each confirmed Mainnet transaction, Jetton Wallet balance, Master allocation status, and total supply before unlocking the next allocation.
+
+## Remaining Mainnet gates
+
+1. Enable and successfully publish the GitHub Pages Issuer, or approve and independently validate an alternative signing workflow.
+2. Add and pass a Sandbox test proving the Master retains the required 0.35 TON protected reserve after all five allocations, using realistic fees; adjust the initial reserve funding/payload if required and regenerate the exact-head release package.
+3. Complete an independent qualified smart-contract and TEP-74/TEP-64 audit; resolve all critical/high findings.
+4. Independently reproduce current Master code, wallet code, metadata cell, StateInit and derived address hashes from a clean environment.
+5. Complete exact payload, signer, address, and network-fee review.
+6. Obtain the Founder's explicit approval and personal wallet signature for deployment and for each irreversible allocation transaction.
+
+**Owner execution policy:** Mainnet only; no Testnet deployment or Testnet transaction is authorized. Local compilation, Sandbox simulation, offline payload inspection, and independent review remain permitted. Never treat a predicted address, uploaded artifact, wallet request, or issuer checkbox as proof of an on-chain transaction.
+
+---
+
 # CURRENT OWNER EXECUTION DECISION — 2026-11-22 (supersedes conflicting historical gates below)
 
 - The owner requires **real TON Mainnet execution only**. No Testnet deployment, Testnet transaction, or Testnet allocation rehearsal is authorized or required.

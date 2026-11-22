@@ -132,7 +132,7 @@ Support workflow:
 | Step | Work item | Status | Exit evidence |
 |---|---|---|---|
 | 48.1 | Approve offline-first product and trust boundaries | Planned | Product/security review |
-| 48.2 | Audit current mining engine, API, ledger, auth, and schema | Pending | File-by-file dependency map |
+| 48.2 | Audit current mining engine, API, ledger, auth, and schema | Done — see [MINING_OFFLINE_CURRENT_STATE_AUDIT.md](./MINING_OFFLINE_CURRENT_STATE_AUDIT.md) | Audit recorded at Action #49; no offline client/lease/sync implementation exists yet |
 | 48.3 | Define signed lease protocol and threat model | Pending | Reviewed protocol and key rotation plan |
 | 48.4 | Implement PWA shell, service worker, and cache strategy | Pending | Offline install/open tests |
 | 48.5 | Implement IndexedDB event queue and state machine | Pending | Persistence/restart tests |

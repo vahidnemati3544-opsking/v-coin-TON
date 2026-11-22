@@ -3,6 +3,8 @@ import path from 'node:path';
 
 const planPath = path.join(__dirname, '..', 'allocation', 'allocation-plan.json');
 const plan = JSON.parse(fs.readFileSync(planPath, 'utf8'));
+const configPath = path.join(__dirname, '..', 'deployment.config.template.json');
+const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 
 describe('VCOIN five-wallet allocation manifest', () => {
   test('defines exactly the five approved operational roles', () => {

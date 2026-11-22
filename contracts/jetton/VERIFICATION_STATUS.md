@@ -3,7 +3,7 @@
 **Latest exact-head contract artifact:** GitHub Actions run #252 / artifact `14768219639`  
 **Artifact source commit:** `22534f7d03d896ea45fbe330a7a5a9940d44d419`  
 **Artifact SHA-256:** `800946828268df7e1b522c9da5d162f878814711c02a7525dff1eafbc99fa853`  
-**Current repository HEAD after documentation-only review:** `7af2ee4f6e51cd4ed5eb3a32854d70fefbb649d9`  
+**Repository baseline before Action #52 documentation corrections:** `7af2ee4f6e51cd4ed5eb3a32854d70fefbb649d9`  
 **Release disposition: NO-GO for Mainnet deployment and issuance.**
 
 - Run #252 `build-and-test` passed: dependency audit, Tact compilation, TEP-64 metadata content-cell build, unsigned Mainnet preview generation, Jest tests, issuer syntax/sequence guards and artifact upload.

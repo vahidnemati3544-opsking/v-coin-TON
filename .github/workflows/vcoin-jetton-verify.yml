@@ -70,10 +70,17 @@ jobs:
           if-no-files-found: error
           include-hidden-files: true
           retention-days: 30
-      - name: Prepare TonConnect issuer site assets
+      - name: Prepare and validate root-level Pages site assets
         run: |
           python ../../issuer/generate_icon.py
           cp build/mainnet-deployment-preview.json ../../issuer/deployment-preview.json
+          touch ../../issuer/.nojekyll
+          test -s ../../issuer/index.html
+          test -s ../../issuer/tonconnect-manifest.json
+          test -s ../../issuer/deployment-preview.json
+          test -s ../../issuer/icon-180.png
+          test -f ../../issuer/.nojekyll
+          echo "Verified Pages artifact entry files at issuer/ root."
       - name: Validate TonConnect issuer syntax and transaction sequencing guards
         run: |
           node <<'NODE'
@@ -155,3 +162,18 @@ jobs:
       - name: Deploy TonConnect issuer
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Verify published Pages endpoints
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          set -euo pipefail
+          base="${PAGES_URL%/}/"
+          for path in index.html tonconnect-manifest.json deployment-preview.json icon-180.png; do
+            echo "Checking ${base}${path}"
+            curl --fail --silent --show-error --location \
+              --retry 20 --retry-all-errors --retry-delay 10 --max-time 20 \
+              "${base}${path}" -o "/tmp/vcoin-pages-${path}"
+            test -s "/tmp/vcoin-pages-${path}"
+          done
+          grep -q "V COIN" /tmp/vcoin-pages-index.html
+          echo "GitHub Pages returned HTTP success for all required issuer assets."

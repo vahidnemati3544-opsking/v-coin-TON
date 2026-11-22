@@ -7,7 +7,7 @@
 - Treat the backend and PostgreSQL as authoritative for user activity and internal accounting.
 - Never trust client-provided reward amounts, elapsed time, user IDs, level costs, or wallet ownership.
 - Keep TON private keys and recovery phrases outside V COIN servers.
-- Separate development, testnet, and production credentials and databases.
+- Separate local-development and Mainnet credentials, endpoints and databases; do not configure or use Testnet execution credentials.
 - Require explicit approval for irreversible or financial administrative actions.
 
 ## 2. Controls currently present in code
@@ -89,7 +89,7 @@ Before staging or production:
 - Penetration testing of authentication and business APIs.
 - Monitoring and alerting for failures and suspicious activity.
 - Incident response and credential rotation procedures.
-- Independent smart-contract review before any TON Testnet/Mainnet release.
+- Independent qualified smart-contract and TEP-74/TEP-64 review before any Mainnet deployment or issuance.
 
 ## 8. Release restrictions
 
@@ -105,7 +105,7 @@ No real-value transfer, token issuance, Mainnet deployment, or public mining lau
 - A valid bounce rolls back only the failed role's amount and reopens only that role for retry; successful allocations remain recorded.
 - The five-wallet allocation manifest is in contracts/jetton/allocation/allocation-plan.json.
 - Executable Sandbox tests cover fixed destinations, exact amounts, owner authorization, underfunding, natural bounce rollback, retry, and final issuance lock.
-- CI success is necessary but does not replace independent review, dependency audit, or Testnet verification.
+- CI success is necessary but does not replace independent review, dependency audit, or complete local TON Sandbox verification. Testnet deployment and transactions are not authorized.
 
 ## 10. Compiler and dependency maintenance
 

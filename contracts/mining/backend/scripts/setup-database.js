@@ -60,6 +60,16 @@ const migrations = [
     version: '003_balance_based_mining',
     description: 'Legacy internal-balance mining snapshot fields; public mining remains disabled',
     file: path.resolve(__dirname, '../database/migrations/003-balance-based-mining.sql')
+  },
+  {
+    version: '004_price_reference_candles',
+    description: 'Modelled USD reference-price state and historical candles',
+    file: path.resolve(__dirname, '../database/migrations/004-price-reference-candles.sql')
+  },
+  {
+    version: '005_vcoin_supply_and_price_reset',
+    description: 'Apply the owner-approved 2.1B VCOIN mining cap and USD 0.008 reference baseline',
+    file: path.resolve(__dirname, '../database/migrations/005-vcoin-supply-and-price-reset.sql')
   }
 ];
 

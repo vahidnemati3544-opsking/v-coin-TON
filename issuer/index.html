@@ -110,6 +110,8 @@
   let preview = null;
   let ui = null;
   let wallet = null;
+  let nextAllocationIndex = 0;
+  let allocationCount = 0;
 
   function setStatus(message) { status.textContent = message; }
 
@@ -122,17 +124,19 @@
 
   function updateControls() {
     const role = walletRole();
-    deployButton.disabled = role !== 'founder-operator';
+    deployButton.disabled = role !== 'founder-operator' || deployButton.dataset.submitted === 'true';
     document.querySelectorAll('[data-issuance-role]').forEach((button) => {
-      button.disabled = role !== 'founder-operator' || !confirmed.checked || button.dataset.submitted === 'true';
+      const index = Number(button.dataset.sequence);
+      button.disabled = role !== 'founder-operator' || !confirmed.checked || index !== nextAllocationIndex || button.dataset.submitted === 'true';
     });
     if (role === 'disconnected') setStatus('No wallet connected. Connect the registered Founder wallet.');
     else if (role === 'wrong-network') setStatus('Wrong network. This release console accepts TON Mainnet only.');
-    else if (role === 'founder-operator') setStatus('Founder wallet connected on Mainnet. Deployment is enabled; issuance still requires on-chain Master confirmation.');
-    else setStatus('Connected wallet does not match either approved signer. Disconnect and connect the registered wallet.');
+    else if (role === 'founder-operator' && nextAllocationIndex >= allocationCount) setStatus('All five allocations are marked verified. Independently confirm Master total_supply equals 2,100,000,000,000,000 base units and mintable is false.');
+    else if (role === 'founder-operator') setStatus('Founder wallet connected on Mainnet. Deployment is enabled; only the next unverified allocation can be requested after Master confirmation.');
+    else setStatus('Connected wallet does not match the approved Founder signer. Disconnect and connect the registered wallet.');
   }
 
-  function addAllocation(role, item) {
+  function addAllocation(role, item, sequence) {
     const row = document.createElement('div');
     row.className = 'panel';
     const title = document.createElement('h2');
@@ -149,7 +153,20 @@
     const button = document.createElement('button');
     button.textContent = 'Issue ' + Number(item.token_amount).toLocaleString('en-US') + ' VCOIN to ' + role.replaceAll('_', ' ');
     button.dataset.issuanceRole = role;
+    button.dataset.sequence = String(sequence);
     button.disabled = true;
+    const verifyLabel = document.createElement('label');
+    const verifyInput = document.createElement('input');
+    verifyInput.type = 'checkbox';
+    verifyInput.disabled = true;
+    verifyLabel.append(verifyInput, document.createTextNode(' I independently confirmed this transaction on TON Mainnet and verified the recipient Jetton Wallet balance and allocation status.'));
+    verifyInput.addEventListener('change', () => {
+      if (verifyInput.checked && sequence === nextAllocationIndex && button.dataset.submitted === 'true') {
+        button.dataset.verified = 'true';
+        nextAllocationIndex += 1;
+        updateControls();
+      }
+    });
     button.addEventListener('click', async () => {
       if (walletRole() !== 'founder-operator' || !confirmed.checked) return;
       button.disabled = true;
@@ -165,7 +182,8 @@
           }]
         });
         button.dataset.submitted = 'true';
-        button.textContent = 'Request sent to wallet — verify on-chain before continuing';
+        verifyInput.disabled = false;
+        button.textContent = 'Wallet request returned — verify on-chain before unlocking the next allocation';
         $('deploy-result').textContent = 'Wallet returned from the signing flow. This page does not claim on-chain finality; verify the Master transaction and Jetton Wallet balance before the next allocation.';
       } catch (error) {
         button.disabled = false;
@@ -174,7 +192,7 @@
       }
       updateControls();
     });
-    row.append(title, owner, jetton, amount, button);
+    row.append(title, owner, jetton, amount, button, verifyLabel);
     allocationsNode.appendChild(row);
   }
 
@@ -220,7 +238,8 @@
             payload: preview.unsigned_deploy_message.body_boc_base64
           }]
         });
-        $('deploy-result').textContent = 'Deployment request returned from Tonkeeper. Wait for Mainnet confirmation and verify the Master getters before issuing any VCOIN.';
+        deployButton.dataset.submitted = 'true';
+        $('deploy-result').textContent = 'Deployment request returned from Tonkeeper. The deploy button is locked for this page session. Wait for Mainnet confirmation and verify the Master getters before issuing any VCOIN.';
       } catch (error) {
         $('deploy-result').textContent = 'Wallet request was cancelled or failed: ' + (error?.message || String(error));
       }
@@ -228,7 +247,9 @@
     });
 
     confirmed.addEventListener('change', updateControls);
-    for (const [role, item] of Object.entries(preview.issuance_transactions)) addAllocation(role, item);
+    const entries = Object.entries(preview.issuance_transactions);
+    allocationCount = entries.length;
+    entries.forEach(([role, item], index) => addAllocation(role, item, index));
     updateControls();
   } catch (error) {
     setStatus('Console unavailable: ' + (error?.message || String(error)));

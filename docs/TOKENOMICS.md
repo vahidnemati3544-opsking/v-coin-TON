@@ -109,7 +109,7 @@ Contract implementation must be reviewed against the applicable TON standards an
 11. Testing and deployment restrictions
 
 The implementation must undergo reproducible local builds, comprehensive TON Sandbox testing, functional verification, and independent smart-contract security review before any Mainnet deployment.
-Local TON Sandbox tests are required but are not a substitute for Testnet. Complete a real TON Testnet deployment and full five-wallet issuance rehearsal before Mainnet.
+Local TON Sandbox tests and full five-wallet issuance simulation are required. Under the current owner execution instruction, no TON Testnet deployment or Testnet transaction is authorized. Do not use Testnet addresses, balances, or payloads.
 Mainnet deployment requires a separate, explicit approval after the exact source commit, compiled artifacts, code-cell and StateInit hashes, metadata, wallet-control proofs, independent audit, and transaction details have been reviewed.
 No Mainnet deployment, initial issuance, liquidity commitment, or irreversible administrative action is authorized by this document.
 
@@ -121,7 +121,7 @@ Document status: Owner-approved tokenomics design — implementation pending.
 
 13. Smart contract specification
 
-The technical specification for the VCOIN TON Jetton Master and Wallet contracts is maintained in docs/JETTON_CONTRACT_SPEC.md. This is a design specification, not compiled contract source code or deployment evidence. Implementation, compilation, tests, independent security review and Testnet deployment remain subject to the release gates. The deployment parameter template is contracts/jetton/deployment.config.template.json.
+The technical specification for the VCOIN TON Jetton Master and Wallet contracts is maintained in docs/JETTON_CONTRACT_SPEC.md. This is a design specification, not compiled contract source code or deployment evidence. Implementation, compilation, local Sandbox tests, independent security review and the Mainnet release gates remain mandatory. Testnet deployment and transactions are not authorized. The deployment parameter template is contracts/jetton/deployment.config.template.json.
 
 14. Official wallet allocation register
 

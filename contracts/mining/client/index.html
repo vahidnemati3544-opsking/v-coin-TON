@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#b88a2b"><link rel="manifest" href="./manifest.webmanifest">
+<link rel="stylesheet" href="./styles.css"><title>V COIN – TON</title>
+</head>
+<body>
+<main class="shell">
+<header><p class="eyebrow">TON BLOCKCHAIN</p><h1>V COIN</h1><p class="subtitle">Offline-ready account shell</p></header>
+<section class="status" aria-live="polite"><span id="network-state">Checking connection…</span><span id="app-state">Starting</span></section>
+<section class="panel"><h2>Mining availability</h2><p id="mining-message">Mining is not enabled in this client yet. A verified wallet snapshot and signed offline lease are required first.</p><p class="notice">No provisional or confirmed reward is calculated by this shell.</p></section>
+<section class="panel"><h2>Local diagnostics</h2><p>Queued diagnostic events: <strong id="queue-count">0</strong></p><button id="export-diagnostics" type="button">Export local diagnostics</button><p id="diagnostics-message" role="status"></p></section>
+<footer>V COIN – TON · Offline client foundation · Not a wallet</footer>
+</main>
+<script src="./app.js" defer></script>
+</body></html>

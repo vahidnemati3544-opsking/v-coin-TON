@@ -418,4 +418,85 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     const wallet = blockchain.openContract(VCoinJettonWallet.fromAddress(walletAddress));
     expect((await wallet.getGetWalletData()).balance).toBe(FOUNDER_ALLOCATION);
   });
+
+  test('allows only Founder to withdraw operational TON to the fixed owner address', async () => {
+    const blockchain = await Blockchain.create();
+    const owner = await blockchain.treasury('owner');
+    const attacker = await blockchain.treasury('attacker');
+    const { master } = await deployMaster(blockchain, owner);
+
+    const unauthorized = await master.send(
+      attacker.getSender(),
+      { value: toNano('0.02') },
+      { $$type: 'VCoinWithdraw', amount: toNano('0.1') },
+    );
+    expect(unauthorized.transactions).toHaveTransaction({ to: master.address, success: false });
+
+    const withdrawn = await master.send(
+      owner.getSender(),
+      { value: toNano('0.02') },
+      { $$type: 'VCoinWithdraw', amount: toNano('0.2') },
+    );
+    expect(withdrawn.transactions).toHaveTransaction({
+      from: owner.address,
+      to: master.address,
+      success: true,
+    });
+    expect(withdrawn.transactions).toHaveTransaction({
+      from: master.address,
+      to: owner.address,
+      success: true,
+    });
+    expect((await blockchain.getContract(master.address)).account.account?.storage.balance.coins ?? 0n).toBeGreaterThan(toNano('0.25'));
+  });
+
+  test('rejects withdrawals that breach the protected reserve and rejects zero amount', async () => {
+    const blockchain = await Blockchain.create();
+    const owner = await blockchain.treasury('owner');
+    const { master } = await deployMaster(blockchain, owner);
+
+    const drainAttempt = await master.send(
+      owner.getSender(),
+      { value: toNano('0.02') },
+      { $$type: 'VCoinWithdraw', amount: toNano('0.6') },
+    );
+    expect(drainAttempt.transactions).toHaveTransaction({ to: master.address, success: false });
+
+    const zeroAttempt = await master.send(
+      owner.getSender(),
+      { value: toNano('0.02') },
+      { $$type: 'VCoinWithdraw', amount: 0n },
+    );
+    expect(zeroAttempt.transactions).toHaveTransaction({ to: master.address, success: false });
+    expect(((await blockchain.getContract(master.address)).account.account?.storage.balance.coins ?? 0n)).toBeGreaterThan(toNano('0.25'));
+  });
+
+  test('rejects a withdrawal request below the 0.01 TON processing value', async () => {
+    const blockchain = await Blockchain.create();
+    const owner = await blockchain.treasury('owner');
+    const { master } = await deployMaster(blockchain, owner);
+
+    const before = (await blockchain.getContract(master.address)).account.account?.storage.balance.coins ?? 0n;
+    const underfunded = await master.send(
+      owner.getSender(),
+      { value: toNano('0.009') },
+      { $$type: 'VCoinWithdraw', amount: toNano('0.1') },
+    );
+
+    expect(underfunded.transactions).toHaveTransaction({
+      to: master.address,
+      success: false,
+    });
+    // The rejected inbound request is bounced back to the sender; this is
+    // a refund, not a successful operational withdrawal to the owner.
+    expect(underfunded.transactions).toHaveTransaction({
+      from: master.address,
+      to: owner.address,
+      inMessageBounced: true,
+    });
+    const after = (await blockchain.getContract(master.address)).account.account?.storage.balance.coins ?? 0n;
+    expect(after).toBeGreaterThan(toNano('0.25'));
+    expect(after).toBeLessThan(before + toNano('0.009'));
+  });
+
 });

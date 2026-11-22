@@ -6,6 +6,8 @@ const VCOIN_MINING_ALLOCATION: Int = 1050000000000000; // 1,050,000,000 VCOIN
 const VCOIN_TREASURY_ALLOCATION: Int = 210000000000000; // 210,000,000 VCOIN
 const VCOIN_LIQUIDITY_ALLOCATION: Int = 210000000000000; // 210,000,000 VCOIN
 const VCOIN_ECOSYSTEM_ALLOCATION: Int = 210000000000000; // 210,000,000 VCOIN
+const VCOIN_MIN_MASTER_RESERVE: Int = ton("0.25");
+const VCOIN_WITHDRAWAL_FEE_BUFFER: Int = ton("0.10");
 
 message VCoinMint {
     receiver: Address;
@@ -13,6 +15,10 @@ message VCoinMint {
 }
 
 message VCoinFund {}
+
+message VCoinWithdraw {
+    amount: Int as coins;
+}
 
 contract VCoinMaster with JettonMaster {
     total_supply: Int as coins = 0;
@@ -81,6 +87,25 @@ contract VCoinMaster with JettonMaster {
         let ctx: Context = context();
         require(ctx.sender == self.gas_operator_wallet, "Unauthorized gas funding source");
         require(ctx.value >= ton("0.75"), "Gas reserve deposit must be at least 0.75 TON");
+    }
+
+    // Founder-only recovery of operational TON; recipient is always self.owner.
+    receive(msg: VCoinWithdraw) {
+        let ctx: Context = context();
+        require(ctx.sender == self.owner, "Unauthorized TON withdrawal");
+        require(msg.amount > 0, "Withdrawal amount must be positive");
+        require(ctx.value >= ton("0.01"), "Insufficient withdrawal request value");
+        require(
+            myBalance() >= msg.amount + VCOIN_MIN_MASTER_RESERVE + VCOIN_WITHDRAWAL_FEE_BUFFER,
+            "Withdrawal would breach Master reserve"
+        );
+        send(SendParameters{
+            to: self.owner,
+            value: msg.amount,
+            mode: SendPayGasSeparately,
+            bounce: true,
+            body: beginCell().endCell()
+        });
     }
 
     // Owner-authorized allocation issuance. Each approved wallet can receive

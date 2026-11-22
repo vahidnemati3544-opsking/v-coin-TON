@@ -39,14 +39,15 @@ jobs:
         run: npm run build
       - name: Run Jest tests
         run: npm test
-      - name: Preserve generated contract bindings for sandbox test development
+      - name: Preserve exact-head release artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: vcoin-jetton-build-${{ github.run_id }}
+          name: vcoin-jetton-release-${{ github.sha }}
           path: |
             contracts/jetton/build/
             contracts/jetton/build-test/
             contracts/jetton/package-lock.json
             contracts/jetton/npm-audit-report.json
           if-no-files-found: warn
+          retention-days: 30

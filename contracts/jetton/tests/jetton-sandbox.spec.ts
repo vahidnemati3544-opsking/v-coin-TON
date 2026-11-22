@@ -48,8 +48,8 @@ async function deployMaster(
   if (fundMaster) {
     const funding = await master.send(
       gasOperator.getSender(),
-      { value: toNano('0.75') },
-      { $$type: 'VCoinFund' },
+      { value: toNano('1.00') },
+      { $type: 'VCoinFund' },
     );
     expect(funding.transactions).toHaveTransaction({
       from: gasOperator.address,

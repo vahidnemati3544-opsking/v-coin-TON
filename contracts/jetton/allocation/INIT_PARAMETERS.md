@@ -1,10 +1,8 @@
 # VCOIN Jetton Master initialization parameters
 
-This document defines the exact argument order for the VCoinMaster StateInit. It prevents the approved five wallet destinations from being assigned to the wrong allocation roles during deployment.
+This document defines the exact argument order for the VCoinMaster StateInit and the five approved VCOIN allocation destinations.
 
 ## Constructor signature
-
-The current contract constructor is:
 
 ```text
 VCoinMaster(
@@ -20,30 +18,30 @@ VCoinMaster(
 
 ## Canonical source mapping
 
-| Constructor argument | Allocation role | Canonical source |
+| Constructor argument | Role | Canonical source |
 |---|---|---|
-| owner | Founder — 20% / 420,000,000 VCOIN | docs/WALLET_ALLOCATION_REGISTER.md, Founder row |
-| content | Jetton metadata cell | Approved token metadata package; not a wallet address |
-| miningReserveWallet | Mining reserve — 50% / 1,050,000,000 VCOIN | docs/WALLET_ALLOCATION_REGISTER.md, Mining reserve and extraction row |
-| treasuryWallet | Treasury — 10% / 210,000,000 VCOIN | docs/WALLET_ALLOCATION_REGISTER.md, Treasury row |
-| liquidityWallet | Liquidity and market — 10% / 210,000,000 VCOIN | docs/WALLET_ALLOCATION_REGISTER.md, Liquidity and market row |
-| ecosystemWallet | Ecosystem and marketing — 10% / 210,000,000 VCOIN | docs/WALLET_ALLOCATION_REGISTER.md, Ecosystem and marketing row |
-| gasOperatorWallet | GAS & OPERATIONS — TON fee funding only; not a VCOIN allocation | docs/WALLET_ALLOCATION_REGISTER.md, Separate operational network-fee wallet section |
+| owner | Founder — 20% / 420,000,000 VCOIN; also the sole GAS & OPERATIONS wallet | docs/WALLET_ALLOCATION_REGISTER.md, Founder row |
+| content | Jetton metadata cell | Approved token metadata package |
+| miningReserveWallet | Mining reserve — 50% / 1,050,000,000 VCOIN | Wallet register, Mining reserve row |
+| treasuryWallet | Treasury — 10% / 210,000,000 VCOIN | Wallet register, Treasury row |
+| liquidityWallet | Liquidity and market — 10% / 210,000,000 VCOIN | Wallet register, Liquidity row |
+| ecosystemWallet | Ecosystem and marketing — 10% / 210,000,000 VCOIN | Wallet register, Ecosystem row |
+| gasOperatorWallet | Must be exactly the same address as owner; no separate GAS address exists | Same Founder address as owner |
 
 ## Mandatory pre-deployment checks
 
-1. Read all five addresses from the canonical wallet register; do not reorder them by table row number.
-2. Exclude the separate GAS & OPERATIONS wallet. It is not a VCOIN allocation destination.
-3. Verify the intended network and address control without requesting or storing seed phrases.
-4. Confirm the five addresses are pairwise distinct. The constructor also rejects duplicates.
-5. Confirm gasOperatorWallet is the separate GAS & OPERATIONS address and is distinct from all five allocation addresses.
-6. After deployment, call get_allocation_config and get_gas_operator_wallet; compare all returned addresses against the register.
-7. Do not issue any VCOIN until the independent review and explicit Mainnet approval are complete.
+1. Read the five allocation addresses from the canonical wallet register.
+2. Set owner and gasOperatorWallet to the exact same Founder address.
+3. Do not configure, derive, fund, or use a sixth operational wallet.
+4. Confirm the five allocation addresses are pairwise distinct.
+5. Confirm the intended TON network and address control without requesting or storing seed phrases.
+6. Confirm get_allocation_config and get_gas_operator_wallet both report the Founder address in their respective roles.
+7. Do not issue VCOIN until independent review, Testnet rehearsal, and explicit Mainnet approval are complete.
 
 ## Issuance procedure
 
-First, the separate GAS & OPERATIONS wallet sends a VCoinFund message with at least 0.75 TON to seed the Master contract's gas reserve. This wallet is not authorized to issue VCOIN. The founder/owner then sends five separate VCoinMint messages, one per allocation, using the exact amount for the corresponding configured destination and attaching at least 0.01 TON per request. The Master pays 0.1 TON from its reserved balance for each deterministic Jetton wallet credit. A role becomes complete only after its Jetton wallet successfully receives the credit. A natural bounce rolls back only that role and permits that exact allocation to be retried. Once all five roles are credited, mintable becomes false.
+The Founder wallet, serving as both owner and GAS & OPERATIONS, funds the Master reserve with a VCoinFund message carrying at least 0.75 TON. The same Founder wallet signs the five separate VCoinMint requests, one per allocation, with the exact configured amount and at least 0.01 TON attached per request. The Master pays the destination-wallet credit costs from its reserve. A natural bounce rolls back only the affected role and permits that exact allocation to be retried. Once all five roles are credited, mintable becomes false.
 
-## Release caveat
+## Founder allocation
 
-The founder allocation is directed to the founder's Jetton wallet as one exact 420,000,000 VCOIN issuance. The project owner has explicitly approved the founder's right to withdraw or transfer the full amount at once. No founder vesting contract, time lock, or installment schedule is required. This does not waive independent contract review, Testnet rehearsal, or explicit Mainnet authorization.
+The Founder receives exactly 420,000,000 VCOIN as one allocation. This release design has no vesting contract or time lock. This does not waive independent contract review, Testnet rehearsal, or explicit Mainnet authorization.

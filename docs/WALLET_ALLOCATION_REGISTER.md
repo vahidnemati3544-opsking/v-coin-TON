@@ -26,24 +26,22 @@ This register records owner-provided addresses and intended allocations. The pro
 | 5 | Mining reserve and extraction | `UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0` | 50% | 1,050,000,000 VCOIN |
 | | **Total** | **Five designated addresses** | **100%** | **2,100,000,000 VCOIN** |
 
-## 3. Separate operational network-fee wallet
+## 3. Founder wallet — GAS & OPERATIONS
 
-The project owner explicitly designated the following separate Tonkeeper address as the **V COIN – TON GAS & OPERATIONS wallet**:
+The Founder allocation wallet is also the only GAS & OPERATIONS wallet:
 
-`UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB`
+`UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy`
 
-**Owner instruction:** The owner will deposit TON into this Tonkeeper wallet only for TON network fees and related authorized operational transaction costs. This wallet is not a VCOIN allocation wallet and is not a sixth allocation destination. It must not receive or hold any portion of the 2,100,000,000 VCOIN allocation by virtue of this designation.
+There is no separate operational-fee address and no sixth wallet. The Founder wallet is one of the five allocation destinations, receives 420,000,000 VCOIN, funds the Master TON reserve, and is the sole deployment and issuance signer. Do not configure or use another address for GAS & OPERATIONS.
 
-The five allocation addresses remain unchanged. Do not ask the owner to fund all five allocation wallets with TON merely because they are VCOIN recipients. The operational fee wallet is the designated TON funding source. If a specific Jetton transfer or contract operation technically requires TON in another signing wallet, document the exact requirement and obtain the owner's approval before any top-up. Do not assume that a separate fee wallet can sponsor every transaction type without a supported transaction flow.
+The Founder must verify this same address in Tonkeeper on the intended TON network before any funding or signature. Never request or store seed phrases, private keys, PINs, or recovery codes. The Founder wallet's TON balance is used for deployment and network fees; the VCOIN allocation remains the Founder’s 420,000,000 VCOIN share.
 
-The separate fee wallet address is owner-provided; control and network format must be verified before funding. Never request or store its seed phrase or private key. In the current VCoinMaster design, this address is the immutable gasOperatorWallet and may fund the Master reserve only through VCoinFund (minimum 0.75 TON). It is not authorized to issue VCOIN and is not a token-allocation destination. The founder wallet remains the sole VCoinMint authority; its full 420,000,000 VCOIN allocation is issued in one operation and is not subject to vesting or a time lock. Each owner-signed issuance request carries at least 0.01 TON while the Master pays 0.1 TON per destination-wallet credit from the reserve.
-
-## 4. Wallet separation rules
+## 4. Allocation wallet rules
 
 - Each allocation category must remain associated with its designated address.
 - The mining reserve address is the destination designated for the 1,050,000,000 VCOIN mining allocation.
 - The five allocations must not be consolidated into a single wallet by default.
-- The Tonkeeper GAS & OPERATIONS address above is a separate fee-funding wallet, not an allocation destination.
+- The Founder allocation address is also the sole GAS & OPERATIONS address; it is not a separate or sixth wallet.
 - Any Gram Wallet address is likewise outside this five-address allocation map unless the project owner explicitly approves a change.
 - Do not infer wallet ownership from a pasted address. Before signing or sending, verify each address on the intended TON network and complete an appropriate wallet-control/signature check where required.
 
@@ -62,7 +60,7 @@ Before any real VCOIN issuance or transfer:
 5. Verify the total supply, six decimals, allocation caps and one-time Founder allocation.
 6. Perform the full allocation rehearsal in local TON Sandbox and reconcile all simulated balances, then deploy and exercise the exact contract on TON Testnet before Mainnet.
 7. Obtain the project owner's explicit approval before any Mainnet issuance or transfer.
-8. Before depositing TON into the fee wallet, verify its address in Tonkeeper and confirm the intended network.
+8. Before depositing TON for deployment or fees, verify the Founder allocation address in Tonkeeper and confirm the intended network.
 
 ## 7. Accounting controls
 
@@ -79,4 +77,4 @@ Allocation accounting must be capped at the approved amount for each category. A
 
 Any replacement, addition, removal or reassignment of an allocation address requires explicit project-owner approval and a new version of this register. Update all dependent deployment templates and allocation documentation in the same controlled change.
 
-**Current status:** Five VCOIN allocation addresses and one separate TON operational-fee address are recorded. Ownership verification, Jetton wallet derivation, contract deployment, initial issuance and transfers are not confirmed by this document.
+**Current status:** Exactly five VCOIN allocation addresses are recorded; the Founder address also serves GAS & OPERATIONS. Ownership verification, Jetton wallet derivation, contract deployment, initial issuance and transfers are not confirmed by this document.

@@ -53,12 +53,12 @@ The VCoinMaster constructor reads these addresses in the following role order: f
 
 Before any real VCOIN issuance or transfer:
 
-1. Confirm the intended network (Testnet or Mainnet) and never mix their addresses or balances.
+1. Confirm TON Mainnet in Tonkeeper and in every transaction preview. Testnet deployment and Testnet transactions are not authorized; never mix network addresses or balances.
 2. Validate each address format and network representation.
 3. Founder reviews the five owner-provided TON addresses in the final constructor preview; the deterministic Jetton wallet addresses are derived from the Master and checked against the manifest. Never request seed phrases or private keys.
 4. Confirm the deployed VCOIN Jetton master address and derive the correct Jetton wallet for each owner address using the master contract.
 5. Verify the total supply, six decimals, allocation caps and one-time Founder allocation.
-6. Perform the full allocation rehearsal in local TON Sandbox and reconcile all simulated balances, then deploy and exercise the exact contract on TON Testnet before Mainnet.
+6. Perform the full five-allocation rehearsal in local TON Sandbox and reconcile all simulated balances. Do not deploy or send transactions on TON Testnet.
 7. Obtain the project owner's explicit approval before any Mainnet issuance or transfer.
 8. Before depositing TON for deployment or fees, verify the Founder allocation address in Tonkeeper and confirm the intended network.
 

@@ -1,3 +1,24 @@
+# CURRENT MAINNET RELEASE PREFLIGHT — 2026-11-22 (Action #51; supersedes prior status entries below)
+
+**Artifact:** run #249 / artifact `14767013070`  
+**Artifact source commit:** `834dc7bc8364110d7003106968d367b5c4755d84`  
+**Current repository HEAD before this status update:** `f8d2e15b3e7f4df4709f56b51a8f5a4094b96636`  
+**Release disposition: NO-GO for Mainnet deployment and issuance.**
+
+- Downloaded and independently inspected the exact run #249 ZIP. Artifact SHA-256: `ecfc8cb99b0d2ad57dcfed3f146018c1a16a2270e93ea30827543481e54758c3`.
+- Independently recalculated and matched Master StateInit, Master code-cell, Master data-cell, metadata content-cell, and all five Jetton Wallet StateInit hashes.
+- Decoded the predicted Master and five recipient friendly addresses; all six account IDs match their StateInit hashes and all CRC16-XMODEM checksums pass.
+- Verified the five allocation amounts sum exactly to 2,100,000,000 VCOIN at six decimals and the five owner addresses match `docs/WALLET_ALLOCATION_REGISTER.md`.
+- GitHub compare confirms the 17 commits after artifact source commit changed mining/offline-client and documentation files only; Jetton source, tests, deployment script, deployment config, metadata, package manifest and lockfile were unchanged.
+- The locally mounted `VCOIN-TON-MAIN-1f10257-release.zip` is older (SHA-256 `225b76dc64c6fb616b1c8575ca68a95d5435b0a5ec952836050f5163ba9cb0c4`). Do not use it as the current contract artifact.
+- This is BOC/hash/address-integrity reproduction from the downloaded artifact, **not** an independent clean-room compilation or external security audit.
+- Remaining blockers: qualified independent smart-contract/TEP-74/TEP-64 audit; independent clean-room rebuild; final live fee and reserve review; Founder review of exact Mainnet signer, network, metadata, addresses and payloads.
+- No Mainnet deployment, issuance, or transfer has been sent. The artifact is unsigned. Mainnet remains NO-GO until every release gate is resolved and the Founder personally approves and signs each transaction.
+
+See [Action #51 hash reproduction report](../../docs/MAINNET_RELEASE_HASH_REPRODUCTION_ACTION_51.md).
+
+---
+
 # CURRENT MAINNET PREFLIGHT — 2026-11-22 (Action #47; supersedes prior preflight entries below)
 
 **Exact source commit tested:** `834dc7bc8364110d7003106968d367b5c4755d84`  

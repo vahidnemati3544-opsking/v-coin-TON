@@ -1,3 +1,31 @@
+# CURRENT MAINNET PREFLIGHT — 2026-11-22 (Action #47; supersedes prior preflight entries below)
+
+**Exact source commit tested:** `834dc7bc8364110d7003106968d367b5c4755d84`  
+**Release disposition: NO-GO for Mainnet signature/deployment/issuance.** This is a tested unsigned release candidate, not authorization to broadcast.
+
+## Reserve simulation and exact-head CI
+
+- Added a Sandbox assertion that checks the actual Master account balance after all five real Jetton wallet-credit cascades and Sandbox fees; it requires at least 0.35 TON to remain.
+- The prior 0.75 TON initial funding was experimentally insufficient: after all five allocations, Sandbox measured **0.2447036 TON**, below the protected 0.35 TON threshold.
+- Raised the initial Master funding in `contracts/jetton/scripts/prepare-mainnet-deployment.ts` and the Sandbox deployment helper to **1.00 TON**. The five-allocation reserve assertion passed with this funding. The withdrawal-drain rejection test was also adjusted to remain meaningful under the 1.00 TON starting balance.
+- GitHub Actions run #249 (run ID `45056163758`) on this exact source commit: Tact compilation, metadata generation, unsigned Mainnet preview generation, Jest tests, issuer syntax/sequence checks, and artifact upload all passed. Jest: **3 suites passed; 20 tests passed**. Dependency audit: 0 vulnerabilities.
+- Exact-head release artifact: `vcoin-jetton-release-834dc7bc8364110d7003106968d367b5c4755d84`; artifact ID `14767013070`; size 173,064 bytes; SHA-256 `ecfc8cb99b0d2ad57dcfed3f146018c1a16a2270e93ea30827543481e54758c3`.
+- The GitHub Pages deployment job still fails at `actions/configure-pages@v5`: `Resource not accessible by integration` when trying to create the Pages site. The owner must enable GitHub Pages through repository Settings > Pages or grant the required repository administration capability. The issuer site artifact was built and uploaded, but the hosted Pages issuer is not confirmed deployed.
+- The deployment preview remains unsigned and uses **1.00 TON** for initial Master reserve funding. Predicted Master address and StateInit/code/data hashes remain the same as the preceding exact build because only deployment funding parameters and Sandbox tests changed; these remain build predictions, not on-chain evidence.
+
+## Remaining Mainnet gates
+
+1. Resolve GitHub Pages administration permission or approve and independently validate an alternative Founder signing workflow.
+2. Complete an independent qualified smart-contract and TEP-74/TEP-64 audit; resolve critical/high findings.
+3. Independently reproduce current Master code, wallet code, metadata cell, StateInit and derived address hashes from a clean environment.
+4. Complete exact payload, signer, five destination addresses, and Mainnet fee review; account for real network fee variance beyond Sandbox.
+5. Obtain the Founder's explicit approval and personal wallet signature for deployment and each irreversible allocation transaction.
+6. After deployment, verify Master activation, the on-chain `get_wallet_address` result for each recipient, total supply, each Jetton Wallet balance, and allocation flags before proceeding to the next transfer.
+
+**Owner execution policy:** Mainnet only; no Testnet deployment or Testnet transaction is authorized. Local compilation, Sandbox simulation, offline payload inspection, and independent review remain permitted. No Mainnet deployment, issuance, or transfer is claimed by this action.
+
+---
+
 # CURRENT MAINNET ISSUANCE PREFLIGHT — 2026-11-22 (Action #45; supersedes older conflicting status notes below)
 
 **Reviewed exact source commit:** `1f10257faedf8e4cc454955621c10e9f3afccc83`  

@@ -1,16 +1,26 @@
 # V COIN Mainnet Issuer
 
-This static TonConnect console is designed to request Founder-controlled wallet signatures only.
+This static TonConnect console is a Founder-controlled interface for reviewing and requesting signatures for the V COIN TON Jetton deployment and its five separate allocations.
 
-- The deployment action requires the registered Founder wallet on TON Mainnet; this same address serves the GAS & OPERATIONS role.
-- It submits one message with the predicted Master StateInit, VCoinFund body, and 0.75 TON minimum attached value.
-- The five mint actions require the registered Founder wallet and are sent one at a time as separate wallet-signing requests. The next action unlocks only after the Founder manually confirms the prior on-chain transaction and recipient Jetton Wallet balance.
+## Build and deployment
+
+- GitHub Actions compiles the current Jetton source, generates the unsigned Mainnet preview, copies that exact preview into the Pages artifact, and deploys the artifact.
+- `issuer/deployment-preview.json` is a CI-generated release input and is intentionally not maintained as a stale checked-in preview.
+- The current source configuration attaches **1.00 TON** to the Master deployment/funding message. This is a reserve amount, not a live fee quote. The Founder must review the current wallet/network fee estimate before signing.
+- Each of the five allocation requests is a separate Founder-signed message with **0.01 TON** attached, plus any live network fee required by the wallet/network.
+- The five allocation amounts and destination owner addresses are loaded from the CI-generated preview tied to the exact source commit.
+
+## GitHub Pages requirement
+
+- The repository's Pages site must first be enabled by the repository owner/admin in **Settings → Pages**, with **Source = GitHub Actions**.
+- The workflow deploys to an existing Pages site. The Actions-generated `GITHUB_TOKEN` cannot create a missing Pages site because that operation requires additional administration permission.
+- No personal access token or repository-administration secret is stored in this project.
+
+## Signing and safety
+
+- The deployment and all five allocations require the registered Founder wallet on TON Mainnet; the same wallet serves as GAS & OPERATIONS.
+- Allocation messages are sent one at a time. The next action unlocks only after the Founder manually confirms the prior on-chain transaction and recipient Jetton Wallet balance.
 - The UI does not collect or store private keys, seed phrases, PINs, or recovery phrases.
-- The UI does not claim on-chain finality; after each signature, verify the transaction and account state on Mainnet before continuing.
-- The allocation amounts and recipient addresses are loaded from the CI-generated deployment-preview.json.
+- The UI does not claim on-chain finality. After each signature, independently verify the transaction, Master state, total supply, allocation flag, and recipient Jetton Wallet balance on Mainnet before continuing.
+- The current preview is explicitly unsigned. Publishing this interface does not deploy or issue VCOIN.
 
-The page is published through GitHub Pages. If Pages is not yet enabled, the verification workflow attempts to enable it with the repository's Actions permissions.
-
-The formerly configured inaccessible GAS wallet is retired and must not be funded or used. Founder and GAS & OPERATIONS are one address and do not create a sixth VCOIN allocation.
-
-The deployment button locks after a signing request is returned to avoid duplicate requests in the same page session. Reloading the page does not prove a transaction failed; always check Mainnet before retrying.

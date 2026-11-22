@@ -19,7 +19,7 @@ async function deployMaster(
   const treasury = await blockchain.treasury('treasury');
   const liquidity = await blockchain.treasury('liquidity');
   const ecosystem = await blockchain.treasury('ecosystem');
-  const gasOperator = await blockchain.treasury('gas-operations');
+  const gasOperator = owner;
   const master = blockchain.openContract(
     await VCoinMaster.fromInit(
       owner.address,
@@ -109,30 +109,23 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     expect((await master.getGetJettonData()).total_supply).toBe(FOUNDER_ALLOCATION);
   });
 
-  test('accepts Master gas funding only from the separate GAS & OPERATIONS wallet', async () => {
+  test('allows the Founder wallet to fund the Master reserve and rejects all other funding sources', async () => {
     const blockchain = await Blockchain.create();
     const owner = await blockchain.treasury('owner');
     const attacker = await blockchain.treasury('attacker');
     const { master, gasOperator } = await deployMaster(blockchain, owner, false);
 
-    const ownerMintFromGasWallet = await master.send(
-      gasOperator.getSender(),
-      { value: toNano('0.01') },
-      { $$type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
-    );
-    expect(ownerMintFromGasWallet.transactions).toHaveTransaction({
-      to: master.address,
-      success: false,
-    });
+    expect(gasOperator.address).toEqual(owner.address);
 
-    const ownerFunding = await master.send(
+    const authorizedFunding = await master.send(
       owner.getSender(),
       { value: toNano('0.75') },
       { $$type: 'VCoinFund' },
     );
-    expect(ownerFunding.transactions).toHaveTransaction({
+    expect(authorizedFunding.transactions).toHaveTransaction({
+      from: owner.address,
       to: master.address,
-      success: false,
+      success: true,
     });
 
     const unauthorizedFunding = await master.send(
@@ -145,18 +138,7 @@ describe('VCOIN Jetton Sandbox release gates', () => {
       success: false,
     });
 
-    const authorizedFunding = await master.send(
-      gasOperator.getSender(),
-      { value: toNano('0.75') },
-      { $$type: 'VCoinFund' },
-    );
-    expect(authorizedFunding.transactions).toHaveTransaction({
-      from: gasOperator.address,
-      to: master.address,
-      success: true,
-    });
     expect((await master.getGetJettonData()).total_supply).toBe(0n);
-
     const issued = await master.send(
       owner.getSender(),
       { value: toNano('0.01') },

@@ -139,8 +139,8 @@ async function main() {
       state_init_boc_base64: stateInitBoc.toString('base64'),
       body_boc_base64: deployFundingBody.toBoc().toString('base64'),
       body_type: 'VCoinFund',
-      attached_ton: '0.75',
-      attached_ton_purpose: 'minimum Master gas reserve funding required by VCoinFund',
+      attached_ton: '1.00',
+      attached_ton_purpose: '1.00 TON initial Master reserve; Sandbox measured 0.2447036 TON remaining from 0.75 TON after all five allocations, so this raises the reserve with an additional 0.25 TON margin',
       network_fee_quote_required: true,
     },
     signing: {

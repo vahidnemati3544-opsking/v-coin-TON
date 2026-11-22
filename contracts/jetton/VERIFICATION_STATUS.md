@@ -25,23 +25,31 @@ The current `contracts/jetton/tests/jetton-sandbox.spec.ts` includes tests for:
 
 These are committed test cases, not by themselves proof that CI passed on the latest main commit. Exact-head GitHub Actions results must be checked and recorded before this status can be upgraded to tested.
 
-## Latest exact-head CI evidence — 2026-11-22 (refreshed)
+## Latest exact-head CI evidence — 2026-11-22
 
-- Latest reviewed source/config commit: `eedb618add19a7305ef7b3f3caeccfbd6a8b97bd`.
-- GitHub Actions verification: [run #79](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44989067270), event `push`, conclusion `success`; legacy workflow [run #392](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44989067279) also succeeded.
-- All verification steps completed successfully: lockfile generation, clean `npm ci`, dependency audit gate, Tact compilation, and Jest Sandbox suite.
-- The audit report in the uploaded CI artifact reports 0 vulnerabilities (0 info, 0 low, 0 moderate, 0 high, 0 critical).
-- The latest CI artifact `vcoin-jetton-build-44989067270` contains Master and Jetton Wallet code BOCs. SHA-256 of the serialized artifact files (not TON cell hashes): Master `149044c6850f4a8116c0673a02a72247660831ad4fbf87fd486958a3eddfcaf1`; Jetton Wallet `8373d9e5318314563ea6d140e1bbb3aa18240cf8f261bdeb5b94d73c903778a0`.
-- Generated `package-lock.json` SHA-256: `e386d60a3a83b1d3fc033264cc422c7bc3f5d1f4507ee373d1d939c82953d4ba`. It is preserved in the latest CI artifact; it is not yet committed to `main`.
+- Latest reviewed main commit: `fa795093af7a0e2816a9aad66208fc68626c533b`.
+- The Jetton workflow completed successfully on this exact commit in run #397: [GitHub Actions run #397](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44989365249).
+- The observed steps were checkout, Node 22 setup, `npm install`, Tact build, and Jest tests; all completed successfully.
+- Important limitation: this workflow does **not** run `npm ci`, does not run an audit step, and did not publish a build artifact in run #397. Therefore this success confirms build and tests on the exact head, but does not establish a reproducible locked dependency install, a fresh vulnerability audit, or retained BOC outputs.
+- The repository's `contracts/jetton/` directory currently has no committed `package-lock.json`.
+- Earlier run #79 on commit `eedb618add19a7305ef7b3f3caeccfbd6a8b97bd` reported a zero-vulnerability audit and generated BOCs, but those are earlier-commit evidence only and must not be treated as exact-head audit or artifact evidence for the current main commit.
+- The five-wallet full-supply allocation intent is confirmed by the project owner and recorded in the deployment config, allocation manifest, runbook, wallet register, and this status document. This confirmation is not transaction authorization.
 
 ## Remaining Mainnet release gates
 
-- Commit the generated lockfile to `main` and confirm a fresh exact-head CI run: pending.
+- Generate and commit a reviewed `package-lock.json`; change the Jetton workflow to use `npm ci`; rerun exact-head CI and retain build artifacts: pending.
 - Independent smart-contract and TEP-74/TEP-64 review: pending.
 - Independent clean-room build and TON cell-hash / StateInit hash reproduction: pending. The SHA-256 values above are file checksums only and must not be represented as TON cell hashes.
 - Confirm all five allocation destination addresses and separate gas wallet against the final deployment constructor inputs; verify wallet control for the intended Mainnet network: pending.
-- Final metadata/content approval and signed release manifest: pending.
+- Create and approve a valid TEP-64 metadata package/content cell using the canonical logo only after verifying its actual file format and integrity; generate metadata hash and signed release manifest: pending.
 - Mainnet deployment, issuance, and transfers: not performed; explicit per-transaction Founder approval remains required.
+
+## Additional concrete blockers confirmed on current main
+
+- The only logo asset directory entries are the canonical logo lock, the logo file, and the lock document. No approved `metadata.json`, metadata URI, or assembled TEP-64 content cell is present in the Jetton package.
+- The canonical logo is stored as `vcoin-canonical-logo.png`, but its recorded Base64 signature begins with JPEG bytes (`FF D8 FF`). Its actual format and full integrity have not been independently verified. Do not publish it as PNG or build metadata around an unverified asset.
+- The current workflow uses `npm install` rather than a lockfile-backed clean install and does not retain BOC artifacts on the latest run.
+- No deployed Master address, deterministic Jetton wallet addresses, TON cell hashes, StateInit hashes, or on-chain balances exist in the repository evidence.
 
 ## Safety boundary
 

@@ -10,6 +10,12 @@
 
 > This document is a source-control and release-gate record. Git blob IDs below are Git object identifiers, not TON contract code hashes, StateInit hashes, deployed addresses, or proof of a reproducible compiled artifact.
 
+## Superseding owner-approved revision — 2026-11-22
+
+The original Action 21 review above is a historical snapshot. The current approved design is 2,100,000,000 VCOIN at six decimals (2,100,000,000,000,000 base units), allocated 420M / 1.05B / 210M / 210M / 210M across Founder / Mining / Treasury / Liquidity / Ecosystem. The modelled USD reference baseline is 0.008 per VCOIN and is not a market quote or guarantee.
+
+A new Tact build and five-wallet preview passed CI build and Jest tests on source commit 6455cc0c7bf41b8e2fe0cb6552817129ce078aa8 (run #135). Predicted Master: EQAriHkG8kqO0GQwwX6ODgqpJCV-oUDKwalDK8lAzYGBWHvV; StateInit hash: 2b887906f24a8ed06430c17e8e0e0aa924257ea140cac1a9432bc940cd818158. These are unsigned predicted values, not deployed addresses. Independent clean-room TON hash reproduction, independent security review, live fee simulation and on-chain getter checks remain pending. No Mainnet transaction has been signed or broadcast.
+
 ## 1. Non-execution boundary
 
 During Action 21:

@@ -56,7 +56,7 @@
     <div id="wallet-status" class="status">Loading the fixed Mainnet deployment preview…</div>
     <div class="grid" style="margin-top:12px">
       <div class="kv"><strong>Required network</strong>TON Mainnet (−239)</div>
-      <div class="kv"><strong>Deployment signer</strong>GAS &amp; OPERATIONS wallet</div>
+      <div class="kv"><strong>Deployment signer</strong>Founder wallet (GAS &amp; OPERATIONS role)</div>
       <div class="kv"><strong>Issuance signer</strong>Founder wallet</div>
       <div class="kv"><strong>Master address</strong><code id="master-address">Loading…</code></div>
       <div class="kv"><strong>Master StateInit hash</strong><code id="master-hash">Loading…</code></div>
@@ -66,10 +66,10 @@
 
   <section class="panel">
     <h2>Step 1 — Deploy Master and fund reserve</h2>
-    <p class="small">Connect the exact GAS &amp; OPERATIONS wallet. The deployment message carries the Master StateInit, a VCoinFund body, and 0.75 TON minimum attached value. Wallet/network fees are additional.</p>
-    <div class="kv"><strong>Required signer</strong><code id="gas-signer">Loading…</code></div>
+    <p class="small">Connect the registered Founder wallet (also GAS &amp; OPERATIONS). The deployment message carries the Master StateInit, a VCoinFund body, and 0.75 TON minimum attached value. Wallet/network fees are additional.</p>
+    <div class="kv"><strong>Required signer — Founder / GAS &amp; OPERATIONS</strong><code id="gas-signer">Loading…</code></div>
     <div class="kv" style="margin-top:8px"><strong>Attached value</strong>0.75 TON minimum + wallet/network fees</div>
-    <button id="deploy-button" disabled>Deploy VCOIN Master from GAS wallet</button>
+    <button id="deploy-button" disabled>Deploy VCOIN Master from Founder wallet</button>
     <p id="deploy-result" class="small muted"></p>
   </section>
 
@@ -116,21 +116,19 @@
   function walletRole() {
     if (!wallet || !preview) return 'disconnected';
     if (wallet.account.chain !== '-239') return 'wrong-network';
-    if (wallet.account.address === preview.signing.signer_raw) return 'gas';
-    if (wallet.account.address === preview.signing.allocation_issuance_signer_raw) return 'founder';
+    if (wallet.account.address === preview.signing.signer_raw && wallet.account.address === preview.signing.allocation_issuance_signer_raw) return 'founder-operator';
     return 'other';
   }
 
   function updateControls() {
     const role = walletRole();
-    deployButton.disabled = role !== 'gas';
+    deployButton.disabled = role !== 'founder-operator';
     document.querySelectorAll('[data-issuance-role]').forEach((button) => {
-      button.disabled = role !== 'founder' || !confirmed.checked || button.dataset.submitted === 'true';
+      button.disabled = role !== 'founder-operator' || !confirmed.checked || button.dataset.submitted === 'true';
     });
-    if (role === 'disconnected') setStatus('No wallet connected. Connect the GAS wallet for deployment or Founder wallet for issuance.');
+    if (role === 'disconnected') setStatus('No wallet connected. Connect the registered Founder wallet.');
     else if (role === 'wrong-network') setStatus('Wrong network. This release console accepts TON Mainnet only.');
-    else if (role === 'gas') setStatus('GAS & OPERATIONS wallet connected on Mainnet. Deployment button is enabled.');
-    else if (role === 'founder') setStatus('Founder wallet connected on Mainnet. Issuance buttons require the Master confirmation checkbox.');
+    else if (role === 'founder-operator') setStatus('Founder wallet connected on Mainnet. Deployment is enabled; issuance still requires on-chain Master confirmation.');
     else setStatus('Connected wallet does not match either approved signer. Disconnect and connect the registered wallet.');
   }
 
@@ -153,7 +151,7 @@
     button.dataset.issuanceRole = role;
     button.disabled = true;
     button.addEventListener('click', async () => {
-      if (walletRole() !== 'founder' || !confirmed.checked) return;
+      if (walletRole() !== 'founder-operator' || !confirmed.checked) return;
       button.disabled = true;
       try {
         await ui.sendTransaction({

@@ -14,7 +14,7 @@
 
 ## Material reserve limitation
 
-The current Master accepts the authorized `VCoinFund` reserve-funding message but has **no TON withdrawal method**. TON attached to the Master may therefore be irrecoverable through the current contract. Do not send reserve TON or sign a deployment transaction on the assumption that unused TON can later be withdrawn. This limitation requires an explicit architecture decision and informed Founder acceptance, or a separately reviewed contract redesign and complete rebuild/audit before deployment.
+The current Master includes an owner-only `VCoinWithdraw` message. It can return TON only to the Founder/owner address, only for a positive amount, and only when the Master retains the protected 0.25 TON minimum reserve plus the 0.10 TON fee buffer. The current TonConnect issuer does not expose a withdrawal control; any withdrawal must be separately encoded, reviewed and signed by the Founder. Sandbox withdrawal tests are not a live fee quote. Never assume all attached TON is freely withdrawable.
 
 ## Release gates remain mandatory
 
@@ -24,7 +24,7 @@ Mainnet remains **NO-GO** until all of the following are evidenced:
 3. An independent qualified smart-contract audit covers the Master, Jetton Wallet implementation, bounce/retry logic, TEP-74 behavior, and TEP-64 metadata; all critical/high findings are resolved.
 4. The exact reviewed source commit is rebuilt independently and all BOC, StateInit, cell, metadata, and address hashes are reproduced.
 5. The five destination addresses and Founder signer/network are checked in the exact deployment preview; post-deployment getters and deterministic Jetton Wallet addresses are independently checked before issuance.
-6. Current network fees and reserve requirements are simulated against the exact payloads. The documented 0.75 TON minimum is not a live fee quote.
+6. Current network fees and reserve requirements are simulated against the exact payloads. The contract's minimum accepted `VCoinFund` message is 0.75 TON, while the current generated unsigned preview requests 1.00 TON to retain an additional reserve margin. The issuer must read this amount from the generated preview rather than hard-code it. Neither figure is a live fee quote; current network fees and reserve sufficiency must be checked against the exact payload.
 7. The Founder receives and approves the complete transaction review for each irreversible Mainnet operation.
 
 Never request or store a seed phrase, private key, PIN, or recovery code. The Founder signs in their own wallet. This addendum does not authorize any transaction.
@@ -91,7 +91,7 @@ No seed phrase, private key, PIN, or recovery code may be requested or stored.
 
 ## 4. Gas reserve and allocation issuance
 
-The Founder wallet, acting in its GAS & OPERATIONS role, deploys the Master and seeds its reserve in the same first internal message: attach the StateInit, send the VCoinFund body, and deliver at least 0.75 TON to the predicted Master address. The Founder wallet retains the separately guarded authority to issue VCOIN through VCoinMint.
+The Founder wallet, acting in its GAS & OPERATIONS role, deploys the Master and seeds its reserve in the same first internal message: attach the StateInit, send the VCoinFund body, and deliver the exact `unsigned_deploy_message.attached_ton` amount from the freshly generated release preview (currently 1.00 TON). The contract's minimum is 0.75 TON; neither value includes a live fee quote. The Founder wallet retains the separately guarded authority to issue VCOIN through VCoinMint.
 
 After deployment, the Founder wallet is the only VCoinMint authority. Each of the five issuance requests must:
 - Target one of the five fixed destinations.
@@ -116,11 +116,11 @@ Before any deployment:
 8. Obtain a qualified independent smart-contract security audit and resolve every critical/high finding.
 9. Founder verifies all five owner-provided destination addresses in the signed deployment preview; derive each deterministic Jetton Wallet address from the deployed Master and compare it to the allocation manifest.
 
-Local TON Sandbox tests are required but are not sufficient for Mainnet. A real TON Testnet deployment and full five-wallet issuance rehearsal are required before Mainnet. This is consistent with TON's deployment guidance.
+Local TON Sandbox tests are required but are not sufficient for Mainnet. Under the current Founder instruction, no TON Testnet deployment or Testnet transaction is authorized. The remaining release gates are qualified independent audit, independent clean-room rebuild, live fee/reserve review, exact transaction review, and explicit Founder signatures.
 
 ## 6. Mainnet approval and transaction signing
 
-Mainnet deployment and initial issuance are separate, irreversible on-chain operations. The owner has specified the intended amounts and destinations, but Mainnet release remains NO-GO until Sandbox, Testnet, independent security review, exact-build hash reproduction, and live fee simulation are complete.
+Mainnet deployment and initial issuance are separate, irreversible on-chain operations. The owner has specified the intended amounts and destinations, but Mainnet release remains NO-GO until local Sandbox tests, independent security review, clean-room rebuild/hash reproduction, live fee simulation, and explicit Founder approval are complete. Testnet deployment and transactions are not authorized.
 
 Before requesting any Founder signature, present one complete transaction review containing:
 - Exact network and wallet to be used.
@@ -147,7 +147,7 @@ The Founder personally reviews and signs in the wallet only after explicit readi
 - Founder review of the exact five owner-provided TON addresses and post-deployment deterministic Jetton Wallet address derivation: pending.
 - Historical 10B Master address `EQCvOZBRDK51sk2k1qSWksk6jnhXT11MHquhD06FFLOKrh77` is superseded. Current 2.1B predicted Master address is recorded in the fresh exact-head CI preview; it is not deployed yet.
 - Predicted deterministic recipient Jetton Wallet addresses are recorded in `contracts/jetton/allocation-manifest.template.json`; they were derived from the same Master address and independently hash-checked. Confirm each with the deployed Master's `get_wallet_address` getter before issuance.
-- Unsigned deployment preview is generated by `scripts/prepare-mainnet-deployment.ts`; deployment sender is the separate GAS & OPERATIONS wallet, deployment body is VCoinFund, attached value is 0.75 TON minimum, plus wallet/network fees.
+- Unsigned deployment preview is generated by `scripts/prepare-mainnet-deployment.ts`; deployment sender is the Founder wallet (also GAS & OPERATIONS), deployment body is VCoinFund, and attached value is taken from the exact generated preview (currently 1.00 TON), plus live wallet/network fees.
 - Initial mint and allocation transactions: none recorded.
 - Mainnet deployment or issuance: not performed; the owner has confirmed the five-wallet full-supply allocation intent, but no Mainnet transaction is authorized until all release gates pass and the exact transaction is separately approved.
 

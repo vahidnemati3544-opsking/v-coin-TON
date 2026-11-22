@@ -27,10 +27,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: contracts/jetton/package.json
-      - name: Install dependencies
-        run: npm install --no-audit --no-fund
+      - name: Generate deterministic dependency lockfile
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Install from generated lockfile
+        run: npm ci --no-audit --no-fund
       - name: Capture dependency audit report
         run: npm audit --json > npm-audit-report.json || true
       - name: Enforce zero high or critical dependency advisories

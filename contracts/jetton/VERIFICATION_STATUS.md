@@ -200,7 +200,7 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 
 ## Action #40 — Founder / GAS & OPERATIONS role unification (2026-11-22)
 
-**Status:** Implemented, committed, compiled, Sandbox-tested, and exact-head CI verified in run #161. This is not a deployment or Mainnet authorization.
+**Status:** Implemented and committed. The shared-signer logic passed the exact-head build and Sandbox suite; the later constructor-hardening and issuer sequencing refinements are recorded in Action #42. This is not a deployment or Mainnet authorization.
 
 - Founder and GAS & OPERATIONS use the same owner-approved Mainnet address: `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy`.
 - Old inaccessible GAS address is retired; never fund or use it.
@@ -209,7 +209,7 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 - The generated Mainnet preview is artifact `14744513956` (SHA-256 `35a2331b99a73ddb40b511b26b4a436ff6566181d63194c0c8e825df7c31da53`).
 - Mainnet deployment, minting, and token credits remain unperformed.
 
-## Action #41 — Regenerate and independently reproduce Mainnet address package
+## Action #41 — First regeneration and independent hash reproduction (superseded by Action #42)
 
 **Status:** CI generation and independent local hash reproduction passed; addresses remain unsigned predictions until deployed-Master getters confirm them.
 
@@ -224,3 +224,16 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 - Ecosystem / Marketing Jetton Wallet: `EQCDG9Bz_yAP0qZ34lH_vHhj_2eLbCVHPu-dHnG5BtBC7nPR`; hash `831bd073ff200fd2a677e251ffbc7863ff678b6c25473eef9d1e71b906d042ee`.
 - An independent Python BOC parser recalculated the Master StateInit hash, Master code cell hash, Jetton Wallet code cell hash, and all five Jetton Wallet StateInit hashes; all matched the CI artifact. The hash bytes embedded in all six friendly addresses and all six CRC16-XMODEM checksums also verified.
 - This is deterministic build/hash verification, not a third-party security audit or on-chain verification. Testnet rehearsal, external audit, live fee simulation, Mainnet deployment, and five allocation mints remain pending.
+
+## Action #42 — Enforce Founder-only GAS role, sequential issuance, and regenerate addresses
+
+**Status:** Contract, tests, issuer console, and CI controls committed. Exact-head run #173 build-and-test succeeded; independent BOC/address reproduction passed. No deployment or token issuance occurred.
+
+- Contract constructor now requires `gasOperatorWallet == owner`; a deployment that assigns a separate GAS wallet is rejected.
+- Added a Sandbox test that attempts the deployment path with a separate GAS wallet and expects constructor rejection. Existing tests cover Founder-only minting, exact allocations, cap, duplicate issuance, five-wallet distribution, and bounce/retry behavior.
+- TonConnect issuer recognizes the shared Founder signer for both deployment and minting, locks the deploy button after a wallet request, and exposes only one allocation request at a time. The next allocation unlocks only after the user manually confirms the previous on-chain balance and allocation status.
+- CI run #173 on commit `08fe61fd46fcf83b730512be80e2276acad3e139`: Tact compile, strict npm audit, Mainnet preview generation, Jest tests, and issuer syntax/safety guard validation succeeded. GitHub Pages deployment remains blocked by repository administration permission.
+- New unsigned Master preview: `EQBmjwr-Bc2_wNKcZHjTr8KtPGQgN-ltRhTIXqK0zM89O0Xt`; StateInit hash `668f0afe05cdbfc0d29c6478d3afc2ad3c642037e96d4614c85ea2b4cccf3d3b`; Master code hash `383823efc716ed7aab1efe58536aca94f476d6a42d0e6a3041ef56c1f598f846`.
+- New predicted Jetton Wallets: Founder `EQAR0RVzOcPf8ILtICUucwNplBPsgq2VrQkpqe418leHvyaI`; Mining `EQARsFwLXMkI6xPnA6KDF38svc8u_TIDJ8t4fcR7HpLwvhE4`; Treasury `EQBVb4YTI5tkWR-AArcz2M7ik6I45tRgjQs8XribDJxQD-7H`; Liquidity `EQAUXhlV8gxHRhHPKksK7bjkhTnb0d_e5JUL1jzE7Na9L8ol`; Ecosystem `EQDZL9l3y0BlXRretbbFSpBMj-GdNQzvg0PKcRwlr6m6JFO1`.
+- Independent Python BOC parser reproduced the Master StateInit hash, Master code hash, Jetton Wallet code hash, and all five Jetton Wallet StateInit hashes. The six friendly addresses' embedded hashes and CRC16-XMODEM checksums also passed.
+- These remain unsigned predictions. Third-party security audit, Testnet deployment/issuance rehearsal, fee simulation, Mainnet deployment, and the five allocations remain pending.

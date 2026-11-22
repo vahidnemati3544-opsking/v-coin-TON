@@ -96,3 +96,23 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 - Generated metadata content-cell hash: 6dc0e0c3a9ec89e72fc8402a13915bb425032a0e57dfa955ba5579eab28c940c.
 - Canonical logo intentionally omitted until the locked source asset's actual JPEG format is verified and any new converted asset is separately approved.
 - Next action: derive the complete VCoinMaster StateInit from the exact constructor values and metadata content cell, independently reproduce its hash/address, then prepare a Tonkeeper-compatible deploy transaction for Founder review and signature.
+## Action #33 — Mainnet deployment StateInit and five Jetton wallet derivation
+
+**Status:** Unsigned Mainnet deployment package generated; StateInit and all five deterministic wallet addresses independently hash-checked; no transaction broadcast.
+
+- Exact preview build commit: 9d198dc169d53f6307f042db395cf5dfdbb6c1b6; [CI run #105](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44990829838) passed.
+- Artifact ID: 14741568516; artifact SHA-256: b464d40dc1cf0b29b95011c0f1409c8083cf22aa7aab994377475f3e11457fdb.
+- Predicted Mainnet VCoinMaster address: EQCvOZBRDK51sk2k1qSWksk6jnhXT11MHquhD06FFLOKrh77.
+- Master StateInit hash: af3990510cae75b24da4d6a49692c93a8e78574f5d4c1eaba10f4e8514b38aae. It was independently reproduced from the serialized StateInit BOC using a separate cell-hash parser; the hash embedded in the friendly Master address matches exactly.
+- Master code cell hash: 0e1a3581d5ee1a37f8ac12f39e8d6be1a8277ad2d612ad3f35bce78da474f03a.
+- Metadata content cell hash: 6dc0e0c3a9ec89e72fc8402a13915bb425032a0e57dfa955ba5579eab28c940c.
+- Founder Jetton Wallet: EQBElyTbIfy5Z0Aur87D_UVl4F4Qg1_ZUr5D0AGbf2osCZvo; StateInit hash 449724db21fcb967402eafcec3fd4565e05e10835fd952be43d0019b7f6a2c09.
+- Mining Reserve Jetton Wallet: EQANO_4VthNKI4WjeXbxV4ZvGZyBGrMURY0zVnfQknXhzbIM; StateInit hash 0d3bfe15b6134a2385a37976f157866f199c811ab314458d335677d09275e1cd.
+- Treasury Jetton Wallet: EQCuFM3AkJGmeNUy2rllpNum4ojmGzNuT6PVhtJ_c4SicJIY; StateInit hash ae14cdc09091a678d532dab965a4dba6e288e61b336e4fa3d586d27f7384a270.
+- Liquidity / Market Jetton Wallet: EQBQgo1HRRnKFZEhLvSW12nt3omq8H6icxtGhn30tOlENX6Z; StateInit hash 50828d474519ca1591212ef496d769edde89aaf07ea2731b46867df4b4e94435.
+- Ecosystem / Marketing Jetton Wallet: EQCRa4bOU5yZaYaEqFhb5qa-pcbIyegjg6AEwGTVQVOECMQ4; StateInit hash 916b86ce539c99698684a8585be6a6bea5c6c8c9e82383a004c064d541538408.
+- A separate parser independently recomputed all five Jetton Wallet StateInit hashes from their BOCs; each matched both the generated hash and the address hash bytes.
+- Deployment transaction design: GAS & OPERATIONS wallet sends the first message to the predicted Master with StateInit, VCoinFund body, and 0.75 TON minimum attached value. This deploys the contract and funds its reserve in one transaction. Network/wallet fee quote is additional and still required.
+- After the Master is active and getters confirm the five destinations, the Founder wallet signs five separate VCoinMint requests: 2B, 5B, 1B, 1B, 1B VCOIN. Each transaction is separately reviewed; mintable becomes false after all five successful credits.
+- No Mainnet transaction has been signed or broadcast. The Master address and Jetton Wallet addresses remain predicted until on-chain deployment and getter checks.
+- Independent third-party smart-contract security audit and live Mainnet fee simulation remain outstanding; do not describe this as an audited or deployed token.

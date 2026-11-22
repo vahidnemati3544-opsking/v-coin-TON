@@ -120,10 +120,12 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Configure GitHub Pages
+      - name: Configure existing GitHub Pages site
+        # The repository owner must enable Pages once in Settings > Pages
+        # and select "GitHub Actions" as the build and deployment source.
+        # GITHUB_TOKEN can deploy to an existing Pages site but cannot create
+        # the repository's Pages site when Pages has never been enabled.
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - name: Deploy TonConnect issuer
         id: deployment
         uses: actions/deploy-pages@v4

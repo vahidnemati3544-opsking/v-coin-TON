@@ -83,8 +83,13 @@ describe('VCOIN Jetton Sandbox release gates', () => {
 
     const rejected = await master.send(
       separateGas.getSender(),
-      { value: toNano('0.75') },
-      { $type: 'VCoinFund' },
+      { value: toNano('0.1') },
+      {
+        $$type: 'ProvideWalletAddress',
+        query_id: 1n,
+        owner_address: owner.address,
+        include_address: false,
+      },
     );
     expect(rejected.transactions).toHaveTransaction({
       to: master.address,

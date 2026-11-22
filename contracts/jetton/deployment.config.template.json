@@ -48,7 +48,7 @@
   },
   "deployment_authorized": false,
   "mainnet_authorized": false,
-  "notes": "Template only. Mainnet is the intended release network, but deployment_authorized and mainnet_authorized remain false until all release gates pass and the Founder explicitly approves the exact transaction. The five owner allocation addresses are recorded in allocation_wallets; these are not derived Jetton wallet contract addresses. Derive each Jetton wallet from the deployed Master and verify it before issuance. Founder receives the full 2,000,000,000 VCOIN allocation in one operation with no vesting or time lock. The separate GAS & OPERATIONS wallet is a TON-fee funding source only, not a VCOIN allocation. Metadata URI/content cell and all derived contract addresses remain null until approved and verified. Never commit secrets, seed phrases or private keys.",
+  "notes": "Founder explicitly confirmed the complete 10,000,000,000 VCOIN supply is to be issued and allocated directly across all five registered allocation wallets, including the Founder wallet as one of those five. Do not ask again which allocation method is intended. The separate GAS & OPERATIONS wallet is not a sixth VCOIN allocation. This confirmation records allocation intent only; deployment_authorized and mainnet_authorized remain false until all technical release gates pass and exact transaction details are presented for explicit signing approval. The five owner addresses are not derived Jetton Wallet addresses; derive and verify each after deployment. Founder receives 2,000,000,000 VCOIN in one operation, with no vesting or time lock. Never commit secrets.",
   "allocation_wallet_verification": {
     "status": "pending_wallet_control_proof",
     "note": "Owner-designated addresses only; recording does not prove control. Verify each address on TON Mainnet before any deployment or issuance.",
@@ -59,5 +59,20 @@
       "ecosystem_marketing": "pending",
       "mining_reserve": "pending"
     }
+  },
+  "release_intent": {
+    "founder_confirmed": true,
+    "scope": "issue_and_allocate_full_fixed_supply_to_all_five_registered_wallets",
+    "total_tokens": "10000000000",
+    "allocations": {
+      "founder": "2000000000",
+      "mining_reserve": "5000000000",
+      "treasury": "1000000000",
+      "liquidity_market": "1000000000",
+      "ecosystem_marketing": "1000000000"
+    },
+    "founder_is_one_of_five_wallets": true,
+    "gas_operations_wallet_is_not_an_allocation_wallet": true,
+    "mainnet_transaction_authorized": false
   }
 }

@@ -237,3 +237,18 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 - New predicted Jetton Wallets: Founder `EQAR0RVzOcPf8ILtICUucwNplBPsgq2VrQkpqe418leHvyaI`; Mining `EQARsFwLXMkI6xPnA6KDF38svc8u_TIDJ8t4fcR7HpLwvhE4`; Treasury `EQBVb4YTI5tkWR-AArcz2M7ik6I45tRgjQs8XribDJxQD-7H`; Liquidity `EQAUXhlV8gxHRhHPKksK7bjkhTnb0d_e5JUL1jzE7Na9L8ol`; Ecosystem `EQDZL9l3y0BlXRretbbFSpBMj-GdNQzvg0PKcRwlr6m6JFO1`.
 - Independent Python BOC parser reproduced the Master StateInit hash, Master code hash, Jetton Wallet code hash, and all five Jetton Wallet StateInit hashes. The six friendly addresses' embedded hashes and CRC16-XMODEM checksums also passed.
 - These remain unsigned predictions. Third-party security audit, Testnet deployment/issuance rehearsal, fee simulation, Mainnet deployment, and the five allocations remain pending.
+
+## Action #43 — Internal static security review
+
+**Status:** Scoped manual review completed; no substitute for independent third-party audit. Mainnet remains NO-GO.
+
+- Reviewed `contracts/jetton/src/vcoin.tact`, `contracts/jetton/src/jetton.tact`, `contracts/jetton/src/messages.tact`, Sandbox release tests, deployment generator, and TonConnect issuer controls.
+- Authorization: constructor requires `gasOperatorWallet == owner`; only Founder/owner can issue VCOIN or fund the Master; a different GAS wallet is rejected.
+- Allocation: five distinct fixed destinations; exact role amounts; total cap 2,100,000,000 VCOIN at six decimals; one-time role flags; minting is disabled after all five credits succeed.
+- Bounce handling: Master accepts allocation rollback only from the deterministic Jetton Wallet for that role and checks the exact amount before restoring the role's retry state.
+- Holder controls: Jetton transfers and burns require the holder's owner address; inbound wallet transfers validate the deterministic source wallet; bounced transfer/burn messages restore the prior balance.
+- Administrative surface: no Master method to freeze, claw back, confiscate, or seize holder Jetton balances; metadata is fixed in StateInit with an immutable commit-pinned URI.
+- Issuer: Mainnet-only network guard, exact Founder raw-address signer guard, one-at-a-time allocation sequencing, manual on-chain confirmation gate, deploy-request lock, and no private-key/seed collection. CI syntax and guard checks passed in run #173.
+- Verification evidence: run #173 passed 17/17 Jest tests, Tact compilation, strict npm audit (zero vulnerabilities), unsigned Mainnet preview generation, and issuer syntax/safety checks.
+- Residual blockers: independent qualified security audit; live TON Testnet deployment and five-wallet issuance rehearsal; live fee/reserve simulation; deployed-Master getter verification; GitHub Pages owner setting. No Mainnet transaction has been signed or broadcast.
+- Design note: the Master has no TON withdrawal method. Any unused TON reserve remaining in the Master after deployment/issuance is not recoverable through the current contract. This is a deliberate absence of admin withdrawal authority in the current implementation and must be understood before signing.

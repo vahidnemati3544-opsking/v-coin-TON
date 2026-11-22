@@ -53,7 +53,6 @@ contract VCoinMaster with JettonMaster {
         require(treasuryWallet != liquidityWallet, "Duplicate allocation wallet");
         require(treasuryWallet != ecosystemWallet, "Duplicate allocation wallet");
         require(liquidityWallet != ecosystemWallet, "Duplicate allocation wallet");
-        require(gasOperatorWallet != owner, "Gas operator must be separate");
         require(gasOperatorWallet != miningReserveWallet, "Gas operator must be separate");
         require(gasOperatorWallet != treasuryWallet, "Gas operator must be separate");
         require(gasOperatorWallet != liquidityWallet, "Gas operator must be separate");
@@ -75,8 +74,8 @@ contract VCoinMaster with JettonMaster {
         self.ecosystem_issued = false;
     }
 
-    // The separate GAS & OPERATIONS wallet funds the Master reserve. It is
-    // deliberately not an allocation destination and cannot issue VCOIN.
+    // Founder wallet also serves as GAS & OPERATIONS. This role can fund
+    // the Master reserve; VCOIN issuance remains separately guarded by VCoinMint.
     receive(msg: VCoinFund) {
         let ctx: Context = context();
         require(ctx.sender == self.gas_operator_wallet, "Unauthorized gas funding source");

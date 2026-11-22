@@ -2,8 +2,9 @@
 
 const INTERVAL_MS = 72 * 60 * 60 * 1000;
 const PRICE_SCALE = 1_000_000_000_000n;
-const INCREASE_NUMERATOR = 1_002_041n;
-const INCREASE_DENOMINATOR = 1_000_000n;
+const INCREASE_NUMERATOR = 1_003_338_149_181n;
+const INCREASE_DENOMINATOR = 1_000_000_000_000n;
+const INCREASE_RATE_PERCENT = '0.33381492';
 const MINING_RESERVE_CODE = 'USER_MINING';
 
 function increasePriceScaled(currentScaled) {
@@ -85,7 +86,7 @@ async function advancePriceReference({ pool, now = new Date() }) {
       await client.query(
         'INSERT INTO price_reference_candles ' +
         '(period_start, period_end, open_usd, high_usd, low_usd, close_usd, increase_rate_percent) ' +
-        'VALUES ($1, $2, $3, $4, $5, $6, 0.20410000) ' +
+        'VALUES ($1, $2, $3, $4, $5, $6, 0.33381492) ' +
         'ON CONFLICT (period_start) DO NOTHING',
         [
           periodStart.toISOString(),
@@ -197,6 +198,7 @@ function startPriceReferenceScheduler({ pool, logger = console }) {
 
 module.exports = {
   INTERVAL_MS,
+  INCREASE_RATE_PERCENT,
   increasePriceScaled,
   scaledPriceToDecimal,
   decimalPriceToScaled,

@@ -1,45 +1,33 @@
-# V COIN (VCOIN) — TON Jetton Smart Contract Specification
+# V COIN (VCOIN) — TON Jetton Contract Specification
 
-**Document ID:** VCT-JETTON-SPEC-001  
-**Version:** 1.0.0  
-**Status:** Contract design draft — implementation, compilation, audit and deployment pending  
-**Network target for first rehearsal:** TON Testnet only  
-**Token standard:** TEP-74 (Jettons), with TEP-64 metadata  
-**Repository scope:** V-Coin-TON
+**Document ID:** VCT-JETTON-SPEC-002  
+**Version:** 2.0.0  
+**Status:** Current implementation candidate; exact-head CI passed; independent audit and Mainnet release gates remain pending  
+**Network direction:** TON Mainnet only for first live issuance; no Testnet deployment is in the current execution path  
+**Token standard target:** TEP-74 Jetton with TEP-64 metadata  
+**Repository:** `vahidnemati3544-opsking/v-coin-TON`
 
-> This is the binding technical design brief for the VCOIN Jetton implementation. It is not compiled contract code, a deployed token, a legal opinion, or authorization to deploy or transfer assets.
+> This specification supersedes the earlier draft and its conflicting Testnet / founder-vesting assumptions. It describes the current implementation and approved economic rules. It is not proof of TEP compliance, independent audit, deployment, issuance, or authorization to broadcast a transaction.
 
 ## 1. Approved token parameters
 
-| Parameter | Required value |
+| Parameter | Approved value |
 |---|---|
 | Name | V COIN |
 | Symbol | VCOIN |
 | Decimals | 6 |
-| Initial supply | 10,000,000,000 VCOIN |
-| Initial supply in base units | 10,000,000,000,000,000 |
-| Additional minting | Permanently disabled after initial issuance |
+| Total initial supply | 10,000,000,000 VCOIN |
+| Total supply in base units | 10,000,000,000,000,000 |
 | Standard | TON Jetton, TEP-74 |
-| Metadata | TEP-64 compliant |
-| First deployment target | TON Testnet |
-| Mainnet | Disabled pending separate explicit approval |
+| Metadata | TEP-64 |
+| Additional minting | Disabled after all five allocations complete |
+| Live network direction | TON Mainnet, subject to all release gates and explicit Founder approval |
 
-The total supply is 10^16 base units. All token arithmetic must use integer base units; floating-point arithmetic is prohibited.
+All token arithmetic must use integer base units. Floating-point token arithmetic is prohibited.
 
-## 2. Required contract components
+## 2. Fixed allocation policy
 
-1. **Jetton Master (minter):** authoritative total supply, admin/issuance state, metadata, wallet code and deterministic owner-wallet derivation.
-2. **Jetton Wallet:** one contract instance per owner, implementing standard Jetton balance and transfer behavior.
-3. **Allocation / vesting controls:** separate contracts or independently reviewed wallet controls for allocations that require restrictions. These are not substitutes for the standard Jetton Master or Wallet.
-4. **Off-chain deployment and verification scripts:** reproducible compilation, state initialization, deployment, getter verification and address manifest.
-
-The implementation must follow the active TEP-74 interface and TON security recommendations. TEP-89 wallet discovery may be added if the selected implementation supports it and interoperability tests pass.
-
-## 3. Fixed initial allocation
-
-The initial issuance must equal exactly 10,000,000,000 VCOIN.
-
-| Allocation | Percent | VCOIN | Base units |
+| Role | Share | VCOIN | Base units |
 |---|---:|---:|---:|
 | Founder | 20% | 2,000,000,000 | 2,000,000,000,000,000 |
 | Mining reserve | 50% | 5,000,000,000 | 5,000,000,000,000,000 |
@@ -48,122 +36,102 @@ The initial issuance must equal exactly 10,000,000,000 VCOIN.
 | Ecosystem / marketing | 10% | 1,000,000,000 | 1,000,000,000,000,000 |
 | **Total** | **100%** | **10,000,000,000** | **10,000,000,000,000,000** |
 
-The contract/deployment process must reject any configuration whose allocations do not sum exactly to the approved total. Allocation recipient addresses are intentionally not supplied in this draft; they must be owner-confirmed and independently checked before deployment. Public documents must not expose confidential founder or treasury controller identities or addresses.
+The Founder receives the full 2,000,000,000 VCOIN allocation in one operation. No vesting, time lock, or installment schedule applies to the Founder allocation. The five owner-designated allocation addresses are recorded in `docs/WALLET_ALLOCATION_REGISTER.md`. The separate GAS & OPERATIONS wallet is for TON fees only and is not a VCOIN allocation recipient.
 
-## 4. Supply and minting invariants
+## 3. Current Master contract behavior
 
-1. No issuance beyond the exact initial supply is permitted.
-2. Initial issuance must be a one-time, owner-authorized deployment operation with a verifiable transaction trail.
-3. The issuance state must transition irreversibly from not-issued to issued-and-locked.
-4. After initial issuance, the Master must report mintable = 0 and reject every mint request.
-5. No admin method, upgrade path, emergency method, metadata update, wallet method or backend service may recreate mint authority.
-6. If the selected implementation cannot guarantee irreversible mint disablement, it is not acceptable for VCOIN.
-7. Burning may reduce total supply. Burned tokens must never be reissued or counted as available mining reserve.
-8. Supply and allocation totals must be checked on-chain after issuance. A database record is not proof of issuance.
+The current implementation is in `contracts/jetton/src/vcoin.tact` and `contracts/jetton/src/jetton.tact`.
 
-**Preferred issuance model:** deploy the reviewed Master with a one-time issuance mechanism, issue the exact total only to pre-approved allocation destinations (or to a separately reviewed distribution vault with immutable, auditable allocation rules), and irrevocably disable minting. The final implementation must prove that no partially completed multi-recipient issuance can leave supply or allocation state inconsistent. The implementation choice must be settled in code review before Testnet deployment.
+- The Master constructor fixes the five allocation destinations in StateInit.
+- The Founder wallet is the sole `VCoinMint` authority.
+- Each configured destination can receive only its exact fixed allocation, once.
+- The Master rejects unknown destinations, wrong amounts, duplicate issuance, unauthorized senders, and issuance above the fixed supply.
+- A separate GAS & OPERATIONS wallet may fund the Master reserve through `VCoinFund`; it cannot issue VCOIN.
+- The Master sets `mintable=false` after all five allocation credits complete.
+- A natural bounce from a deterministic destination Jetton Wallet is authenticated by sender address and exact amount; only the affected role is rolled back and eligible for retry.
+- The Jetton Wallet implementation contains owner-authorized transfer and burn paths, validates internal wallet relationships, and restores balances after applicable bounced operations.
 
-## 5. Jetton Master interface and behavior
+These are source-level implementation statements. Independent TEP-74 interoperability and security review remains required before Mainnet.
 
-The Master must provide the standard getters, including:
-- get_jetton_data() — total supply, mintability, admin address, content and wallet code.
-- get_wallet_address(owner_address) — deterministic Jetton Wallet address for the supplied owner address.
+## 4. Constructor and address controls
 
-It must correctly process standard Jetton wallet deployment, burn notifications and any selected discovery interface. It must validate message sender and opcode for every privileged or supply-affecting operation.
+The constructor argument order is:
 
-The Master must not include a hidden mint, arbitrary balance editing, confiscation, blacklist seizure, or owner withdrawal function that can move tokens from user wallets.
+```text
+VCoinMaster(
+  owner,
+  content,
+  miningReserveWallet,
+  treasuryWallet,
+  liquidityWallet,
+  ecosystemWallet,
+  gasOperatorWallet
+)
+```
 
-## 6. Jetton Wallet interface and behavior
+Use `contracts/jetton/allocation/INIT_PARAMETERS.md` and `docs/WALLET_ALLOCATION_REGISTER.md` as the canonical mapping. The five owner addresses and the separate fee wallet must be pairwise distinct, correctly represented for TON Mainnet, and verified before any transaction. The owner addresses are not the derived Jetton Wallet contract addresses. Derive each holder Jetton Wallet from the deployed Master and verify it before issuance.
 
-Each owner wallet must implement the applicable TEP-74 behavior, including:
-- get_wallet_data() — balance, owner, Master address and wallet code.
-- Standard transfer handling with sender authorization and sufficient-balance checks.
-- Standard internal transfer processing with correct sender/Master validation.
-- Standard burn handling and Master burn notification.
-- Correct bounce handling and excess return behavior.
-- Safe forwarding of TON and payload handling according to TEP-74.
+Recording an address does not prove wallet control. Use a safe signed wallet-control proof or equivalent verification; never request or store a seed phrase, private key, PIN, or recovery code.
 
-The wallet must reject unauthorized balance changes, malformed messages, wrong-Master messages, insufficient balances and invalid sender relationships. All amount calculations use integer base units.
+## 5. Metadata
 
-## 7. Metadata and identity
+The Master stores a TEP-64 content cell. The approved name, symbol, six decimals, canonical icon, and metadata URI/content must be assembled into a reviewed metadata package before deployment. Current deployment template metadata URI is intentionally null; metadata packaging, content-cell construction, and immutable URI verification are release blockers. The canonical logo is documented under `contracts/jetton/assets/`.
 
-Metadata must follow TEP-64. The canonical Master address on the selected network is the token identity. Name, ticker, icon, website and metadata URI are descriptive only and must never be used as proof that a token is authentic.
+Do not deploy with empty or placeholder metadata. Verify the resulting metadata through the deployed Master getter and an independent TEP-64 parser.
 
-Before any user-facing integration, pin and verify the exact Master address and network. Never substitute a USDT Master address, sample Jetton, test token, or a user's per-owner Jetton Wallet address.
+## 6. Supply and allocation invariants
 
-Metadata mutability must be explicitly decided before implementation. Recommended default: immutable metadata after initial deployment, unless the owner separately approves a narrowly constrained and auditable update mechanism before deployment.
+1. The five allocations sum exactly to 10^16 base units.
+2. Only the Founder wallet can request allocation issuance.
+3. Each configured role can be credited only its exact allocation.
+4. No arbitrary receiver or amount is accepted.
+5. A bounced allocation must roll back only the affected role and must not leave total supply inconsistent with credited balances.
+6. Once all five roles complete, `mintable=false` and every later mint request must fail.
+7. Burning may reduce supply; burned VCOIN is not replenished or reissued.
+8. Backend/database balances are not proof of on-chain ownership or issuance.
 
-## 8. Allocation-specific controls
+## 7. Required verification evidence
 
-### 8.1 Founder allocation — 2 billion VCOIN
+The latest exact-head CI run on commit `a53ba80f5655b44acdf51420a683f9c3a4a2334e` passed lockfile generation, clean `npm ci`, dependency audit, Tact compilation, and Jest Sandbox tests. The audit report recorded zero vulnerabilities. The workflow artifact and file checksums are recorded in `contracts/jetton/VERIFICATION_STATUS.md`.
 
-The approved economic rule is four-year vesting. The exact start timestamp, cliff (if any), release frequency, beneficiary wallet and revocation policy have not been supplied. No vesting contract may be deployed until these parameters are explicitly approved and independently reviewed. No founder identity or confidential address should be placed in public documentation.
+This CI pass is not an independent security audit and does not establish Mainnet readiness. Remaining evidence includes:
+- Commit the generated lockfile to `main` and rerun CI on the resulting exact head.
+- Independently review TEP-74 / TEP-64 behavior, wallet transfers, burns, bounce handling, and message validation.
+- Rebuild independently and reproduce TON code-cell hashes, StateInit hashes, and deterministic addresses. A SHA-256 checksum of a BOC file is not a TON cell hash.
+- Complete metadata package/content-cell review.
+- Verify control of all five allocation destinations and the separate fee wallet on TON Mainnet.
+- Produce a signed release manifest tying source commit, toolchain, lockfile, BOCs, cell hashes, StateInit hashes, metadata, network, and review approvals together.
 
-### 8.2 Mining reserve — 5 billion VCOIN
+## 8. Mainnet release and signing boundary
 
-The reserve is a hard cap. The mining distributor must not mint. It may transfer only from the funded reserve and must enforce atomic reservation, idempotency, reconciliation and a hard stop when the reserve is exhausted.
+The deployment template must remain fail-closed: `deployment_authorized=false` and `mainnet_authorized=false` until all release gates pass and the Founder explicitly approves the exact transaction.
 
-The approved mining rule is separate from the Jetton token contract: the next mining interval uses the user's verified on-chain VCOIN balance in the linked wallet; reward rate is 1% per 24 hours at every level 1–400; six-decimal integer base units; pending internal rewards do not count as wallet holdings. Mining API remains disabled until wallet-proof, balance-reader and payout requirements pass.
+Before any Founder signature, present:
+- TON Mainnet and the exact signing wallet.
+- Exact Master StateInit / deployment details and resulting address derivation.
+- All constructor arguments and the five destination roles.
+- Metadata URI/content hash.
+- Exact attached TON values, fee estimate, reserve funding, and simulation results.
+- Exact VCOIN amount and base units for each issuance request.
+- Expected state changes and post-transaction balance/getter checks.
+- Source commit, toolchain, lockfile, BOC checksums, TON cell / StateInit hashes, and independent audit status.
+- Clear explanation of irreversibility and residual risks.
 
-### 8.3 Treasury, liquidity and ecosystem allocations
+Deployment, gas-reserve funding, and each of the five allocation issuance messages are separate on-chain operations. Do not sign or broadcast any of them until the corresponding complete transaction review has been presented and the Founder has explicitly approved it. Never send Mainnet transactions from CI.
 
-Each destination and its controller must be owner-confirmed. Custody model, multisig threshold, timelocks, vesting/lock conditions and operational policies must be specified in separate reviewed documents before any transfer or deployment. Do not publish confidential controller identities or addresses.
+## 9. Current disposition
 
-## 9. Admin, upgradeability and custody
+**Mainnet release status: NO-GO / NOT DEPLOYED.**
 
-- No contract upgradeability or proxy mechanism is permitted unless separately justified, explicitly approved and independently audited.
-- The Master must not retain mint authority after initial issuance.
-- Any temporary deployment authority must be minimized and removed/locked as part of the verified issuance procedure.
-- Administrative keys must use an owner-approved secure wallet or multisig arrangement. The exact controller and threshold are deployment decisions still pending.
-- Never request, store, log, transmit or paste seed phrases or private keys into the repository, backend, chat or deployment scripts.
-- Wallet transactions must be signed in the user's wallet interface.
+- Contract source and Sandbox tests: present.
+- Exact-head CI: passed on the recorded commit.
+- Generated lockfile: in CI artifact; not yet committed to `main`.
+- Metadata package and content cell: pending.
+- Independent security / standards review: pending.
+- Independent TON cell and StateInit hash reproduction: pending.
+- Mainnet wallet-control proofs: pending.
+- Mainnet Master address and deployment transaction: none.
+- VCOIN issuance or transfers: none.
+- Mainnet authorization: false.
 
-## 10. Required tests
-
-The implementation is not acceptable until automated tests demonstrate:
-1. Exact initial supply and exact five-bucket allocation sum.
-2. Six-decimal/base-unit arithmetic with no floating-point conversions.
-3. One-time issuance succeeds only once.
-4. Every mint attempt after lock is rejected.
-5. Master getters return correct supply, mintable = 0, metadata and wallet code.
-6. get_wallet_address(owner) is deterministic and correct.
-7. Wallet getter reports the expected owner and Master.
-8. Valid transfers update balances correctly.
-9. Unauthorized transfers, wrong-Master messages and insufficient balances are rejected.
-10. Burn reduces supply and cannot enable re-minting.
-11. Bounce, excess, malformed payload and replay cases are safe.
-12. Allocation destinations and any vesting/distributor restrictions behave as specified.
-13. Testnet explorer state and transaction traces match local test results.
-
-Tests must include adversarial cases and must not be reported as passing unless actually executed.
-
-## 11. Deployment and release gates
-
-**Current state: NO-GO. No deployment is authorized by this document.**
-
-Before Testnet deployment:
-- Select and pin the contract language/compiler and a maintained TEP-74 implementation.
-- Complete Master and Wallet source code, build configuration, deployment scripts and automated tests.
-- Obtain owner approval for all five destination addresses and any distribution vault.
-- Resolve founder vesting start, release schedule and beneficiary.
-- Resolve treasury/liquidity/ecosystem custody and controller arrangements.
-- Reproducibly compile and verify contract artifacts.
-- Complete independent smart-contract review.
-- Prepare a Testnet-only deployment manifest and confirm the network in every wallet and explorer.
-- Deploy only after explicit owner approval of the exact transaction and destination addresses.
-- Verify Master address, getters, supply, metadata, wallet code and allocation balances on Testnet.
-
-Mainnet deployment, initial issuance on Mainnet, liquidity provision, irreversible admin changes and real-value transfers require separate explicit approval after independent security review.
-
-## 12. Change control
-
-Any change to supply, decimals, allocation, mint prohibition, wallet transfer semantics, admin powers, metadata mutability, vesting or mining reserve controls requires a documented change request, impact analysis, tests and explicit project-owner approval.
-
-## 13. Official standards and technical references
-
-- TEP-74 Jettons Standard: https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md
-- TON Jetton architecture: https://docs.ton.org/contracts/standard/tokens/jettons/how-it-works
-- TON Jetton payment/security guidance: https://docs.ton.org/applications/payments/jettons
-- TON Jetton implementation comparison: https://docs.ton.org/contracts/standard/tokens/jettons/comparison
-
-**Document status:** Technical contract specification drafted and attached to V COIN–TON. Smart-contract source implementation, compilation, tests, independent audit and deployment remain pending.
+No Testnet deployment is included in the current execution path. This specification does not authorize deployment, issuance, or transfer.

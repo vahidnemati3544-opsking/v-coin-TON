@@ -1,125 +1,113 @@
 # V COIN – TON Jetton Deployment Runbook
 
-**Status:** Implementation/deployment gate; NOT deployed  
-**Standard:** TEP-74 Jetton, metadata TEP-64  
+**Status:** Implementation candidate; NOT deployed  
+**Standard:** TEP-74 Jetton; metadata TEP-64  
 **Initial supply:** 10,000,000,000 VCOIN  
 **Decimals:** 6  
 **Initial supply in base units:** 10000000000000000  
-**Recorded founder allocation wallet (ownership unverified):** UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy  
-**GAS & OPERATIONS wallet (TON fees only; not a VCOIN allocation):** UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB
+**Release disposition:** **NO-GO for Mainnet** until all gates below are evidenced and separately approved.
 
-## 1. Non-negotiable design
+## 1. Approved fixed design
 
-1. Use the maintained TON Foundation / ton-blockchain Jetton reference implementation as the compatibility baseline; pin an exact upstream commit before building.
-2. Mint the approved initial supply exactly once. The contract must enforce the 10,000,000,000 VCOIN cap in code, not only in the deployment script.
-3. After initial issuance, permanently disable minting. Prefer an explicit immutable/one-time issuance state transition over relying only on an operator promise.
-4. Do not include hidden freeze, confiscation, arbitrary clawback, or post-transfer seizure functionality.
-5. Keep metadata immutable after launch, or make any pre-launch metadata update capability explicit and revoke it before Mainnet launch.
-6. Use integer base units throughout. Never use floating-point token arithmetic.
-7. No production deployment until source, compiled code hash, test evidence, and independent review are recorded.
+- Founder: 2,000,000,000 VCOIN (20%), credited in one operation; no vesting, time lock, or staged release.
+- Mining reserve: 5,000,000,000 VCOIN (50%).
+- Treasury: 1,000,000,000 VCOIN (10%).
+- Liquidity / market: 1,000,000,000 VCOIN (10%).
+- Ecosystem / marketing: 1,000,000,000 VCOIN (10%).
+- Six decimals; total supply is 10^16 base units.
+- No additional minting after the five exact allocations have completed.
+- The five approved allocation destinations are recorded only in `docs/WALLET_ALLOCATION_REGISTER.md`.
+- The separate GAS & OPERATIONS wallet is a TON-fee funding source only; it is not a sixth VCOIN allocation destination.
 
-## 2. Founder authority and custody
+The implementation must enforce the cap and per-role amounts in contract code, not merely in deployment scripts. No hidden freeze, confiscation, arbitrary clawback, or post-transfer seizure functionality is permitted.
 
-The founder is the operational approver for distributions from founder-controlled custody. The recorded founder allocation wallet above is a candidate destination, not proof of ownership; it must pass TON Connect proof/signature verification on the intended network. The separate GAS & OPERATIONS wallet is reserved for TON fees and operational funding only; it is not the founder's VCOIN allocation destination.
+## 2. Current source behavior
 
-Founder authority is implemented through transaction authorization:
-- backend creates a proposal only;
-- proposal contains exact network, Jetton master, recipient, amount in base units, and unique idempotency key;
-- founder reviews the exact details in Tonkeeper or another TON wallet;
-- only the wallet can sign and broadcast;
-- backend independently verifies the confirmed transaction on-chain.
+The current Tact source is `contracts/jetton/src/vcoin.tact`. Its constructor order is documented in `contracts/jetton/allocation/INIT_PARAMETERS.md`:
 
-A backend role or database flag must never be treated as permission to move tokens.
+```text
+VCoinMaster(
+  owner,
+  content,
+  miningReserveWallet,
+  treasuryWallet,
+  liquidityWallet,
+  ecosystemWallet,
+  gasOperatorWallet
+)
+```
 
-A confirmed TON transfer to an independently controlled wallet cannot be reversed by the founder. If the founder must retain control over an allocation, keep it in founder-controlled custody or use a disclosed, audited vesting/escrow contract with clearly specified beneficiary rights.
+The contract fixes the five allocation destinations in StateInit, rejects duplicate allocation addresses and overlap with the gas operator, accepts VCoinMint only from the Founder/owner, and accepts only the exact amount for the matching role. Each role can be issued once. The Master sets mintable=false after all five role flags are complete.
 
-## 3. Approved allocation
+A failed wallet credit is expected to return as a natural bounce from the deterministic Jetton wallet. The contract validates the sender and amount, rolls back only the matching role, and permits that exact role to be retried. The current Sandbox test file contains cases for each role's natural bounce and retry. These tests must still pass in CI on the exact reviewed commit; source presence alone is not a CI result.
 
-| Allocation | VCOIN | Base units |
-|---|---:|---:|
-| Founder (4-year vesting) | 2,000,000,000 | 2000000000000000 |
-| Mining reserve | 5,000,000,000 | 5000000000000000 |
-| Treasury | 1,000,000,000 | 1000000000000000 |
-| Liquidity / market | 1,000,000,000 | 1000000000000000 |
-| Ecosystem / marketing | 1,000,000,000 | 1000000000000000 |
-| **Total** | **10,000,000,000** | **10000000000000000** |
+## 3. Wallet and constructor controls
 
-Allocation sums must be checked in base units before every batch. No category may exceed its approved cap.
+- Read the five allocation destinations from `docs/WALLET_ALLOCATION_REGISTER.md`; do not reorder them by table row number.
+- Set `owner` to the Founder allocation address.
+- Set `miningReserveWallet`, `treasuryWallet`, `liquidityWallet`, and `ecosystemWallet` to their corresponding registered addresses.
+- Set `gasOperatorWallet` to the separately registered GAS & OPERATIONS address.
+- Confirm all six addresses are distinct and use the intended network representation.
+- Do not infer ownership from an address label. Complete a safe wallet-control proof for every allocation destination before issuance.
+- After deployment, compare `get_allocation_config` and `get_gas_operator_wallet` against the approved register.
 
-## 4. Deployment sequence
+No seed phrase, private key, PIN, or recovery code may be requested or stored.
 
-### Gate A — source and build
-- Import the maintained official Jetton reference implementation at a pinned commit.
-- Apply the fixed-supply and one-time-issuance constraints.
-- Review Jetton master and wallet behavior against TEP-74 and metadata against TEP-64.
-- Build reproducibly; record compiler/toolchain versions and code hashes.
-- Run unit, sandbox, negative, replay, authorization, transfer, burn, and supply-cap tests.
+## 4. Gas reserve and allocation issuance
 
-### Gate B — Testnet
-- Verify founder wallet proof on Testnet.
-- Deploy master and verify get_jetton_data.
-- Verify wallet address derivation and wallet code.
-- Mint exactly the approved initial supply once.
-- Attempt a second mint and prove it fails.
-- Transfer small test amounts to separate wallets; verify notifications, balances, fees, and transaction finality.
-- Verify metadata and explorer presentation.
-- Record all addresses, transaction hashes, code hashes, and test outputs.
+The separate GAS & OPERATIONS wallet may send VCoinFund with at least 0.75 TON to seed the Master reserve. It cannot issue VCOIN.
 
-### Gate C — Mainnet approval
-- Complete independent smart-contract review.
-- Review token distribution, consumer disclosures, sanctions/AML obligations, tax and securities/financial-services considerations with qualified counsel in relevant jurisdictions.
-- Confirm all recipient addresses and custody/vesting arrangements.
-- Confirm TON for deployment and transfer fees.
-- Obtain explicit founder approval of the final build hashes, metadata, supply, and destinations.
+The Founder wallet is the only VCoinMint authority. Each issuance request must:
+- Target one of the five fixed destinations.
+- Carry the exact role amount in base units.
+- Include at least 0.01 TON as the request value.
+- Be reviewed as a separate transaction before the Founder signs it.
 
-### Gate D — Mainnet deployment and distribution
-- Deploy only the exact reviewed build.
-- Verify deployed code and state on-chain.
-- Issue the initial supply exactly once and verify total supply.
-- Revoke/disable minting irreversibly as specified by the reviewed contract.
-- Send each allocation only after the founder signs the exact transaction.
-- Reconcile each confirmed transfer against the allocation ledger.
-- Publish the Jetton master address and verified transaction references.
+The Master reserve is intended to fund 0.1 TON for each deterministic destination Jetton-wallet credit. Confirm the actual required reserve and fee behavior in the exact-build simulation and transaction preview; do not rely on these documented nominal values as a substitute for a live fee estimate.
 
-## 5. Recorded allocation recipient addresses
+After each confirmed credit, reconcile the corresponding Jetton wallet balance and role status. After all five credits succeed, verify total supply equals exactly 10^16 base units and mintable=false. If a natural bounce occurs, verify only the affected role rolled back before retrying it.
 
-The following five public wallet addresses have been recorded as the current candidate destinations for the five VCOIN allocations. Recording an address does not prove wallet ownership or authorize a transfer. Each destination must be independently verified on the intended TON network before any distribution.
+## 5. Build and verification gates
 
-| Allocation | VCOIN | Recorded candidate destination | Verification status |
-|---|---:|---|---|
-| Founder (4-year vesting) | 2,000,000,000 | `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` | Ownership unverified; vesting custody must be finalized |
-| Treasury | 1,000,000,000 | `UQBEW5bLGbq0yVDOimgl6fpZQkdla9Wk5b0tXyx69bmBktQ` | Ownership unverified |
-| Liquidity / market | 1,000,000,000 | `UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn` | Ownership unverified |
-| Ecosystem / marketing | 1,000,000,000 | `UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE` | Ownership unverified |
-| Mining reserve | 5,000,000,000 | `UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0` | Ownership unverified |
+Before any deployment:
+1. Freeze the exact source commit and record the commit SHA.
+2. Pin the compiler and dependencies; create and commit a lockfile, then use a clean reproducible install.
+3. Run the Tact build and all TON Sandbox tests on that exact commit.
+4. Verify negative, authorization, duplicate, amount-cap, allocation, retry, and natural-bounce cases.
+5. Independently review TEP-74 Jetton Wallet behavior and TEP-64 metadata.
+6. Produce Master and Wallet BOCs, compiler/toolchain provenance, code-cell hashes, StateInit hashes, deterministic addresses, metadata hash, and a signed release manifest.
+7. Rebuild independently and compare all hashes.
+8. Obtain a qualified independent smart-contract security audit and resolve every critical/high finding.
+9. Verify control of all five destination wallets on the intended Mainnet network.
 
-**Separate GAS & OPERATIONS wallet (TON fees only; no VCOIN allocation):** `UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB`.
+Local TON Sandbox tests are part of the required verification. No Testnet deployment is included in the current execution path.
 
-The GAS & OPERATIONS wallet is not a substitute for TON held by a wallet that must sign a transaction. Sponsored fees or a relayer require separate implementation and testing.
+## 6. Mainnet approval and transaction signing
 
-Do not infer a recipient address from a wallet label, Telegram username, or a prior transaction. No transfer is authorized by this register; each transfer still requires exact transaction review and founder signature.
+Mainnet deployment and initial issuance are separate, irreversible on-chain operations and are not authorized by this runbook.
 
-## 6. Mainnet stop conditions
+Before requesting any Founder signature, present one complete transaction review containing:
+- Exact network and wallet to be used.
+- Exact contract address or StateInit deployment details.
+- Recipient and amount in human-readable VCOIN and base units.
+- Attached TON value, estimated fees, and required reserve.
+- Expected state change and post-transaction checks.
+- Exact reviewed source commit, artifact hashes, and independent audit status.
+- Clear explanation of irreversibility and any residual risk.
 
-Stop if any of the following is true:
-- founder wallet proof fails or network is ambiguous;
-- build is not reproducible or source/code hash differs from the reviewed build;
-- initial supply or allocation sums do not match exactly;
-- second mint succeeds;
-- metadata or admin privileges remain outside the approved policy;
-- recipient address has not been verified;
-- transaction simulation, fee estimate, or chain data is unavailable;
-- independent review or required legal review is incomplete.
+The Founder personally reviews and signs in the wallet only after explicit readiness is announced and the complete transaction details are confirmed. Never ask for a seed phrase or private key. A confirmed transfer to an independently controlled address cannot be reversed.
 
 ## 7. Current evidence record
 
-- Five allocation candidate destinations: recorded in Section 5; ownership/control verification pending.
-- Separate GAS & OPERATIONS wallet: recorded for TON fees only; not an allocation recipient.
-- Jetton master address: not deployed.
-- Deployment transaction: none.
-- Initial mint transaction: none.
-- Mainnet allocation transfers: none.
-- Test evidence: not yet attached.
-- Independent audit: not yet completed.
+- Five allocation destinations and separate fee wallet: recorded in `docs/WALLET_ALLOCATION_REGISTER.md`.
+- Five-role allocation logic and natural-bounce/retry test cases: present in current main source and Sandbox test file.
+- Exact-head CI result: must be refreshed and recorded.
+- Dependency lockfile: absent from current main; release blocker.
+- Reproducible compiled artifacts and independently reproduced code/StateInit hashes: not yet attested.
+- Independent security audit: pending.
+- Wallet-control proofs: pending.
+- Jetton Master address and deployment transaction: none recorded.
+- Initial mint and allocation transactions: none recorded.
+- Mainnet deployment or issuance: not performed; not authorized.
 
-This runbook is an execution control document, not evidence that any token has been deployed or transferred.
+This runbook records implementation and release controls. It is not evidence of deployment, wallet ownership, token issuance, or transaction approval.

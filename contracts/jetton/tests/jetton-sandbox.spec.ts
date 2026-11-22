@@ -285,6 +285,13 @@ describe('VCOIN Jetton Sandbox release gates', () => {
       });
     }
 
+    // Measure the actual Master account balance after all five real Jetton
+    // wallet-credit message cascades and Sandbox execution fees. The contract's
+    // withdrawal guard protects 0.25 TON plus a 0.10 TON fee buffer.
+    const masterBalanceAfterAllAllocations =
+      (await blockchain.getContract(master.address)).account.account?.storage.balance.coins ?? 0n;
+    expect(masterBalanceAfterAllAllocations).toBeGreaterThanOrEqual(toNano('0.35'));
+
     const data = await master.getGetJettonData();
     expect(data.total_supply).toBe(MAX_SUPPLY);
     expect(data.mintable).toBe(false);

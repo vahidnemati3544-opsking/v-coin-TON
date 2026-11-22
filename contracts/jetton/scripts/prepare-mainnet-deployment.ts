@@ -56,13 +56,21 @@ async function main() {
     throw new Error('Derived StateInit address does not match Tact-generated Master address');
   }
 
-  const allocationAmounts: Record<string, { tokens: string; baseUnits: string }> = {
-    founder: { tokens: '420000000', baseUnits: '420000000000000' },
-    mining_reserve: { tokens: '1050000000', baseUnits: '1050000000000000' },
-    treasury: { tokens: '210000000', baseUnits: '22100000000000' },
-    liquidity_market: { tokens: '210000000', baseUnits: '22100000000000' },
-    ecosystem_marketing: { tokens: '210000000', baseUnits: '22100000000000' },
-  };
+  const allocationAmounts: Record<string, { tokens: string; baseUnits: string }> = Object.fromEntries(
+    Object.entries(config.allocation_base_units).map(([role, baseUnits]) => {
+      const amount = BigInt(baseUnits as string);
+      const tokenScale = 10n ** BigInt(config.decimals);
+      if (amount % tokenScale !== 0n) {
+        throw new Error('Allocation for ' + role + ' is not an exact whole-token amount');
+      }
+      return [role, { tokens: (amount / tokenScale).toString(), baseUnits: amount.toString() }];
+    }),
+  );
+  const allocationTotal = Object.values(allocationAmounts)
+    .reduce((sum, allocation) => sum + BigInt(allocation.baseUnits), 0n);
+  if (allocationTotal !== BigInt(config.initial_supply_base_units)) {
+    throw new Error('Configured five-wallet allocations do not sum to the fixed initial supply');
+  }
   const issuanceTransactions: Record<string, unknown> = {};
   for (const [role, ownerAddress] of Object.entries(allocationOwners)) {
     const allocation = allocationAmounts[role];

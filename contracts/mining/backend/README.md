@@ -70,6 +70,14 @@ Accordingly, `src/server.js` deliberately returns HTTP 503 with `WALLET_BALANCE_
 
 The approved policy is documented in `../../../docs/WALLET_BALANCE_MINING_SPEC.md` and `../../../docs/MINING_READINESS_PLAN.md`: the next mining interval must be based only on a verified on-chain VCOIN Jetton balance in the user's linked TON wallet. Pending internal rewards do not count as wallet holdings.
 
+## Offline mining foundation — Action #50
+
+Migration 008 adds storage for finalized Jetton balance observations, registered device public keys, signed offline leases, idempotent sync batches, ordered offline events, and reconciliation audit records. The Ed25519 canonical-payload signing utility is in src/services/offline-lease-crypto.js; it is a tested building block, not a lease-issuance endpoint. Its private key must be supplied only from a managed secret store and must never be committed.
+
+The initial PWA shell is in ../../client. It currently provides static shell caching and local diagnostics export only. It does not yet mine, verify a lease in the browser, queue mining events, or synchronize rewards. Migration 008 has been registered but not applied to any database. Public mining remains disabled.
+
+See [the offline lease and wallet trust protocol](../../../docs/OFFLINE_LEASE_AND_WALLET_TRUST_PROTOCOL.md) and [the implementation checkpoints](../../../docs/OFFLINE_MINING_AND_DIAGNOSTICS_PLAN.md).
+
 ## What remains before Testnet extraction rehearsal
 
 - Confirm the official VCOIN Jetton master address and Testnet/Mainnet identity from deployment evidence.

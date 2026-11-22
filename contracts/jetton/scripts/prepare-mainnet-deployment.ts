@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { Address, beginCell, Cell, storeStateInit } from '@ton/core';
-import { VCoinMaster } from '../build/VCoinMaster_VCoinMaster';
+import { VCoinMaster, VCoinJettonWallet } from '../build/VCoinMaster_VCoinMaster';
 
 const root = path.resolve(__dirname, '..');
 const readJson = (file: string) => JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'));
@@ -28,6 +28,19 @@ async function main() {
     throw new Error('Tact compiler did not produce VCoinMaster StateInit');
   }
 
+  const allocationOwners = {
+    founder: wallets.founder,
+    mining_reserve: wallets.mining_reserve,
+    treasury: wallets.treasury,
+    liquidity_market: wallets.liquidity_market,
+    ecosystem_marketing: wallets.ecosystem_marketing,
+  };
+  const jettonWallets: Record<string, string> = {};
+  for (const [role, ownerAddress] of Object.entries(allocationOwners)) {
+    const jettonWallet = await VCoinJettonWallet.fromInit(Address.parse(ownerAddress), master.address);
+    jettonWallets[role] = jettonWallet.address.toString({ bounceable: true, urlSafe: true, testOnly: false });
+  }
+
   const stateInitCell = beginCell().store(storeStateInit(master.init)).endCell();
   const stateInitBoc = stateInitCell.toBoc();
   const stateInitHash = stateInitCell.hash().toString('hex');
@@ -49,6 +62,7 @@ async function main() {
     state_init_boc_base64: stateInitBoc.toString('base64'),
     metadata_uri: metadata.metadata_uri,
     metadata_content_cell_hash: metadata.content_cell_hash,
+    derived_jetton_wallet_addresses: jettonWallets,
     constructor_arguments: {
       owner_founder: wallets.founder,
       mining_reserve: wallets.mining_reserve,

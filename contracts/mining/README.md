@@ -45,7 +45,7 @@ With six token decimals, calculations use integer base units:
 
 The USD interpretation is 1% of the account's VCOIN value per day. Since the same VCOIN market price values both the balance and the reward, the price cancels when converting the rule back into VCOIN units. Therefore no hard-coded USD price or unverified price feed is used by the reward engine. If the VCOIN price changes, the user's USD balance value and the USD value of the reward change proportionally, while the token reward remains 1% of the eligible token balance per 24 hours.
 
-The engine snapshots eligible available balance at session start and after each successful claim. A later deposit is applied to the next accrual interval and is not retroactively rewarded. Reserved balances are excluded. Rewards are credited to the internal account and remain subject to the 5,000,000,000 VCOIN mining reserve. This rule is identical for levels 1–400.
+The engine snapshots eligible available balance at session start and after each successful claim. A later deposit is applied to the next accrual interval and is not retroactively rewarded. Reserved balances are excluded. Rewards are credited to the internal account and remain subject to the 1,050,000,000 VCOIN mining reserve. This rule is identical for levels 1–400.
 
 4. Level Progression System
 
@@ -75,7 +75,7 @@ Every reward operation must have a unique identifier and an auditable record.
 
 6. Mining Reserve
 
-The PostgreSQL reserve migration defines a fixed allocation of 5,000,000,000 VCOIN (5,000,000,000,000,000 base units at six decimals). New rewards are reserved in the same transaction as reward creation. The reserve is a hard cap and does not authorize token minting.
+The PostgreSQL reserve migration defines a fixed allocation of 1,050,000,000 VCOIN (1,050,000,000,000,000 base units at six decimals). New rewards are reserved in the same transaction as reward creation. The reserve is a hard cap and does not authorize token minting.
 
 The settlement migration confirms a reserved reward and posts balanced ledger entries to the mining expense and user's internal VCOIN liability accounts, then updates the user's internal balance in the same transaction. This is an application-accounting credit, not a TON wallet transfer.
 

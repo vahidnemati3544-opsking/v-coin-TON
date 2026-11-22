@@ -79,12 +79,14 @@
     "gas_operations_wallet_is_not_an_allocation_wallet": true,
     "mainnet_transaction_authorized": false
   },
-  "predicted_master_address": "EQAriHkG8kqO0GQwwX6ODgqpJCV-oUDKwalDK8lAzYGBWHvV",
-  "predicted_master_state_init_hash": "2b887906f24a8ed06430c17e8e0e0aa924257ea140cac1a9432bc940cd818158",
+  "predicted_master_address": "EQBDbY_0r9XTVCQjH3aw8bfQtF4eoOV6QdFJEJTBMtw6_pIJ",
+  "predicted_master_state_init_hash": "436d8ff4afd5d35424231f76b0f1b7d0b45e1ea0e57a41d1491094c132dc3afe",
   "price_reference": {
     "initial_price_usd": "0.008",
     "currency": "USD",
     "price_type": "modelled_reference_not_market_price",
     "not_a_market_quote": true
-  }
+  },
+  "preview_source_commit": "c4a9831f8d751a0a714054014dcf9135622c9cce",
+  "preview_status": "unsigned CI-generated preview; independent reproduction and Testnet review pending"
 }

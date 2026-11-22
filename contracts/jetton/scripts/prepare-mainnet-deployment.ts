@@ -37,9 +37,14 @@ async function main() {
     ecosystem_marketing: wallets.ecosystem_marketing,
   };
   const jettonWallets: Record<string, string> = {};
+  const jettonWalletStateInitHashes: Record<string, string> = {};
   for (const [role, ownerAddress] of Object.entries(allocationOwners)) {
     const jettonWallet = await VCoinJettonWallet.fromInit(Address.parse(ownerAddress), master.address);
+    if (!jettonWallet.init) throw new Error('Missing Jetton wallet StateInit for ' + role);
+    const walletStateInitCell = beginCell().store(storeStateInit(jettonWallet.init)).endCell();
     jettonWallets[role] = jettonWallet.address.toString({ bounceable: true, urlSafe: true, testOnly: false });
+    jettonWalletStateInitHashes[role] = walletStateInitCell.hash().toString('hex');
+    fs.writeFileSync(path.join(root, 'build', 'jetton-wallet-' + role + '.state-init.boc'), walletStateInitCell.toBoc());
   }
 
   const stateInitCell = beginCell().store(storeStateInit(master.init)).endCell();
@@ -64,6 +69,7 @@ async function main() {
     metadata_uri: metadata.metadata_uri,
     metadata_content_cell_hash: metadata.content_cell_hash,
     derived_jetton_wallet_addresses: jettonWallets,
+    derived_jetton_wallet_state_init_hashes: jettonWalletStateInitHashes,
     constructor_arguments: {
       owner_founder: wallets.founder,
       mining_reserve: wallets.mining_reserve,

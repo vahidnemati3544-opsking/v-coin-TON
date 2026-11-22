@@ -197,3 +197,13 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 
 - Exact-head build-and-test job in Jetton CI run #146 passed, including npm audit (zero advisories), Tact compile, TEP-64 content generation, Mainnet preview generation, and Jest Sandbox tests. The separate Pages job failed only at Configure GitHub Pages due repository administration permission.
 - A concurrent run #147 reached the generated-lockfile commit step while run #146 was committing the same lockfile and failed that commit step. The authoritative lockfile is now committed on main at commit `1795fb4ccdba6cbbffa09ec032af15ba7e7103f6`; this was a workflow race, not a contract compile or test failure. A fresh exact-head CI run is required to re-confirm the now-committed main head.
+
+## Action #40 — Founder / GAS & OPERATIONS role unification (2026-11-22)
+
+**Status:** Implementation changes committed; exact-head CI and regenerated address artifacts pending. This is not a deployment or Mainnet authorization.
+
+- Founder and GAS & OPERATIONS use the same owner-approved Mainnet address: `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy`.
+- Old inaccessible GAS address is retired; never fund or use it.
+- Five allocation recipients and amounts are unchanged. GAS & OPERATIONS is a role, not a sixth VCOIN recipient.
+- Required verification: Tact build, Sandbox tests for shared-signer funding, regenerated Mainnet preview and five Jetton Wallet addresses, issuer signer guard, and exact-head CI.
+- Mainnet deployment, minting, and token credits remain unperformed.

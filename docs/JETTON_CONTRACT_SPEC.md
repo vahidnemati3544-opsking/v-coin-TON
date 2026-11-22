@@ -29,14 +29,14 @@ All token arithmetic must use integer base units. Floating-point token arithmeti
 
 | Role | Share | VCOIN | Base units |
 |---|---:|---:|---:|
-| Founder | 20% | 2,000,000,000 | 2,000,000,000,000,000 |
-| Mining reserve | 50% | 5,000,000,000 | 5,000,000,000,000,000 |
-| Treasury | 10% | 1,000,000,000 | 1,000,000,000,000,000 |
-| Liquidity / market | 10% | 1,000,000,000 | 1,000,000,000,000,000 |
-| Ecosystem / marketing | 10% | 1,000,000,000 | 1,000,000,000,000,000 |
+| Founder | 20% | 420,000,000 | 420,000,000,000,000 |
+| Mining reserve | 50% | 1,050,000,000 | 1,050,000,000,000,000 |
+| Treasury | 10% | 210,000,000 | 210,000,000,000,000 |
+| Liquidity / market | 10% | 210,000,000 | 210,000,000,000,000 |
+| Ecosystem / marketing | 10% | 210,000,000 | 210,000,000,000,000 |
 | **Total** | **100%** | **10,000,000,000** | **10,000,000,000,000,000** |
 
-The Founder receives the full 2,000,000,000 VCOIN allocation in one operation. No vesting, time lock, or installment schedule applies to the Founder allocation. The five owner-designated allocation addresses are recorded in `docs/WALLET_ALLOCATION_REGISTER.md`. The separate GAS & OPERATIONS wallet is for TON fees only and is not a VCOIN allocation recipient.
+The Founder receives the full 420,000,000 VCOIN allocation in one operation. No vesting, time lock, or installment schedule applies to the Founder allocation. The five owner-designated allocation addresses are recorded in `docs/WALLET_ALLOCATION_REGISTER.md`. The separate GAS & OPERATIONS wallet is for TON fees only and is not a VCOIN allocation recipient.
 
 ## 3. Current Master contract behavior
 
@@ -81,7 +81,7 @@ Do not deploy with empty or placeholder metadata. Verify the resulting metadata 
 
 ## 6. Supply and allocation invariants
 
-1. The five allocations sum exactly to 10^16 base units.
+1. The five allocations sum exactly to 2,100,000,000,000,000 base units.
 2. Only the Founder wallet can request allocation issuance.
 3. Each configured role can be credited only its exact allocation.
 4. No arbitrary receiver or amount is accepted.

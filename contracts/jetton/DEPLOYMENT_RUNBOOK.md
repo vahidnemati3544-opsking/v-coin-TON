@@ -20,7 +20,7 @@ The current Master accepts the authorized `VCoinFund` reserve-funding message bu
 
 Mainnet remains **NO-GO** until all of the following are evidenced:
 1. Pages issuer site is enabled and its published build is checked (or an explicitly approved alternative signing workflow is reviewed).
-2. A real TON Testnet deployment and complete five-allocation rehearsal succeeds.
+2. **No Testnet deployment or Testnet rehearsal is part of the approved plan.** Use local compilation, automated tests, Sandbox simulations, and independent review instead; these do not send transactions to Testnet.
 3. An independent qualified smart-contract audit covers the Master, Jetton Wallet implementation, bounce/retry logic, TEP-74 behavior, and TEP-64 metadata; all critical/high findings are resolved.
 4. The exact reviewed source commit is rebuilt independently and all BOC, StateInit, cell, metadata, and address hashes are reproduced.
 5. The five destination addresses and Founder signer/network are checked in the exact deployment preview; post-deployment getters and deterministic Jetton Wallet addresses are independently checked before issuance.

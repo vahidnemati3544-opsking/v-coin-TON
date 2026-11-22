@@ -8,7 +8,7 @@ const {
   decimalPriceToScaled
 } = require('../src/services/price-reference');
 
-test('initial reference price is exactly USD 0.004', () => {
+test('initial reference price is exactly USD 0.008', () => {
   assert.equal(decimalPriceToScaled('0.008000000000').toString(), '8000000000');
 });
 

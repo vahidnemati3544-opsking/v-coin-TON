@@ -46,7 +46,7 @@ async function applyTestMigrations(pool) {
       [version]
     );
   }
-
+}
 
 test('PostgreSQL mining reward is reserved, double-entry posted, and idempotently confirmed', {
   skip: !databaseUrl

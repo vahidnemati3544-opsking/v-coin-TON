@@ -135,7 +135,7 @@ The Founder personally reviews and signs in the wallet only after explicit readi
 
 ## 7. Current evidence record
 
-- Five allocation destinations and separate fee wallet: recorded in `docs/WALLET_ALLOCATION_REGISTER.md`.
+- Five allocation destinations: recorded in `docs/WALLET_ALLOCATION_REGISTER.md`; Founder is also the sole GAS & OPERATIONS wallet.
 - Five-role allocation logic and natural-bounce/retry test cases: present in current main source and Sandbox test file.
 - Exact-head CI: passed on commit `618e397a8a6f97ce76a45043af78acbedbd5ea72` in [GitHub Actions run #111](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44990981787); clean `npm ci`, strict dependency audit (zero advisories at all severities), Tact build, TEP-64 content-cell generation, unsigned Mainnet StateInit preview, and all Sandbox tests completed successfully.
 - `package-lock.json`: committed to `main`; authoritative CI uses `npm ci` and fails on moderate, high, or critical dependency advisories.
@@ -182,7 +182,7 @@ This runbook records implementation and release controls. It is not evidence of 
 - Master predicted address: `EQBDbY_0r9XTVCQjH3aw8bfQtF4eoOV6QdFJEJTBMtw6_pIJ`; StateInit hash `436d8ff4afd5d35424231f76b0f1b7d0b45e1ea0e57a41d1491094c132dc3afe`.
 - All five predicted Jetton Wallet addresses and StateInit hashes are recorded in `contracts/jetton/allocation-manifest.template.json`.
 - Independent BOC parser reproduced the Master and five wallet hashes, checked the Master and wallet code hashes, and verified the hash bytes plus CRC16 checksums of all six friendly addresses.
-- Third-party audit, Testnet rehearsal, live fee simulation, on-chain deployment, and allocation remain outstanding.
+- Third-party audit, independent clean-room rebuild, live fee simulation, on-chain deployment, and allocation remain outstanding. Testnet deployment/transactions are not authorized.
 
 ## Action #42 — Founder-only GAS enforcement and sequential issuance controls
 
@@ -191,4 +191,4 @@ This runbook records implementation and release controls. It is not evidence of 
 - Sandbox coverage rejects a constructor configuration with a separate GAS wallet.
 - The TonConnect console locks a submitted deployment request for the page session and serializes the five mint requests. The Founder must manually confirm each on-chain balance and role status before the next mint is enabled.
 - Exact-head run #173 build-and-test and issuer syntax/safety checks passed. New Master and Jetton Wallet previews, with independently reproduced hashes and address checksums, are in `contracts/jetton/allocation-manifest.template.json`.
-- No Mainnet deployment, mint, or token credit has occurred. External audit and Testnet rehearsal remain required.
+- No Mainnet deployment, mint, or token credit has occurred. External audit, clean-room rebuild and live fee simulation remain required; Testnet deployment/transactions are not authorized.

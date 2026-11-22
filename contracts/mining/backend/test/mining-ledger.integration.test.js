@@ -55,6 +55,11 @@ async function applyTestMigrations(pool) {
       path.join(databaseDir, 'migrations/005-vcoin-supply-and-price-reset.sql'), 'utf8'
     );
     await client.query(supplyMigration);
+
+    const annualPriceMigration = await fs.readFile(
+      path.join(databaseDir, 'migrations/006-annual-compound-price-policy.sql'), 'utf8'
+    );
+    await client.query(annualPriceMigration);
   } finally {
     if (lockAcquired) {
       try { await client.query('SELECT pg_advisory_unlock(741230017)'); } catch (_) { /* preserve original error */ }
@@ -63,7 +68,7 @@ async function applyTestMigrations(pool) {
   }
 }
 
-test('owner-approved supply migration applies the 1.05B mining cap and USD 0.008 reference baseline', {
+test('owner-approved migrations apply the 1.05B mining cap, USD 0.008 baseline, and 50% annual compound rate', {
   skip: !databaseUrl
 }, async () => {
   const pool = new Pool({ connectionString: databaseUrl, max: 2 });
@@ -75,10 +80,11 @@ test('owner-approved supply migration applies the 1.05B mining cap and USD 0.008
     assert.equal(reserve.rows[0].allocated_base_units, '1050000000000000');
 
     const price = await pool.query(
-      'SELECT initial_price_usd::text, current_price_usd::text FROM price_reference_state WHERE singleton = TRUE'
+      'SELECT initial_price_usd::text, current_price_usd::text, increase_rate_percent::text FROM price_reference_state WHERE singleton = TRUE'
     );
     assert.equal(Number(price.rows[0].initial_price_usd), 0.008);
     assert.equal(Number(price.rows[0].current_price_usd), 0.008);
+    assert.equal(price.rows[0].increase_rate_percent, '0.33381492');
   } finally {
     await pool.end();
   }

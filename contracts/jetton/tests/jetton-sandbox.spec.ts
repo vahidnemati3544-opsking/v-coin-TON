@@ -480,7 +480,7 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     const underfunded = await master.send(
       owner.getSender(),
       { value: toNano('0.009') },
-      { $type: 'VCoinWithdraw', amount: toNano('0.1') },
+      { $$type: 'VCoinWithdraw', amount: toNano('0.1') },
     );
 
     expect(underfunded.transactions).toHaveTransaction({

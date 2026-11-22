@@ -5,25 +5,26 @@
 **Status:** Owner-designated allocation destinations; fixed-role enforcement implemented in VCoinMaster source; deployed-address verification pending  
 **Network:** TON Blockchain  
 **Token:** VCOIN Jetton (TEP-74)  
-**Total initial supply:** 10,000,000,000 VCOIN  
+**Total initial supply:** 2,100,000,000 VCOIN  
+**USD reference price:** 0.008 per VCOIN (modelled reference; not a market quote)  
 **Decimals:** 6
 
 ## 1. Authority and scope
 
 This is the canonical register of the five wallet addresses designated by the project owner for the five approved VCOIN allocation categories. These five addresses are the only approved allocation destinations in the current design. Do not substitute, add, or silently reassign any wallet.
 
-This register records owner-provided addresses and intended allocations. The project owner has explicitly confirmed that the entire 10,000,000,000 VCOIN supply is to be issued and allocated across these five wallets; the Founder wallet is one of the five, not an additional sixth destination. This confirmation does not prove address ownership or control, establish a deployed Jetton balance, or evidence that any transfer has occurred.
+This register records owner-provided addresses and intended allocations. The project owner has explicitly confirmed that the entire 2,100,000,000 VCOIN supply is to be issued and allocated across these five wallets; the Founder wallet is one of the five, not an additional sixth destination. This confirmation does not prove address ownership or control, establish a deployed Jetton balance, or evidence that any transfer has occurred.
 
 ## 2. Approved five-wallet allocation
 
 | No. | Allocation category | TON address supplied by project owner | Share | Allocation |
 |---:|---|---|---:|---:|
-| 1 | Founder | `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` | 20% | 2,000,000,000 VCOIN |
-| 2 | Treasury | `UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ` | 10% | 1,000,000,000 VCOIN |
-| 3 | Liquidity and market | `UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn` | 10% | 1,000,000,000 VCOIN |
-| 4 | Ecosystem and marketing | `UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE` | 10% | 1,000,000,000 VCOIN |
-| 5 | Mining reserve and extraction | `UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0` | 50% | 5,000,000,000 VCOIN |
-| | **Total** | **Five designated addresses** | **100%** | **10,000,000,000 VCOIN** |
+| 1 | Founder | `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` | 20% | 420,000,000 VCOIN |
+| 2 | Treasury | `UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ` | 10% | 210,000,000 VCOIN |
+| 3 | Liquidity and market | `UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn` | 10% | 210,000,000 VCOIN |
+| 4 | Ecosystem and marketing | `UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE` | 10% | 210,000,000 VCOIN |
+| 5 | Mining reserve and extraction | `UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0` | 50% | 1,050,000,000 VCOIN |
+| | **Total** | **Five designated addresses** | **100%** | **2,100,000,000 VCOIN** |
 
 ## 3. Separate operational network-fee wallet
 
@@ -31,16 +32,16 @@ The project owner explicitly designated the following separate Tonkeeper address
 
 `UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB`
 
-**Owner instruction:** The owner will deposit TON into this Tonkeeper wallet only for TON network fees and related authorized operational transaction costs. This wallet is not a VCOIN allocation wallet and is not a sixth allocation destination. It must not receive or hold any portion of the 10,000,000,000 VCOIN allocation by virtue of this designation.
+**Owner instruction:** The owner will deposit TON into this Tonkeeper wallet only for TON network fees and related authorized operational transaction costs. This wallet is not a VCOIN allocation wallet and is not a sixth allocation destination. It must not receive or hold any portion of the 2,100,000,000 VCOIN allocation by virtue of this designation.
 
 The five allocation addresses remain unchanged. Do not ask the owner to fund all five allocation wallets with TON merely because they are VCOIN recipients. The operational fee wallet is the designated TON funding source. If a specific Jetton transfer or contract operation technically requires TON in another signing wallet, document the exact requirement and obtain the owner's approval before any top-up. Do not assume that a separate fee wallet can sponsor every transaction type without a supported transaction flow.
 
-The separate fee wallet address is owner-provided; control and network format must be verified before funding. Never request or store its seed phrase or private key. In the current VCoinMaster design, this address is the immutable gasOperatorWallet and may fund the Master reserve only through VCoinFund (minimum 0.75 TON). It is not authorized to issue VCOIN and is not a token-allocation destination. The founder wallet remains the sole VCoinMint authority; its full 2,000,000,000 VCOIN allocation is issued in one operation and is not subject to vesting or a time lock. Each owner-signed issuance request carries at least 0.01 TON while the Master pays 0.1 TON per destination-wallet credit from the reserve.
+The separate fee wallet address is owner-provided; control and network format must be verified before funding. Never request or store its seed phrase or private key. In the current VCoinMaster design, this address is the immutable gasOperatorWallet and may fund the Master reserve only through VCoinFund (minimum 0.75 TON). It is not authorized to issue VCOIN and is not a token-allocation destination. The founder wallet remains the sole VCoinMint authority; its full 420,000,000 VCOIN allocation is issued in one operation and is not subject to vesting or a time lock. Each owner-signed issuance request carries at least 0.01 TON while the Master pays 0.1 TON per destination-wallet credit from the reserve.
 
 ## 4. Wallet separation rules
 
 - Each allocation category must remain associated with its designated address.
-- The mining reserve address is the destination designated for the 5,000,000,000 VCOIN mining allocation.
+- The mining reserve address is the destination designated for the 1,050,000,000 VCOIN mining allocation.
 - The five allocations must not be consolidated into a single wallet by default.
 - The Tonkeeper GAS & OPERATIONS address above is a separate fee-funding wallet, not an allocation destination.
 - Any Gram Wallet address is likewise outside this five-address allocation map unless the project owner explicitly approves a change.
@@ -67,10 +68,10 @@ Before any real VCOIN issuance or transfer:
 
 All amounts must be stored and calculated as integer base units. With six decimals:
 
-- 2,000,000,000 VCOIN = 2,000,000,000,000,000 base units.
-- 1,000,000,000 VCOIN = 1,000,000,000,000,000 base units.
-- 5,000,000,000 VCOIN = 5,000,000,000,000,000 base units.
-- Total 10,000,000,000 VCOIN = 10,000,000,000,000,000 base units.
+- 420,000,000 VCOIN = 420,000,000,000,000 base units.
+- 210,000,000 VCOIN = 22,100,000,000,000 base units.
+- 1,050,000,000 VCOIN = 1,050,000,000,000,000 base units.
+- Total 2,100,000,000 VCOIN = 2,100,000,000,000,000 base units.
 
 Allocation accounting must be capped at the approved amount for each category. A database record or backend balance is not proof of an on-chain transfer.
 

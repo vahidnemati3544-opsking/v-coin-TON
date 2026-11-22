@@ -36,12 +36,12 @@
     "mining_reserve": "UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0"
   },
   "metadata": {
-    "uri": "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/9d3364b767aecdf0df038b9bf600435f6662c225/contracts/jetton/metadata.json",
+    "uri": "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/e17bcb9d82ea182bff3358b9fac6b5fa25c166ee/contracts/jetton/metadata.json",
     "immutable": true,
     "status": "generated_in_CI_and_ready_for_constructor_review",
-    "content_cell_hash": "6dc0e0c3a9ec89e72fc8402a13915bb425032a0e57dfa955ba5579eab28c940c",
-    "content_boc_file_sha256": "459b380b7ef4215f4bfcf100a5b132703eba535012f0690b12a365fe72e9d438",
-    "logo_status": "omitted_pending_canonical_asset_format_verification"
+    "logo_status": "canonical_founder_approved_logo_integrated; hosted_on_github_pages; original_jpeg_bytes_preserved",
+    "content_hash_status": "regenerated_by_exact_head_CI_from_pinned_metadata_uri",
+    "image_uri": "https://vahidnemati3544-opsking.github.io/v-coin-TON/vcoin-canonical-logo.jpg"
   },
   "deployment_authorized": false,
   "mainnet_authorized": false,

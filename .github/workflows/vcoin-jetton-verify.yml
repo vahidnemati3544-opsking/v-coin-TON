@@ -43,7 +43,7 @@ jobs:
       - name: Compile Tact contracts
         run: npm run build
       - name: Build immutable TEP-64 metadata content cell
-        run: node scripts/build-metadata-cell.cjs "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/9d3364b767aecdf0df038b9bf600435f6662c225/contracts/jetton/metadata.json"
+        run: node scripts/build-metadata-cell.cjs "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/e17bcb9d82ea182bff3358b9fac6b5fa25c166ee/contracts/jetton/metadata.json"
       - name: Generate unsigned Mainnet deployment preview
         run: npx tsx scripts/prepare-mainnet-deployment.ts
       - name: Run Jest tests

@@ -35,13 +35,6 @@
     "ecosystem_marketing": "UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE",
     "mining_reserve": "UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0"
   },
-  "allocation_destinations": {
-    "founder_jetton_wallet": "EQB8AerdUs4kIiwgXYNXn97vInNGz1i6mM82aRz6Qk-yLXT8",
-    "mining_reserve_jetton_wallet": "EQDSRCdDD6aozmwM7RIHyt9D-RyayizOMu5xENy0SPXwnWqd",
-    "treasury_jetton_wallet": "EQDVyMsB_lGSxbI9-GSfr_Np3NohePKdYpaBEUitvAYFGsy-",
-    "liquidity_market_jetton_wallet": "EQAnRjBQl3D9c0s5GV0t8RlTMReOFQRNNXoc3oyVVgjzl5MH",
-    "ecosystem_marketing_jetton_wallet": "EQCtNm8cneWOwU_JFfK_rf9Os7_Y8yItALCtI0ZYvoHQX8xs"
-  },
   "metadata": {
     "uri": "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/9d3364b767aecdf0df038b9bf600435f6662c225/contracts/jetton/metadata.json",
     "immutable": true,
@@ -52,10 +45,10 @@
   },
   "deployment_authorized": false,
   "mainnet_authorized": false,
-  "notes": "Owner-approved fixed supply is 2,100,000,000 VCOIN at 6 decimals, allocated across exactly five wallets in shares 20/50/10/10/10. Founder receives 420,000,000 VCOIN and is also the sole GAS & OPERATIONS wallet, deployment signer, and Master reserve funder. No separate GAS address or sixth wallet exists. This is an unsigned template; deployment_authorized and mainnet_authorized remain false. Regenerate predicted addresses from the reviewed StateInit. Never commit secrets.",
+  "notes": "Owner-approved fixed supply is 2,100,000,000 VCOIN at 6 decimals, allocated across exactly five owner-provided wallets in shares 20/50/10/10/10. Founder is the sole GAS & OPERATIONS wallet, deployment signer, and Master reserve funder. No separate GAS address or sixth wallet exists. All derived Master and Jetton Wallet addresses are intentionally omitted from this template and must be regenerated from the reviewed exact-build StateInit; verify each Jetton Wallet with the deployed Master's get_wallet_address getter before issuance. This template is unsigned; deployment_authorized and mainnet_authorized remain false. Never commit secrets.",
   "allocation_wallet_verification": {
     "status": "founder_address_review_pending_before_mainnet_signature",
-    "note": "All five recipient TON addresses were supplied by the Founder and are embedded in the deterministic StateInit. Their corresponding Jetton wallet addresses are derived from the predicted Master StateInit. After deployment, confirm the on-chain get_wallet_address result for each role before issuing tokens.",
+    "note": "The five owner-provided Mainnet owner addresses below are the canonical allocation destinations. Derived Jetton Wallet addresses are intentionally not stored here because previous predictions are stale; regenerate from the exact reviewed Master StateInit and confirm each on-chain get_wallet_address result after deployment.",
     "destinations": {
       "founder": "owner_provided_address_in_constructor_preview",
       "treasury": "owner_provided_address_in_constructor_preview",
@@ -80,19 +73,11 @@
     "mainnet_transaction_authorized": false,
     "gas_operations_wallet_is_founder_wallet": true
   },
-  "predicted_master_address": "EQBmjwr-Bc2_wNKcZHjTr8KtPGQgN-ltRhTIXqK0zM89O0Xt",
-  "predicted_master_state_init_hash": "668f0afe05cdbfc0d29c6478d3afc2ad3c642037e96d4614c85ea2b4cccf3d3b",
   "price_reference": {
     "initial_price_usd": "0.008",
     "currency": "USD",
     "price_type": "modelled_reference_not_market_price",
     "not_a_market_quote": true
   },
-  "preview_source_commit": "08fe61fd46fcf83b730512be80e2276acad3e139",
-  "preview_status": "unsigned preview; independent BOC hash and friendly-address checksum reproduction passed; third-party audit and Testnet rehearsal pending",
-  "predicted_master_code_cell_hash": "383823efc716ed7aab1efe58536aca94f476d6a42d0e6a3041ef56c1f598f846",
-  "predicted_jetton_wallet_code_cell_hash": "786a569e6ba80af26a148a1634a18b1f1959a590682aba5f0ca855b7a38332ea",
-  "preview_workflow_run_id": 44999045441,
-  "preview_artifact_id": 14744952085,
-  "preview_artifact_sha256": "99ad2ebca586fefa56927e4b831eef72f71f906ca583d9cccb3da256e14385d6"
+  "preview_status": "stale derived addresses and artifact references removed; regenerate from reviewed exact-head StateInit before any signing"
 }

@@ -12,6 +12,10 @@ on:
       - ".github/workflows/vcoin-jetton-verify.yml"
   workflow_dispatch:
 
+concurrency:
+  group: vcoin-jetton-verify-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
 

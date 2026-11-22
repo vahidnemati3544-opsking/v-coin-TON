@@ -139,4 +139,14 @@ This runbook records implementation and release controls. It is not evidence of 
 - The old inaccessible GAS wallet is retired and must never be funded or used.
 - Five VCOIN allocation wallets and 20/50/10/10/10 allocations remain unchanged; no sixth recipient is introduced.
 - The TonConnect issuer must recognize the shared Founder signer for deployment and issuance while retaining the Master-confirmation gate for issuance.
-- Regenerate the Master StateInit/address and all five Jetton Wallet addresses from this exact source before any signing review.
+- Regenerated Master StateInit/address and all five Jetton Wallet addresses are recorded in `allocation-manifest.template.json` and were independently hash-reproduced. They remain predictions until Mainnet deployment and getter verification.
+
+## Action #41 — New unsigned Mainnet preview and independent hash reproduction
+
+**Status:** Passed for deterministic build/hash checks; not deployed.
+
+- Latest exact-head CI run #161 on `5e27d36d6a92f0140d249baab7b08ae275539fbe`: Tact compile, dependency audit (zero vulnerabilities), metadata build, unsigned preview generation, and all 16 Jest tests passed.
+- Master predicted address: `EQBDbY_0r9XTVCQjH3aw8bfQtF4eoOV6QdFJEJTBMtw6_pIJ`; StateInit hash `436d8ff4afd5d35424231f76b0f1b7d0b45e1ea0e57a41d1491094c132dc3afe`.
+- All five predicted Jetton Wallet addresses and StateInit hashes are recorded in `contracts/jetton/allocation-manifest.template.json`.
+- Independent BOC parser reproduced the Master and five wallet hashes, checked the Master and wallet code hashes, and verified the hash bytes plus CRC16 checksums of all six friendly addresses.
+- Third-party audit, Testnet rehearsal, live fee simulation, on-chain deployment, and allocation remain outstanding.

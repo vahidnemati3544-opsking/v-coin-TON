@@ -64,7 +64,9 @@ jobs:
             !**/node_modules/**
             !contracts/jetton/build/**
             !contracts/jetton/build-test/**
+            !contracts/jetton/npm-audit-report.json
             !**/.env
+            contracts/mining/backend/.env.example
           if-no-files-found: error
           retention-days: 30
       - name: Prepare TonConnect issuer site assets

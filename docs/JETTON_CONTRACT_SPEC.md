@@ -99,7 +99,7 @@ This CI pass is not an independent security audit and does not establish Mainnet
 - Independently review TEP-74 / TEP-64 behavior, wallet transfers, burns, bounce handling, and message validation.
 - Rebuild independently and reproduce TON code-cell hashes, StateInit hashes, and deterministic addresses. A SHA-256 checksum of a BOC file is not a TON cell hash.
 - Complete metadata package/content-cell review.
-- Verify control of all five allocation destinations and the separate fee wallet on TON Mainnet.
+- Verify control of the five allocation destinations on TON Mainnet. The Founder allocation wallet is also the sole GAS & OPERATIONS wallet.
 - Produce a signed release manifest tying source commit, toolchain, lockfile, BOCs, cell hashes, StateInit hashes, metadata, network, and review approvals together.
 
 ## 8. Mainnet release and signing boundary

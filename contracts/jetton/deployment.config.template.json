@@ -35,11 +35,11 @@
     "mining_reserve": "UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0"
   },
   "allocation_destinations": {
-    "founder_jetton_wallet": null,
-    "mining_reserve_jetton_wallet": null,
-    "treasury_jetton_wallet": null,
-    "liquidity_market_jetton_wallet": null,
-    "ecosystem_marketing_jetton_wallet": null
+    "founder_jetton_wallet": "EQB8AerdUs4kIiwgXYNXn97vInNGz1i6mM82aRz6Qk-yLXT8",
+    "mining_reserve_jetton_wallet": "EQDSRCdDD6aozmwM7RIHyt9D-RyayizOMu5xENy0SPXwnWqd",
+    "treasury_jetton_wallet": "EQDVyMsB_lGSxbI9-GSfr_Np3NohePKdYpaBEUitvAYFGsy-",
+    "liquidity_market_jetton_wallet": "EQAnRjBQl3D9c0s5GV0t8RlTMReOFQRNNXoc3oyVVgjzl5MH",
+    "ecosystem_marketing_jetton_wallet": "EQCtNm8cneWOwU_JFfK_rf9Os7_Y8yItALCtI0ZYvoHQX8xs"
   },
   "metadata": {
     "uri": "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/9d3364b767aecdf0df038b9bf600435f6662c225/contracts/jetton/metadata.json",
@@ -78,8 +78,8 @@
     "gas_operations_wallet_is_not_an_allocation_wallet": true,
     "mainnet_transaction_authorized": false
   },
-  "predicted_master_address": null,
-  "predicted_master_state_init_hash": null,
+  "predicted_master_address": "EQAriHkG8kqO0GQwwX6ODgqpJCV-oUDKwalDK8lAzYGBWHvV",
+  "predicted_master_state_init_hash": "2b887906f24a8ed06430c17e8e0e0aa924257ea140cac1a9432bc940cd818158",
   "price_reference": {
     "initial_price_usd": "0.008",
     "currency": "USD",

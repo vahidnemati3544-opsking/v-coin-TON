@@ -98,3 +98,12 @@ No Mainnet transaction was submitted by this review. No Testnet deployment or tr
 ## 7. Action #54 change log
 
 This is an evidence/reconciliation addendum. It deliberately does not replace either Master address with the other, does not change contract source or metadata, and does not trigger a deployment. The next implementation task is the read-only Mainnet state/transaction lookup, followed by an explicit decision whether the historical address is already deployed and must remain the canonical Master.
+
+## 8. Publication and repository write record
+
+Action #54 was committed directly to `main` in three documentation-only commits:
+- Reconciliation report: `6376d96fab5a40bb3af951a9a3d6a6c420d0e136`.
+- Verification-status superseding addendum: `3ba8d3017151d7fca27ae3194b250b707adb1de0`.
+- Deployment-inventory addendum: `b8ab15d1b758f3e3cbca5daed123ee5ba8deaab3`.
+
+The resulting branch HEAD is `b8ab15d1b758f3e3cbca5daed123ee5ba8deaab3`. These commits change documentation only; the contract/issuer source remains the exact source snapshot tested by run #282 at `d6c4f1cdd5618aa0eaa7b7ab31e58a998cb00bbe`. No code or deployment artifact was silently changed by Action #54.

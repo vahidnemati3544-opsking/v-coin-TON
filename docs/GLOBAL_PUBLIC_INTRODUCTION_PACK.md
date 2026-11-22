@@ -1,7 +1,7 @@
 # V COIN – TON | Global Public Introduction Pack
 
 **Document ID:** VCT-GPIP-001  
-**Version:** 1.0.0  
+**Version:** 1.0.1  
 **Review date:** 2026-11-20  
 **Status:** Controlled development-communications draft — legal and responsible-entity sign-off required before publication  
 **Repository:** vahidnemati3544-opsking/v-coin-TON  
@@ -30,7 +30,7 @@ The repository contains design documents, tokenomics, contract specifications, b
 | Subject | What may be stated | What must not be claimed |
 |---|---|---|
 | TON / Jetton | “Designed for development on TON using the Jetton standard (TEP-74).” | “VCOIN is live on TON”, unless the exact Master address, network and on-chain state are independently verified and published. |
-| Supply | “The approved design specifies a proposed initial supply of 10 billion VCOIN and six decimals.” | “10 billion tokens have been minted, issued, locked or allocated on-chain.” |
+| Supply | “The approved design specifies a proposed initial supply of 2.1 billion VCOIN and six decimals.” | “10 billion tokens have been minted, issued, locked or allocated on-chain.” |
 | Minting | “The design requires no additional minting after the one-time initial issuance.” | “Minting is permanently disabled” until the deployed contract and its state are independently verified. |
 | Mining | “Wallet-based mining is a planned capability with a documented specification.” | “Mining is live”, “users are earning”, or any claim that internal pending balances are wallet-held tokens. |
 | Wallet / Telegram | “Wallet ownership verification and Telegram integration are in the technical plan.” | “Wallet connection, user verification or Telegram extraction is operational” without an end-to-end test record. |
@@ -53,7 +53,7 @@ V COIN – TON is an independent project in development exploring a TON-based Je
 
 V COIN – TON is an independent digital-asset project in development on the TON ecosystem. The current repository documents a proposed Jetton design, a planned tokenomics model and technical requirements for transparent accounting and future wallet-based reward calculations.
 
-The approved design specifies a proposed initial supply of 10,000,000,000 VCOIN with six decimal places. These are design parameters; they do not establish that VCOIN has been issued or deployed on-chain. The project’s wallet-verification, mining, payout, security-audit and market-compliance work remains subject to implementation and independent verification.
+The approved design specifies a proposed initial supply of 2,100,000,000 VCOIN with six decimal places. These are design parameters; they do not establish that VCOIN has been issued or deployed on-chain. The project’s wallet-verification, mining, payout, security-audit and market-compliance work remains subject to implementation and independent verification.
 
 No token price, return, liquidity, exchange listing, regulatory approval or global availability is promised or represented. Digital assets can involve substantial risk, including the possible loss of all value. Any future distribution or service will depend on technical readiness and applicable legal requirements.
 
@@ -77,7 +77,7 @@ V COIN – TON هو مشروع مستقل قيد التطوير يستكشف ت�
 
 V COIN – TON مشروع مستقل للأصول الرقمية قيد التطوير ضمن منظومة TON. وتوثّق المستندات التقنية الحالية تصميمًا مقترحًا لرمز Jetton، ونموذجًا مقترحًا للاقتصاد الرمزي، ومتطلبات فنية للمحاسبة الشفافة واحتساب المكافآت مستقبلًا بالاعتماد على المحافظ الرقمية.
 
-ينص التصميم المعتمد على عرض أولي مقترح قدره 10,000,000,000 من VCOIN وبست خانات عشرية. وهذه معايير تصميمية لا تثبت أن الرمز قد صدر أو نُشر على الشبكة. ولا تزال أعمال التحقق من المحافظ، والتعدين، والمدفوعات، والتدقيق الأمني، والامتثال القانوني في كل سوق خاضعة للتنفيذ والتحقق المستقل.
+ينص التصميم المعتمد على عرض أولي مقترح قدره 2,100,000,000 من VCOIN وبست خانات عشرية. وهذه معايير تصميمية لا تثبت أن الرمز قد صدر أو نُشر على الشبكة. ولا تزال أعمال التحقق من المحافظ، والتعدين، والمدفوعات، والتدقيق الأمني، والامتثال القانوني في كل سوق خاضعة للتنفيذ والتحقق المستقل.
 
 لا توجد أي وعود أو إقرارات بشأن سعر الرمز أو العائد أو السيولة أو الإدراج في منصات التداول أو الموافقة التنظيمية أو الإتاحة العالمية. وقد تنطوي الأصول الرقمية على مخاطر كبيرة، بما في ذلك احتمال خسارة كامل القيمة. وأي توزيع أو خدمة مستقبلية سيعتمد على الجاهزية التقنية والمتطلبات القانونية السارية.
 
@@ -99,7 +99,7 @@ V COIN – TON 是一个正在开发中的独立数字资产项目，正在研�
 
 V COIN – TON 是一个正在 TON 生态中开发的独立数字资产项目。当前资料记录了拟议的 Jetton 设计、代币经济模型，以及透明会计和未来钱包余额奖励计算的技术要求。
 
-现行设计方案提出初始供应量为 10,000,000,000 VCOIN，精度为六位小数。这些内容仅属于设计参数，并不证明该代币已经发行或部署到区块链。钱包验证、挖矿、支付、独立安全审计及各司法辖区的合规工作仍须完成实施和独立核验。
+现行设计方案提出初始供应量为 2,100,000,000 VCOIN，精度为六位小数。这些内容仅属于设计参数，并不证明该代币已经发行或部署到区块链。钱包验证、挖矿、支付、独立安全审计及各司法辖区的合规工作仍须完成实施和独立核验。
 
 本项目不承诺或表示任何代币价格、收益、流动性、交易平台上市、监管批准或全球可用性。数字资产可能具有重大风险，包括损失全部价值的风险。任何未来分发或服务均须以技术准备情况和适用法律要求为前提。
 
@@ -113,7 +113,7 @@ V COIN – TON 是一個正在開發中的獨立數碼資產項目，正研究�
 
 V COIN – TON 是一個正在 TON 生態中開發的獨立數碼資產項目。現有文件記錄了建議中的 Jetton 設計、代幣經濟模型，以及透明會計和日後按錢包餘額計算獎勵的技術要求。
 
-現行設計方案提出初始供應量為 10,000,000,000 VCOIN，並採用六位小數。這些只是設計參數，並不代表代幣已經發行或部署至區塊鏈。錢包驗證、挖礦、付款、獨立保安審計，以及各司法管轄區的合規工作，仍須完成實施並接受獨立核實。
+現行設計方案提出初始供應量為 2,100,000,000 VCOIN，並採用六位小數。這些只是設計參數，並不代表代幣已經發行或部署至區塊鏈。錢包驗證、挖礦、付款、獨立保安審計，以及各司法管轄區的合規工作，仍須完成實施並接受獨立核實。
 
 本項目不承諾或表示任何代幣價格、回報、流動性、交易平台上市、監管批准或全球可用性。數碼資產可能涉及重大風險，包括損失全部價值的風險。任何未來分發或服務均須視乎技術準備情況及適用法律要求。
 

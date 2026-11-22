@@ -4,58 +4,58 @@
   "network": "mainnet",
   "jetton_master_address": null,
   "decimals": 6,
-  "total_supply_base_units": "10000000000000000",
+  "total_supply_base_units": "2100000000000000",
   "founder_wallet_candidate": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
   "transfers": [
     {
       "allocation": "founder",
-      "tokens": "2000000000",
-      "base_units": "2000000000000000",
+      "tokens": "420000000",
+      "base_units": "420000000000000",
       "destination": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
       "requires_founder_signature": true,
-      "destination_verification": "derived_and_independently_hash_checked_pending_mainnet_getter_confirmation",
-      "predicted_jetton_wallet_address": "EQBElyTbIfy5Z0Aur87D_UVl4F4Qg1_ZUr5D0AGbf2osCZvo",
-      "predicted_jetton_wallet_state_init_hash": "449724db21fcb967402eafcec3fd4565e05e10835fd952be43d0019b7f6a2c09"
+      "destination_verification": "must_be_rederived_from_revised_master_and_confirmed_by_on_chain_getter",
+      "predicted_jetton_wallet_address": null,
+      "predicted_jetton_wallet_state_init_hash": null
     },
     {
       "allocation": "mining_reserve",
-      "tokens": "5000000000",
-      "base_units": "5000000000000000",
+      "tokens": "1050000000",
+      "base_units": "1050000000000000",
       "destination": "UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0",
       "requires_founder_signature": true,
-      "destination_verification": "derived_and_independently_hash_checked_pending_mainnet_getter_confirmation",
-      "predicted_jetton_wallet_address": "EQANO_4VthNKI4WjeXbxV4ZvGZyBGrMURY0zVnfQknXhzbIM",
-      "predicted_jetton_wallet_state_init_hash": "0d3bfe15b6134a2385a37976f157866f199c811ab314458d335677d09275e1cd"
+      "destination_verification": "must_be_rederived_from_revised_master_and_confirmed_by_on_chain_getter",
+      "predicted_jetton_wallet_address": null,
+      "predicted_jetton_wallet_state_init_hash": null
     },
     {
       "allocation": "treasury",
-      "tokens": "1000000000",
-      "base_units": "1000000000000000",
+      "tokens": "210000000",
+      "base_units": "210000000000000",
       "destination": "UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ",
       "requires_founder_signature": true,
-      "destination_verification": "derived_and_independently_hash_checked_pending_mainnet_getter_confirmation",
-      "predicted_jetton_wallet_address": "EQCuFM3AkJGmeNUy2rllpNum4ojmGzNuT6PVhtJ_c4SicJIY",
-      "predicted_jetton_wallet_state_init_hash": "ae14cdc09091a678d532dab965a4dba6e288e61b336e4fa3d586d27f7384a270"
+      "destination_verification": "must_be_rederived_from_revised_master_and_confirmed_by_on_chain_getter",
+      "predicted_jetton_wallet_address": null,
+      "predicted_jetton_wallet_state_init_hash": null
     },
     {
       "allocation": "liquidity_market",
-      "tokens": "1000000000",
-      "base_units": "1000000000000000",
+      "tokens": "210000000",
+      "base_units": "210000000000000",
       "destination": "UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn",
       "requires_founder_signature": true,
-      "destination_verification": "derived_and_independently_hash_checked_pending_mainnet_getter_confirmation",
-      "predicted_jetton_wallet_address": "EQBQgo1HRRnKFZEhLvSW12nt3omq8H6icxtGhn30tOlENX6Z",
-      "predicted_jetton_wallet_state_init_hash": "50828d474519ca1591212ef496d769edde89aaf07ea2731b46867df4b4e94435"
+      "destination_verification": "must_be_rederived_from_revised_master_and_confirmed_by_on_chain_getter",
+      "predicted_jetton_wallet_address": null,
+      "predicted_jetton_wallet_state_init_hash": null
     },
     {
       "allocation": "ecosystem_marketing",
-      "tokens": "1000000000",
-      "base_units": "1000000000000000",
+      "tokens": "210000000",
+      "base_units": "210000000000000",
       "destination": "UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE",
       "requires_founder_signature": true,
-      "destination_verification": "derived_and_independently_hash_checked_pending_mainnet_getter_confirmation",
-      "predicted_jetton_wallet_address": "EQCRa4bOU5yZaYaEqFhb5qa-pcbIyegjg6AEwGTVQVOECMQ4",
-      "predicted_jetton_wallet_state_init_hash": "916b86ce539c99698684a8585be6a6bea5c6c8c9e82383a004c064d541538408"
+      "destination_verification": "must_be_rederived_from_revised_master_and_confirmed_by_on_chain_getter",
+      "predicted_jetton_wallet_address": null,
+      "predicted_jetton_wallet_state_init_hash": null
     }
   ],
   "safeguards": [
@@ -74,21 +74,26 @@
   },
   "notes": [
     "Template only; Mainnet deployment and every issuance require explicit Founder approval after all release gates pass.",
-    "Founder allocation is one immediate 2,000,000,000 VCOIN issuance with no vesting or time lock.",
+    "Founder allocation is one immediate 420,000,000 VCOIN issuance with no vesting or time lock.",
     "The separate GAS & OPERATIONS wallet is for TON fees only and is not a VCOIN allocation recipient.",
     "Every issuance request requires exact transaction review, Founder wallet signature, and on-chain finality reconciliation.",
-    "Project owner confirmed the complete 10,000,000,000 VCOIN supply is to be allocated across all five registered wallets, with the Founder wallet included as one of the five. This is not authorization to deploy or broadcast transactions; exact Mainnet signing approval remains separate.",
+    "Project owner confirmed the complete 2,100,000,000 VCOIN supply is to be allocated across all five registered wallets, with the Founder wallet included as one of the five. This is not authorization to deploy or broadcast transactions; exact Mainnet signing approval remains separate.",
     "Predicted Master address and deterministic recipient Jetton Wallet addresses are derived from the unsigned Mainnet StateInit preview. They are not deployed/on-chain addresses until Mainnet deployment is confirmed.",
     "The Founder signs the deployment/funding transaction from the separate GAS & OPERATIONS wallet (0.75 TON minimum attached value with VCoinFund body); the Founder allocation owner wallet signs the five exact VCoinMint issuance messages after deployment."
   ],
   "founder_confirmed_release_intent": {
     "scope": "all_five_wallets_full_supply",
-    "total_tokens": "10000000000",
+    "total_tokens": "2100000000",
     "founder_is_one_of_five": true,
     "confirmation_status": "confirmed_by_project_owner",
     "mainnet_transaction_authorized": false
   },
-  "predicted_jetton_master_address": "EQCvOZBRDK51sk2k1qSWksk6jnhXT11MHquhD06FFLOKrh77",
-  "predicted_master_state_init_hash": "af3990510cae75b24da4d6a49692c93a8e78574f5d4c1eaba10f4e8514b38aae",
-  "metadata_content_cell_hash": "6dc0e0c3a9ec89e72fc8402a13915bb425032a0e57dfa955ba5579eab28c940c"
+  "predicted_jetton_master_address": null,
+  "predicted_master_state_init_hash": null,
+  "metadata_content_cell_hash": "6dc0e0c3a9ec89e72fc8402a13915bb425032a0e57dfa955ba5579eab28c940c",
+  "price_reference": {
+    "initial_price_usd": "0.008",
+    "currency": "USD",
+    "price_type": "modelled_reference_not_market_price"
+  }
 }

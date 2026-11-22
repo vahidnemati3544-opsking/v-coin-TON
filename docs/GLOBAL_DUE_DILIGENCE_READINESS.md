@@ -61,7 +61,7 @@ This is a repository evidence inventory, not a complete source-code review. Rech
 | No. | Area | Required action / evidence | Status |
 |---:|---|---|---|
 | 1 | Jetton contracts | Implement Master and Wallet contracts against `docs/JETTON_CONTRACT_SPEC.md`; add reproducible build and tests | BLOCKED |
-| 2 | Deployment inventory | Keep addresses blank until Testnet deployment and authoritative chain verification | UNVERIFIED |
+| 2 | Deployment inventory | Keep deployed Master and Jetton Wallet addresses marked UNVERIFIED until Founder-approved TON Mainnet deployment and authoritative on-chain verification | UNVERIFIED |
 | 3 | Wallet ownership | Implement signed wallet proof, expiry, nonce and replay protection | NOT VERIFIED |
 | 4 | Jetton balance reader | Validate network, exact Master, owner address, balance and data freshness | NOT IMPLEMENTED / NOT VERIFIED |
 | 5 | Mining eligibility | Calculate only from verified wallet snapshots; do not trust client-supplied balances | BLOCKED |
@@ -139,7 +139,7 @@ Keep separate records for public display identity, legal identity/beneficial own
 ## 9. Release gates — all applicable items must pass
 
 - [ ] Jetton Master and Wallet contracts implemented, reviewed and tested.
-- [ ] Testnet deployment transaction and Master address independently verified.
+- [ ] Founder-approved Mainnet deployment transaction and Master address independently verified.
 - [ ] Supply, decimals, admin and mint-disable behaviour verified from contract state and transaction history.
 - [ ] Wallet ownership proof tested against replay and expiry attacks.
 - [ ] Balance reader validates exact network, Master, owner and freshness.

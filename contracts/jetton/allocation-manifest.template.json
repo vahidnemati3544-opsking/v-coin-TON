@@ -2,7 +2,7 @@
   "project": "V COIN – TON",
   "status": "unsigned_mainnet_deployment_preview_only",
   "network": "mainnet",
-  "jetton_master_address": null,
+  "jetton_master_address": "EQAo1TAGqSw6oUaMmpBtgQyRtCGEbSJNiGGy2Use04lRCQlU",
   "decimals": 6,
   "total_supply_base_units": "2100000000000000",
   "founder_wallet_candidate": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
@@ -13,9 +13,9 @@
       "base_units": "420000000000000",
       "destination": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
       "requires_founder_signature": true,
-      "destination_verification": "Regenerated from exact-head CI artifact 14744952085 (run 173), source commit 08fe61fd46fcf83b730512be80e2276acad3e139; independent BOC hash, address-hash and CRC16 checks passed; on-chain getter confirmation pending.",
-      "predicted_jetton_wallet_address": "EQAR0RVzOcPf8ILtICUucwNplBPsgq2VrQkpqe418leHvyaI",
-      "predicted_jetton_wallet_state_init_hash": "11d1157339c3dff082ed20252e7303699413ec82ad95ad0929a9ee35f25787bf"
+      "destination_verification": "Regenerated from exact-head CI artifact 14768399023 (run 251), source commit d608f0235da91e314e8052d7fe315e8ca5fba12f; independent BOC hash, account-id and CRC16 checks passed; on-chain getter confirmation pending.",
+      "predicted_jetton_wallet_address": "EQCuSU4lcpQvZ4MFNLvVIJW0AQ44ZKJxA0r9dQfXGCnx5o3M",
+      "predicted_jetton_wallet_state_init_hash": "ae494e2572942f67830534bbd52095b4010e3864a271034afd7507d71829f1e6"
     },
     {
       "allocation": "mining_reserve",
@@ -23,9 +23,9 @@
       "base_units": "1050000000000000",
       "destination": "UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0",
       "requires_founder_signature": true,
-      "destination_verification": "Regenerated from exact-head CI artifact 14744952085 (run 173), source commit 08fe61fd46fcf83b730512be80e2276acad3e139; independent BOC hash, address-hash and CRC16 checks passed; on-chain getter confirmation pending.",
-      "predicted_jetton_wallet_address": "EQARsFwLXMkI6xPnA6KDF38svc8u_TIDJ8t4fcR7HpLwvhE4",
-      "predicted_jetton_wallet_state_init_hash": "11b05c0b5cc908eb13e703a283177f2cbdcf2efd320327cb787dc47b1e92f0be"
+      "destination_verification": "Regenerated from exact-head CI artifact 14768399023 (run 251), source commit d608f0235da91e314e8052d7fe315e8ca5fba12f; independent BOC hash, account-id and CRC16 checks passed; on-chain getter confirmation pending.",
+      "predicted_jetton_wallet_address": "EQC7NasKiax_ZFXUQpVe9fLxqMDJnprtJ_miDq6cL2NFzvlU",
+      "predicted_jetton_wallet_state_init_hash": "bb35ab0a89ac7f6455d442955ef5f2f1a8c0c99e9aed27f9a20eae9c2f6345ce"
     },
     {
       "allocation": "treasury",
@@ -33,9 +33,9 @@
       "base_units": "210000000000000",
       "destination": "UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ",
       "requires_founder_signature": true,
-      "destination_verification": "Regenerated from exact-head CI artifact 14744952085 (run 173), source commit 08fe61fd46fcf83b730512be80e2276acad3e139; independent BOC hash, address-hash and CRC16 checks passed; on-chain getter confirmation pending.",
-      "predicted_jetton_wallet_address": "EQBVb4YTI5tkWR-AArcz2M7ik6I45tRgjQs8XribDJxQD-7H",
-      "predicted_jetton_wallet_state_init_hash": "556f8613239b64591f8002b733d8cee293a238e6d4608d0b3c5eb89b0c9c500f"
+      "destination_verification": "Regenerated from exact-head CI artifact 14768399023 (run 251), source commit d608f0235da91e314e8052d7fe315e8ca5fba12f; independent BOC hash, account-id and CRC16 checks passed; on-chain getter confirmation pending.",
+      "predicted_jetton_wallet_address": "EQBE2gcC2QdiUGxk0CpO-_e8XQjGys0aZMrlgjJjetoR1wYL",
+      "predicted_jetton_wallet_state_init_hash": "44da0702d90762506c64d02a4efbf7bc5d08c6cacd1a64cae58232637ada11d7"
     },
     {
       "allocation": "liquidity_market",
@@ -43,9 +43,9 @@
       "base_units": "210000000000000",
       "destination": "UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn",
       "requires_founder_signature": true,
-      "destination_verification": "Regenerated from exact-head CI artifact 14744952085 (run 173), source commit 08fe61fd46fcf83b730512be80e2276acad3e139; independent BOC hash, address-hash and CRC16 checks passed; on-chain getter confirmation pending.",
-      "predicted_jetton_wallet_address": "EQAUXhlV8gxHRhHPKksK7bjkhTnb0d_e5JUL1jzE7Na9L8ol",
-      "predicted_jetton_wallet_state_init_hash": "145e1955f20c474611cf2a4b0aedb8e48539dbd1dfdee4950bd63cc4ecd6bd2f"
+      "destination_verification": "Regenerated from exact-head CI artifact 14768399023 (run 251), source commit d608f0235da91e314e8052d7fe315e8ca5fba12f; independent BOC hash, account-id and CRC16 checks passed; on-chain getter confirmation pending.",
+      "predicted_jetton_wallet_address": "EQBAwSqjIN8psYIubCXcu4x9RwjRoi3FOYaBpK6WgMJTtDDi",
+      "predicted_jetton_wallet_state_init_hash": "40c12aa320df29b1822e6c25dcbb8c7d4708d1a22dc5398681a4ae9680c253b4"
     },
     {
       "allocation": "ecosystem_marketing",
@@ -53,9 +53,9 @@
       "base_units": "210000000000000",
       "destination": "UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE",
       "requires_founder_signature": true,
-      "destination_verification": "Regenerated from exact-head CI artifact 14744952085 (run 173), source commit 08fe61fd46fcf83b730512be80e2276acad3e139; independent BOC hash, address-hash and CRC16 checks passed; on-chain getter confirmation pending.",
-      "predicted_jetton_wallet_address": "EQDZL9l3y0BlXRretbbFSpBMj-GdNQzvg0PKcRwlr6m6JFO1",
-      "predicted_jetton_wallet_state_init_hash": "d92fd977cb40655d1adeb5b6c54a904c8fe19d350cef8343ca711c25afa9ba24"
+      "destination_verification": "Regenerated from exact-head CI artifact 14768399023 (run 251), source commit d608f0235da91e314e8052d7fe315e8ca5fba12f; independent BOC hash, account-id and CRC16 checks passed; on-chain getter confirmation pending.",
+      "predicted_jetton_wallet_address": "EQDUyzsEwYEz_er6XLxbKu-n2-vGXijuntlnnq27CXunOKGp",
+      "predicted_jetton_wallet_state_init_hash": "d4cb3b04c18133fdeafa5cbc5b2aefa7dbebc65e28ee9ed9679eadbb097ba738"
     }
   ],
   "safeguards": [
@@ -82,7 +82,7 @@
     "Predicted Master address and deterministic recipient Jetton Wallet addresses are derived from the unsigned Mainnet StateInit preview. They are not deployed/on-chain addresses until Mainnet deployment is confirmed.",
     "The Founder wallet signs the deployment/funding transaction as GAS & OPERATIONS (0.75 TON minimum attached value with VCoinFund body), and signs the five exact VCoinMint issuance messages after deployment.",
     "The previously configured inaccessible GAS wallet is retired and must never be funded or used.",
-    "Action #42 hardened the constructor to require gasOperatorWallet == owner (Founder). The exact-head run 173 preview (artifact 14744952085) regenerates the Master and five Jetton Wallet predictions from the hardened contract. Independent BOC hash reproduction and friendly-address hash/CRC16 checks passed. These are unsigned predictions pending Testnet rehearsal, external audit, and Mainnet getter confirmation."
+    "Action #51 regenerated all predicted Master and recipient Jetton Wallet values from the exact-head run #251 artifact (14768399023), source commit d608f0235da91e314e8052d7fe315e8ca5fba12f. Independent BOC hashes, address account IDs and CRC16 checksums passed. Values remain unsigned predictions until Mainnet deployment and on-chain getter confirmation."
   ],
   "founder_confirmed_release_intent": {
     "scope": "all_five_wallets_full_supply",
@@ -91,34 +91,36 @@
     "confirmation_status": "confirmed_by_project_owner",
     "mainnet_transaction_authorized": false
   },
-  "predicted_jetton_master_address": "EQBmjwr-Bc2_wNKcZHjTr8KtPGQgN-ltRhTIXqK0zM89O0Xt",
-  "predicted_master_state_init_hash": "668f0afe05cdbfc0d29c6478d3afc2ad3c642037e96d4614c85ea2b4cccf3d3b",
+  "predicted_jetton_master_address": "EQAo1TAGqSw6oUaMmpBtgQyRtCGEbSJNiGGy2Use04lRCQlU",
+  "predicted_master_state_init_hash": "28d53006a92c3aa1468c9a906d810c91b421846d224d8861b2d94b1ed3895109",
   "metadata_content_cell_hash": "6dc0e0c3a9ec89e72fc8402a13915bb425032a0e57dfa955ba5579eab28c940c",
   "price_reference": {
     "initial_price_usd": "0.008",
     "currency": "USD",
     "price_type": "modelled_reference_not_market_price"
   },
-  "preview_source_commit": "08fe61fd46fcf83b730512be80e2276acad3e139",
-  "preview_workflow_run_id": 44999045441,
-  "preview_artifact_id": 14744952085,
-  "preview_artifact_sha256": "99ad2ebca586fefa56927e4b831eef72f71f906ca583d9cccb3da256e14385d6",
+  "preview_source_commit": "d608f0235da91e314e8052d7fe315e8ca5fba12f",
+  "preview_workflow_run_id": 45060427627,
+  "preview_artifact_id": 14768399023,
+  "preview_artifact_sha256": "ac9fd402e448d214d8f87cc6d135ccf3a420a9bc0237309115bb59fc126fd998",
   "gas_wallet_unification_status": "contract-enforced; Founder wallet is the only permitted GAS & OPERATIONS signer",
   "clean_room_hash_reproduction": {
-    "status": "passed",
-    "source_commit": "08fe61fd46fcf83b730512be80e2276acad3e139",
-    "artifact_id": 14744952085,
-    "method": "Independent Python BOC parser and SHA-256 cell-hash implementation; decoded TON friendly addresses and independently verified embedded account hashes and CRC16-XMODEM checksums.",
-    "master_state_init_hash": "668f0afe05cdbfc0d29c6478d3afc2ad3c642037e96d4614c85ea2b4cccf3d3b",
-    "master_code_cell_hash": "383823efc716ed7aab1efe58536aca94f476d6a42d0e6a3041ef56c1f598f846",
-    "jetton_wallet_code_cell_hash": "786a569e6ba80af26a148a1634a18b1f1959a590682aba5f0ca855b7a38332ea",
+    "status": "BOC_AND_ADDRESS_HASH_REPRODUCTION_PASSED; independent source rebuild pending",
+    "source_commit": "d608f0235da91e314e8052d7fe315e8ca5fba12f",
+    "artifact_id": 14768399023,
+    "method": "Separate Python BOC parser and recursive TON ordinary-cell SHA-256 representation hashing; decoded all friendly addresses and independently checked embedded account hashes and CRC16-XMODEM checksums. This is not a second independent compiler build.",
+    "master_state_init_hash": "28d53006a92c3aa1468c9a906d810c91b421846d224d8861b2d94b1ed3895109",
+    "master_code_cell_hash": "5087c882019324e9d8e309c78f42e3bcee9433a54d7d0367d49320a7bbabcc36",
+    "master_data_cell_hash": "785448095c11b5a8d2ed8ac7a2dfb4abb5e8d22050e28b7f749f7e5ecb18a600",
+    "metadata_content_cell_hash": "6dc0e0c3a9ec89e72fc8402a13915bb425032a0e57dfa955ba5579eab28c940c",
     "jetton_wallet_state_init_hashes": {
-      "founder": "11d1157339c3dff082ed20252e7303699413ec82ad95ad0929a9ee35f25787bf",
-      "mining_reserve": "11b05c0b5cc908eb13e703a283177f2cbdcf2efd320327cb787dc47b1e92f0be",
-      "treasury": "556f8613239b64591f8002b733d8cee293a238e6d4608d0b3c5eb89b0c9c500f",
-      "liquidity_market": "145e1955f20c474611cf2a4b0aedb8e48539dbd1dfdee4950bd63cc4ecd6bd2f",
-      "ecosystem_marketing": "d92fd977cb40655d1adeb5b6c54a904c8fe19d350cef8343ca711c25afa9ba24"
+      "founder": "ae494e2572942f67830534bbd52095b4010e3864a271034afd7507d71829f1e6",
+      "mining_reserve": "bb35ab0a89ac7f6455d442955ef5f2f1a8c0c99e9aed27f9a20eae9c2f6345ce",
+      "treasury": "44da0702d90762506c64d02a4efbf7bc5d08c6cacd1a64cae58232637ada11d7",
+      "liquidity_market": "40c12aa320df29b1822e6c25dcbb8c7d4708d1a22dc5398681a4ae9680c253b4",
+      "ecosystem_marketing": "d4cb3b04c18133fdeafa5cbc5b2aefa7dbebc65e28ee9ed9679eadbb097ba738"
     },
-    "address_hash_and_checksum_verification": "passed for Master and all five Jetton Wallet addresses"
-  }
+    "address_hash_and_checksum_verification": "passed for Master and all five predicted Jetton Wallet addresses"
+  },
+  "preview_status": "Regenerated from exact-head CI run 251; unsigned Mainnet preview only; on-chain deployment and getter verification pending."
 }

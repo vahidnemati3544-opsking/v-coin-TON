@@ -39,6 +39,8 @@ jobs:
         run: npm run build
       - name: Build immutable TEP-64 metadata content cell
         run: node scripts/build-metadata-cell.cjs "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${GITHUB_SHA}/contracts/jetton/metadata.json"
+      - name: Generate unsigned Mainnet deployment preview
+        run: npx tsx scripts/prepare-mainnet-deployment.ts
       - name: Run Jest tests
         run: npm test
       - name: Commit generated dependency lockfile when missing or changed

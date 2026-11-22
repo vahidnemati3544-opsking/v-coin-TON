@@ -13,9 +13,9 @@
       "base_units": "420000000000000",
       "destination": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
       "requires_founder_signature": true,
-      "destination_verification": "must_be_rederived_from_revised_master_and_confirmed_by_on_chain_getter",
-      "predicted_jetton_wallet_address": null,
-      "predicted_jetton_wallet_state_init_hash": null
+      "destination_verification": "derived_from_revised_master_state_init_and_independently_hash_checked; pending on-chain getter confirmation",
+      "predicted_jetton_wallet_address": "EQB8AerdUs4kIiwgXYNXn97vInNGz1i6mM82aRz6Qk-yLXT8",
+      "predicted_jetton_wallet_state_init_hash": "7c01eadd52ce24222c205d83579fdeef227346cf58ba98cf36691cfa424fb22d"
     },
     {
       "allocation": "mining_reserve",
@@ -23,9 +23,9 @@
       "base_units": "1050000000000000",
       "destination": "UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0",
       "requires_founder_signature": true,
-      "destination_verification": "must_be_rederived_from_revised_master_and_confirmed_by_on_chain_getter",
-      "predicted_jetton_wallet_address": null,
-      "predicted_jetton_wallet_state_init_hash": null
+      "destination_verification": "derived_from_revised_master_state_init_and_independently_hash_checked; pending on-chain getter confirmation",
+      "predicted_jetton_wallet_address": "EQDSRCdDD6aozmwM7RIHyt9D-RyayizOMu5xENy0SPXwnWqd",
+      "predicted_jetton_wallet_state_init_hash": "d24427430fa6a8ce6c0ced1207cadf43f91c9aca2cce32ee7110dcb448f5f09d"
     },
     {
       "allocation": "treasury",
@@ -33,9 +33,9 @@
       "base_units": "210000000000000",
       "destination": "UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ",
       "requires_founder_signature": true,
-      "destination_verification": "must_be_rederived_from_revised_master_and_confirmed_by_on_chain_getter",
-      "predicted_jetton_wallet_address": null,
-      "predicted_jetton_wallet_state_init_hash": null
+      "destination_verification": "derived_from_revised_master_state_init_and_independently_hash_checked; pending on-chain getter confirmation",
+      "predicted_jetton_wallet_address": "EQDVyMsB_lGSxbI9-GSfr_Np3NohePKdYpaBEUitvAYFGsy-",
+      "predicted_jetton_wallet_state_init_hash": "d5c8cb01fe5192c5b23df8649faff369dcda2178f29d6296811148adbc06051a"
     },
     {
       "allocation": "liquidity_market",
@@ -43,9 +43,9 @@
       "base_units": "210000000000000",
       "destination": "UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn",
       "requires_founder_signature": true,
-      "destination_verification": "must_be_rederived_from_revised_master_and_confirmed_by_on_chain_getter",
-      "predicted_jetton_wallet_address": null,
-      "predicted_jetton_wallet_state_init_hash": null
+      "destination_verification": "derived_from_revised_master_state_init_and_independently_hash_checked; pending on-chain getter confirmation",
+      "predicted_jetton_wallet_address": "EQAnRjBQl3D9c0s5GV0t8RlTMReOFQRNNXoc3oyVVgjzl5MH",
+      "predicted_jetton_wallet_state_init_hash": "274630509770fd734b39195d2df1195331178e15044d357a1cde8c955608f397"
     },
     {
       "allocation": "ecosystem_marketing",
@@ -53,9 +53,9 @@
       "base_units": "210000000000000",
       "destination": "UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE",
       "requires_founder_signature": true,
-      "destination_verification": "must_be_rederived_from_revised_master_and_confirmed_by_on_chain_getter",
-      "predicted_jetton_wallet_address": null,
-      "predicted_jetton_wallet_state_init_hash": null
+      "destination_verification": "derived_from_revised_master_state_init_and_independently_hash_checked; pending on-chain getter confirmation",
+      "predicted_jetton_wallet_address": "EQCtNm8cneWOwU_JFfK_rf9Os7_Y8yItALCtI0ZYvoHQX8xs",
+      "predicted_jetton_wallet_state_init_hash": "ad366f1c9de58ec14fc915f2bfadff4eb3bfd8f3222d00b0ad234658be81d05f"
     }
   ],
   "safeguards": [
@@ -88,8 +88,8 @@
     "confirmation_status": "confirmed_by_project_owner",
     "mainnet_transaction_authorized": false
   },
-  "predicted_jetton_master_address": null,
-  "predicted_master_state_init_hash": null,
+  "predicted_jetton_master_address": "EQAriHkG8kqO0GQwwX6ODgqpJCV-oUDKwalDK8lAzYGBWHvV",
+  "predicted_master_state_init_hash": "2b887906f24a8ed06430c17e8e0e0aa924257ea140cac1a9432bc940cd818158",
   "metadata_content_cell_hash": "6dc0e0c3a9ec89e72fc8402a13915bb425032a0e57dfa955ba5579eab28c940c",
   "price_reference": {
     "initial_price_usd": "0.008",

@@ -1,6 +1,6 @@
 # Founder-only TON reserve withdrawal
 
-**Status:** Proposed implementation; CI, independent review, and exact-build fee simulation are required. This document does not authorize Mainnet deployment or any transaction.
+**Status:** Implemented in `contracts/jetton/src/vcoin.tact` as `VCoinWithdraw`; Sandbox tests cover successful Founder withdrawal, non-Owner rejection, zero-amount rejection, reserve-floor enforcement and underfunded request rejection. Independent review and exact-build fee simulation remain required. This does not authorize Mainnet deployment or any transaction. This document does not authorize Mainnet deployment or any transaction.
 
 ## Scope separation
 
@@ -18,7 +18,7 @@ This feature applies only to TON already held as the VCoinMaster operational res
 
 ## Required verification
 
-Sandbox tests must prove Founder authorization, rejection of non-Founder callers, fixed destination, zero-amount rejection, reserve-floor enforcement, and successful balance movement. CI must compile the generated message ABI and run the complete pre-existing suite. Review must also assess send-fee accounting, bounce behavior, storage reserve, and whether a bounced outbound payment restores the intended accounting.
+The current Sandbox suite in `contracts/jetton/tests/jetton-sandbox.spec.ts` verifies successful Founder-only withdrawal to the fixed Founder address, protected reserve floor, zero-amount rejection and the minimum 0.01 TON request value. CI must compile the generated message ABI and run the complete suite on the exact source commit. Independent review must still assess send-fee accounting, bounce behavior, storage reserve and whether a bounced outbound payment restores the intended accounting.
 
 ## Explicit non-goal
 

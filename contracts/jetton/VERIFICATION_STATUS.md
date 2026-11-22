@@ -42,3 +42,9 @@ These are committed test cases, not by themselves proof that CI passed on the la
 - Confirm all five allocation destination addresses and separate gas wallet against the final deployment constructor inputs; verify wallet control for the intended Mainnet network: pending.
 - Final metadata/content approval and signed release manifest: pending.
 - Mainnet deployment, issuance, and transfers: not performed; explicit per-transaction Founder approval remains required.
+
+## Safety boundary
+
+No Testnet deployment is included in the current execution path; local TON Sandbox testing is permitted and required. No Mainnet transaction may be signed or broadcast until the exact build, destinations, amounts, fees, network, simulation, and independent review have been presented for explicit Founder approval.
+
+Never request or store seed phrases, private keys, wallet PINs, or recovery codes.

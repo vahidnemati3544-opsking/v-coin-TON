@@ -69,18 +69,20 @@
   ],
   "secrets_must_never_be_committed": true,
   "gas_operations_wallet": {
-    "address": "UQCOZYJNI3HC6PN1YCy1cP-ikKPygoVUQlX2SIcJ_zEWJeGB",
-    "purpose": "TON fees and operational funding only; not a VCOIN allocation recipient"
+    "address": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
+    "purpose": "TON fees and operational funding only; same Founder address, not a sixth VCOIN allocation recipient",
+    "shared_role": "founder"
   },
   "notes": [
     "Template only; Mainnet deployment and every issuance require explicit Founder approval after all release gates pass.",
     "Founder allocation is one immediate 420,000,000 VCOIN issuance with no vesting or time lock.",
-    "The separate GAS & OPERATIONS wallet is for TON fees only and is not a VCOIN allocation recipient.",
+    "The Founder wallet also serves as GAS & OPERATIONS for TON fees only; it is not a sixth VCOIN allocation recipient.",
     "Every issuance request requires exact transaction review, Founder wallet signature, and on-chain finality reconciliation.",
     "Project owner confirmed the complete 2,100,000,000 VCOIN supply is to be allocated across all five registered wallets, with the Founder wallet included as one of the five. This is not authorization to deploy or broadcast transactions; exact Mainnet signing approval remains separate.",
     "Predicted Master address and deterministic recipient Jetton Wallet addresses are derived from the unsigned Mainnet StateInit preview. They are not deployed/on-chain addresses until Mainnet deployment is confirmed.",
-    "The Founder signs the deployment/funding transaction from the separate GAS & OPERATIONS wallet (0.75 TON minimum attached value with VCoinFund body); the Founder allocation owner wallet signs the five exact VCoinMint issuance messages after deployment.",
-    "The predicted Jetton wallet addresses and StateInit hashes in this manifest were refreshed from exact-head CI artifact 14743262138 on source commit 502c20e2d979a42dc10cd58e0874be60e8e5ba5f; this fixes stale addresses from an earlier Master preview. They remain predictions only until the deployed Master's get_wallet_address getters confirm them."
+    "The Founder wallet signs the deployment/funding transaction as GAS & OPERATIONS (0.75 TON minimum attached value with VCoinFund body), and signs the five exact VCoinMint issuance messages after deployment.",
+    "The predicted Jetton wallet addresses and StateInit hashes in this manifest were refreshed from exact-head CI artifact 14743262138 on source commit 502c20e2d979a42dc10cd58e0874be60e8e5ba5f; this fixes stale addresses from an earlier Master preview. They remain predictions only until the deployed Master's get_wallet_address getters confirm them.",
+    "The previously configured inaccessible GAS wallet is retired and must never be funded or used."
   ],
   "founder_confirmed_release_intent": {
     "scope": "all_five_wallets_full_supply",
@@ -100,5 +102,6 @@
   "preview_source_commit": "502c20e2d979a42dc10cd58e0874be60e8e5ba5f",
   "preview_workflow_run_id": 44994317905,
   "preview_artifact_id": 14743262138,
-  "preview_artifact_sha256": "d3cf96ad22e1efdfa19c38b8d7075da19f602593ec8fe089def250569d7e2c6f"
+  "preview_artifact_sha256": "d3cf96ad22e1efdfa19c38b8d7075da19f602593ec8fe089def250569d7e2c6f",
+  "gas_wallet_unification_status": "owner_approved; implementation pending CI"
 }

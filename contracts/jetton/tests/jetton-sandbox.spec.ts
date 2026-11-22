@@ -470,4 +470,30 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     expect(zeroAttempt.transactions).toHaveTransaction({ to: master.address, success: false });
     expect(((await blockchain.getContract(master.address)).account.account?.storage.balance.coins ?? 0n)).toBeGreaterThan(toNano('0.25'));
   });
+
+  test('rejects a withdrawal request below the 0.01 TON processing value', async () => {
+    const blockchain = await Blockchain.create();
+    const owner = await blockchain.treasury('owner');
+    const { master } = await deployMaster(blockchain, owner);
+
+    const before = (await blockchain.getContract(master.address)).account.account?.storage.balance.coins ?? 0n;
+    const underfunded = await master.send(
+      owner.getSender(),
+      { value: toNano('0.009') },
+      { $type: 'VCoinWithdraw', amount: toNano('0.1') },
+    );
+
+    expect(underfunded.transactions).toHaveTransaction({
+      to: master.address,
+      success: false,
+    });
+    expect(underfunded.transactions).not.toHaveTransaction({
+      from: master.address,
+      to: owner.address,
+    });
+    const after = (await blockchain.getContract(master.address)).account.account?.storage.balance.coins ?? 0n;
+    expect(after).toBeGreaterThan(toNano('0.25'));
+    expect(after).toBeLessThan(before + toNano('0.009'));
+  });
+
 });

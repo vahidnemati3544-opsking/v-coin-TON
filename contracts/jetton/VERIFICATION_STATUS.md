@@ -1,19 +1,20 @@
 # CURRENT MAINNET RELEASE PREFLIGHT — 2026-11-22 (Action #53; supersedes prior status entries below)
 
-**Latest exact-head CI run:** `45063673730` — build-and-test and deploy-issuer both succeeded  
-**Exact source commit:** `90c0d71adbfb3dbe8b645958eda0e4deb598bd86`  
-**Contract build artifact ID:** `14769907918`  
-**Contract build ZIP SHA-256:** `349ab278406927a12e6ea7ded99e2ed85649c8133d13cd6bbd1124dad0e0d4f2`  
-**Full source artifact ID:** `14770701121`  
-**Full source ZIP SHA-256:** `ead200093f24898084cd6535b9500024d845510c3eca60c97c9f5160fd13a2f1`  
+**Latest exact-head CI run:** `45064060029` — build-and-test and deploy-issuer both succeeded  
+**Exact source commit:** `673faf7ec3e3f7266b21f934eabd0ce7ae7237bf`  
+**Contract build artifact ID:** `14770706582`  
+**Contract build ZIP SHA-256:** `2048a3284a5afe9e076c20d15d712ecec2f777ad531e627fe17042c82ceed083`  
+**Full source artifact ID:** `14770147735`  
+**Full source ZIP SHA-256:** `374b6a6c165e51e01657f9e384eb93338b23a3fb2af051a4aaeec564a3e94406`  
+**Complete source-and-release bundle SHA-256:** `232196cbde7ca35c0a491c1b5493539b44fbe5efac91d09a9c44dab6d7340d37`  
 **Predicted Master address (not deployed):** `EQAo1TAGqSw6oUaMmpBtgQyRtCGEbSJNiGGy2Use04lRCQlU`  
 **Master StateInit hash:** `28d53006a92c3aa1468c9a906d810c91b421846d224d8861b2d94b1ed3895109`  
 **Release disposition: NO-GO for Mainnet deployment and issuance.**
 
-- Run `45063673730` passed dependency installation/audit enforcement, Tact compilation, TEP-64 metadata-cell generation, unsigned Mainnet preview generation, Jest Sandbox tests, issuer safety/sequence guards, full source snapshot upload and Pages deployment.
+- Run `45064060029` passed dependency installation/audit enforcement, Tact compilation, TEP-64 metadata-cell generation, unsigned Mainnet preview generation, Jest Sandbox tests, issuer safety/sequence guards, full source snapshot upload and Pages deployment.
 - The generated preview confirms fixed supply **2,100,000,000 VCOIN**, six decimals, five allocations **420M / 1,050M / 210M / 210M / 210M**, and five registered owner addresses.
 - The preview's Master reserve attachment is **1.00 TON**. The contract's minimum `VCoinFund` request is 0.75 TON; the issuer now reads the amount from the exact preview rather than hard-coding it. A live network fee quote is still required.
-- The full source artifact includes all source/documentation files, the safe `.env.example`, and `.gitignore`; no `.git`, `node_modules` or secrets are included. The combined source-and-release bundle is integrity-tested and linked in Action #53.
+- The full source artifact includes all source/documentation files, the safe `.env.example`, and `.gitignore`; no `.git`, `node_modules` or secrets are included.
 - GitHub Pages deployment succeeded and the environment URL is `https://vahidnemati3544-opsking.github.io/v-coin-TON/`.
 - Founder is the sole deployment/issuance signer and the shared GAS & OPERATIONS wallet. No separate fee wallet or sixth allocation destination exists.
 - The Master source includes the Founder-only `VCoinWithdraw` path, protected by a 0.25 TON minimum reserve plus a 0.10 TON fee buffer. The issuer does not expose a withdrawal control; a withdrawal requires a separate reviewed payload.
@@ -21,7 +22,6 @@
 - No Mainnet deployment, issuance, transfer or payout has been sent. The predicted Master/Jetton Wallet addresses are not on-chain evidence.
 - Remaining gates: qualified independent smart-contract/TEP-74/TEP-64 audit; independent clean-room rebuild; live fee/reserve review; Founder review of network, signer, metadata, addresses and exact payloads; explicit Founder signature for deployment and each separate allocation.
 - Current execution policy is Mainnet-only. No Testnet deployment or Testnet transaction is authorized.
-- The documentation-only follow-up commits `b8c490a840e649ed71047316c94a2b7860d5f348` and `3ae6375cd682502c8b422108cc7ca769a9eed552` updated the Action #53 artifact report and deployment inventory after the source snapshot; they did not alter contract source, deployment inputs, metadata, issuer code or backend/mining code.
 
 See [Action #53 repository and ZIP review](../../docs/PROJECT_REVIEW_ACTION_53.md).
 

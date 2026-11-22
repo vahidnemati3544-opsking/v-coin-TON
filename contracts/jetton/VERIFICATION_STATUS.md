@@ -407,3 +407,17 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 - Verification evidence: run #173 passed 17/17 Jest tests, Tact compilation, strict npm audit (zero vulnerabilities), unsigned Mainnet preview generation, and issuer syntax/safety checks.
 - Residual blockers: independent qualified security audit; live TON Testnet deployment and five-wallet issuance rehearsal; live fee/reserve simulation; deployed-Master getter verification; GitHub Pages owner setting. No Mainnet transaction has been signed or broadcast.
 - Design note: the Master has no TON withdrawal method. Any unused TON reserve remaining in the Master after deployment/issuance is not recoverable through the current contract. This is a deliberate absence of admin withdrawal authority in the current implementation and must be understood before signing.
+
+
+## Current status update — Action #54 (2026-11-22)
+
+The earlier logo-pending statements in this historical verification log are superseded by Action #54. The Founder-approved canonical image was already present in the repository; inspection confirmed JPEG bytes under a misleading `.png` suffix. The exact original bytes were preserved, the asset was renamed to `contracts/jetton/assets/vcoin-canonical-logo.jpg`, and TEP-64 metadata now includes its stable GitHub Pages URL. The old misleading `.png` path was removed. CI copies the same canonical JPEG into the Pages root and checks its HTTP availability.
+
+- Final source commit: `c30b3f6386ce8fd9da603d2fecc745d4f5b992ed`.
+- Exact-head CI: successful; Tact build, strict dependency audit, 3 Jest suites / 21 tests, issuer checks, and Pages deployment passed.
+- Metadata URI: `https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/e17bcb9d82ea182bff3358b9fac6b5fa25c166ee/contracts/jetton/metadata.json`.
+- Metadata image: `https://vahidnemati3544-opsking.github.io/v-coin-TON/vcoin-canonical-logo.jpg`.
+- TEP-64 content-cell hash: `abadcbc42c4e6309bea1d595dbfd1b834a07bfb171b2b1e2cb6d4b7e244330ca`.
+- Metadata BOC SHA-256: `005aeddd589838a3b603ccbe58a6e893015e7f5dbaf4c5f43edb3fb2a82ee287`.
+- Predicted Master address for this metadata/build: `EQBn4hW8bKhFTSz9riY5q3Pr3SfJmv2VYKZQl_NWMbK--5fP` (prediction only; not deployed).
+- Mainnet deployment and allocation transactions remain unsigned and unbroadcast. Independent security audit, clean-room rebuild, final live fee review, and Founder payload approval remain outstanding.

@@ -133,9 +133,9 @@ Support workflow:
 |---|---|---|---|
 | 48.1 | Approve offline-first product and trust boundaries | Planned | Product/security review |
 | 48.2 | Audit current mining engine, API, ledger, auth, and schema | Done — see [MINING_OFFLINE_CURRENT_STATE_AUDIT.md](./MINING_OFFLINE_CURRENT_STATE_AUDIT.md) | Audit recorded at Action #49; no offline client/lease/sync implementation exists yet |
-| 48.3 | Define signed lease protocol and threat model | Pending | Reviewed protocol and key rotation plan |
-| 48.4 | Implement PWA shell, service worker, and cache strategy | Pending | Offline install/open tests |
-| 48.5 | Implement IndexedDB event queue and state machine | Pending | Persistence/restart tests |
+| 48.3 | Define signed lease protocol and threat model | Protocol drafted in Action #50; review pending | Key rotation and security review sign-off |
+| 48.4 | Implement PWA shell, service worker, and cache strategy | Initial shell committed in Action #50; browser tests pending | HTTPS install/offline/open tests |
+| 48.5 | Implement IndexedDB event queue and state machine | Pending — only IndexedDB diagnostics read path exists; mining event queue not implemented | Append-only queue and persistence/restart tests |
 | 48.6 | Implement authenticated idempotent sync endpoint | Pending | Retry/replay integration tests |
 | 48.7 | Implement server reconciliation and ledger integration | Pending | Atomic ledger and reserve tests |
 | 48.8 | Implement diagnostics export and redaction | Pending | Privacy/security tests |
@@ -154,3 +154,14 @@ This plan is not evidence that offline mining has already been implemented. Do n
 - MDN, Client-side storage: https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Client-side_APIs/Client-side_storage
 
 These platform APIs support offline caching and deferred synchronization, but browser scheduling and background execution are not guaranteed. The application must therefore work safely with foreground retry and must not promise continuous mining while an app is closed.
+
+
+## Action #50 — first implementation foundation (2026-11-22)
+
+- Added protocol document: [OFFLINE_LEASE_AND_WALLET_TRUST_PROTOCOL.md](./OFFLINE_LEASE_AND_WALLET_TRUST_PROTOCOL.md).
+- Added additive migration 008 for Jetton balance snapshots, device public-key records, offline leases, sync batches, event replay constraints, and reconciliation audit.
+- Registered migration 008 in the local database setup script. It has not been applied to any database.
+- Added an Ed25519 canonical-payload signing/verification utility and unit tests. The module is not connected to lease issuance or any public route; no private key is stored in the repository.
+- Added the initial installable PWA shell, manifest, and service worker. It currently supports shell caching and local diagnostics export only. It does not yet implement mining, signed-lease verification in the browser, or an IndexedDB mining-event queue.
+- Public mining remains HTTP 503. No wallet ownership proof adapter, trusted TON balance reader, reconciliation worker, payout, or Mainnet transaction was added.
+- The available ZIP is a Jetton build artifact and does not contain the backend/client source. It was not modified or relabeled as a full application release.

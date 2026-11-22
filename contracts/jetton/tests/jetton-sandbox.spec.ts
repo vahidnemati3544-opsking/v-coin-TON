@@ -465,7 +465,7 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     const drainAttempt = await master.send(
       owner.getSender(),
       { value: toNano('0.02') },
-      { $$type: 'VCoinWithdraw', amount: toNano('0.6') },
+      { $$type: 'VCoinWithdraw', amount: toNano('0.7') },
     );
     expect(drainAttempt.transactions).toHaveTransaction({ to: master.address, success: false });
 

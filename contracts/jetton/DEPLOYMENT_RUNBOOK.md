@@ -101,9 +101,10 @@ The Founder personally reviews and signs in the wallet only after explicit readi
 
 - Five allocation destinations and separate fee wallet: recorded in `docs/WALLET_ALLOCATION_REGISTER.md`.
 - Five-role allocation logic and natural-bounce/retry test cases: present in current main source and Sandbox test file.
-- Exact-head CI result: must be refreshed and recorded.
-- Dependency lockfile: absent from current main; release blocker.
-- Reproducible compiled artifacts and independently reproduced code/StateInit hashes: not yet attested.
+- Exact-head CI: passed on commit `4458760becbd9f7a37b1ffa85695999bdf73cfe4` in [GitHub Actions run #78](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/44988982989); audit report recorded zero vulnerabilities.
+- Generated `package-lock.json`: preserved in the CI artifact but not yet committed to `main`; committing it and rerunning CI remains a release gate.
+- Master and Jetton Wallet BOCs: retained in the CI artifact; BOC file checksums are recorded in `VERIFICATION_STATUS.md`. TON cell hashes, StateInit hashes, and independent reproduction remain pending.
+- TEP-64 metadata package/content cell and immutable URI: pending; do not deploy with placeholder or empty metadata.
 - Independent security audit: pending.
 - Wallet-control proofs: pending.
 - Jetton Master address and deployment transaction: none recorded.

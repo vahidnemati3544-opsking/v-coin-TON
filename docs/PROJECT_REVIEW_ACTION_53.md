@@ -101,7 +101,7 @@ The combined archive merges the full 94-file source snapshot with the exact-head
 - ZIP integrity test: PASS.
 - Required source, backend, mining, issuer, compiled contract and preview files: present.
 
-The combined archive is a source snapshot at the exact Git commit plus CI build outputs and a final Action #53 artifact addendum. It does not include Git history or a `.git` directory.
+The combined archive is a source snapshot at the exact Git commit plus CI build outputs and a final Action #53 artifact addendum. It does not include Git history or a `.git` directory. The later documentation-only commits `72f13a31b261df3a96dffdded2410fd444abc40c` and `0e3672894cb06ebf17a1543a6d2feb7a7389c82f` refresh this report and deployment inventory with the final artifact references; they do not change contract, backend, mining or issuer code.
 
 ## 4. Current unsigned Mainnet preview
 

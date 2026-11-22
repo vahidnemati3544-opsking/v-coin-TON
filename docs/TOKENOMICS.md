@@ -126,3 +126,12 @@ The technical specification for the VCOIN TON Jetton Master and Wallet contracts
 14. Official wallet allocation register
 
 The canonical five-wallet allocation map is maintained in docs/WALLET_ALLOCATION_REGISTER.md. The register is part of the approved design baseline. Address ownership, wallet control, Jetton wallet derivation, on-chain balances and transfers must still be independently verified before any issuance or payout. The register does not authorize deployment or transfer by itself.
+
+15. Modelled USD reference-price policy
+
+- Initial modelled USD reference baseline: 0.008 per VCOIN.
+- Approved target: 50% compound growth per 365-day year, applied gradually.
+- Backend cadence: one modelled update every 72 hours, using a fixed-point multiplier of 1.003338149181 (approximately 0.3338149181% per 72-hour period).
+- The annualized multiplier is approximately 1.5 over 365 days.
+- This is an internal modelled reference schedule only. It is not a market quote, exchange price, guaranteed value, or promise of returns.
+- This price model does not change the fixed on-chain supply, allocation percentages, or holder control of the Jetton balances.

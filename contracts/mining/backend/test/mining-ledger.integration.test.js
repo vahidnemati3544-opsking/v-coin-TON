@@ -73,6 +73,54 @@ async function applyTestMigrations(pool) {
   }
 }
 
+
+test('purchase and payout settlement schema is idempotent and remains gated by Founder approval', {
+  skip: !databaseUrl
+}, async () => {
+  const pool = new Pool({ connectionString: databaseUrl, max: 2 });
+  try {
+    await applyTestMigrations(pool);
+    const lifecycle = await pool.query(
+      'SELECT status, closed_at FROM mining_lifecycle WHERE singleton = TRUE'
+    );
+    assert.equal(lifecycle.rows[0].status, 'running');
+    assert.equal(lifecycle.rows[0].closed_at, null);
+
+    const telegramId = String(BigInt(Date.now()) * 10000n + BigInt(process.pid) + 7n);
+    const user = await pool.query(
+      "INSERT INTO users (telegram_user_id, username) VALUES ($1::bigint, 'ci_purchase_test') RETURNING id",
+      [telegramId]
+    );
+    const userId = user.rows[0].id;
+    const order = await pool.query(
+      "INSERT INTO purchase_orders (" +
+      "user_id, idempotency_key, network, payer_wallet_address, " +
+      "beneficiary_jetton_wallet_address, founder_ton_wallet_address, " +
+      "expected_ton_nano, vcoin_amount_base_units, expires_at" +
+      ") VALUES ($1, $2, 'testnet', $3, $4, $5, 1000000000, 1000000, clock_timestamp() + INTERVAL '15 minutes') " +
+      'RETURNING status, payment_confirmed_at, delivered_at',
+      [userId, 'ci-purchase:' + randomUUID(), 'payer-test-wallet', 'beneficiary-test-jetton-wallet', 'founder-test-wallet']
+    );
+    assert.equal(order.rows[0].status, 'awaiting_payment');
+    assert.equal(order.rows[0].payment_confirmed_at, null);
+    assert.equal(order.rows[0].delivered_at, null);
+
+    const batch = await pool.query(
+      "INSERT INTO mining_payout_batches (network) VALUES ('testnet') RETURNING status"
+    );
+    assert.equal(batch.rows[0].status, 'draft');
+
+    await assert.rejects(
+      pool.query(
+        "INSERT INTO mining_payout_batches (network, status) VALUES ('testnet', 'approved')"
+      ),
+      /check constraint/i
+    );
+  } finally {
+    await pool.end();
+  }
+});
+
 test('owner-approved migrations apply the 1.05B mining cap, USD 0.008 baseline, and 50% annual compound rate', {
   skip: !databaseUrl
 }, async () => {

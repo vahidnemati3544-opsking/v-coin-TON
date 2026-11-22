@@ -48,6 +48,28 @@ async function applyTestMigrations(pool) {
   }
 }
 
+test('owner-approved supply migration applies the 1.05B mining cap and USD 0.008 reference baseline', {
+  skip: !databaseUrl
+}, async () => {
+  const pool = new Pool({ connectionString: databaseUrl, max: 2 });
+  try {
+    await applyTestMigrations(pool);
+    const reserve = await pool.query(
+      "SELECT allocated_base_units::text FROM mining_reserve WHERE reserve_code = 'USER_MINING'"
+    );
+    assert.equal(reserve.rows[0].allocated_base_units, '1050000000000000');
+
+    const price = await pool.query(
+      'SELECT initial_price_usd::text, current_price_usd::text FROM price_reference_state WHERE singleton = TRUE'
+    );
+    assert.equal(Number(price.rows[0].initial_price_usd), 0.008);
+    assert.equal(Number(price.rows[0].current_price_usd), 0.008);
+  } finally {
+    await pool.end();
+  }
+});
+
+
 test('PostgreSQL mining reward is reserved, double-entry posted, and idempotently confirmed', {
   skip: !databaseUrl
 }, async () => {

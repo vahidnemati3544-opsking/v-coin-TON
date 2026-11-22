@@ -1,3 +1,29 @@
+# CURRENT AUTHORITATIVE RELEASE STATUS — 2026-11-22 (Action #44)
+
+> This section supersedes any older conflicting deployment, signer, wallet-role, CI, or preview statements later in this historical log. Read this section first.
+
+- Current main HEAD reviewed: `d542c7281e317aca040a3b83bb8f249af6cb0e26`.
+- Founder and GAS & OPERATIONS are the **same single wallet**. The Founder address is the sole contract owner, sole VCOIN issuance signer, and GAS reserve funder. There is no separate GAS signer and no sixth VCOIN recipient. The constructor and deployment generator enforce `gasOperatorWallet == owner`; the TonConnect issuer requires the Founder wallet for deployment and all five allocations.
+- The five and only five VCOIN allocation destinations remain Founder 420M, Mining Reserve 1.05B, Treasury 210M, Liquidity/Market 210M, and Ecosystem/Marketing 210M; total 2.1B VCOIN, six decimals. Do not use any historical six-wallet or 10B allocation statements below.
+- Exact-head GitHub Actions run #179 (run ID `44999283338`) on this HEAD: `build-and-test` succeeded, including clean lockfile install, strict npm audit, Tact compile, immutable TEP-64 cell generation, unsigned Mainnet preview generation, Jest tests, issuer syntax/sequence guard checks, and artifact uploads. The `deploy-issuer` job failed only at `Configure GitHub Pages` because the connected GitHub App lacks repository administration permission; site deployment was skipped. This does not mean the contract build/test job failed.
+- The previous successful exact-head run #173 also validated the constructor hardening and sequential issuer controls. No Mainnet transaction has been signed, broadcast, or confirmed.
+- **Release disposition remains NO-GO for Mainnet.** Still required: owner enables GitHub Pages Source = GitHub Actions; real TON Testnet deployment and complete five-allocation rehearsal; independent third-party smart-contract/TEP-74/TEP-64 audit; final fee and reserve simulation; and review of the exact current unsigned deployment package and constructor addresses before any signature.
+- The Master has no TON withdrawal method. Any unused TON reserve sent to the Master is not recoverable through the current contract. This is a material, irreversible design limitation; do not add a withdrawal function without the owner's explicit architecture approval.
+- The issuer page is a transaction-request interface, not a blockchain verifier. Its checkboxes are manual operator acknowledgements; each transaction and recipient balance must be independently verified using TON Mainnet explorers/getters before the next allocation.
+- Historical predicted addresses and hashes in older action entries are not authoritative for the current source unless regenerated from the current exact-head artifact and independently reproduced. Treat every predicted address as unconfirmed until the deployed Master getters agree.
+
+## Action #44 — Reconcile release status with Founder/GAS unified signer and latest exact-head CI
+
+**Status:** Documentation correction committed; Mainnet remains NO-GO.
+
+- Corrected the top-level release status to make the current Founder = GAS & OPERATIONS rule authoritative and to supersede stale historical references to a separate GAS signer.
+- Recorded exact-head run #179 and separated the successful build/test job from the GitHub Pages permission failure.
+- Reaffirmed the five allocation wallets and current 2.1B fixed supply; explicitly prohibited treating historical six-wallet or 10B plans as current.
+- Reaffirmed the unrecoverable Master TON reserve limitation, the need for independent third-party audit, Testnet rehearsal, fee simulation, and independent on-chain verification.
+- No contract code, deployment payload, wallet address, allocation, or transaction was changed by this documentation-only action.
+
+---
+
 # V COIN TON Jetton verification status
 
 **Reviewed branch:** `main`  

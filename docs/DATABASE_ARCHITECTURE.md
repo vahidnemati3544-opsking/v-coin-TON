@@ -3,7 +3,7 @@
 **Database:** PostgreSQL  
 **Schema file:** contracts/mining/backend/database/schema.sql  
 **Migrations:** contracts/mining/backend/database/migrations/  
-**Status:** Core schema, reserve controls, and atomic internal-ledger settlement are implemented in code. Local PostgreSQL verification remains pending. These components do not establish wallet-based mining or on-chain payouts.
+**Status:** Core schema, reserve controls, and atomic internal-ledger settlement are implemented in code. Local PostgreSQL verification remains pending. These components do not establish wallet-based mining or on-chain payouts. The authoritative purchase, level-balance, and final mining-payout policy is documented in `docs/PURCHASE_AND_MINING_PAYOUT_POLICY.md`.
 
 ## 1. Core tables
 
@@ -50,7 +50,7 @@ Migration `001-mining-reserve.sql` creates:
 - confirm_mining_reward(...)
 - reverse_mining_reward(...)
 
-The fixed design allocation is 5,000,000,000 VCOIN = 5,000,000,000,000,000 base units. The migration checks this exact amount and prevents pending plus distributed amounts from exceeding the allocation.
+The approved mining allocation is 1,050,000,000 VCOIN = 1,050,000,000,000,000 base units (50% of the fixed 2,100,000,000 VCOIN total supply). Migration 001 originally seeded a legacy 5,000,000,000 VCOIN value; migration 005-vcoin-supply-and-price-reset.sql corrects the live development reserve to the approved 1,050,000,000 VCOIN cap before issuance. Migration 005 refuses to apply if pending plus distributed rewards already exceed the corrected cap. The migration runner includes migration 005; do not edit historical migration 001.
 
 Migration `002-mining-ledger-settlement.sql` adds `confirm_mining_reward_to_internal_balance(...)`, which confirms the reserve, posts equal debit/credit ledger entries, updates the user's internal available balance, and marks the reward confirmed in one transaction. Repeated confirmation is idempotent and does not increment the balance twice. This is an internal accounting entry, not an on-chain transfer.
 
@@ -95,7 +95,17 @@ The integration suite uses `TEST_DATABASE_URL` and must point to a separate, dis
 - Seed approved levels and costs only after the owner approves the schedule.
 - Run full PostgreSQL integration tests without skips, against an isolated test database.
 - Verify rollback, reserve exhaustion, concurrency, idempotency and ledger reconciliation.
-- Implement the separate wallet snapshot and payout schema after the TON wallet and provider architecture is approved.
+- Implement the separate wallet snapshot, TON-to-VCOIN purchase settlement, combined level-qualifying balance, and end-of-mining on-chain payout lifecycle after the TON wallet and provider architecture is approved.
 - Verify backup/restore and least-privilege database roles.
 
 A successful JavaScript CI run does not prove that SQL has been applied to the user's local PostgreSQL instance. A successful database connection does not prove that mining is live.
+
+
+## 10. Approved purchase and mining payout flow
+
+- A completed TON-to-VCOIN purchase sends the TON consideration to the Founder allocation wallet and transfers already-issued VCOIN from the Founder Jetton wallet to the buyer's verified Jetton wallet. Purchases must not mint new VCOIN.
+- Purchased VCOIN and eligible accumulated mining rewards are combined for level calculation, while their origins remain separately identifiable in the immutable ledger.
+- Mining rewards are credited to the user's internal pending/eligible account during the mining period. They are not represented as an on-chain wallet balance until an on-chain payout is confirmed.
+- After the Founder formally declares the mining period complete, the system reconciles the 1,050,000,000 VCOIN mining allocation, validates each user's eligible rewards and payout destination, and transfers each payable amount from the designated mining reserve Jetton wallet to the user's verified Jetton wallet.
+- Payouts require idempotency, reserve-cap enforcement, transaction finality/bounce verification, and an immutable audit trail. Never mark a payout paid before chain confirmation.
+- The 5,000,000,000 VCOIN value in migration 001 is historical and is superseded by migration 005. The effective cap is 1,050,000,000 VCOIN.

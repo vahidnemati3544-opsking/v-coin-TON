@@ -60,6 +60,11 @@ async function applyTestMigrations(pool) {
       path.join(databaseDir, 'migrations/006-annual-compound-price-policy.sql'), 'utf8'
     );
     await client.query(annualPriceMigration);
+
+    const settlementMigration = await fs.readFile(
+      path.join(databaseDir, 'migrations/007-purchase-and-mining-payout-settlement.sql'), 'utf8'
+    );
+    await client.query(settlementMigration);
   } finally {
     if (lockAcquired) {
       try { await client.query('SELECT pg_advisory_unlock(741230017)'); } catch (_) { /* preserve original error */ }

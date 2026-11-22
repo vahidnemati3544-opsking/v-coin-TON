@@ -12,7 +12,7 @@
 - Each allocation has a one-time issued flag. The Master disables further issuance only after all five allocation roles have completed.
 - A bounced wallet-credit message is checked against the deterministic Jetton wallet for that role and its exact allocation amount; only that role is reset for retry.
 - GAS & OPERATIONS can fund the Master reserve through VCoinFund but cannot issue VCOIN.
-- The founder allocation is one immediate 2,000,000,000 VCOIN allocation; no vesting or time lock applies.
+- The founder allocation is one immediate 420,000,000 VCOIN allocation; no vesting or time lock applies.
 
 ## Committed Sandbox coverage
 
@@ -66,7 +66,7 @@ Never request or store seed phrases, private keys, wallet PINs, or recovery code
 
 ## Founder-confirmed issuance scope — 2026-11-22
 
-The project owner explicitly confirmed that the full fixed supply of 10,000,000,000 VCOIN is to be issued and allocated directly across all five registered Mainnet allocation wallets: Founder 2,000,000,000; Mining Reserve 5,000,000,000; Treasury 1,000,000,000; Liquidity/Market 1,000,000,000; Ecosystem/Marketing 1,000,000,000. The Founder wallet is one of these five allocation wallets, not an additional destination. The separate GAS & OPERATIONS wallet is not an allocation wallet. Do not ask the owner to choose between partial Founder-only issuance and five-wallet allocation again.
+The project owner explicitly confirmed that the full fixed supply of 2,100,000,000 VCOIN is to be issued and allocated directly across all five registered Mainnet allocation wallets: Founder 420,000,000; Mining Reserve 1,050,000,000; Treasury 210,000,000; Liquidity/Market 1,000,000,000; Ecosystem/Marketing 1,000,000,000. The Founder wallet is one of these five allocation wallets, not an additional destination. The separate GAS & OPERATIONS wallet is not an allocation wallet. Do not ask the owner to choose between partial Founder-only issuance and five-wallet allocation again.
 
 This is confirmation of the intended allocation plan, not a signature authorization. Deployment, issuance, and each Mainnet transaction remain blocked until technical release gates pass and exact transaction details are presented for the Founder's informed approval and wallet signature.
 
@@ -136,3 +136,17 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 - GitHub Pages publication was blocked because the connected GitHub App lacks repository administration permission to create the Pages site; configure-pages returned 'Resource not accessible by integration' even with enablement=true.
 - One-time Founder action required: open https://github.com/vahidnemati3544-opsking/v-coin-TON/settings/pages and set Build and deployment -> Source to GitHub Actions. The next push to issuer/** or the verification workflow will publish the site at https://vahidnemati3544-opsking.github.io/v-coin-TON/.
 - No Mainnet deployment, mint, or token transfer has been broadcast. The predicted Master address and five Jetton Wallet addresses remain unsigned previews until Mainnet confirmation.
+
+
+## Action #36 — Owner-approved supply and reference-price revision
+
+**Status:** Source, tests, templates and economic documentation updated; exact-head CI and regenerated Mainnet artifacts pending.
+
+- Owner-approved fixed supply: 2,100,000,000 VCOIN, six decimals, 2,100,000,000,000,000 base units.
+- Shares remain 20/50/10/10/10: Founder 420,000,000; Mining Reserve 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN.
+- Modelled USD reference price reset to 0.008 per VCOIN. It is not a market quote, guarantee, or promise of appreciation.
+- Previous Master and Jetton Wallet predictions are invalidated and must be regenerated from the revised contract StateInit.
+- A forward-only PostgreSQL migration lowers the mining reserve cap only if pending plus distributed rewards fit the new 1.05B reserve; otherwise it aborts for reconciliation.
+- The same migration resets the active modelled reference price to 0.008 while retaining historical candles.
+- The tracked old issuer preview is marked superseded and cannot be used for signing. CI must pass before a fresh preview replaces it.
+- No Mainnet deployment, minting, or transfer is authorized or broadcast by this revision.

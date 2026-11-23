@@ -1,5 +1,7 @@
 # CURRENT CONTROLLING RELEASE ADDENDUM — 2026-11-23
 
+> **Scope correction (Action #64):** Independent specialist/external security auditing is not a V COIN–TON project activity, pending task, or release condition. Any older checklist statements below that list such an audit as required or pending are historical and superseded by this addendum. The project uses its own engineering checks and release controls.
+
 > This addendum governs this runbook. Older historical statements below that conflict with it are superseded and must not be used for signing or funding decisions.
 
 ## Current verified repository state
@@ -23,7 +25,7 @@ Mainnet remains **NO-GO** until all of the following are evidenced:
 3. The exact source commit is rebuilt from a clean environment and all BOC, StateInit, cell, metadata, and address hashes are reproduced.
 4. The five destination addresses and Founder signer/network are checked in the exact deployment preview; post-deployment getters and deterministic Jetton Wallet addresses are checked before issuance.
 5. Current network fees and reserve requirements are simulated against the exact payloads. The contract's minimum accepted `VCoinFund` message is 0.75 TON, while the current generated unsigned preview requests 1.00 TON to retain an additional reserve margin. The issuer must read this amount from the generated preview rather than hard-code it. Neither figure is a live fee quote; current network fees and reserve sufficiency must be checked against the exact payload.
-7. The Founder receives and approves the complete transaction review for each irreversible Mainnet operation.
+6. The Founder receives and approves the complete transaction review for each irreversible Mainnet operation.
 
 Never request or store a seed phrase, private key, PIN, or recovery code. The Founder signs in their own wallet. This addendum does not authorize any transaction.
 
@@ -179,7 +181,7 @@ This runbook records implementation and release controls. It is not evidence of 
 - Master predicted address: **not generated for the current 2.1B allocation revision**. Previous predicted address and StateInit hash are invalid and must not be reused.
 - No current recipient Jetton Wallet addresses or StateInit hashes are recorded; generate them only from the latest reviewed exact-head build and verify each against the deployed Master's getter.
 - Independent BOC parser reproduced the Master and five wallet hashes, checked the Master and wallet code hashes, and verified the hash bytes plus CRC16 checksums of all six friendly addresses.
-- Third-party audit, independent clean-room rebuild, live fee simulation, on-chain deployment, and allocation remain outstanding. Testnet deployment/transactions are not authorized.
+- The clean-room rebuild, live fee simulation, on-chain deployment, and allocation remain outstanding. Testnet deployment/transactions are not authorized.
 
 ## Action #42 — Founder-only GAS enforcement and sequential issuance controls
 
@@ -188,4 +190,4 @@ This runbook records implementation and release controls. It is not evidence of 
 - Sandbox coverage rejects a constructor configuration with a separate GAS wallet.
 - The TonConnect console locks a submitted deployment request for the page session and serializes the five mint requests. The Founder must manually confirm each on-chain balance and role status before the next mint is enabled.
 - Exact-head run #173 build-and-test and issuer syntax/safety checks passed. New Master and Jetton Wallet previews, with independently reproduced hashes and address checksums, are in `contracts/jetton/allocation-manifest.template.json`.
-- No Mainnet deployment, mint, or token credit has occurred. External audit, clean-room rebuild and live fee simulation remain required; Testnet deployment/transactions are not authorized.
+- No Mainnet deployment, mint, or token credit has occurred. Clean-room rebuild and live fee simulation remain required; Testnet deployment/transactions are not authorized.

@@ -65,6 +65,31 @@ async function applyTestMigrations(pool) {
       path.join(databaseDir, 'migrations/007-purchase-and-mining-payout-settlement.sql'), 'utf8'
     );
     await client.query(settlementMigration);
+
+    const walletSnapshotMigration = await fs.readFile(
+      path.join(databaseDir, 'migrations/008-wallet-snapshots-and-offline-mining.sql'), 'utf8'
+    );
+    await client.query(walletSnapshotMigration);
+
+    const allocationMigration = await fs.readFile(
+      path.join(databaseDir, 'migrations/009-21b-vcoin-allocation-baseline.sql'), 'utf8'
+    );
+    await client.query(allocationMigration);
+
+    const tonProofMigration = await fs.readFile(
+      path.join(databaseDir, 'migrations/010-ton-proof-challenges.sql'), 'utf8'
+    );
+    await client.query(tonProofMigration);
+
+    const walletChainMigration = await fs.readFile(
+      path.join(databaseDir, 'migrations/011-wallet-chain-separation.sql'), 'utf8'
+    );
+    await client.query(walletChainMigration);
+
+    const walletMiningMigration = await fs.readFile(
+      path.join(databaseDir, 'migrations/012-wallet-backed-mining-basis.sql'), 'utf8'
+    );
+    await client.query(walletMiningMigration);
   } finally {
     if (lockAcquired) {
       try { await client.query('SELECT pg_advisory_unlock(741230017)'); } catch (_) { /* preserve original error */ }
@@ -121,7 +146,7 @@ test('purchase and payout settlement schema is idempotent and remains gated by F
   }
 });
 
-test('owner-approved migrations apply the 1.05B mining cap, USD 0.008 baseline, and 50% annual compound rate', {
+test('owner-approved migrations apply the 1.05B mining cap, USD 0.004 baseline, and 50% annual compound rate', {
   skip: !databaseUrl
 }, async () => {
   const pool = new Pool({ connectionString: databaseUrl, max: 2 });
@@ -135,8 +160,8 @@ test('owner-approved migrations apply the 1.05B mining cap, USD 0.008 baseline, 
     const price = await pool.query(
       'SELECT initial_price_usd::text, current_price_usd::text, increase_rate_percent::text FROM price_reference_state WHERE singleton = TRUE'
     );
-    assert.equal(Number(price.rows[0].initial_price_usd), 0.008);
-    assert.equal(Number(price.rows[0].current_price_usd), 0.008);
+    assert.equal(Number(price.rows[0].initial_price_usd), 0.004);
+    assert.equal(Number(price.rows[0].current_price_usd), 0.004);
     assert.equal(price.rows[0].increase_rate_percent, '0.33381492');
   } finally {
     await pool.end();

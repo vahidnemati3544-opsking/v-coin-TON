@@ -105,9 +105,10 @@ app.use(
   })
 );
 
-// Fail closed until the wallet-balance mining implementation is complete.
-// The current engine still uses internal PostgreSQL balances and must not be
-// exposed as an extraction API under the owner's approved TON-wallet rule.
+// Fail closed: the legacy engine still uses internal PostgreSQL balances.
+// A separate wallet-backed engine and snapshot basis now exist, but public
+// mining remains disabled pending live-chain validation, security review,
+// and payout reconciliation under the owner's approved TON-wallet rule.
 app.use("/api/v1/mining", miningApiRateLimit, (req, res) => {
   return res.status(503).json({
     error: "WALLET_BALANCE_MINING_NOT_IMPLEMENTED",

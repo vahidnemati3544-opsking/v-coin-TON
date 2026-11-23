@@ -15,11 +15,11 @@ The Founder allocation destination is also the sole GAS & OPERATIONS wallet. It 
 
 ## 2. Fixed supply
 
-- USD reference price: 0.008 per VCOIN (modelled reference only; not a market quote or guarantee).
+- USD reference price: 0.004 per VCOIN (modelled reference only; not a market quote or guarantee).
 
-- Initial supply: 2,100,000,000 VCOIN.
+- Initial supply: 10,000,000,000 VCOIN.
 - Decimals: 6.
-- Base units: 2,100,000,000,000,000.
+- Base units: 10,000,000,000,000,000.
 - Additional minting: permanently disabled after the single initial issuance.
 - No replacement minting after burns.
 - The Jetton master and wallet implementation must conform to TEP-74 and pass local tests and independent review before deployment.
@@ -52,14 +52,14 @@ If stronger custody controls are required for a particular allocation, use a dis
 
 | Allocation | Share | Amount |
 |---|---:|---:|
-| Founder | 20% | 420,000,000 VCOIN |
-| User mining reserve | 50% | 1,050,000,000 VCOIN |
-| Project treasury | 10% | 210,000,000 VCOIN |
-| Liquidity and market | 10% | 210,000,000 VCOIN |
-| Ecosystem and marketing | 10% | 210,000,000 VCOIN |
-| **Total** | **100%** | **2,100,000,000 VCOIN** |
+| Founder | 20% | 2,000,000,000 VCOIN |
+| User mining reserve | 50% | 5,000,000,000 VCOIN |
+| Project treasury | 10% | 1,000,000,000 VCOIN |
+| Liquidity and market | 10% | 1,000,000,000 VCOIN |
+| Ecosystem and marketing | 10% | 1,000,000,000 VCOIN |
+| **Total** | **100%** | **10,000,000,000 VCOIN** |
 
-The exact five allocation owner addresses are maintained in `docs/WALLET_ALLOCATION_REGISTER.md`. The Founder allocation is immediate and has no vesting, time lock, monthly installments or staged release. No Founder vesting contract or schedule is required or authorized. The mining reserve is a pre-existing allocation; mining rewards must be paid from this reserve and must never mint new tokens.
+The exact five allocation owner addresses are maintained in `docs/WALLET_ALLOCATION_REGISTER.md`. The Founder allocation is 2,000,000,000 VCOIN (20% of fixed supply); its release terms must follow the owner-approved founder allocation schedule and must be encoded transparently before deployment. No Founder vesting contract or schedule is required or authorized. The mining reserve is a pre-existing allocation; mining rewards must be paid from this reserve and must never mint new tokens.
 
 ## 6. Operational TON network-fee funding
 

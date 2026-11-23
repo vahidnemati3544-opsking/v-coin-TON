@@ -1,3 +1,5 @@
+Current policy correction (2026-11-23): This historical Action #52 review is superseded wherever it lists an independent qualified smart-contract/TEP audit as an active task or release condition. That workstream is excluded from the current project owner-approved scope. Current baseline: 2.1B VCOIN, six decimals; Founder 420M immediate/no vesting; five allocation wallets with Founder also sole GAS & OPERATIONS; Mainnet-only execution and no Testnet deployment/transactions. This record does not authorize any on-chain operation.
+
 # V COIN–TON Repository and ZIP Review — Action #52
 
 **Review date:** 2026-11-22  

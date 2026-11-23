@@ -16,8 +16,8 @@
 | Name | V COIN |
 | Symbol | VCOIN |
 | Decimals | 6 |
-| Total initial supply | 10,000,000,000 VCOIN |
-| Total supply in base units | 10,000,000,000,000,000 |
+| Total initial supply | 2,100,000,000 VCOIN |
+| Total supply in base units | 2,100,000,000,000,000 |
 | Standard | TON Jetton, TEP-74 |
 | Metadata | TEP-64 |
 | Additional minting | Disabled after all five allocations complete |
@@ -29,14 +29,14 @@ All token arithmetic must use integer base units. Floating-point token arithmeti
 
 | Role | Share | VCOIN | Base units |
 |---|---:|---:|---:|
-| Founder | 20% | 2,000,000,000 | 2,000,000,000,000,000 |
-| Mining reserve | 50% | 5,000,000,000 | 5,000,000,000,000,000 |
-| Treasury | 10% | 1,000,000,000 | 1,000,000,000,000,000 |
-| Liquidity / market | 10% | 1,000,000,000 | 1,000,000,000,000,000 |
-| Ecosystem / marketing | 10% | 1,000,000,000 | 1,000,000,000,000,000 |
-| **Total** | **100%** | **10,000,000,000** | **10,000,000,000,000,000** |
+| Founder | 20% | 420,000,000 | 420,000,000,000,000 |
+| Mining reserve | 50% | 1,050,000,000 | 1,050,000,000,000,000 |
+| Treasury | 10% | 210,000,000 | 210,000,000,000,000 |
+| Liquidity / market | 10% | 210,000,000 | 210,000,000,000,000 |
+| Ecosystem / marketing | 10% | 210,000,000 | 210,000,000,000,000 |
+| **Total** | **100%** | **2,100,000,000** | **2,100,000,000,000,000** |
 
-The Founder receives the full 2,000,000,000 VCOIN allocation in one operation. No vesting, time lock, or installment schedule applies to the Founder allocation. The five owner-designated allocation addresses are recorded in `docs/WALLET_ALLOCATION_REGISTER.md`. The Founder wallet is one of the five allocation recipients and also serves as the sole GAS & OPERATIONS wallet; there is no separate fee wallet or sixth address.
+The Founder receives the full 420,000,000 VCOIN allocation in one operation. No vesting, time lock, or installment schedule applies to the Founder allocation. The five owner-designated allocation addresses are recorded in `docs/WALLET_ALLOCATION_REGISTER.md`. The Founder wallet is one of the five allocation recipients and also serves as the sole GAS & OPERATIONS wallet; there is no separate fee wallet or sixth address.
 
 ## 3. Current Master contract behavior
 
@@ -81,7 +81,7 @@ Do not deploy with empty or placeholder metadata. Verify the resulting metadata 
 
 ## 6. Supply and allocation invariants
 
-1. The five allocations sum exactly to 10,000,000,000,000,000 base units.
+1. The five allocations sum exactly to 2,100,000,000,000,000 base units.
 2. Only the Founder wallet can request allocation issuance.
 3. Each configured role can be credited only its exact allocation.
 4. No arbitrary receiver or amount is accepted.
@@ -149,4 +149,4 @@ For level calculation, the user's eligible purchased VCOIN and eligible mining r
 
 ### Final mining payout
 
-The mining allocation is capped at 5,000,000,000 VCOIN (5,000,000,000,000,000 base units). During mining, eligible rewards remain internal accounting claims and are not described as on-chain holdings. Only after the Founder formally declares mining complete and a full reserve/user reconciliation passes may the backend prepare on-chain payouts from the designated mining-reserve Jetton wallet to each user's verified Jetton wallet. A payout becomes paid only after the TON transaction is verified final and successful. Idempotency, replay protection, bounce handling, reserve exhaustion controls, and audit logs are mandatory. No additional minting is permitted.
+The mining allocation is capped at 1,050,000,000 VCOIN (1,050,000,000,000,000 base units). During mining, eligible rewards remain internal accounting claims and are not described as on-chain holdings. Only after the Founder formally declares mining complete and a full reserve/user reconciliation passes may the backend prepare on-chain payouts from the designated mining-reserve Jetton wallet to each user's verified Jetton wallet. A payout becomes paid only after the TON transaction is verified final and successful. Idempotency, replay protection, bounce handling, reserve exhaustion controls, and audit logs are mandatory. No additional minting is permitted.

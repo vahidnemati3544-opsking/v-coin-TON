@@ -2,7 +2,7 @@
 
 **Document ID:** VCT-JETTON-SPEC-002  
 **Version:** 2.0.0  
-**Status:** Current implementation candidate; exact-head CI passed; independent audit and Mainnet release gates remain pending  
+**Status:** Current implementation candidate for the 2.1B allocation; exact-head CI for this corrected revision is pending; independent audit and Mainnet release gates remain pending  
 **Network direction:** TON Mainnet only for first live issuance; no Testnet deployment is in the current execution path  
 **Token standard target:** TEP-74 Jetton with TEP-64 metadata  
 **Repository:** `vahidnemati3544-opsking/v-coin-TON`
@@ -92,7 +92,7 @@ Do not deploy with empty or placeholder metadata. Verify the resulting metadata 
 
 ## 7. Required verification evidence
 
-The latest exact-head CI run on commit `a53ba80f5655b44acdf51420a683f9c3a4a2334e` passed lockfile generation, clean `npm ci`, dependency audit, Tact compilation, and Jest Sandbox tests. The audit report recorded zero vulnerabilities. The workflow artifact and file checksums are recorded in `contracts/jetton/VERIFICATION_STATUS.md`.
+A previously recorded CI run passed lockfile generation, dependency audit, Tact compilation, and Jest Sandbox tests, but it predates the current 2.1B allocation correction and is historical evidence only. A new exact-head CI run must verify the current source, allocation plan, deployment preview, and Sandbox tests. The current verification status is tracked in `contracts/jetton/VERIFICATION_STATUS.md`.
 
 This CI pass is not an independent security audit and does not establish Mainnet readiness. Remaining evidence includes:
 - Commit the generated lockfile to `main` and rerun CI on the resulting exact head.
@@ -124,8 +124,8 @@ Deployment, gas-reserve funding, and each of the five allocation issuance messag
 **Mainnet release status: NO-GO / NOT DEPLOYED.**
 
 - Contract source and Sandbox tests: present.
-- Exact-head CI: passed on the recorded commit.
-- Generated lockfile: in CI artifact; not yet committed to `main`.
+- Exact-head CI for the current 2.1B allocation revision: pending.
+- `package-lock.json`: committed to `main`; clean `npm ci` must be verified again on the current exact head.
 - Metadata JSON, immutable commit-pinned URI, content cell, and canonical logo URL: generated and verified in exact-head CI; external TEP-64 parser review remains a release gate.
 - Independent security / standards review: pending.
 - Independent TON cell and StateInit hash reproduction: pending.

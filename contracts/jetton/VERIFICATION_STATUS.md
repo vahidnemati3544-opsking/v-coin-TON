@@ -7,7 +7,7 @@
 **Recipient Jetton Wallet predictions and artifact hashes:** cleared and invalidated; regenerate from the exact reviewed build and independently reproduce before any signature.  
 **Release disposition: NO-GO for Mainnet deployment and issuance until exact-head CI, clean-room hash reproduction, independent security review, wallet-control verification, and live fee/reserve checks pass.**
 
-The previous 10B economic revision has been removed from the active source, configuration, allocation plan, issuer, and current migration runner. The current allocation is the 2.1B model above. Historical deployment previews and derived addresses from earlier source revisions must not be reused, even where a previous preview also displayed a 2.1B supply, because the current source and allocation revision require fresh exact-head build and hash verification.
+The previous incorrect economic revision has been removed from the active source, configuration, allocation plan, issuer, and current migration runner. The current allocation is the 2.1B model above. Historical deployment previews and derived addresses from earlier source revisions must not be reused, even where a previous preview also displayed a 2.1B supply, because the current source and allocation revision require fresh exact-head build and hash verification.
 
 No Mainnet deployment, token issuance, or wallet transfer has been confirmed by this document. A predicted address, workflow artifact, or wallet submission is not on-chain evidence.
 
@@ -146,7 +146,7 @@ See [Action #51 hash reproduction report](../../docs/MAINNET_RELEASE_HASH_REPROD
 
 - Current main HEAD reviewed: `d542c7281e317aca040a3b83bb8f249af6cb0e26`.
 - Founder and GAS & OPERATIONS are the **same single wallet**. The Founder address is the sole contract owner, sole VCOIN issuance signer, and GAS reserve funder. There is no separate GAS signer and no sixth VCOIN recipient. The constructor and deployment generator enforce `gasOperatorWallet == owner`; the TonConnect issuer requires the Founder wallet for deployment and all five allocations.
-- The five and only five VCOIN allocation destinations remain Founder 420M, Mining Reserve 1.05B, Treasury 210M, Liquidity/Market 210M, and Ecosystem/Marketing 210M; total 2.1B VCOIN, six decimals. Do not use any historical six-wallet or 10B allocation statements below.
+- The five and only five VCOIN allocation destinations remain Founder 420M, Mining Reserve 1.05B, Treasury 210M, Liquidity/Market 210M, and Ecosystem/Marketing 210M; total 2.1B VCOIN, six decimals. Do not use any historical six-wallet or superseded allocation statements below.
 - Exact-head GitHub Actions run #179 (run ID `44999283338`) on this HEAD: `build-and-test` succeeded, including clean lockfile install, strict npm audit, Tact compile, immutable TEP-64 cell generation, unsigned Mainnet preview generation, Jest tests, issuer syntax/sequence guard checks, and artifact uploads. The `deploy-issuer` job failed only at `Configure GitHub Pages` because the connected GitHub App lacks repository administration permission; site deployment was skipped. This does not mean the contract build/test job failed.
 - The previous successful exact-head run #173 also validated the constructor hardening and sequential issuer controls. No Mainnet transaction has been signed, broadcast, or confirmed.
 - **Release disposition remains NO-GO for Mainnet.** Still required: owner enables GitHub Pages Source = GitHub Actions; real TON Testnet deployment and complete five-allocation rehearsal; independent third-party smart-contract/TEP-74/TEP-64 audit; final fee and reserve simulation; and review of the exact current unsigned deployment package and constructor addresses before any signature.
@@ -160,7 +160,7 @@ See [Action #51 hash reproduction report](../../docs/MAINNET_RELEASE_HASH_REPROD
 
 - Corrected the top-level release status to make the current Founder = GAS & OPERATIONS rule authoritative and to supersede stale historical references to a separate GAS signer.
 - Recorded exact-head run #179 and separated the successful build/test job from the GitHub Pages permission failure.
-- Reaffirmed the five allocation wallets and current 2.1B fixed supply; explicitly prohibited treating historical six-wallet or 10B plans as current.
+- Reaffirmed the five allocation wallets and current 2.1B fixed supply; explicitly prohibited treating historical six-wallet or superseded allocation plans as current.
 - Reaffirmed the unrecoverable Master TON reserve limitation, the need for independent third-party audit, Testnet rehearsal, fee simulation, and independent on-chain verification.
 - No contract code, deployment payload, wallet address, allocation, or transaction was changed by this documentation-only action.
 
@@ -281,7 +281,7 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 - Ecosystem / Marketing Jetton Wallet: EQCRa4bOU5yZaYaEqFhb5qa-pcbIyegjg6AEwGTVQVOECMQ4; StateInit hash 916b86ce539c99698684a8585be6a6bea5c6c8c9e82383a004c064d541538408.
 - A separate parser independently recomputed all five Jetton Wallet StateInit hashes from their BOCs; each matched both the generated hash and the address hash bytes.
 - Deployment transaction design: GAS & OPERATIONS wallet sends the first message to the predicted Master with StateInit, VCoinFund body, and 0.75 TON minimum attached value. This deploys the contract and funds its reserve in one transaction. Network/wallet fee quote is additional and still required.
-- Historical 10B plan only (superseded by Action #36): the Founder wallet would sign five separate VCoinMint requests of 2B, 5B, 1B, 1B, 1B VCOIN. Do not use those old amounts. The current 2.1B requests are 420M, 1.05B, 210M, 210M, 210M VCOIN.
+- Historical superseded allocation plan (superseded by Action #36): do not use those old amounts. The current 2.1B requests are 420M, 1.05B, 210M, 210M, 210M VCOIN.
 - No Mainnet transaction has been signed or broadcast. The Master address and Jetton Wallet addresses remain predicted until on-chain deployment and getter checks.
 - Independent third-party smart-contract security audit and live Mainnet fee simulation remain outstanding; do not describe this as an audited or deployed token.
 ## Action #34 — Dependency advisory remediation and strict audit gate
@@ -308,7 +308,7 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 
 ## Action #36 — Owner-approved supply and reference-price revision
 
-**Correction to earlier historical entries:** Any old 10B allocation/address/hash records above are historical and superseded. Current source and fresh CI artifact are the sole 2.1B candidate release.
+**Correction to earlier historical entries:** Older allocation, address, and hash records above are superseded. Current source and a fresh exact-head CI artifact are the sole 2.1B candidate release.
 
 **Status:** Source, allocation templates, economic documents, mining reserve migration and new unsigned Mainnet preview updated; build and Jest tests passed in exact-head CI. Independent review/hash reproduction and Mainnet authorization remain pending.
 

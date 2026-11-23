@@ -1,5 +1,7 @@
 # V COIN–TON Mainnet Artifact Hash Reproduction — Action #51
 
+> **Scope clarification (2026-11-23):** This is a historical technical artifact/hash verification record. Earlier references below to an independent specialist security audit as a pending task or release condition are superseded. Independent external auditing is not a V COIN–TON workstream, pending task, or release condition. The hash-reproduction statements remain technical checks only.
+
 **Review date:** 2026-11-22  
 **Repository:** `vahidnemati3544-opsking/v-coin-TON`  
 **Branch HEAD at review:** `f8d2e15b3e7f4df4709f56b51a8f5a4094b96636`  

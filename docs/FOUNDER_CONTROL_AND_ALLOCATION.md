@@ -22,7 +22,7 @@ The Founder allocation destination is also the sole GAS & OPERATIONS wallet. It 
 - Base units: 2,100,000,000,000,000.
 - Additional minting: permanently disabled after the single initial issuance.
 - No replacement minting after burns.
-- The Jetton master and wallet implementation must conform to TEP-74 and pass local tests and independent review before deployment.
+- The Jetton master and wallet implementation must be checked against TEP-74 through engineering verification and local tests before deployment. Independent external auditing is not a project workstream or release condition.
 
 The no-additional-minting rule is an immutable supply constraint. Founder authority does not include creating tokens beyond the approved initial supply.
 
@@ -59,7 +59,7 @@ If stronger custody controls are required for a particular allocation, use a dis
 | Ecosystem and marketing | 10% | 210,000,000 VCOIN |
 | **Total** | **100%** | **2,100,000,000 VCOIN** |
 
-The exact five allocation owner addresses are maintained in `docs/WALLET_ALLOCATION_REGISTER.md`. The Founder allocation is 420,000,000 VCOIN (20% of fixed supply); its release terms must follow the owner-approved founder allocation schedule and must be encoded transparently before deployment. No Founder vesting contract or schedule is required or authorized. The mining reserve is a pre-existing allocation; mining rewards must be paid from this reserve and must never mint new tokens.
+The exact five allocation owner addresses are maintained in `docs/WALLET_ALLOCATION_REGISTER.md`. The Founder allocation is 420,000,000 VCOIN (20% of fixed supply); the full 420,000,000 VCOIN allocation is credited in one operation. No vesting, time lock, monthly installments, or staged release applies; no Founder vesting contract or schedule is required or authorized. The mining reserve is a pre-existing allocation; mining rewards must be paid from this reserve and must never mint new tokens.
 
 ## 6. Operational TON network-fee funding
 
@@ -96,7 +96,7 @@ A transaction must remain pending or failed until independently verified on-chai
 - Require unique idempotency keys and append-only audit history.
 - Separate local-development and Mainnet credentials, endpoints and databases. Testnet deployment and transactions are not authorized.
 - Keep distribution disabled when chain data is stale, inconsistent or unavailable.
-- Perform independent smart-contract review and deployment verification before Mainnet use.
+- Perform the project's defined engineering verification and deployment checks before Mainnet use.
 
 ## 9. Release gates
 
@@ -106,7 +106,7 @@ The following are not yet established by this document:
 - completed local TON Sandbox deployment/allocation/transfer tests;
 - verified founder wallet proof;
 - verified Mainnet deployment address and transaction;
-- independent security review;
+- internal source review, automated tests, TON Sandbox verification, and reproducible build/hash checks;
 - legal and compliance review for the intended jurisdictions.
 
 No token should be represented as issued, transferable or available for extraction until the relevant on-chain evidence exists.

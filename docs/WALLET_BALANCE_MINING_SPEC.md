@@ -1,3 +1,5 @@
+Current policy correction (2026-11-23): This specification is superseded wherever it describes Testnet rehearsal or Testnet as the mining integration network. Approved execution is Mainnet-only after engineering gates; local TON Sandbox simulations and isolated tests are permitted, but no Testnet deployment or transaction is authorized. The approved supply/allocation baseline is 2,100,000,000 VCOIN (6 decimals) across exactly five allocation wallets; Founder is also the sole GAS & OPERATIONS wallet. This document does not authorize deployment, issuance, or payouts.
+
 # V COIN–TON Wallet-Balance Mining Specification
 
 **Document ID:** VCT-WALLET-MINING-001  

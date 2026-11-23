@@ -14,7 +14,7 @@ This document records the project owner's required financial flow for TON purcha
 
 ## 2. Fixed supply and mining cap
 
-The total initial supply is exactly 2,100,000,000 VCOIN (2,100,000,000,000,000 base units). The mining allocation is exactly 1,050,000,000 VCOIN (1,050,000,000,000,000 base units), representing 50% of total supply. No additional minting is permitted. Migration 001 seeds the approved 1,050,000,000 VCOIN reserve. Forward-only migration 009 applies the current 1,050,000,000 VCOIN mining cap and checks existing pending/distributed rewards before applying.
+The total initial supply is exactly 2,100,000,000 VCOIN (2,100,000,000,000,000 base units). The mining allocation is exactly 1,050,000,000 VCOIN (1,050,000,000,000,000 base units), representing 50% of total supply. No additional minting is permitted. Historical migration 001 seeded the original reserve; migration 005 reduced it to 1,050,000,000 VCOIN. Forward-only migration 009 reaffirms the current 1,050,000,000 VCOIN mining cap and checks existing pending/distributed rewards before applying.
 
 ## 3. TON-to-VCOIN purchase
 

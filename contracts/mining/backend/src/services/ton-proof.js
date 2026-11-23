@@ -124,10 +124,11 @@ function verifyTonProof(input, options = {}) {
   let stateInit;
   try {
     address = Address.parse(input.address);
-    if (typeof input.walletStateInit !== 'string' || input.walletStateInit.length > 20000) {
+    const walletStateInit = input.walletStateInit || input.proof?.state_init;
+    if (typeof walletStateInit !== 'string' || walletStateInit.length > 20000) {
       throw new Error('walletStateInit missing');
     }
-    stateInit = loadStateInit(Cell.fromBase64(input.walletStateInit).beginParse());
+    stateInit = loadStateInit(Cell.fromBase64(walletStateInit).beginParse());
   } catch (_) {
     throw new TonProofError('INVALID_WALLET_STATE_INIT', 'Wallet address or state init is invalid.');
   }

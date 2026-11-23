@@ -1,3 +1,5 @@
+> **Controlling correction (2026-11-23):** This report is a historical artifact/hash verification record. Current approved supply is 2,100,000,000 VCOIN (2.1 × 10^15 base units), six decimals; allocations are 420M Founder (immediate, no vesting), 1.05B Mining, and 210M each Treasury, Liquidity/Market, Ecosystem/Marketing. The Founder wallet is also the sole GAS & OPERATIONS wallet. Mainnet-only execution applies after local engineering verification; Testnet deployment, transactions, and rehearsal are not authorized. Independent external auditing is not a V COIN–TON workstream, pending task, or release condition. Historical references below that conflict with this baseline are superseded. This document's BOC/hash reproduction is an engineering check, not an external audit.
+
 # V COIN–TON Mainnet Artifact Hash Reproduction — Action #51
 
 > **Scope clarification (2026-11-23):** This is a historical technical artifact/hash verification record. Earlier references below to an independent specialist security audit as a pending task or release condition are superseded. Independent external auditing is not a V COIN–TON workstream, pending task, or release condition. The hash-reproduction statements remain technical checks only.
@@ -74,7 +76,7 @@ It contains the compiled Master/Wallet artifacts, StateInit BOCs, metadata conte
 This is an independent BOC/hash/address-integrity reproduction from the downloaded artifact. It is **not** a second independent clean-room compilation from source, not a qualified smart-contract security audit, not wallet-control proof, not a live Mainnet fee quote, and not an on-chain getter/balance check.
 
 Remaining release blockers:
-1. Qualified independent smart-contract and TEP-74/TEP-64 security review, with critical/high findings resolved.
+1. Complete the remaining project-defined engineering tests for TEP-74/TEP-64 behavior and resolve any critical/high technical findings.
 2. Independent clean-room rebuild from the exact source and pinned toolchain, with matching BOCs and hashes.
 3. Founder verification of the exact signer, Mainnet network, five destination owner addresses, metadata and transaction payloads.
 4. Live fee review and final Master reserve assessment.
@@ -89,7 +91,7 @@ TON's Jetton deployment guide explicitly warns that Mainnet deployment and minti
 - Token transfers: **none**.
 - Mainnet activation: **not established**.
 - Testnet transactions: **none**, in accordance with the project's Mainnet-only execution instruction.
-- Mainnet release disposition: **NO-GO pending the remaining independent review and Founder-signed release gates**.
+- Mainnet release disposition: **NO-GO pending the remaining engineering verification and Founder-signed release gates**.
 
 
 ## 7. Follow-up exact-head build after manifest refresh

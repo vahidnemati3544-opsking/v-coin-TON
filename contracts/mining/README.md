@@ -45,7 +45,7 @@ With six token decimals, calculations use integer base units:
 
 The USD interpretation is 1% of the account's VCOIN value per day. Since the same VCOIN market price values both the balance and the reward, the price cancels when converting the rule back into VCOIN units. Therefore no hard-coded USD price or unverified price feed is used by the reward engine. If the VCOIN price changes, the user's USD balance value and the USD value of the reward change proportionally, while the token reward remains 1% of the eligible token balance per 24 hours.
 
-The legacy engine snapshots the internal eligible balance at session start and after each successful claim. Rewards are credited only to the internal accounting balance; this is not an on-chain holding or payout. Do not expose this engine as live extraction. The 1,050,000,000 VCOIN reserve remains a hard cap.
+The legacy engine snapshots the internal eligible balance at session start and after each successful claim. Rewards are credited only to the internal accounting balance; this is not an on-chain holding or payout. Do not expose this engine as live extraction. The 5,000,000,000 VCOIN reserve remains a hard cap.
 
 4. Level Progression System
 
@@ -75,7 +75,7 @@ Every reward operation must have a unique identifier and an auditable record.
 
 6. Mining Reserve
 
-The PostgreSQL reserve migration defines a fixed allocation of 1,050,000,000 VCOIN (1,050,000,000,000,000 base units at six decimals). New rewards are reserved in the same transaction as reward creation. The reserve is a hard cap and does not authorize token minting.
+The PostgreSQL reserve migration defines a fixed allocation of 5,000,000,000 VCOIN (5,000,000,000,000,000 base units at six decimals). New rewards are reserved in the same transaction as reward creation. The reserve is a hard cap and does not authorize token minting.
 
 The settlement migration confirms a reserved reward and posts balanced ledger entries to the mining expense and user's internal VCOIN liability accounts, then updates the user's internal balance in the same transaction. This is an application-accounting credit, not a TON wallet transfer.
 

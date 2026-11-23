@@ -4,8 +4,8 @@
 **Status:** Owner-approved business rules; implementation and end-to-end verification pending  
 **Network:** TON Blockchain  
 **Asset:** VCOIN Jetton (TEP-74)  
-**Fixed total supply:** 2,100,000,000 VCOIN  
-**Mining allocation cap:** 1,050,000,000 VCOIN  
+**Fixed total supply:** 10,000,000,000 VCOIN  
+**Mining allocation cap:** 5,000,000,000 VCOIN  
 **Decimals:** 6
 
 ## 1. Purpose and authority
@@ -14,7 +14,7 @@ This document records the project owner's required financial flow for TON purcha
 
 ## 2. Fixed supply and mining cap
 
-The total initial supply is exactly 2,100,000,000 VCOIN (2,100,000,000,000,000 base units). The mining allocation is exactly 1,050,000,000 VCOIN (1,050,000,000,000,000 base units), representing 50% of total supply. No additional minting is permitted. The old 5,000,000,000 VCOIN value in migration 001 is historical; migration 005-vcoin-supply-and-price-reset.sql corrects the development database reserve to 1,050,000,000 VCOIN and refuses to proceed if existing pending/distributed rewards exceed the cap.
+The total initial supply is exactly 10,000,000,000 VCOIN (10,000,000,000,000,000 base units). The mining allocation is exactly 5,000,000,000 VCOIN (5,000,000,000,000,000 base units), representing 50% of total supply. No additional minting is permitted. Migration 001 seeds the approved 5,000,000,000 VCOIN reserve. Historical migration 005 temporarily applied a superseded 1,050,000,000 VCOIN cap; forward-only migration 009 restores the approved 5,000,000,000 VCOIN cap and checks existing pending/distributed rewards before applying.
 
 ## 3. TON-to-VCOIN purchase
 
@@ -23,7 +23,7 @@ The total initial supply is exactly 2,100,000,000 VCOIN (2,100,000,000,000,000 b
 3. The TON payment is directed to the Founder allocation wallet:
    `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy`
 4. After the exact payment is verified as successful and final on the intended TON network, the corresponding already-issued VCOIN is transferred from the Founder Jetton wallet to the user's verified Jetton wallet.
-5. The purchase is a transfer of existing VCOIN, never a mint. The amount deliverable through this route is limited by the available, unencumbered VCOIN balance in the Founder wallet's approved 420,000,000 VCOIN allocation. It cannot consume the mining reserve or another allocation without a separately approved policy change.
+5. The purchase is a transfer of existing VCOIN, never a mint. The amount deliverable through this route is limited by the available, unencumbered VCOIN balance in the Founder wallet's approved 2,000,000,000 VCOIN allocation. It cannot consume the mining reserve or another allocation without a separately approved policy change.
 6. The backend reconciles the TON payment and VCOIN delivery using transaction hashes, exact amounts, sender/recipient, approved Jetton master, unique order ID, and idempotency key.
 7. The order is not marked complete until both payment receipt and VCOIN delivery are verified. If delivery fails or bounces after payment, it remains an exception (unpaid delivery) for a controlled retry or refund process; never silently mark it complete.
 
@@ -42,12 +42,12 @@ The exact rules for whether purchased VCOIN is spendable for upgrades, whether m
 ## 5. Mining accrual and final payout
 
 1. During the mining period, mining rewards accrue as internal eligible claims in the user's account. They are not yet VCOIN in the user's external TON wallet.
-2. The backend reserves every reward against the fixed 1,050,000,000 VCOIN mining allocation. Pending plus distributed rewards must never exceed this cap.
+2. The backend reserves every reward against the fixed 5,000,000,000 VCOIN mining allocation. Pending plus distributed rewards must never exceed this cap.
 3. Only after the Founder formally announces that mining has ended may the close process begin.
 4. The close process freezes further accrual, validates account eligibility, reconciles all mining claims and ledger entries against the reserve, resolves disputes/anti-fraud flags, and validates each user's verified TON wallet destination.
 5. A final payout manifest is generated and independently reconciled. Approved rewards are transferred from the designated mining-reserve Jetton wallet to each user's verified Jetton wallet.
 6. A payout is marked paid only after the transaction is verified successful and final on TON. Bounced, failed, pending, or ambiguous transfers remain unpaid and must be handled with idempotent retry controls.
-7. Total payouts may not exceed 1,050,000,000 VCOIN. No additional minting or replacement minting is allowed.
+7. Total payouts may not exceed 5,000,000,000 VCOIN. No additional minting or replacement minting is allowed.
 
 ## 6. Accounting, security, and founder authority
 

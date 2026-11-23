@@ -9,7 +9,7 @@
 - The overall workflow is marked failed solely because the separate `deploy-issuer` job could not create the repository Pages site. Its log reports `Get Pages site failed: Not Found`, followed by `Create Pages site failed: Resource not accessible by integration`. The issuer deployment step was skipped. This is a repository Pages administration/enablement permission issue, not a contract compilation or test failure.
 - Do not describe the Pages site as deployed. The repository owner must enable GitHub Pages with **Settings → Pages → Build and deployment → Source = GitHub Actions** (if the owner UI permits it), then rerun the workflow. The connected GitHub App cannot perform this administrative setup.
 - The single approved signer, deployment sender, and TON reserve funder is the Founder wallet. `gasOperatorWallet` must equal `owner`. There is no separate GAS wallet and no sixth VCOIN allocation destination.
-- Fixed supply remains exactly 2,100,000,000 VCOIN, six decimals, allocated 20% Founder / 50% Mining Reserve / 10% Treasury / 10% Liquidity-Market / 10% Ecosystem-Marketing. No additional minting is permitted.
+- Fixed supply remains exactly 10,000,000,000 VCOIN, six decimals, allocated 20% Founder / 50% Mining Reserve / 10% Treasury / 10% Liquidity-Market / 10% Ecosystem-Marketing. No additional minting is permitted.
 - The deployment preview is unsigned and is not evidence of deployment. No Mainnet deployment, issuance, or transfer has been broadcast or confirmed.
 
 ## Material reserve limitation
@@ -35,24 +35,24 @@ Never request or store a seed phrase, private key, PIN, or recovery code. The Fo
 
 **Status:** Implementation candidate; NOT deployed  
 **Standard:** TEP-74 Jetton; metadata TEP-64  
-**Initial supply:** 2,100,000,000 VCOIN  
+**Initial supply:** 10,000,000,000 VCOIN  
 **Decimals:** 6  
-**Modelled USD reference price:** 0.008 per VCOIN (not a market quote or guarantee)  
+**Modelled USD reference price:** 0.004 per VCOIN (not a market quote or guarantee)  
 **Modelled reference schedule:** 50% annual compound target; 72-hour steps at approximately 0.3338149181% (off-chain model only)  
 **Initial supply in base units:** 2100000000000000  
 **Release disposition:** **NO-GO for Mainnet** until all gates below are evidenced and separately approved.
 
 ## 1. Approved fixed design
 
-- Founder: 420,000,000 VCOIN (20%), credited in one operation; no vesting, time lock, or staged release.
-- Mining reserve: 1,050,000,000 VCOIN (50%).
-- Treasury: 210,000,000 VCOIN (10%).
-- Liquidity / market: 210,000,000 VCOIN (10%).
-- Ecosystem / marketing: 210,000,000 VCOIN (10%).
-- Six decimals; total supply is 2.1 × 10^15 base units.
+- Founder: 2,000,000,000 VCOIN (20%), credited in one operation; no vesting, time lock, or staged release.
+- Mining reserve: 5,000,000,000 VCOIN (50%).
+- Treasury: 1,000,000,000 VCOIN (10%).
+- Liquidity / market: 1,000,000,000 VCOIN (10%).
+- Ecosystem / marketing: 1,000,000,000 VCOIN (10%).
+- Six decimals; total supply is 1.0 × 10^16 base units.
 - No additional minting after the five exact allocations have completed.
 - The five approved allocation destinations are recorded in `docs/WALLET_ALLOCATION_REGISTER.md`; the Founder wallet is one of those five.
-- The project owner explicitly confirmed the complete 2,100,000,000 VCOIN supply is to be issued and allocated across all five destinations (Founder 420M, Mining Reserve 1.05B, Treasury 210M, Liquidity/Market 210M, Ecosystem/Marketing 210M). Do not ask the owner to choose this allocation path again.
+- The project owner explicitly confirmed the complete 10,000,000,000 VCOIN supply is to be issued and allocated across all five destinations (Founder 420M, Mining Reserve 1.05B, Treasury 210M, Liquidity/Market 210M, Ecosystem/Marketing 210M). Do not ask the owner to choose this allocation path again.
 - The Founder wallet also serves as GAS & OPERATIONS, a TON-fee funding role only; it is not a sixth VCOIN allocation destination. The previously configured inaccessible GAS address is retired and must never be funded.
 
 The implementation must enforce the cap and per-role amounts in contract code, not merely in deployment scripts. No hidden freeze, confiscation, arbitrary clawback, or post-transfer seizure functionality is permitted. After a successful credit, the Master contract has no method to pull tokens back from a recipient Jetton Wallet. Normal TEP-74 transfers remain under the holder's wallet authority; the Founder cannot reverse a completed transfer or confiscate a holder's balance.
@@ -101,7 +101,7 @@ After deployment, the Founder wallet is the only VCoinMint authority. Each of th
 
 The Master reserve is intended to fund 0.1 TON for each deterministic destination Jetton-wallet credit. Confirm the actual required reserve and fee behavior in the exact-build simulation and transaction preview; do not rely on these documented nominal values as a substitute for a live fee estimate.
 
-After each confirmed credit, reconcile the corresponding Jetton wallet balance and role status. After all five credits succeed, verify total supply equals exactly 2.1 × 10^15 base units and mintable=false. If a natural bounce occurs, verify only the affected role rolled back before retrying it.
+After each confirmed credit, reconcile the corresponding Jetton wallet balance and role status. After all five credits succeed, verify total supply equals exactly 1.0 × 10^16 base units and mintable=false. If a natural bounce occurs, verify only the affected role rolled back before retrying it.
 
 ## 5. Build and verification gates
 

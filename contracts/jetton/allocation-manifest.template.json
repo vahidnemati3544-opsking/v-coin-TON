@@ -4,13 +4,13 @@
   "network": "mainnet",
   "jetton_master_address": "EQAo1TAGqSw6oUaMmpBtgQyRtCGEbSJNiGGy2Use04lRCQlU",
   "decimals": 6,
-  "total_supply_base_units": "2100000000000000",
+  "total_supply_base_units": "10000000000000000",
   "founder_wallet_candidate": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
   "transfers": [
     {
       "allocation": "founder",
-      "tokens": "420000000",
-      "base_units": "420000000000000",
+      "tokens": "2000000000",
+      "base_units": "2000000000000000",
       "destination": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
       "requires_founder_signature": true,
       "destination_verification": "Regenerated from exact-head CI artifact 14768399023 (run 251), source commit d608f0235da91e314e8052d7fe315e8ca5fba12f; independent BOC hash, account-id and CRC16 checks passed; on-chain getter confirmation pending.",
@@ -19,8 +19,8 @@
     },
     {
       "allocation": "mining_reserve",
-      "tokens": "1050000000",
-      "base_units": "1050000000000000",
+      "tokens": "5000000000",
+      "base_units": "5000000000000000",
       "destination": "UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0",
       "requires_founder_signature": true,
       "destination_verification": "Regenerated from exact-head CI artifact 14768399023 (run 251), source commit d608f0235da91e314e8052d7fe315e8ca5fba12f; independent BOC hash, account-id and CRC16 checks passed; on-chain getter confirmation pending.",
@@ -29,8 +29,8 @@
     },
     {
       "allocation": "treasury",
-      "tokens": "210000000",
-      "base_units": "210000000000000",
+      "tokens": "1000000000",
+      "base_units": "1000000000000000",
       "destination": "UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ",
       "requires_founder_signature": true,
       "destination_verification": "Regenerated from exact-head CI artifact 14768399023 (run 251), source commit d608f0235da91e314e8052d7fe315e8ca5fba12f; independent BOC hash, account-id and CRC16 checks passed; on-chain getter confirmation pending.",
@@ -39,8 +39,8 @@
     },
     {
       "allocation": "liquidity_market",
-      "tokens": "210000000",
-      "base_units": "210000000000000",
+      "tokens": "1000000000",
+      "base_units": "1000000000000000",
       "destination": "UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn",
       "requires_founder_signature": true,
       "destination_verification": "Regenerated from exact-head CI artifact 14768399023 (run 251), source commit d608f0235da91e314e8052d7fe315e8ca5fba12f; independent BOC hash, account-id and CRC16 checks passed; on-chain getter confirmation pending.",
@@ -49,8 +49,8 @@
     },
     {
       "allocation": "ecosystem_marketing",
-      "tokens": "210000000",
-      "base_units": "210000000000000",
+      "tokens": "1000000000",
+      "base_units": "1000000000000000",
       "destination": "UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE",
       "requires_founder_signature": true,
       "destination_verification": "Regenerated from exact-head CI artifact 14768399023 (run 251), source commit d608f0235da91e314e8052d7fe315e8ca5fba12f; independent BOC hash, account-id and CRC16 checks passed; on-chain getter confirmation pending.",
@@ -78,7 +78,7 @@
     "Founder allocation is one immediate 420,000,000 VCOIN issuance with no vesting or time lock.",
     "The Founder wallet also serves as GAS & OPERATIONS for TON fees only; it is not a sixth VCOIN allocation recipient.",
     "Every issuance request requires exact transaction review, Founder wallet signature, and on-chain finality reconciliation.",
-    "Project owner confirmed the complete 2,100,000,000 VCOIN supply is to be allocated across all five registered wallets, with the Founder wallet included as one of the five. This is not authorization to deploy or broadcast transactions; exact Mainnet signing approval remains separate.",
+    "Project owner confirmed the complete 10,000,000,000 VCOIN supply is to be allocated across all five registered wallets, with the Founder wallet included as one of the five. This is not authorization to deploy or broadcast transactions; exact Mainnet signing approval remains separate.",
     "Predicted Master address and deterministic recipient Jetton Wallet addresses are derived from the unsigned Mainnet StateInit preview. They are not deployed/on-chain addresses until Mainnet deployment is confirmed.",
     "The Founder wallet signs the deployment/funding transaction as GAS & OPERATIONS (0.75 TON minimum attached value with VCoinFund body), and signs the five exact VCoinMint issuance messages after deployment.",
     "The previously configured inaccessible GAS wallet is retired and must never be funded or used.",
@@ -86,7 +86,7 @@
   ],
   "founder_confirmed_release_intent": {
     "scope": "all_five_wallets_full_supply",
-    "total_tokens": "2100000000",
+    "total_tokens": "10000000000",
     "founder_is_one_of_five": true,
     "confirmation_status": "confirmed_by_project_owner",
     "mainnet_transaction_authorized": false
@@ -95,7 +95,7 @@
   "predicted_master_state_init_hash": "28d53006a92c3aa1468c9a906d810c91b421846d224d8861b2d94b1ed3895109",
   "metadata_content_cell_hash": "6dc0e0c3a9ec89e72fc8402a13915bb425032a0e57dfa955ba5579eab28c940c",
   "price_reference": {
-    "initial_price_usd": "0.008",
+    "initial_price_usd": "0.004",
     "currency": "USD",
     "price_type": "modelled_reference_not_market_price"
   },

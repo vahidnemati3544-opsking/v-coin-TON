@@ -69,7 +69,7 @@
     "The Founder wallet also serves as GAS & OPERATIONS for TON fees only; it is not a sixth VCOIN allocation recipient.",
     "Every issuance request requires exact transaction review, Founder wallet signature, and on-chain finality reconciliation.",
     "Project owner confirmed the complete 2,100,000,000 VCOIN supply is to be allocated across all five registered wallets, with the Founder wallet included as one of the five. This is not authorization to deploy or broadcast transactions; exact Mainnet signing approval remains separate.",
-    "All previous predicted Master and Jetton Wallet addresses were invalidated by the 10B supply revision. Regenerate from the exact reviewed source build; predictions are not on-chain addresses until Mainnet deployment is confirmed.",
+    "All previous predicted Master and Jetton Wallet addresses are invalidated by the current 2.1B allocation revision. Regenerate from the exact reviewed source build; predictions are not on-chain addresses until Mainnet deployment is confirmed.",
     "The Founder wallet signs the deployment/funding transaction as GAS & OPERATIONS (0.75 TON minimum attached value with VCoinFund body), and signs the five exact VCoinMint issuance messages after deployment.",
     "The previously configured inaccessible GAS wallet is retired and must never be funded or used.",
     "Action #51 regenerated all predicted Master and recipient Jetton Wallet values from the exact-head run #251 artifact (14768399023), source commit d608f0235da91e314e8052d7fe315e8ca5fba12f. Independent BOC hashes, address account IDs and CRC16 checksums passed. Values remain unsigned predictions until Mainnet deployment and on-chain getter confirmation."
@@ -95,8 +95,8 @@
   "preview_artifact_sha256": null,
   "gas_wallet_unification_status": "contract-enforced; Founder wallet is the only permitted GAS & OPERATIONS signer",
   "clean_room_hash_reproduction": {
-    "status": "INVALIDATED_BY_10B_SUPPLY_REVISION",
+    "status": "INVALIDATED_BY_CURRENT_21B_ALLOCATION_REVISION",
     "note": "All previous Master/Jetton wallet predictions and associated release artifact hashes are stale after the supply and allocation change. Regenerate from the exact reviewed source commit; perform an independent reproducible build and on-chain getter verification before signing."
   },
-  "preview_status": "All derived addresses and artifact hashes invalidated by the 10B supply revision; regenerate from reviewed exact-head source. Unsigned template only."
+  "preview_status": "All derived addresses and artifact hashes invalidated by the current 2.1B allocation revision; regenerate from reviewed exact-head source. Unsigned template only."
 }

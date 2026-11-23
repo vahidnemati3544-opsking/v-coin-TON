@@ -33,7 +33,7 @@ Repository paths previously inspected on `main`:
 | `docs/MINING_READINESS_PLAN.md` | Mining readiness decision and work register | Live extraction |
 | `docs/WALLET_BALANCE_MINING_SPEC.md` | Wallet-balance mining requirements | Working on-chain balance reader |
 | `docs/DATABASE_ARCHITECTURE.md` | Schema and database design | Successful local or production DB operation |
-| `docs/SECURITY_ANTI_FRAUD.md` | Security controls and safeguards | Independent security audit |
+| `docs/SECURITY_ANTI_FRAUD.md` | Security controls and safeguards | External security certification (not a project workstream) |
 | `docs/API_ARCHITECTURE.md` | API design | Production availability |
 | `BACKEND-ARCHITECTURE.md` | Backend architecture | Operational deployment |
 | `DEPLOYMENT_ARCHITECTURE.md` | Deployment plan | Completed deployment |
@@ -56,7 +56,7 @@ This is a repository evidence inventory, not a complete source-code review. Rech
 4. **PostgreSQL:** schema, migrations and connection configuration exist. A Running Windows service does not prove this application connected or migrations ran.
 5. **Wallet and Telegram:** code/documentation presence does not prove end-to-end wallet ownership proof, trusted Jetton balance retrieval, or a live Telegram Mini App.
 6. **Tokenomics:** allocations are design assumptions, not proof of minted, locked, vested or wallet-held tokens.
-7. **Assurance:** no independent smart-contract audit, backend penetration test, jurisdiction-specific legal opinion or exchange approval has been established here.
+7. **Assurance:** no external security certification is claimed or planned as a V COIN–TON release workstream. Internal engineering verification, CI, local Sandbox evidence and remediation records must be stated accurately; jurisdiction-specific legal clearance remains a separate matter.
 
 ## 4. Remediation register
 
@@ -74,7 +74,7 @@ This is a repository evidence inventory, not a complete source-code review. Rech
 | 10 | Level schedule | Approve exact level rules, costs and seed data before implementation; do not invent rates | OWNER DECISION REQUIRED |
 | 11 | Referrals | Approve formula, qualifying activity, eligibility, caps, abuse controls and reserve accounting | DESIGN / UNVERIFIED |
 | 12 | Telegram | Verify bot ownership, webhook security and end-to-end test account flow | NOT VERIFIED |
-| 13 | Security | Obtain independent contract audit and backend penetration test; remediate critical/high findings | NOT STARTED |
+| 13 | Security | Maintain internal engineering verification, local Sandbox/CI evidence, dependency review and remediation records; do not represent these as an external audit | ENGINEERING EVIDENCE TRACKED |
 | 14 | Treasury | Approve custody, key roles, transaction authorisation, recovery and reconciliation | POLICY / EVIDENCE PENDING |
 | 15 | Legal | Identify responsible entity and obtain written market-specific legal opinions | NOT STARTED |
 | 16 | Communications | Map each public claim to evidence; label roadmap features as planned | CONTROL REQUIRED |
@@ -149,7 +149,7 @@ Keep separate records for public display identity, legal identity/beneficial own
 - [ ] Reserve, ledger and payout accounting reconcile without double-counting.
 - [ ] Bounce, finality, concurrency and idempotency tests pass.
 - [ ] PostgreSQL migrations and non-skipped integration tests pass on an isolated DB.
-- [ ] Independent security reviews completed; critical/high findings resolved.
+- [ ] Documented internal engineering checks, CI and local TON Sandbox tests pass; identified critical/high defects are resolved. This is not an external security audit.
 - [ ] Treasury controls and incident response approved.
 - [ ] Responsible entity and jurisdiction-specific legal requirements confirmed by qualified counsel.
 - [ ] Public statements and campaigns approved for the exact audience and jurisdiction.

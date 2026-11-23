@@ -15,7 +15,7 @@ Current policy correction (2026-11-23): This register is a historical market/reg
 
 **Current global release status: NO-GO for public token offers, paid token promotion, token sales, real-value payouts, public mining activation, Mainnet launch, or exchange/listing claims.**
 
-The current repository describes V COIN – TON as under development. The tokenomics document is approved for design, not issuance. The reviewed readiness register states that no verified Jetton deployment, wallet-based mining, production database operation, independent security audit, or jurisdiction-specific legal opinion has been established. The mining API is deliberately fail-closed with HTTP 503 until wallet-based mining is implemented and verified.
+The current repository describes V COIN – TON as under development. The tokenomics document is approved for design, not issuance. The reviewed readiness register states that no verified Jetton deployment, wallet-based mining, production database operation, external security certification, or jurisdiction-specific legal opinion has been established. The mining API is deliberately fail-closed with HTTP 503 until wallet-based mining is implemented and verified.
 
 The global programme may continue with evidence-led project-development communications, technical documentation and carefully controlled B2B research. Such communications must not invite token purchases, imply availability, or describe roadmap features as live. Every country-specific communication remains subject to local legal review.
 
@@ -97,12 +97,12 @@ Do not claim absolute anonymity. Public-chain transactions and balances may be o
 | Supply and treasury | On-chain supply verification, allocation reconciliation, vesting rules, treasury custody and dual-control/approval evidence | **Design only; implementation/evidence pending** |
 | Wallet and mining | TON wallet ownership proof, exact Jetton Master/network validation, trusted balance reader, immutable snapshots, reserve controls and end-to-end payout reconciliation | **Not verified; public mining endpoint remains blocked** |
 | Database and backend | Successful isolated PostgreSQL setup, ordered migration evidence, non-skipped integration tests, access controls and recovery test | **Local verification pending** |
-| Security assurance | Independent smart-contract audit after implementation, backend penetration test, dependency review, remediation evidence and incident-response plan | **Not completed** |
+| Security assurance | Documented internal engineering verification, CI and local Sandbox evidence, dependency review, remediation records and incident-response plan | **Engineering evidence tracked; no external security audit is planned or claimed** |
 | Financial transparency | Reconciled reserve and treasury records, independent accounting review, publication cadence and complaint process | **Pending** |
 | Jurisdictional clearance | Written legal opinion for each market and activity, required registrations/licences, approved distribution and geo-controls | **Not started / not established** |
 | Communications approval | Claim-to-evidence register, approved disclaimers, translation review, influencer/agency controls and archived campaign records | **Control framework required** |
 
-Passing CI or having source files in GitHub is not proof of production operation, a deployed token, a security audit or legal approval.
+Passing CI or having source files in GitHub is not proof of production operation, a deployed token, external security certification or legal approval.
 
 ## 7. Channel and partnership controls
 
@@ -126,7 +126,7 @@ Passing CI or having source files in GitHub is not proof of production operation
 >
 > The current design specifies a planned initial supply of 2,100,000,000 VCOIN, six decimal places and no additional minting. These are design parameters only; they do not confirm that tokens have been issued or deployed.
 >
-> Jetton implementation and deployment, verified wallet-based mining, production payouts, independent security audits and market-specific legal reviews remain pending. No public sale, exchange listing, guaranteed liquidity, price or financial return is being represented.
+> Jetton implementation and deployment, verified wallet-based mining, production payouts, internal engineering verification and market-specific legal reviews remain pending. No public sale, exchange listing, guaranteed liquidity, price or financial return is being represented.
 >
 > V COIN – TON remains in development. Any future availability or functionality will be announced only after the relevant technical, security and legal requirements have been completed.
 

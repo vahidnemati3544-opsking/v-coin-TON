@@ -36,7 +36,7 @@ A wallet balance is eligible only when all of the following are true:
 6. The balance snapshot is timestamped and tied to the verified owner wallet, Jetton master, network, and source block/transaction context.
 7. If the provider is unavailable, stale, inconsistent, or cannot prove the correct Jetton, mining start/claim fails closed. The backend must not fall back to an internal database balance.
 
-The Jetton master address, network (Testnet or Mainnet), and approved data-provider configuration are required deployment inputs. They must not be guessed or copied from an unrelated token.
+The Jetton master address, TON Mainnet network configuration, and approved data-provider configuration are required deployment inputs. Local verification must use TON Sandbox; Testnet deployment or transactions are not authorized. They must not be guessed or copied from an unrelated token.
 
 ## 4. Mining and payout lifecycle
 
@@ -76,7 +76,7 @@ Private keys and seed phrases must never be requested, stored, logged, or sent t
 - Separate internal pending-reward ledger and withdrawal/payout state machine.
 - TON Jetton transfer adapter and on-chain transaction reconciliation.
 - Idempotency, concurrency, reserve, replay, bounced-transfer, and rollback tests.
-- Telegram Mini App end-to-end test with the owner's wallet on TON Testnet.
+- Telegram Mini App integration tests using local TON Sandbox fixtures; no Testnet wallet deployment or transaction.
 
 ## 8. Current incompatibility / release gate
 
@@ -84,13 +84,13 @@ The current code in `contracts/mining/engine.js` and `contracts/mining/backend/s
 
 Therefore the current internal-balance mining implementation is not compliant with this approved wallet-balance rule and must not be activated as the user's extraction flow. A code commit or green unit test alone cannot remove this gate.
 
-## 9. Inputs required before Testnet implementation
+## 9. Inputs required before Mainnet implementation
 
 - Approved VCOIN Jetton master contract address for the target network.
-- TON network selection (Testnet for rehearsal; Mainnet requires separate approval).
+- TON Mainnet configuration for any future live operation; all rehearsal and integration simulation must remain local in TON Sandbox.
 - Trusted TON data-provider/API configuration and credentials stored privately.
 - Wallet-connect/ownership-proof method and Telegram Mini App origin.
 - Payout sender architecture and signing custody policy; backend must not hold a user's recovery phrase.
 - Explicit operational claim cadence and missed-claim policy.
 
-No token address, provider, or signing custody model may be invented. Mainnet transfer and public mining remain disabled until independent review and explicit owner approval.
+No token address, provider, or signing custody model may be invented. Mainnet transfer and public mining remain disabled until the documented engineering gates pass and the Founder explicitly authorizes the exact operation.

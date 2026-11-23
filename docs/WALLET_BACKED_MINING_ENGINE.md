@@ -1,7 +1,7 @@
 # V COIN – Wallet-Backed Mining Engine
 
 **Action:** 54  
-**Status:** Isolated wallet-backed engine and PostgreSQL integration tests added.  
+**Status:** Isolated wallet-backed engine and PostgreSQL integration tests added; current CI verification is pending.  
 **Public API:** Still disabled (HTTP 503).
 
 ## Reward basis
@@ -19,7 +19,7 @@ This is 1% per 24 hours, using six-decimal VCOIN base units.
 - A session begins only with a fresh, finalized snapshot from the selected network.
 - At claim time, a second fresh, finalized snapshot is required.
 - Both snapshots must belong to the same verified wallet and the same Jetton master.
-- The interval's eligible balance is the lower of its start and end snapshots. This prevents a deposit near claim time from being rewarded retroactively and conservatively accounts for withdrawals.
+- Provisional safety rule: the interval's eligible balance is the lower of its start and end snapshots. This prevents a deposit near claim time from being rewarded retroactively and conservatively accounts for withdrawals. It can reduce rewards after withdrawals, so it is not an approved economic-policy change; founder review is required before activation.
 - The selected start/end snapshot IDs and eligible balance are written to `mining_rewards` for auditability.
 - The session's next interval begins from the latest end snapshot.
 - The claim is reserved against the current 1.05 billion VCOIN mining allocation and posted through the existing balanced internal ledger.

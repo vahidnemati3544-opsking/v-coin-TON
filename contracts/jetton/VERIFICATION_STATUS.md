@@ -1,3 +1,70 @@
+# CURRENT MAINNET RELEASE STATUS — 2026-11-23 (Action #62; supersedes earlier pending-CI and preview records)
+
+**Latest main commit:** `6e3ad85e99b454c1f38a7fea74a982fd89ee3ede` — [commit](https://github.com/vahidnemati3544-opsking/v-coin-TON/commit/6e3ad85e99b454c1f38a7fea74a982fd89ee3ede).  
+**Exact-head CI:** run #318 / ID `45120195381` — [GitHub Actions](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45120195381) — **success**; both `build-and-test` and `deploy-issuer` succeeded.  
+**Exact-head release artifact:** ID `14793237989`; ZIP SHA-256 `a2ac3c1d0af79e7231b84b8baa00108de2bdfef0ae867a343d70c105e4112313`.  
+**Release disposition: NO-GO for Mainnet signing, deployment, or issuance.** The CI success resolves the exact-head build/Pages gate, not the independent audit, clean-room rebuild, wallet-control, or live fee gates.
+
+## Exact-head build and security evidence
+
+- Committed `contracts/jetton/package-lock.json` exists (lockfileVersion 3); the exact-head CI ran `npm ci` successfully. Artifact lockfile SHA-256: `b778e6db4730225c9104b3cd5140418e06de8edbe50d573efc8be0e3035da653`.
+- Exact-head CI passed Tact compilation, immutable TEP-64 content-cell generation, unsigned Mainnet preview generation, issuer syntax/signer/sequence guards, and all artifact uploads.
+- Jest TON Sandbox: **3 suites passed, 21 tests passed**.
+- `npm audit --audit-level=moderate`: **0 vulnerabilities** (0 info, 0 low, 0 moderate, 0 high, 0 critical).
+- TEP-64 metadata JSON is pinned to commit `e17bcb9d82ea182bff3358b9fac6b5fa25c166ee`; the exact-head metadata content cell was generated. Its cell hash is `abadcbc42c4e6309bea1d595dbfd1b834a07bfb171b2b1e2cb6d4b7e244330ca`. The canonical JPEG logo is included through the verified Pages asset path.
+
+## Independent TON BOC/hash reproduction — Action #62
+
+The exact-head run #318 release ZIP was downloaded and independently parsed with a separate Python BOC/cell-hash implementation. The downloaded ZIP SHA-256 matches the GitHub artifact digest. The following hashes were independently recalculated from the artifact BOCs and match the preview:
+
+- Master code cell: `5087c882019324e9d8e309c78f42e3bcee9433a54d7d0367d49320a7bbabcc36`.
+- Master data cell: `241c4f33ce0b692788ea1e397953f923447ec3dc40bce20ad402a68de7b9fb37`.
+- Master StateInit: `67e215bc6ca8454d2cfdae2639ab73ebdd27c99afd9560a65097f35631b2befb`.
+- Jetton Wallet code cell: `9c9aa697222ccb0ba637dd92cde6613e2ff2c66f576fb877e552fdde32c142aa`.
+- TEP-64 metadata content cell: `abadcbc42c4e6309bea1d595dbfd1b834a07bfb171b2b1e2cb6d4b7e244330ca`.
+- All five deterministic Jetton Wallet StateInit hashes independently match the preview; all six friendly addresses have workchain 0, matching embedded account hashes, and valid CRC16-XMODEM checksums.
+
+This is independent hash reproduction from the exact CI artifact. It is **not** an independent clean-room compilation from source and does not establish that any predicted address is deployed.
+
+## Current unsigned Mainnet preview (predictions only)
+
+- Predicted Master: `EQBn4hW8bKhFTSz9riY5q3Pr3SfJmv2VYKZQl_NWMbK--5fP`.
+- Founder Jetton Wallet: `EQCOzLnnSrR-mbM_AeiKU2wpMJ28cPoRncBuQHJ-6_q-Mn0T` — StateInit `8eccb9e74ab47e99b33f01e88a536c29309dbc70fa119dc06e40727eebfabe32`.
+- Mining Reserve Jetton Wallet: `EQAeVMNyrzMYA5dbHtGmTf37e7ikIbzUGSEoeqY5oIKA3kMa` — StateInit `1e54c372af331803975b1ed1a64dfdfb7bb8a421bcd41921287aa639a08280de`.
+- Treasury Jetton Wallet: `EQCXegSjHrFZxC_H2TVVaastC8CxBScqjAbdDZWEEm1GBZ2U` — StateInit `977a04a31eb159c42fc7d9355569ab2d0bc0b105272a8c06dd0d9584126d4605`.
+- Liquidity/Market Jetton Wallet: `EQD5mlEiKvw0KYN8MKLUUfIsjRs1xS_NAb3YEhC_KyigrA59` — StateInit `f99a51222afc3429837c30a2d451f22c8d1b35c52fcd01bdd81210bf2b28a0ac`.
+- Ecosystem/Marketing Jetton Wallet: `EQA2hJ0zEZilgcBGw_ycCT8_bzgUtoS6sxqohbXDCx2PEM6t` — StateInit `36849d331198a581c046c3fc9c093f3f6f3814b684bab31aa885b5c30b1d8f10`.
+
+The preview constructor arguments match the five canonical owner addresses in `docs/WALLET_ALLOCATION_REGISTER.md`. Founder is the sole owner, deployment/issuance signer, and GAS & OPERATIONS funder; the GAS argument equals the Founder address. There is no separate GAS wallet or sixth allocation destination. Allocation totals remain 420M / 1,050M / 210M / 210M / 210M = **2.1B VCOIN**, six decimals. The preview requests **1.00 TON** initial Master reserve funding plus network fees; this is not a live fee quote. Jetton Wallet addresses above are deterministic predictions and must be checked against the deployed Master's `get_wallet_address` getter before any issuance.
+
+## Release gates still open
+
+1. Qualified independent smart-contract / TEP-74 / TEP-64 security audit: **not evidenced in the repository; pending**. The internal source review is not an external audit.
+2. Independent clean-room rebuild from the exact source and pinned toolchain: **pending**. Action #62 reproduced hashes from the exact CI BOCs but did not independently compile the source.
+3. Founder wallet-control and intended TON Mainnet network verification for the five owner destinations: **pending**; an address register is not proof of control.
+4. Live fee and Master-reserve simulation against the exact deployment and five issuance payloads: **pending**. 1.00 TON is the preview attachment, not a guaranteed total debit.
+5. Founder review of the final transaction package and explicit signature for deployment and each separate allocation: **pending**.
+
+## Pages and transaction boundary
+
+- GitHub Pages deployment in run #318 succeeded; the issuer deployment job and its endpoint verification step both passed. The repository integration currently reports admin permission.
+- No Mainnet or Testnet transaction was sent. No contract was deployed, no token was minted, and no wallet was funded by this action.
+- The current project execution policy remains Mainnet-only after all release gates; local Sandbox testing is permitted. No Testnet transaction is authorized.
+- Never request or store seed phrases, private keys, PINs, or recovery codes.
+
+## Action #62 — Exact-head CI, artifact, and independent hash verification
+
+**Status:** CI and artifact hash reproduction completed; Mainnet remains NO-GO.
+
+- Verified exact `main` commit and run #318, including both successful CI jobs and Pages endpoint checks.
+- Downloaded the exact-head release artifact; ZIP SHA-256 matched the artifact digest.
+- Reproduced Master code/data/StateInit, Jetton Wallet code, TEP-64 content, and all five Jetton Wallet StateInit hashes independently; checked all six friendly address account hashes and CRC16 checksums.
+- Verified committed lockfile, clean `npm ci`, zero npm audit vulnerabilities, and 3/3 Sandbox suites with 21/21 tests.
+- Reconciled the unsigned preview's five owner addresses and allocations against the canonical wallet register.
+- No transaction, deployment, mint, or transfer was performed.
+
+---
+
 # CURRENT MAINNET ADDRESS RECONCILIATION — 2026-11-23 (Action #61; supersedes all earlier preview records)
 
 **Current approved allocation baseline:** 2,100,000,000 VCOIN total; 6 decimals; 2,100,000,000,000,000 base units. Founder 420,000,000 (20%); mining rewards 1,050,000,000 (50%); Treasury, Liquidity/Market, and Ecosystem/Marketing 210,000,000 each (10% each).  

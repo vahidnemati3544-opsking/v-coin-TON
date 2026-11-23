@@ -1,3 +1,5 @@
+Current policy correction (2026-11-23): This historical Action #53 review is superseded wherever it lists an independent security audit as a mandatory task or release gate. That workstream is excluded from the current project scope. Current baseline: 2.1B VCOIN, six decimals; Founder 420M immediate/no vesting; five allocation wallets with Founder also sole GAS & OPERATIONS; Mainnet-only execution and no Testnet deployment/transactions. No page status or CI result in this historical report proves live issuance.
+
 # V COIN–TON Comprehensive Correction and Release Bundle — Action #53
 
 **Date:** 2026-11-22  

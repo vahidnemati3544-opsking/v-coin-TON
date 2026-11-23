@@ -14,7 +14,6 @@ const {
 const { createTelegramAuthRouter, createSessionAuthMiddleware } = require("./auth/telegram");
 const { createPriceReferenceRouter, startPriceReferenceScheduler } = require("./services/price-reference");
 const { createTonProofRouter } = require("./routes/ton-proof");
-const { createSessionAuthMiddleware } = require("./auth/telegram");
 
 const app = express();
 

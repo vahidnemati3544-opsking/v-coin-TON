@@ -101,12 +101,12 @@ The wallet must provide:
 
 Before production release:
 
-- Key management must be independently reviewed.
+- Key-management controls must be verified through the project's documented engineering checks; no external security audit is a project release condition.
 - Transaction signing must be tested.
 - Android and Web security must be assessed.
 - TON integration must be validated.
 - Recovery procedures must be tested.
-- Independent security audits must be completed.
+- Complete the documented internal engineering checks, local TON Sandbox tests, and explicit Founder release review; independent external security auditing is outside the current project scope.
 
 11. Development Status
 

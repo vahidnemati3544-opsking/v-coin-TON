@@ -1,3 +1,5 @@
+Current policy correction (2026-11-23): This register is a historical market/regulatory planning snapshot, not an active engineering release checklist. Any reference to independent external security audits as a V COIN–TON task or release condition is superseded and excluded from the current project workstream. Current technical baseline: 2,100,000,000 VCOIN, 6 decimals; Founder 420,000,000 immediate/no vesting; five allocation wallets with Founder also sole GAS & OPERATIONS wallet; Mainnet-only execution, with local Sandbox permitted and no Testnet deployment/transactions authorized. Market/legal requirements remain separate from token deployment and must not be represented as completed.
+
 # V COIN – TON | Global Market & Regulatory Gate Register
 
 **Document ID:** VCT-GMR-001  

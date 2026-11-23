@@ -97,12 +97,12 @@ Do not claim absolute anonymity. Public-chain transactions and balances may be o
 | Supply and treasury | On-chain supply verification, allocation reconciliation, vesting rules, treasury custody and dual-control/approval evidence | **Design only; implementation/evidence pending** |
 | Wallet and mining | TON wallet ownership proof, exact Jetton Master/network validation, trusted balance reader, immutable snapshots, reserve controls and end-to-end payout reconciliation | **Not verified; public mining endpoint remains blocked** |
 | Database and backend | Successful isolated PostgreSQL setup, ordered migration evidence, non-skipped integration tests, access controls and recovery test | **Local verification pending** |
-| Security assurance | Independent smart-contract audit after implementation, backend penetration test, dependency review, remediation evidence and incident-response plan | **Not completed** |
+| Security assurance | Documented internal engineering verification, CI and local Sandbox evidence, dependency review, remediation records and incident-response plan | **Engineering evidence tracked; no external security audit is planned or claimed** |
 | Financial transparency | Reconciled reserve and treasury records, independent accounting review, publication cadence and complaint process | **Pending** |
 | Jurisdictional clearance | Written legal opinion for each market and activity, required registrations/licences, approved distribution and geo-controls | **Not started / not established** |
 | Communications approval | Claim-to-evidence register, approved disclaimers, translation review, influencer/agency controls and archived campaign records | **Control framework required** |
 
-Passing CI or having source files in GitHub is not proof of production operation, a deployed token, a security audit or legal approval.
+Passing CI or having source files in GitHub is not proof of production operation, a deployed token, external security certification or legal approval.
 
 ## 7. Channel and partnership controls
 

@@ -126,7 +126,7 @@ Passing CI or having source files in GitHub is not proof of production operation
 >
 > The current design specifies a planned initial supply of 2,100,000,000 VCOIN, six decimal places and no additional minting. These are design parameters only; they do not confirm that tokens have been issued or deployed.
 >
-> Jetton implementation and deployment, verified wallet-based mining, production payouts, independent security audits and market-specific legal reviews remain pending. No public sale, exchange listing, guaranteed liquidity, price or financial return is being represented.
+> Jetton implementation and deployment, verified wallet-based mining, production payouts, internal engineering verification and market-specific legal reviews remain pending. No public sale, exchange listing, guaranteed liquidity, price or financial return is being represented.
 >
 > V COIN – TON remains in development. Any future availability or functionality will be announced only after the relevant technical, security and legal requirements have been completed.
 

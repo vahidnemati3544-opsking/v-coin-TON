@@ -21,7 +21,13 @@ const NETWORKS = Object.freeze({
   }
 });
 
-function createTonRpcProvider({ network, jettonMasterAddress, endpoint, apiKey }) {
+function createTonRpcProvider({
+  network,
+  jettonMasterAddress,
+  endpoint,
+  apiKey,
+  clientFactory = (parameters) => new TonClient(parameters)
+}) {
   const networkConfig = NETWORKS[network];
   if (!networkConfig) {
     throw new TonRpcError('INVALID_NETWORK', 'TON RPC network must be mainnet or testnet.');
@@ -36,10 +42,18 @@ function createTonRpcProvider({ network, jettonMasterAddress, endpoint, apiKey }
     throw new TonRpcError('INVALID_JETTON_MASTER', 'Configured VCOIN Jetton master address is invalid.');
   }
 
-  const client = new TonClient({
+  if (typeof clientFactory !== 'function') {
+    throw new TonRpcError('INVALID_TON_RPC_CLIENT_FACTORY', 'TON RPC client factory must be a function.');
+  }
+  const client = clientFactory({
     endpoint,
     ...(typeof apiKey === 'string' && apiKey.length > 0 ? { apiKey } : {})
   });
+  if (!client || typeof client.getContractState !== 'function' ||
+      typeof client.callGetMethod !== 'function ||
+      typeof client.getMasterchainInfo !== 'function') {
+    throw new TonRpcError('INVALID_TON_RPC_CLIENT', 'TON RPC client does not implement the required read methods.');
+  }
 
   function assertContext(context) {
     if (!context || context.network !== network ||

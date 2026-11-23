@@ -1,9 +1,11 @@
 # Repository Policy Consistency Sweep — Action #65
 
 **Date:** 2026-11-23  
-**Branch:** `main`  
-**Baseline before sweep:** `3b06022d8f5a0ce1d87959b4557975affb36e62e`  
-**Latest commit after sweep:** `b81db888fd7225b25e2600aa878ca4542563375d`
+**Original sweep branch:** `main`  
+**Continuation branch:** `docs/action-65-complete-policy-sweep`  
+**Baseline before continuation:** `c9d5df5a57be414417726ee6e3729d4e2a966083`  
+**Continuation branch head before this report update:** `f6430ff8b1df5fffbb585db6b448e0da25187076`  
+**Merge commit:** recorded in the linked pull request after merge.
 
 ## Purpose
 
@@ -50,3 +52,26 @@ Review repository documentation for historical statements that conflict with the
 ## Status
 
 **Action #65 — documentation corrections committed; post-sweep CI and full technical release verification remain pending.**
+
+
+## Continuation — remaining active-document corrections
+
+A second pass found active instructions that were not fully aligned by the first 18-file correction set. The following additional files were corrected on the continuation branch:
+
+19. `contracts/README.MD` — replaced obsolete test-network and independent-review instructions with the approved Mainnet-only/Sandbox policy and current 2.1B/five-wallet baseline.
+20. `contracts/jetton/FOUNDER_ONLY_WITHDRAWAL.md` — removed external-review requirements; retained exact-build fee/reserve and engineering verification requirements.
+21. `contracts/mining/README.md` — clarified that the legacy internal-balance engine is not the public extraction flow and removed the external-audit release condition.
+22. `contracts/mining/backend/README.md` — aligned wallet-based mining release wording with documented engineering checks.
+23. `contracts/mining/backend/wallet/README.md` — replaced external-audit and independent-review tasks with internal engineering verification.
+24. `contracts/jetton/tests/README.md` — corrected allocation amounts to 420M / 1.05B / 210M / 210M / 210M, aligned Founder/GAS shared-wallet policy, and removed the obsolete 0.75 TON funding instruction.
+25. `contracts/jetton/allocation-manifest.template.json` — removed the stale 0.75 TON deployment-funding statement; current exact-build runbook baseline is 1.00 TON, subject to fee/reserve simulation.
+
+Existing correction-notice files were also tightened where their active copy still described external security audits as a current workstream: `docs/GLOBAL_DUE_DILIGENCE_READINESS.md`, `docs/GLOBAL_MARKET_REGULATORY_GATE_REGISTER.md`, `docs/GLOBAL_PUBLIC_INTRODUCTION_PACK.md`, and `docs/WALLET_BALANCE_MINING_SPEC.md`.
+
+## Scope boundary
+
+Historical conversation records, old CI snapshots, and dated technical reviews were not silently rewritten as if their original statements had never existed. They retain their historical content only where a dated controlling correction clearly supersedes it. Current operational instructions must follow the approved 2.1B supply, immediate Founder allocation, five-wallet/shared-GAS structure, Mainnet-only execution, and no-external-security-audit-workstream policy.
+
+The continuation changes are documentation/configuration-template corrections only. No contract source, wallet address, token amount, signing key, deployment authorization, transaction payload, or blockchain state was changed. The 1.00 TON figure is a current runbook baseline, not a live fee quote or guarantee.
+
+**Continuation status before merge:** corrections committed to the continuation branch; pull-request review/merge and exact-head CI status remain pending.

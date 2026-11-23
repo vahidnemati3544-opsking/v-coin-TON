@@ -1,6 +1,6 @@
 # V COIN – TON Mainnet Release Package & Hash Audit
 
-> **Scope correction (2026-11-23):** This document records historical source/release/hash checks. Any references in its historical sections to a specialist or external security audit as a pending task or release condition are superseded. Independent external auditing is not a V COIN–TON project workstream, pending task, or release condition. Technical hash reproduction and engineering release checks remain distinct activities.
+> **Controlling baseline correction (2026-11-23):** This is a historical technical source/release/hash record. Current approved supply is 2,100,000,000 VCOIN at six decimals; allocation is 420M Founder (immediate, no vesting), 1.05B Mining, and 210M each Treasury, Liquidity/Market, Ecosystem/Marketing. The current modelled USD reference baseline is 0.004 per VCOIN, not a market quote or guarantee. The Founder wallet is also the sole GAS & OPERATIONS wallet; there is no separate fee wallet or sixth wallet. Execution is Mainnet-only after local engineering verification; Testnet deployment/transactions/rehearsal are not authorized. Independent external auditing is not a project workstream, pending task, or release condition. Historical entries below that conflict with this baseline are superseded and must not guide current execution. Hash reproduction remains an engineering verification activity.
 
 **Document ID:** VCT-MAINNET-AUDIT-021  
 **Action:** 21  

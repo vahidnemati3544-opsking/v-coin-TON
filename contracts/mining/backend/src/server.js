@@ -13,6 +13,8 @@ const {
 } = require("./config/database");
 const { createTelegramAuthRouter, createSessionAuthMiddleware } = require("./auth/telegram");
 const { createPriceReferenceRouter, startPriceReferenceScheduler } = require("./services/price-reference");
+const { createTonProofRouter } = require("./routes/ton-proof");
+const { createSessionAuthMiddleware } = require("./auth/telegram");
 
 const app = express();
 
@@ -75,6 +77,25 @@ app.use(
 );
 // Public modelled reference price and 72-hour candle history.
 app.use("/api/v1/price-reference", createPriceReferenceRouter({ pool }));
+
+// Session-bound TON Connect proof authentication. This verifies wallet ownership
+// but does not enable mining or submit any blockchain transaction.
+const tonProofDomain = process.env.TON_PROOF_DOMAIN || "";
+const tonProofRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler(req, res) {
+    return res.status(429).json({ error: "RATE_LIMIT_EXCEEDED" });
+  }
+});
+app.use(
+  "/api/v1/wallet/ton-proof",
+  tonProofRateLimit,
+  createSessionAuthMiddleware({ pool }),
+  createTonProofRouter({ pool, expectedDomain: tonProofDomain })
+);
 
 // Fail closed until the wallet-balance mining implementation is complete.
 // The current engine still uses internal PostgreSQL balances and must not be

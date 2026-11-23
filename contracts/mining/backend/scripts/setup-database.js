@@ -68,7 +68,7 @@ const migrations = [
   },
   {
     version: '005_vcoin_supply_and_price_reset',
-    description: 'Apply the owner-approved 2.1B VCOIN mining cap and USD 0.008 reference baseline',
+    description: 'Historical superseded VCOIN supply and price reset; retained unchanged for migration checksum history',
     file: path.resolve(__dirname, '../database/migrations/005-vcoin-supply-and-price-reset.sql')
   },
   {
@@ -85,6 +85,11 @@ const migrations = [
     version: '008_wallet_snapshots_and_offline_mining',
     description: 'Add verified Jetton balance snapshot and offline lease/sync persistence foundations',
     file: path.resolve(__dirname, '../database/migrations/008-wallet-snapshots-and-offline-mining.sql')
+  },
+  {
+    version: '009_10b_vcoin_economic_baseline',
+    description: 'Restore approved 10B VCOIN supply economics: 5B mining reserve and USD 0.004 modelled reference baseline',
+    file: path.resolve(__dirname, '../database/migrations/009-10b-vcoin-economic-baseline.sql')
   }
 ];
 

@@ -126,12 +126,12 @@ async function main() {
     },
     issuance_transactions: issuanceTransactions,
     allocations: {
-      founder: '420000000',
-      mining_reserve: '1050000000',
-      treasury: '210000000',
-      liquidity_market: '210000000',
-      ecosystem_marketing: '210000000',
-      total_supply: '2100000000',
+      founder: '2000000000',
+      mining_reserve: '5000000000',
+      treasury: '1000000000',
+      liquidity_market: '1000000000',
+      ecosystem_marketing: '1000000000',
+      total_supply: '10000000000',
       decimals: 6,
     },
     unsigned_deploy_message: {

@@ -127,5 +127,5 @@ No real-value transfer, token issuance, Mainnet deployment, or public mining lau
 - It may send VCoinFund messages to seed the Master contract with at least 0.75 TON for the five Jetton wallet-credit operations.
 - This address is not a VCOIN allocation destination and is not authorized to issue VCOIN; only the founder/owner can submit VCoinMint messages.
 - VCoinMaster sends 0.1 TON from its own reserve for each allocation wallet credit. The owner-signed VCoinMint request needs at least 0.01 TON for its own processing.
-- CI tests reject gas funding from any other sender and verify that the separate fee wallet can fund the Master without receiving VCOIN.
+- CI tests verify that only the Founder / GAS & OPERATIONS wallet funds the Master; this is the same address as the Founder allocation wallet, not a separate fee wallet.
 - No operational-fee top-up or blockchain transaction has been made by this code change.

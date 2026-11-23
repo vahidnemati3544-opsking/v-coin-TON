@@ -1,3 +1,5 @@
+Current policy correction (2026-11-23): This security requirements document is governed by the approved five-wallet baseline. Any wording in the historical section titled “Separate operational gas reserve” that implies a separate GAS wallet is superseded: Founder is the sole GAS & OPERATIONS wallet and also one of the five allocation destinations. No sixth wallet exists. External independent security audits are not a project task or release gate. No Testnet deployment or transaction is authorized; local Sandbox testing is permitted.
+
 # V COIN – TON Security and Anti-Fraud Requirements
 
 **Status:** Security requirements and selected backend controls are documented; implementation and operational checks are tracked as engineering work. No external security-audit company has been contracted or engaged. Independent auditing is not a defined project workstream, pending task, or release condition.

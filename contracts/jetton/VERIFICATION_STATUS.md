@@ -1,3 +1,20 @@
+# STATUS LABEL CORRECTION — 2026-11-23 (Action #63)
+
+This note clarifies the commit references in Action #62 and supersedes the ambiguous “Latest main commit” label in that section:
+
+- **Latest implementation/configuration baseline used for the reproduced preview:** `6e3ad85e99b454c1f38a7fea74a982fd89ee3ede`; exact-head run #318 passed.
+- **Action #62 verification-report commit:** `27696f8a407d1ae5dd8cbc8bf4a96cc3439153ac`; exact-head run #319 passed both `build-and-test` and `deploy-issuer`, including all published Pages endpoint checks.
+- Run #319 artifact ID `14796122451`; ZIP SHA-256 `8c39f933f7a1730748ab1d4f6597fb3fa413853c64b0b723dc9886c48b042750`. The downloaded exact-head artifact was independently rechecked; its Master code/data/StateInit, metadata, five Jetton Wallet StateInit hashes, and friendly-address checksums match the Action #62 values.
+- Run #319 exact-head evidence: lockfile install, Tact compile, TEP-64 content generation, unsigned preview generation, issuer guards, Pages deployment and endpoint verification all passed; npm audit reported zero vulnerabilities; Jest passed 3 suites / 21 tests.
+- This status-label correction changes documentation only; it does not change the contract, configuration, metadata, issuer, allocation addresses or transaction payloads.
+- Mainnet remains NO-GO until the independent qualified security audit, independent clean-room source rebuild, Founder wallet-control verification and live exact-payload fee/reserve simulation are complete. No Mainnet or Testnet transaction was sent.
+
+## Action #63 — Correct source-baseline labeling and record Action #62 exact-head CI
+
+**Status:** Documentation correction committed; no contract or transaction changes.
+
+---
+
 # CURRENT MAINNET RELEASE STATUS — 2026-11-23 (Action #62; supersedes earlier pending-CI and preview records)
 
 **Latest main commit:** `6e3ad85e99b454c1f38a7fea74a982fd89ee3ede` — [commit](https://github.com/vahidnemati3544-opsking/v-coin-TON/commit/6e3ad85e99b454c1f38a7fea74a982fd89ee3ede).  

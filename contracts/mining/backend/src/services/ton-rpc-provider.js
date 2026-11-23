@@ -50,7 +50,7 @@ function createTonRpcProvider({
     ...(typeof apiKey === 'string' && apiKey.length > 0 ? { apiKey } : {})
   });
   if (!client || typeof client.getContractState !== 'function' ||
-      typeof client.callGetMethod !== 'function ||
+      typeof client.callGetMethod !== 'function' ||
       typeof client.getMasterchainInfo !== 'function') {
     throw new TonRpcError('INVALID_TON_RPC_CLIENT', 'TON RPC client does not implement the required read methods.');
   }

@@ -1,18 +1,15 @@
-# CURRENT MAINNET ADDRESS RECONCILIATION — 2026-11-23 (Action #54; supersedes older predicted-address references for current build)
+# CURRENT MAINNET ADDRESS RECONCILIATION — 2026-11-23 (Action #61; supersedes all earlier preview records)
 
-**Latest exact-head CI run:** [#282 / 45066224453](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45066224453) — build-and-test, Pages deployment and published endpoint verification succeeded.  
-**Exact source commit:** `d6c4f1cdd5618aa0eaa7b7ab31e58a998cb00bbe`  
-**Full source artifact:** `14771790593` — SHA-256 `482b913daeda2a4c482c08ca47c3748a40befbe32eebb1dd1ec7d256d12beb0d`  
-**Contract release artifact:** `14771606988` — SHA-256 `fbeebdd60c32d4269951c06130882b999c7a501f3b991818f6712b192426a8c8`  
-**Current preview Master (predicted, not deployed):** `EQBn4hW8bKhFTSz9riY5q3Pr3SfJmv2VYKZQl_NWMbK--5fP`  
-**Current StateInit hash:** `67e215bc6ca8454d2cfdae2639ab73ebdd27c99afd9560a65097f35631b2befb`  
-**Release disposition: NO-GO for Mainnet deployment and issuance until live chain reconciliation and independent release gates pass.**
+**Current approved allocation baseline:** 2,100,000,000 VCOIN total; 6 decimals; 2,100,000,000,000,000 base units. Founder 420,000,000 (20%); mining rewards 1,050,000,000 (50%); Treasury, Liquidity/Market, and Ecosystem/Marketing 210,000,000 each (10% each).  
+**Current source commit:** `163d9f96bc97038c361ac19dda337ffb96cc3320`  
+**Exact-head CI for this corrected allocation revision:** pending verification; earlier CI runs do not verify the current source head.  
+**Current preview Master address / StateInit hash:** not generated for the corrected source head.  
+**Recipient Jetton Wallet predictions and artifact hashes:** cleared and invalidated; regenerate from the exact reviewed build and independently reproduce before any signature.  
+**Release disposition: NO-GO for Mainnet deployment and issuance until exact-head CI, clean-room hash reproduction, independent security review, wallet-control verification, and live fee/reserve checks pass.**
 
-The Founder-supplied address `UQAo1TAGqSw6oUaMmpBtgQyRtCGEbSJNiGGy2Use04lRCVSR` decodes to account ID `28d53006a92c3aa1468c9a906d810c91b421846d224d8861b2d94b1ed3895109`, exactly matching the earlier unsigned preview StateInit `28d53006a92c3aa1468c9a906d810c91b421846d224d8861b2d94b1ed3895109`. It is therefore the earlier predicted Master address, not the current build's predicted Master. The current preview's metadata content cell changed after canonical logo integration, producing a different Master data/StateInit hash and predicted address. This does not prove that the earlier address was deployed. Both addresses must be checked on TON Mainnet before any deployment or issuance; do not treat either prediction as on-chain evidence.
+The previous 10B economic revision has been removed from the active source, configuration, allocation plan, issuer, and current migration runner. The current allocation is the 2.1B model above. Historical deployment previews and derived addresses from earlier source revisions must not be reused, even where a previous preview also displayed a 2.1B supply, because the current source and allocation revision require fresh exact-head build and hash verification.
 
-The 32-byte hash supplied for the transaction/contract call remains unresolved as a transaction hash versus an external message hash. A wallet submission hash alone is not proof of transaction success. See [Action #54 reconciliation](../../docs/MAINNET_ADDRESS_RECONCILIATION_ACTION_54.md) for the exact artifact digests, decoded account IDs, current preview hashes, and required live getter/trace checks.
-
----
+No Mainnet deployment, token issuance, or wallet transfer has been confirmed by this document. A predicted address, workflow artifact, or wallet submission is not on-chain evidence.
 
 # CURRENT MAINNET RELEASE PREFLIGHT — 2026-11-22 (Action #53; supersedes prior status entries below)
 

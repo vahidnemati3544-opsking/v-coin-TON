@@ -87,14 +87,9 @@ const migrations = [
     file: path.resolve(__dirname, '../database/migrations/008-wallet-snapshots-and-offline-mining.sql')
   },
   {
-    version: '009_10b_vcoin_economic_baseline',
-    description: 'Superseded interim economic baseline; retained unchanged for migration checksum history',
-    file: path.resolve(__dirname, '../database/migrations/009-10b-vcoin-economic-baseline.sql')
-  },
-  {
-    version: '010_21b_vcoin_allocation_baseline',
-    description: 'Apply current owner-approved 2.1B VCOIN cap and 1.05B mining rewards reserve',
-    file: path.resolve(__dirname, '../database/migrations/010-21b-vcoin-allocation-baseline.sql')
+    version: '009_21b_vcoin_allocation_baseline',
+    description: 'Apply current owner-approved 2.1B VCOIN allocation model and 1.05B mining rewards reserve',
+    file: path.resolve(__dirname, '../database/migrations/009-21b-vcoin-allocation-baseline.sql')
   }
 ];
 

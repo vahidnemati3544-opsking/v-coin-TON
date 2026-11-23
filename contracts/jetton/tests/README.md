@@ -8,10 +8,10 @@
 
 1. **Owner-only issuance:** reject any issuance request not signed by the configured founder/owner.
 2. **Fixed destination set:** accept only the five addresses stored immutably in Master StateInit; reject any unregistered receiver.
-3. **Exact per-wallet allocations:** founder 2B, mining reserve 5B, treasury 1B, liquidity/market 1B, ecosystem/marketing 1B VCOIN (six decimals).
+3. **Exact per-wallet allocations:** Founder 420M, mining reserve 1,050M, treasury 210M, liquidity/market 210M, ecosystem/marketing 210M VCOIN (six decimals; total 2.1B).
 4. **No partial or over-allocation:** reject wrong amounts for each destination and prevent aggregate supply from exceeding 10B VCOIN.
 5. **One-time role issuance:** each destination allocation can be issued only once.
-6. **Separate gas funding:** accept at least 0.75 TON only from the registered GAS & OPERATIONS wallet; reject funding from any other sender.
+6. **Separate gas funding:** accept the exact Founder-funded Master reserve amount in the reviewed deployment flow (current runbook baseline: 1.00 TON; exact-build fee/reserve simulation remains required) only from the Founder wallet, which is also GAS & OPERATIONS; reject funding from any other sender.
 7. **Owner request fee:** accept a 0.01 TON owner-signed issuance request when the Master gas reserve is funded; reject issuance when that reserve is empty.
 8. **Natural Bounce rollback:** a real bounce from each of the five deterministic destination Jetton wallets rolls back only that role's allocation.
 9. **Authenticated bounce source:** only the deterministic wallet for the corresponding approved role can roll back that allocation.

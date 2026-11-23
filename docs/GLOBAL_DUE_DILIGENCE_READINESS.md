@@ -1,3 +1,5 @@
+Current policy correction (2026-11-23): This register is a historical/internal readiness snapshot. Its references to independent external audits, penetration tests, or audit completion as project tasks or release gates are superseded and are not active V COIN–TON work items. The approved supply is 2,100,000,000 VCOIN (6 decimals); Founder allocation is 420,000,000 VCOIN credited in one operation with no vesting or time lock; exactly five allocation wallets are used, with Founder also the sole GAS & OPERATIONS wallet. Mainnet-only execution applies: local Sandbox testing is permitted; no Testnet deployment or transaction is authorized. Do not treat older tables below as current release requirements.
+
 # V COIN – TON | Global Due Diligence Readiness Register
 
 **Document ID:** VCT-GDD-001  

@@ -39,7 +39,11 @@ async function withTransaction(pool, callback) {
   }
 }
 
-function createWalletMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
+function createWalletMiningEngine({
+  pool,
+  jettonMasterAddresses,
+  maxClaimIntervalMs = 86400000
+}) {
   if (!pool || typeof pool.connect !== 'function') {
     throw new MiningError('INVALID_DATABASE_POOL', 'A PostgreSQL pool is required.');
   }
@@ -60,14 +64,18 @@ function createWalletMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
 
   async function loadWalletSnapshot(client, { userId, snapshotId, network, requireFresh }) {
     const networkConfig = NETWORKS[network];
+    const expectedMaster = jettonMasterAddresses && jettonMasterAddresses[network];
+    if (typeof expectedMaster !== 'string' || expectedMaster.length === 0) {
+      throw new MiningError('JETTON_MASTER_NOT_CONFIGURED', 'The approved VCOIN Jetton master is not configured for this mining network.');
+    }
     if (!networkConfig) {
       throw new MiningError('INVALID_NETWORK', 'Network must be mainnet or testnet.');
     }
     const freshnessClause = requireFresh
-      ? "AND s.observed_at >= clock_timestamp() - ($5 * INTERVAL '1 second') " +
+      ? "AND s.observed_at >= clock_timestamp() - ($6 * INTERVAL '1 second') " +
         "AND s.observed_at <= clock_timestamp() + INTERVAL '30 seconds'"
       : '';
-    const values = [snapshotId, userId, networkConfig.globalId, networkConfig.snapshotName];
+    const values = [snapshotId, userId, networkConfig.globalId, networkConfig.snapshotName, expectedMaster];
     if (requireFresh) values.push(MAX_SNAPSHOT_AGE_SECONDS);
     const result = await client.query(
       'SELECT s.id, s.balance_base_units::text AS balance_base_units, s.network, ' +
@@ -77,6 +85,8 @@ function createWalletMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
       'JOIN wallets w ON w.id = s.wallet_id ' +
       "WHERE s.id = $1 AND w.user_id = $2 AND w.network = 'TON' " +
       'AND w.chain_global_id = $3 AND w.is_verified = TRUE AND s.network = $4 ' +
+      'AND s.jetton_master_address = $5 AND s.owner_wallet_address = w.wallet_address ' +
+      "AND s.source = 'ton_rpc' AND s.source_payload_sha256 IS NOT NULL " +
       'AND s.is_final = TRUE AND s.finalized_at IS NOT NULL ' +
       freshnessClause +
       ' FOR SHARE OF s, w',

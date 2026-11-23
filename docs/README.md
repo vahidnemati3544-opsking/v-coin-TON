@@ -14,3 +14,7 @@ The current approved baseline is 2,100,000,000 VCOIN at 6 decimals, with no addi
 - [Purchase and Mining Payout Policy](PURCHASE_AND_MINING_PAYOUT_POLICY.md) — TON purchase settlement, combined level balance, and final mining payout rules.
 
 Architecture documents describe intended behavior unless a section explicitly identifies functionality as implemented. Internal reviews, CI, automated tests, dependency scans, Sandbox tests, and hash checks are engineering verification activities. No document certifies production readiness or authorizes TON Mainnet deployment.
+
+## Latest repository consistency record
+
+- [Action #65 — Repository Policy Consistency Sweep](REPOSITORY_POLICY_SWEEP_ACTION_65.md): documents the 2026-11-23 correction of superseded historical policy statements and the post-sweep CI status.

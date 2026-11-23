@@ -50,7 +50,7 @@ Migration `001-mining-reserve.sql` creates:
 - confirm_mining_reward(...)
 - reverse_mining_reward(...)
 
-The approved mining rewards allocation is 1,050,000,000 VCOIN = 1,050,000,000,000,000 base units (50% of the fixed 2,100,000,000 VCOIN total allocation). The Founder receives 420,000,000 VCOIN (20%); Treasury, Liquidity/Market, and Ecosystem/Marketing receive 210,000,000 VCOIN each (10% each). Migration 001 seeds the 1,050,000,000 VCOIN mining reserve. Historical migration 005 remains immutable; migration 009 is a superseded interim 5B correction; forward-only migration 010 restores the current 1,050,000,000 VCOIN mining cap. Migration 010 refuses to apply if pending plus distributed rewards exceed the approved reserve. The migration runner includes migrations 001–010; do not edit historical migrations.
+The approved mining rewards allocation is 1,050,000,000 VCOIN = 1,050,000,000,000,000 base units (50% of the fixed 2,100,000,000 VCOIN total allocation). The Founder receives 420,000,000 VCOIN (20%); Treasury, Liquidity/Market, and Ecosystem/Marketing receive 210,000,000 VCOIN each (10% each). Migration 001 seeds the 1,050,000,000 VCOIN mining reserve. Historical migration 005 remains immutable; forward-only migration 009 establishes the current 1,050,000,000 VCOIN mining cap and refuses to apply if pending plus distributed rewards exceed the approved reserve. The migration runner includes migrations 001–009; do not edit historical migrations.
 
 Migration `002-mining-ledger-settlement.sql` adds `confirm_mining_reward_to_internal_balance(...)`, which confirms the reserve, posts equal debit/credit ledger entries, updates the user's internal available balance, and marks the reward confirmed in one transaction. Repeated confirmation is idempotent and does not increment the balance twice. This is an internal accounting entry, not an on-chain transfer.
 
@@ -85,7 +85,7 @@ From `contracts/mining/backend`:
 5. Run `npm install`, then `npm run check` and `npm test`.
 6. Run `npm run db:setup` only after confirming the target.
 
-The setup script applies the core schema and migrations 001–010 in order. Migration 009 is retained as an immutable, superseded interim correction; migration 010 applies the current 2,100,000,000 VCOIN allocation model and 1,050,000,000 VCOIN mining reserve. The USD 0.004 modelled reference baseline remains a separate model input, not a market price. The runner records versions and SHA-256 checksums in `schema_migrations`, uses a PostgreSQL advisory lock, skips unchanged migrations, and refuses checksum drift. It refuses `NODE_ENV=production` and rejects non-local database hosts. It is a local development setup command, not a production migration system.
+The setup script applies the core schema and migrations 001–009 in order. Migration 009 applies the current 2,100,000,000 VCOIN allocation model and 1,050,000,000 VCOIN mining reserve. The USD 0.004 modelled reference baseline remains a separate model input, not a market price. The runner records versions and SHA-256 checksums in `schema_migrations`, uses a PostgreSQL advisory lock, skips unchanged migrations, and refuses checksum drift. It refuses `NODE_ENV=production` and rejects non-local database hosts. It is a local development setup command, not a production migration system.
 
 The integration suite uses `TEST_DATABASE_URL` and must point to a separate, disposable test database — never the development database and never production.
 
@@ -108,4 +108,4 @@ A successful JavaScript CI run does not prove that SQL has been applied to the u
 - Mining rewards are credited to the user's internal pending/eligible account during the mining period. They are not represented as an on-chain wallet balance until an on-chain payout is confirmed.
 - After the Founder formally declares the mining period complete, the system reconciles the 1,050,000,000 VCOIN mining rewards allocation, validates each user's eligible rewards and payout destination, and transfers each payable amount from the designated mining reserve Jetton wallet to the user's verified Jetton wallet.
 - Payouts require idempotency, reserve-cap enforcement, transaction finality/bounce verification, and an immutable audit trail. Never mark a payout paid before chain confirmation.
-- Migration 001 seeds the approved 1,050,000,000 VCOIN mining reserve. Migration 005 and 009 are retained as immutable historical migrations; migration 010 is the forward-only correction that restores the current 1,050,000,000 VCOIN effective cap.
+- Migration 001 seeds the approved 1,050,000,000 VCOIN mining reserve. Migration 005 is retained as immutable historical migration history; migration 009 is the forward-only correction that establishes the current 1,050,000,000 VCOIN effective cap.

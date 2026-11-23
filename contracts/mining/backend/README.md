@@ -93,7 +93,7 @@ The approved execution policy is Mainnet-only. Do not deploy or transact on TON 
 - Run syntax/unit tests and non-skipped PostgreSQL 18 integration tests against an isolated local database.
 - Verify Telegram Mini App authentication and wallet-link UX without asking for identity documents or wallet recovery secrets.
 
-Public mining must remain HTTP 503 until every wallet-balance and payout gate above is implemented, tested and independently reviewed. Enabling internal-balance mining as a shortcut is prohibited. Mainnet mining and real-value payouts require separate Founder approval and qualified security review.
+Public mining must remain HTTP 503 until every wallet-balance and payout gate above is implemented, tested and validated through the project's documented engineering checks. Enabling internal-balance mining as a shortcut is prohibited. Mainnet mining and real-value payouts require separate Founder approval and qualified security review.
 
 ## Modelled 72-hour VCOIN reference price
 

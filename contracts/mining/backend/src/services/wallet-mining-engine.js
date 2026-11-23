@@ -199,6 +199,9 @@ function createWalletMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
           startSnapshot.jetton_master_address !== endSnapshot.jetton_master_address) {
         throw new MiningError('WALLET_SNAPSHOT_IDENTITY_CHANGED', 'Wallet or Jetton master changed during the mining interval.');
       }
+      if (BigInt(session.rate_balance_base_units) !== BigInt(startSnapshot.balance_base_units)) {
+        throw new MiningError('WALLET_SNAPSHOT_BASIS_MISMATCH', 'Mining session balance does not match its recorded on-chain snapshot.');
+      }
 
       const clock = await client.query('SELECT clock_timestamp() AS now');
       const now = new Date(clock.rows[0].now);

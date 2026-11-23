@@ -64,12 +64,12 @@ function createWalletMiningEngine({
 
   async function loadWalletSnapshot(client, { userId, snapshotId, network, requireFresh }) {
     const networkConfig = NETWORKS[network];
+    if (!networkConfig) {
+      throw new MiningError('INVALID_NETWORK', 'Network must be mainnet or testnet.');
+    }
     const expectedMaster = jettonMasterAddresses && jettonMasterAddresses[network];
     if (typeof expectedMaster !== 'string' || expectedMaster.length === 0) {
       throw new MiningError('JETTON_MASTER_NOT_CONFIGURED', 'The approved VCOIN Jetton master is not configured for this mining network.');
-    }
-    if (!networkConfig) {
-      throw new MiningError('INVALID_NETWORK', 'Network must be mainnet or testnet.');
     }
     const freshnessClause = requireFresh
       ? "AND s.observed_at >= clock_timestamp() - ($6 * INTERVAL '1 second') " +

@@ -9,8 +9,15 @@ const {
 const {
   Address,
   Cell,
+  WalletContractV1R1,
+  WalletContractV1R2,
+  WalletContractV1R3,
+  WalletContractV2R1,
+  WalletContractV2R2,
+  WalletContractV3R1,
   WalletContractV3R2,
   WalletContractV4,
+  WalletContractV5R1,
   contractAddress,
   loadStateInit
 } = require('@ton/ton');
@@ -45,37 +52,42 @@ function extractSupportedWalletPublicKey(stateInit, workchain) {
   if (!stateInit.code || !stateInit.data) {
     throw new TonProofError('UNSUPPORTED_WALLET_STATE_INIT', 'Wallet state init must contain code and data.');
   }
-
+  const loadV1 = (slice) => { slice.loadUint(32); return slice.loadBuffer(32); };
+  const loadV2 = (slice) => { slice.loadUint(32); return slice.loadBuffer(32); };
+  const loadV3 = (slice) => { slice.loadUint(32); slice.loadUint(32); return slice.loadBuffer(32); };
+  const loadV4 = (slice) => { slice.loadUint(32); slice.loadUint(32); return slice.loadBuffer(32); };
+  const loadV5 = (slice) => {
+    slice.loadBoolean();
+    slice.loadUint(32);
+    slice.loadUint(32);
+    return slice.loadBuffer(32);
+  };
   const candidates = [
-    {
-      name: 'v3r2',
-      code: WalletContractV3R2.create({
-        workchain,
-        publicKey: Buffer.alloc(32)
-      }).init.code
-    },
-    {
-      name: 'v4r2',
-      code: WalletContractV4.create({
-        workchain,
-        publicKey: Buffer.alloc(32)
-      }).init.code
-    }
-  ];
+    { name: 'v1r1', contract: WalletContractV1R1, load: loadV1 },
+    { name: 'v1r2', contract: WalletContractV1R2, load: loadV1 },
+    { name: 'v1r3', contract: WalletContractV1R3, load: loadV1 },
+    { name: 'v2r1', contract: WalletContractV2R1, load: loadV2 },
+    { name: 'v2r2', contract: WalletContractV2R2, load: loadV2 },
+    { name: 'v3r1', contract: WalletContractV3R1, load: loadV3 },
+    { name: 'v3r2', contract: WalletContractV3R2, load: loadV3 },
+    { name: 'v4r2', contract: WalletContractV4, load: loadV4 },
+    { name: 'v5r1', contract: WalletContractV5R1, load: loadV5, walletId: { networkGlobalId: -239 } }
+  ].map((item) => ({
+    name: item.name,
+    load: item.load,
+    code: item.contract.create({
+      workchain,
+      publicKey: Buffer.alloc(32),
+      ...(item.walletId ? { walletId: item.walletId } : {})
+    }).init.code
+  }));
   const candidate = candidates.find((item) => item.code.equals(stateInit.code));
   if (!candidate) {
-    throw new TonProofError(
-      'UNSUPPORTED_WALLET_VERSION',
-      'This wallet contract version is not in the reviewed TON proof allowlist.'
-    );
+    throw new TonProofError('UNSUPPORTED_WALLET_VERSION', 'This wallet contract version is not in the reviewed TON proof allowlist.');
   }
-
   try {
-    const data = stateInit.data.beginParse();
-    data.loadUint(32); // seqno
-    data.loadUint(32); // wallet_id
-    const publicKey = data.loadBuffer(32);
-    if (publicKey.length !== 32) throw new Error('invalid key length');
+    const publicKey = candidate.load(stateInit.data.beginParse());
+    if (!Buffer.isBuffer(publicKey) || publicKey.length !== 32) throw new Error('invalid key length');
     return publicKey;
   } catch (_) {
     throw new TonProofError('INVALID_WALLET_STATE_INIT', 'Wallet public key could not be extracted from the supported state init.');
@@ -147,7 +159,7 @@ function verifyTonProof(input, options = {}) {
     ? Number(proof.timestamp)
     : proof.timestamp;
   if (!Number.isSafeInteger(timestamp) || timestamp < 0 ||
-      Math.abs(nowSeconds - timestamp) > PROOF_MAX_AGE_SECONDS) {
+      timestamp > nowSeconds + 30 || nowSeconds - timestamp > PROOF_MAX_AGE_SECONDS) {
     throw new TonProofError('TON_PROOF_EXPIRED', 'TON proof timestamp is outside the accepted time window.');
   }
   if (!proof.domain || typeof proof.domain.value !== 'string' ||
@@ -157,10 +169,10 @@ function verifyTonProof(input, options = {}) {
   const domainBytes = Buffer.from(proof.domain.value, 'utf8');
   if (!Number.isSafeInteger(proof.domain.lengthBytes) ||
       proof.domain.lengthBytes !== domainBytes.length ||
-      domainBytes.length > 128) {
+      domainBytes.length > 128 || !/^[a-z0-9.-]+\\.[a-z0-9.-]+$/i.test(proof.domain.value)) {
     throw new TonProofError('TON_PROOF_DOMAIN_LENGTH_INVALID', 'TON proof domain byte length is invalid.');
   }
-  if (typeof proof.payload !== 'string' || proof.payload.length < 32 || proof.payload.length > 128) {
+  if (typeof proof.payload !== 'string' || proof.payload.length < 32 || proof.payload.length > 128 || domainBytes.length + Buffer.byteLength(proof.payload, 'utf8') > 222) {
     throw new TonProofError('TON_PROOF_PAYLOAD_INVALID', 'TON proof challenge is missing or invalid.');
   }
   if (typeof proof.signature !== 'string' || proof.signature.length > 256 ||

@@ -1,3 +1,5 @@
+Current scope correction (2026-11-23): This is a historical public-communications planning pack. Any proposal below to commission, obtain, or make an independent external security audit a V COIN–TON task/release gate is superseded and excluded from the current owner-approved project workstream. Do not describe independent audit as a current project deliverable. Public claims must continue to distinguish design, implementation, testing, deployment, and issuance accurately; legal/regulatory obligations remain separate and must not be presented as completed.
+
 # V COIN – TON | Global Public Introduction Pack
 
 **Document ID:** VCT-GPIP-001  

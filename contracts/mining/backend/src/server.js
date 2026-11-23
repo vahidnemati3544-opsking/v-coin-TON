@@ -93,7 +93,14 @@ app.use(
   "/api/v1/wallet/ton-proof",
   tonProofRateLimit,
   createSessionAuthMiddleware({ pool }),
-  createTonProofRouter({ pool, expectedDomain: tonProofDomain })
+  createTonProofRouter({
+    pool,
+    expectedDomain: tonProofDomain,
+    jettonMasterAddress: process.env.VCOIN_JETTON_MASTER_ADDRESS,
+    mainnetRpcEndpoint: process.env.TON_MAINNET_RPC_ENDPOINT,
+    testnetRpcEndpoint: process.env.TON_TESTNET_RPC_ENDPOINT,
+    rpcApiKey: process.env.TON_RPC_API_KEY
+  })
 );
 
 // Fail closed until the wallet-balance mining implementation is complete.

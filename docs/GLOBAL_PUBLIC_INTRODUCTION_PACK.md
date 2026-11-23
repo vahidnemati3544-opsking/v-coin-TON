@@ -61,7 +61,7 @@ No token price, return, liquidity, exchange listing, regulatory approval or glob
 
 ### Boilerplate for media
 
-V COIN – TON is an independent project in development focused on documenting a proposed Jetton architecture on TON. Its public repository records design decisions and technical work in progress. The project does not represent that a verified on-chain token deployment, live wallet-based mining service, public token sale, exchange listing or independent security audit has been completed. Statements about future features are roadmap items, not currently available services.
+V COIN – TON is an independent project in development focused on documenting a proposed Jetton architecture on TON. Its public repository records design decisions and technical work in progress. The project does not represent that a verified on-chain token deployment, live wallet-based mining service, public token sale, exchange listing or external security certification has been completed. Statements about future features are roadmap items, not currently available services.
 
 ## 4. Localised versions
 

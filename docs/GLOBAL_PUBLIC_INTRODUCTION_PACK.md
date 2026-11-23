@@ -79,7 +79,7 @@ V COIN – TON هو مشروع مستقل قيد التطوير يستكشف ت�
 
 V COIN – TON مشروع مستقل للأصول الرقمية قيد التطوير ضمن منظومة TON. وتوثّق المستندات التقنية الحالية تصميمًا مقترحًا لرمز Jetton، ونموذجًا مقترحًا للاقتصاد الرمزي، ومتطلبات فنية للمحاسبة الشفافة واحتساب المكافآت مستقبلًا بالاعتماد على المحافظ الرقمية.
 
-ينص التصميم المعتمد على عرض أولي مقترح قدره 2,100,000,000 من VCOIN وبست خانات عشرية. وهذه معايير تصميمية لا تثبت أن الرمز قد صدر أو نُشر على الشبكة. ولا تزال أعمال التحقق من المحافظ، والتعدين، والمدفوعات، والتدقيق الأمني، والامتثال القانوني في كل سوق خاضعة للتنفيذ والتحقق المستقل.
+ينص التصميم المعتمد على عرض أولي مقترح قدره 2,100,000,000 من VCOIN وبست خانات عشرية. وهذه معايير تصميمية لا تثبت أن الرمز قد صدر أو نُشر على الشبكة. ولا تزال أعمال التحقق من المحافظ، والتعدين، والمدفوعات، والتحقق الهندسي الداخلي، والامتثال القانوني في كل سوق خاضعة للتنفيذ والتحقق بالأدلة.
 
 لا توجد أي وعود أو إقرارات بشأن سعر الرمز أو العائد أو السيولة أو الإدراج في منصات التداول أو الموافقة التنظيمية أو الإتاحة العالمية. وقد تنطوي الأصول الرقمية على مخاطر كبيرة، بما في ذلك احتمال خسارة كامل القيمة. وأي توزيع أو خدمة مستقبلية سيعتمد على الجاهزية التقنية والمتطلبات القانونية السارية.
 
@@ -101,7 +101,7 @@ V COIN – TON 是一个正在开发中的独立数字资产项目，正在研�
 
 V COIN – TON 是一个正在 TON 生态中开发的独立数字资产项目。当前资料记录了拟议的 Jetton 设计、代币经济模型，以及透明会计和未来钱包余额奖励计算的技术要求。
 
-现行设计方案提出初始供应量为 2,100,000,000 VCOIN，精度为六位小数。这些内容仅属于设计参数，并不证明该代币已经发行或部署到区块链。钱包验证、挖矿、支付、独立安全审计及各司法辖区的合规工作仍须完成实施和独立核验。
+现行设计方案提出初始供应量为 2,100,000,000 VCOIN，精度为六位小数。这些内容仅属于设计参数，并不证明该代币已经发行或部署到区块链。钱包验证、挖矿、支付、内部工程验证及各司法辖区的合规工作仍须完成实施并提供相应证据。
 
 本项目不承诺或表示任何代币价格、收益、流动性、交易平台上市、监管批准或全球可用性。数字资产可能具有重大风险，包括损失全部价值的风险。任何未来分发或服务均须以技术准备情况和适用法律要求为前提。
 
@@ -109,13 +109,13 @@ V COIN – TON 是一个正在 TON 生态中开发的独立数字资产项目。
 
 **項目簡介**
 
-V COIN – TON 是一個正在開發中的獨立數碼資產項目，正研究以 TON 生態為基礎的 Jetton 代幣設計。現有技術文件記錄了建議中的代幣參數、合約架構、會計控制，以及日後以經核實錢包餘額計算獎勵所需的技術要求。項目將分階段開發；在任何公開代幣分發之前，均須完成技術實施、獨立保安審查及適用的法律評估。
+V COIN – TON 是一個正在開發中的獨立數碼資產項目，正研究以 TON 生態為基礎的 Jetton 代幣設計。現有技術文件記錄了建議中的代幣參數、合約架構、會計控制，以及日後以經核實錢包餘額計算獎勵所需的技術要求。項目將分階段開發；在任何公開代幣分發之前，均須完成技術實施、內部工程驗證及適用的法律評估。
 
 **開發進度說明**
 
 V COIN – TON 是一個正在 TON 生態中開發的獨立數碼資產項目。現有文件記錄了建議中的 Jetton 設計、代幣經濟模型，以及透明會計和日後按錢包餘額計算獎勵的技術要求。
 
-現行設計方案提出初始供應量為 2,100,000,000 VCOIN，並採用六位小數。這些只是設計參數，並不代表代幣已經發行或部署至區塊鏈。錢包驗證、挖礦、付款、獨立保安審計，以及各司法管轄區的合規工作，仍須完成實施並接受獨立核實。
+現行設計方案提出初始供應量為 2,100,000,000 VCOIN，並採用六位小數。這些只是設計參數，並不代表代幣已經發行或部署至區塊鏈。錢包驗證、挖礦、付款、內部工程驗證，以及各司法管轄區的合規工作，仍須完成實施並提供相應證據。
 
 本項目不承諾或表示任何代幣價格、回報、流動性、交易平台上市、監管批准或全球可用性。數碼資產可能涉及重大風險，包括損失全部價值的風險。任何未來分發或服務均須視乎技術準備情況及適用法律要求。
 
@@ -137,19 +137,19 @@ Before any public offer of a crypto-asset other than an asset-referenced token o
 | X | Short factual release notes linking to evidence | No price hype, “listing soon”, giveaways, paid shilling or unverified metrics. |
 | Telegram | Technical announcements and support only after bot ownership, security and moderation are verified | No extraction claims, wallet collection, token distribution or referral incentives until tested and legally cleared. |
 | PR / media | Factual project boilerplate and document links | No paid advertorials, KOL campaigns or claims of regulator/exchange endorsement without approval and evidence. |
-| B2B outreach | Private exploratory discussions with auditors, TON infrastructure providers, wallet integrators, compliance counsel and accounting firms | No token placement, brokerage, custody, investment advice or promise of commercial returns. |
+| B2B outreach | Private exploratory discussions with TON infrastructure providers, wallet integrators, compliance counsel and accounting firms | No token placement, brokerage, custody, investment advice or promise of commercial returns. |
 
 ### First 30-day controlled sequence
 
 1. **Week 1 — Evidence room:** publish this approved development copy only after the responsible entity/contact route and risk page are complete. Link every technical claim to a versioned repository document.
-2. **Week 2 — Technical credibility:** publish one architecture explainer and one security-control update. Label each item “implemented”, “tested”, “independently audited”, or “planned” precisely.
-3. **Week 3 — B2B diligence:** send the non-solicitation project brief to a small, counsel-approved list of independent auditors, TON infrastructure specialists and compliance firms. Record replies and conflicts.
+2. **Week 2 — Technical credibility:** publish one architecture explainer and one security-control update. Label each item “implemented”, “tested”, “internally verified”, or “planned” precisely.
+3. **Week 3 — B2B diligence:** send the non-solicitation project brief to a small, counsel-approved list of TON infrastructure specialists and compliance firms. Record replies and conflicts.
 4. **Week 4 — Review, do not scale automatically:** assess factual corrections, support burden, security incidents, audience geography and legal feedback. No paid acquisition or influencer expansion unless the relevant market gate is signed off.
 
 ## 6. PR and partnership protocol
 
 **Partner categories to research (not existing partnerships):**
-- Independent TON smart-contract auditors.
+- TON infrastructure and wallet-integration specialists.
 - TON infrastructure / indexer providers for testable blockchain data.
 - Wallet integration specialists for a secure TON Connect ownership-proof flow.
 - Independent accounting and treasury-control reviewers.
@@ -168,9 +168,9 @@ Subject: V COIN – TON | Technical diligence discussion
 
 Hello,
 
-We are developing V COIN – TON as an independent project exploring a Jetton architecture on TON. We are seeking a technical and compliance-focused discussion about the requirements for independent contract review, wallet-balance verification, accounting controls and jurisdiction-specific readiness.
+We are developing V COIN – TON as an independent project exploring a Jetton architecture on TON. We are seeking a technical and compliance-focused discussion about the requirements for internal engineering verification, wallet-balance verification, accounting controls and jurisdiction-specific readiness.
 
-The project is not presenting a public token offer or asking your organisation to promote, distribute, custody or trade VCOIN. Current materials describe a design and development programme; deployment, live wallet-based mining, production payouts and independent audit remain subject to completion and verification.
+The project is not presenting a public token offer or asking your organisation to promote, distribute, custody or trade VCOIN. Current materials describe a design and development programme; deployment, live wallet-based mining, production payouts and internal engineering verification remain subject to completion and evidence.
 
 If this area falls within your organisation's expertise, we would welcome an initial discussion limited to technical scope, conflicts and the evidence required for a responsible review.
 
@@ -186,7 +186,7 @@ Public disclosures should include, at minimum:
 - Token design parameters clearly labelled as proposed until verified on-chain.
 - Allocation policy and vesting/release rules once implemented and independently reconciled.
 - Treasury governance, approval thresholds, key-management controls and periodic aggregate reporting. Confidential personal identity and sensitive wallet-control details need not be published where law permits, but must be available to authorised reviewers.
-- Independent smart-contract audit scope, report date, findings and remediation status once completed.
+- Internal engineering verification status, test coverage, known limitations and remediation status; do not imply external security certification.
 - Security incident, vulnerability disclosure and user-complaint procedures.
 - Material risks: total loss, volatility, smart-contract bugs, wallet compromise, irreversible transfers, provider outage, liquidity absence, regulatory changes and tax obligations.
 - A clear statement that no regulator, exchange, wallet provider or TON ecosystem organisation endorses the project unless written evidence supports that exact statement.

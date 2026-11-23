@@ -71,4 +71,4 @@ Status is based on repository evidence, not on the existence of documentation or
 - Existing internal-balance tests do not prove TON wallet ownership, Jetton balance reading, or real payouts.
 - The repository evidence reviewed so far does not establish a deployed VCOIN Jetton master address or a completed Jetton deployment. See `docs/JETTON_DEPLOYMENT_INVENTORY.md`.
 - The 24-hour hard claim limit is not changed by this plan.
-- Mainnet, real-value payouts and public extraction remain disabled pending separate approval and independent security review.
+- Mainnet, real-value payouts and public extraction remain disabled pending completion of the documented engineering gates and explicit Founder authorization.

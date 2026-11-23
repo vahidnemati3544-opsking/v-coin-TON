@@ -105,3 +105,20 @@ This work does not yet:
 - Submit any Mainnet or Testnet transaction.
 
 Those remain separate release gates.
+## 3. Capture a verified on-chain Jetton balance snapshot
+
+`POST /api/v1/wallet/ton-proof/snapshot`
+
+Request:
+
+```json
+{ "network": "-239" }
+```
+
+This endpoint requires a previously verified wallet for the selected chain. It reads the VCOIN Jetton wallet through TON RPC, checks the owner and configured Jetton master, and stores the observed balance, masterchain sequence, timestamp, and payload hash in `jetton_wallet_balance_snapshots`.
+
+Mainnet and Testnet must use separate Jetton master configuration:
+- `VCOIN_JETTON_MASTER_MAINNET` — configured to the reviewed deployed Mainnet master.
+- `VCOIN_JETTON_MASTER_TESTNET` — intentionally blank until a Testnet Jetton master is independently deployed and verified.
+
+A Mainnet master address is never reused as the Testnet master. The endpoint fails closed if the selected network has no configured master or its Jetton wallet cannot be verified.

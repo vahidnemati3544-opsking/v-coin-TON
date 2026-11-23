@@ -2,7 +2,7 @@
 
 **Document ID:** VCT-JETTON-SPEC-002  
 **Version:** 2.0.0  
-**Status:** Current implementation candidate for the 2.1B allocation; exact-head CI for this corrected revision is pending; independent audit and Mainnet release gates remain pending  
+**Status:** Current implementation candidate for the 2.1B allocation; exact-head CI for this corrected revision is pending; engineering verification and Mainnet release gates remain pending  
 **Network direction:** TON Mainnet only for first live issuance; no Testnet deployment is in the current execution path  
 **Token standard target:** TEP-74 Jetton with TEP-64 metadata  
 **Repository:** `vahidnemati3544-opsking/v-coin-TON`
@@ -51,7 +51,7 @@ The current implementation is in `contracts/jetton/src/vcoin.tact` and `contract
 - A natural bounce from a deterministic destination Jetton Wallet is authenticated by sender address and exact amount; only the affected role is rolled back and eligible for retry.
 - The Jetton Wallet implementation contains owner-authorized transfer and burn paths, validates internal wallet relationships, and restores balances after applicable bounced operations.
 
-These are source-level implementation statements. Independent TEP-74 interoperability and security review remains required before Mainnet.
+These are source-level implementation statements. TEP-74 interoperability and security behavior must be covered by the project's engineering tests before Mainnet. Independent external auditing is not a project release condition.
 
 ## 4. Constructor and address controls
 
@@ -94,9 +94,9 @@ Do not deploy with empty or placeholder metadata. Verify the resulting metadata 
 
 A previously recorded CI run passed lockfile generation, dependency audit, Tact compilation, and Jest Sandbox tests, but it predates the current 2.1B allocation correction and is historical evidence only. A new exact-head CI run must verify the current source, allocation plan, deployment preview, and Sandbox tests. The current verification status is tracked in `contracts/jetton/VERIFICATION_STATUS.md`.
 
-This CI pass is not an independent security audit and does not establish Mainnet readiness. Remaining evidence includes:
+This CI pass does not establish Mainnet readiness. Remaining engineering evidence includes:
 - Commit the generated lockfile to `main` and rerun CI on the resulting exact head.
-- Independently review TEP-74 / TEP-64 behavior, wallet transfers, burns, bounce handling, and message validation.
+- Complete engineering tests for TEP-74 / TEP-64 behavior, wallet transfers, burns, bounce handling, and message validation.
 - Rebuild independently and reproduce TON code-cell hashes, StateInit hashes, and deterministic addresses. A SHA-256 checksum of a BOC file is not a TON cell hash.
 - Complete metadata package/content-cell review.
 - Verify control of the five allocation destinations on TON Mainnet. The Founder allocation wallet is also the sole GAS & OPERATIONS wallet.
@@ -114,7 +114,7 @@ Before any Founder signature, present:
 - Exact attached TON values, fee estimate, reserve funding, and simulation results.
 - Exact VCOIN amount and base units for each issuance request.
 - Expected state changes and post-transaction balance/getter checks.
-- Source commit, toolchain, lockfile, BOC checksums, TON cell / StateInit hashes, and independent audit status.
+- Source commit, toolchain, lockfile, BOC checksums, TON cell / StateInit hashes, and engineering verification status.
 - Clear explanation of irreversibility and residual risks.
 
 Deployment, gas-reserve funding, and each of the five allocation issuance messages are separate on-chain operations. Do not sign or broadcast any of them until the corresponding complete transaction review has been presented and the Founder has explicitly approved it. Never send Mainnet transactions from CI.
@@ -127,7 +127,7 @@ Deployment, gas-reserve funding, and each of the five allocation issuance messag
 - Exact-head CI for the current 2.1B allocation revision: pending.
 - `package-lock.json`: committed to `main`; clean `npm ci` must be verified again on the current exact head.
 - Metadata JSON, immutable commit-pinned URI, content cell, and canonical logo URL: generated and verified in exact-head CI; external TEP-64 parser review remains a release gate.
-- Independent security / standards review: pending.
+- Engineering verification against TON standards: pending where not yet evidenced.
 - Independent TON cell and StateInit hash reproduction: pending.
 - Mainnet wallet-control proofs: pending.
 - Mainnet Master address and deployment transaction: none.

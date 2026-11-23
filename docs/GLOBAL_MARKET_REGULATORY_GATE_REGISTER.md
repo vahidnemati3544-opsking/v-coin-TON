@@ -15,7 +15,7 @@ Current policy correction (2026-11-23): This register is a historical market/reg
 
 **Current global release status: NO-GO for public token offers, paid token promotion, token sales, real-value payouts, public mining activation, Mainnet launch, or exchange/listing claims.**
 
-The current repository describes V COIN – TON as under development. The tokenomics document is approved for design, not issuance. The reviewed readiness register states that no verified Jetton deployment, wallet-based mining, production database operation, independent security audit, or jurisdiction-specific legal opinion has been established. The mining API is deliberately fail-closed with HTTP 503 until wallet-based mining is implemented and verified.
+The current repository describes V COIN – TON as under development. The tokenomics document is approved for design, not issuance. The reviewed readiness register states that no verified Jetton deployment, wallet-based mining, production database operation, external security certification, or jurisdiction-specific legal opinion has been established. The mining API is deliberately fail-closed with HTTP 503 until wallet-based mining is implemented and verified.
 
 The global programme may continue with evidence-led project-development communications, technical documentation and carefully controlled B2B research. Such communications must not invite token purchases, imply availability, or describe roadmap features as live. Every country-specific communication remains subject to local legal review.
 

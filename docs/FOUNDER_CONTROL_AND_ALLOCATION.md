@@ -46,7 +46,7 @@ A founder cannot unilaterally reverse a confirmed TON transaction or seize token
 
 Accordingly, this project will not describe founder authority as the ability to reverse all transfers or control users' private wallets. The default design is founder approval before release, not undisclosed post-transfer confiscation.
 
-If stronger custody controls are required for a particular allocation, use a disclosed vesting/escrow contract with documented release, cancellation and beneficiary rights. Do not add hidden freeze, confiscation or arbitrary clawback functions.
+Founder allocation is credited in full in one operation with no vesting, time lock, monthly installments, or staged release. Do not add a vesting/escrow mechanism to the Founder allocation. Do not add hidden freeze, confiscation or arbitrary clawback functions.
 
 ## 5. Approved allocation register
 

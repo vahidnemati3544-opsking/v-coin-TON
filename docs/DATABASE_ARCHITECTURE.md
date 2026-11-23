@@ -85,7 +85,7 @@ From `contracts/mining/backend`:
 5. Run `npm install`, then `npm run check` and `npm test`.
 6. Run `npm run db:setup` only after confirming the target.
 
-The setup script applies the core schema and migrations 001–003 in order, records versions and SHA-256 checksums in `schema_migrations`, uses a PostgreSQL advisory lock to prevent concurrent setup, skips unchanged migrations, and refuses checksum drift. It refuses `NODE_ENV=production` and rejects non-local database hosts. It is a local development setup command, not a production migration system.
+The setup script applies the core schema and migrations 001–009 in order, including the forward-only 009 correction that restores the 10,000,000,000 VCOIN supply economics, 5,000,000,000 VCOIN mining reserve, and USD 0.004 modelled reference baseline. It records versions and SHA-256 checksums in `schema_migrations`, uses a PostgreSQL advisory lock to prevent concurrent setup, skips unchanged migrations, and refuses checksum drift. It refuses `NODE_ENV=production` and rejects non-local database hosts. It is a local development setup command, not a production migration system.
 
 The integration suite uses `TEST_DATABASE_URL` and must point to a separate, disposable test database — never the development database and never production.
 

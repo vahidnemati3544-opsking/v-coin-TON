@@ -42,7 +42,7 @@ The Jetton master address, network (Testnet or Mainnet), and approved data-provi
 2. Read and validate its VCOIN Jetton balance.
 3. At the beginning of an accrual interval, persist an immutable wallet-balance snapshot and source metadata.
 4. Calculate the interval reward from that snapshot only. Deposits arriving during the interval apply to the next interval, not retroactively.
-5. Record the earned reward in the internal double-entry ledger as **pending/withdrawable internal reward**, backed by the 1,050,000,000 VCOIN mining allocation. It is not yet an on-chain token in the user's wallet.
+5. Record the earned reward in the internal double-entry ledger as **pending/withdrawable internal reward**, backed by the 5,000,000,000 VCOIN mining allocation. It is not yet an on-chain token in the user's wallet.
 6. Transfer the approved reward amount to the user's verified Jetton wallet through a controlled payout operation. Use a unique operation/idempotency key and reconcile the outgoing TON transaction.
 7. Mark the payout complete only after the correct Jetton transfer is verified on-chain and reaches the required finality/confirmation state. Failed, bounced, pending, or ambiguous transfers must not be marked paid.
 8. Only after successful on-chain payout, take a fresh verified wallet-balance snapshot for the next mining interval. The next reward is based on that wallet balance, including the VCOIN actually received.

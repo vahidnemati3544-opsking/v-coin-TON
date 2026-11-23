@@ -169,7 +169,7 @@ function verifyTonProof(input, options = {}) {
   const domainBytes = Buffer.from(proof.domain.value, 'utf8');
   if (!Number.isSafeInteger(proof.domain.lengthBytes) ||
       proof.domain.lengthBytes !== domainBytes.length ||
-      domainBytes.length > 128 || !/^[a-z0-9.-]+\\.[a-z0-9.-]+$/i.test(proof.domain.value)) {
+      domainBytes.length > 128 || !proof.domain.value.includes('.')) {
     throw new TonProofError('TON_PROOF_DOMAIN_LENGTH_INVALID', 'TON proof domain byte length is invalid.');
   }
   if (typeof proof.payload !== 'string' || proof.payload.length < 32 || proof.payload.length > 128 || domainBytes.length + Buffer.byteLength(proof.payload, 'utf8') > 222) {

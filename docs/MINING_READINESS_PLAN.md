@@ -19,7 +19,7 @@ The approved execution policy is Mainnet-only. No TON Testnet deployment or Test
 - Precision: 6 decimals. All calculations use integer Jetton base units.
 - For one immutable, verified wallet snapshot: `reward_base_units = floor(wallet_snapshot_base_units * elapsed_ms / 8,640,000,000)`.
 - After a payout is confirmed on-chain, obtain a fresh wallet snapshot for the next interval. Never count a reward both as pending internal credit and as wallet holdings.
-- The 1,050,000,000 VCOIN mining allocation is a hard maximum reserve, not permission to mint.
+- The 5,000,000,000 VCOIN mining allocation is a hard maximum reserve, not permission to mint.
 - The existing 24-hour maximum claim interval remains unchanged until its missed-claim policy is explicitly decided and tested.
 
 ## Numbered execution register

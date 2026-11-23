@@ -97,6 +97,8 @@ app.use(
     pool,
     expectedDomain: tonProofDomain,
     jettonMasterAddress: process.env.VCOIN_JETTON_MASTER_ADDRESS,
+    mainnetJettonMasterAddress: process.env.VCOIN_JETTON_MASTER_MAINNET,
+    testnetJettonMasterAddress: process.env.VCOIN_JETTON_MASTER_TESTNET,
     mainnetRpcEndpoint: process.env.TON_MAINNET_RPC_ENDPOINT,
     testnetRpcEndpoint: process.env.TON_TESTNET_RPC_ENDPOINT,
     rpcApiKey: process.env.TON_RPC_API_KEY

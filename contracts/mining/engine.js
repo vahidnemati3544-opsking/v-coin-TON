@@ -142,7 +142,7 @@ function createMiningEngine({ pool, maxClaimIntervalMs = 86400000 }) {
       [randomUUID(), userId, session.id, amount.toString(), randomUUID(), idempotencyKey]
     );
 
-    // Reserve every reward against the approved 1.05B VCOIN mining allocation.
+    // Reserve every reward against the approved 5B VCOIN mining allocation.
     // This runs inside the same PostgreSQL transaction as reward creation;
     // a missing migration or exhausted reserve therefore rolls back the claim.
     const reservation = await client.query(

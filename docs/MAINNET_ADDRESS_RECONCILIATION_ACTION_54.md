@@ -1,3 +1,5 @@
+Current policy correction (2026-11-23): This historical address-reconciliation report is superseded wherever it lists an independent qualified smart-contract/TEP audit as an active task or release gate. That workstream is excluded by the current project owner instruction. Mainnet-only execution applies; no Testnet deployment or transaction is authorized. Any address predictions or reconciliations in this report are not evidence of deployment or token issuance.
+
 # V COIN–TON Exact-Head Artifact and Master Address Reconciliation — Action #54
 
 **Review date:** 2026-11-23  

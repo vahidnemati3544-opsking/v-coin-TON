@@ -1,3 +1,5 @@
+Current policy correction (2026-11-23): This is a historical internal review. Its references to an independent external audit as an outstanding task, requirement, or release condition are superseded and excluded from the V COIN–TON workstream. Mainnet-only execution applies; no Testnet deployment or transaction is authorized. Local Sandbox verification, clean-room source rebuild, live fee/reserve simulation, and explicit Founder approval remain distinct engineering/owner gates. This correction does not claim those remaining gates are complete.
+
 # V COIN–TON Internal Security and Mainnet Fee Review
 
 Date: 2026-11-22

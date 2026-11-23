@@ -1,3 +1,5 @@
+Current policy correction (2026-11-23): Any older requirement below for an independent qualified review/audit is superseded and is not an active project task or release gate. The approved execution policy is Mainnet-only, with local Sandbox tests permitted and no Testnet deployment/transactions authorized. Founder is also the sole GAS & OPERATIONS wallet; no separate fee wallet exists. This parameter document is not authorization to deploy or issue.
+
 # VCOIN Jetton Master initialization parameters
 
 This document defines the exact argument order for the VCoinMaster StateInit and the five approved VCOIN allocation destinations.

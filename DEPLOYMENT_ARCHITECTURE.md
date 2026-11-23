@@ -102,7 +102,7 @@ Blockchain services must support:
 - Blockchain event processing.
 - Transaction confirmation tracking.
 
-No production contract may be deployed without security review and explicit approval.
+No production contract may be deployed without the project's defined engineering security checks and explicit Founder approval.
 
 8. Telegram Deployment
 

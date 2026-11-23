@@ -1,3 +1,5 @@
+Current policy correction (2026-11-23): This historical issuer-page report is superseded wherever it lists an independent security audit as a mandatory V COIN–TON task or release gate. That activity is excluded from the current project workstream. Mainnet-only execution applies; no Testnet deployment or transaction is authorized. Page/issuer functionality does not itself prove contract deployment, token issuance, or live mining.
+
 # V COIN–TON GitHub Pages and Issuer Repair — Action #53
 
 **Date:** 2026-11-22  

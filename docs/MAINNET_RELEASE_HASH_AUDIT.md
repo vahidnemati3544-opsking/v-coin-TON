@@ -1,5 +1,7 @@
 # V COIN – TON Mainnet Release Package & Hash Audit
 
+> **Scope correction (2026-11-23):** This document records historical source/release/hash checks. Any references in its historical sections to a specialist or external security audit as a pending task or release condition are superseded. Independent external auditing is not a V COIN–TON project workstream, pending task, or release condition. Technical hash reproduction and engineering release checks remain distinct activities.
+
 **Document ID:** VCT-MAINNET-AUDIT-021  
 **Action:** 21  
 **Review date:** 2026-11-21  

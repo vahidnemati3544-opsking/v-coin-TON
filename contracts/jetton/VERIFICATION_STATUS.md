@@ -1,3 +1,9 @@
+# PROJECT SCOPE CORRECTION — 2026-11-23 (Action #64)
+
+This controlling note supersedes earlier historical checklist entries that listed an independent external security audit or specialist audit as pending, required, or release-blocking. V COIN–TON has no external certification engagement, and independent external auditing is not a defined project workstream, pending task, or Mainnet release condition. Do not carry those historical checklist entries forward as current work. Continue the project's actual engineering checks: source review, deterministic builds, automated tests, Sandbox simulations, dependency scanning, exact payload/fee checks, wallet-control verification, and Founder authorization. This correction does not certify the contracts as vulnerability-free and does not waive any technical release gate.
+
+---
+
 # STATUS LABEL CORRECTION — 2026-11-23 (Action #63)
 
 This note clarifies the commit references in Action #62 and supersedes the ambiguous “Latest main commit” label in that section:
@@ -7,7 +13,7 @@ This note clarifies the commit references in Action #62 and supersedes the ambig
 - Run #319 artifact ID `14796122451`; ZIP SHA-256 `8c39f933f7a1730748ab1d4f6597fb3fa413853c64b0b723dc9886c48b042750`. The downloaded exact-head artifact was independently rechecked; its Master code/data/StateInit, metadata, five Jetton Wallet StateInit hashes, and friendly-address checksums match the Action #62 values.
 - Run #319 exact-head evidence: lockfile install, Tact compile, TEP-64 content generation, unsigned preview generation, issuer guards, Pages deployment and endpoint verification all passed; npm audit reported zero vulnerabilities; Jest passed 3 suites / 21 tests.
 - This status-label correction changes documentation only; it does not change the contract, configuration, metadata, issuer, allocation addresses or transaction payloads.
-- Mainnet remains NO-GO until the independent qualified security audit, independent clean-room source rebuild, Founder wallet-control verification and live exact-payload fee/reserve simulation are complete. No Mainnet or Testnet transaction was sent.
+- Mainnet remains NO-GO until the clean-room source rebuild, Founder wallet-control verification and live exact-payload fee/reserve simulation are complete. No Mainnet or Testnet transaction was sent.
 
 ## Action #63 — Correct source-baseline labeling and record Action #62 exact-head CI
 
@@ -20,7 +26,7 @@ This note clarifies the commit references in Action #62 and supersedes the ambig
 **Latest main commit:** `6e3ad85e99b454c1f38a7fea74a982fd89ee3ede` — [commit](https://github.com/vahidnemati3544-opsking/v-coin-TON/commit/6e3ad85e99b454c1f38a7fea74a982fd89ee3ede).  
 **Exact-head CI:** run #318 / ID `45120195381` — [GitHub Actions](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45120195381) — **success**; both `build-and-test` and `deploy-issuer` succeeded.  
 **Exact-head release artifact:** ID `14793237989`; ZIP SHA-256 `a2ac3c1d0af79e7231b84b8baa00108de2bdfef0ae867a343d70c105e4112313`.  
-**Release disposition: NO-GO for Mainnet signing, deployment, or issuance.** The CI success resolves the exact-head build/Pages gate, not the independent audit, clean-room rebuild, wallet-control, or live fee gates.
+**Release disposition: NO-GO for Mainnet signing, deployment, or issuance.** The CI success resolves the exact-head build/Pages gate, not the clean-room rebuild, wallet-control, or live fee gates.
 
 ## Exact-head build and security evidence
 
@@ -56,7 +62,6 @@ The preview constructor arguments match the five canonical owner addresses in `d
 
 ## Release gates still open
 
-1. Qualified independent smart-contract / TEP-74 / TEP-64 security audit: **not evidenced in the repository; pending**. The internal source review is not an external audit.
 2. Independent clean-room rebuild from the exact source and pinned toolchain: **pending**. Action #62 reproduced hashes from the exact CI BOCs but did not independently compile the source.
 3. Founder wallet-control and intended TON Mainnet network verification for the five owner destinations: **pending**; an address register is not proof of control.
 4. Live fee and Master-reserve simulation against the exact deployment and five issuance payloads: **pending**. 1.00 TON is the preview attachment, not a guaranteed total debit.
@@ -89,7 +94,7 @@ The preview constructor arguments match the five canonical owner addresses in `d
 **Exact-head CI for this corrected allocation revision:** pending verification; earlier CI runs do not verify the current source head.  
 **Current preview Master address / StateInit hash:** not generated for the corrected source head.  
 **Recipient Jetton Wallet predictions and artifact hashes:** cleared and invalidated; regenerate from the exact reviewed build and independently reproduce before any signature.  
-**Release disposition: NO-GO for Mainnet deployment and issuance until exact-head CI, clean-room hash reproduction, independent security review, wallet-control verification, and live fee/reserve checks pass.**
+**Release disposition: NO-GO for Mainnet deployment and issuance until exact-head CI, clean-room hash reproduction, wallet-control verification, and live fee/reserve checks pass.**
 
 The previous incorrect economic revision has been removed from the active source, configuration, allocation plan, issuer, and current migration runner. The current allocation is the 2.1B model above. Historical deployment previews and derived addresses from earlier source revisions must not be reused, even where a previous preview also displayed a 2.1B supply, because the current source and allocation revision require fresh exact-head build and hash verification.
 
@@ -117,7 +122,7 @@ No Mainnet deployment, token issuance, or wallet transfer has been confirmed by 
 - The Master source includes the Founder-only `VCoinWithdraw` path, protected by a 0.25 TON minimum reserve plus a 0.10 TON fee buffer. The issuer does not expose a withdrawal control; a withdrawal requires a separate reviewed payload.
 - Public mining remains HTTP 503 until verified Mainnet Jetton wallet ownership, balance snapshots, payout and reconciliation are implemented.
 - No Mainnet deployment, issuance, transfer or payout has been sent. The predicted Master/Jetton Wallet addresses are not on-chain evidence.
-- Remaining gates: qualified independent smart-contract/TEP-74/TEP-64 audit; independent clean-room rebuild; live fee/reserve review; Founder review of network, signer, metadata, addresses and exact payloads; explicit Founder signature for deployment and each separate allocation.
+- Remaining gates: independent clean-room rebuild; live fee/reserve review; Founder review of network, signer, metadata, addresses and exact payloads; explicit Founder signature for deployment and each separate allocation.
 - Current execution policy is Mainnet-only. No Testnet deployment or Testnet transaction is authorized.
 
 See [Action #53 repository and ZIP review](../../docs/PROJECT_REVIEW_ACTION_53.md).
@@ -414,7 +419,7 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 - Master code cell hash: 3f90f875f2f62e8c80414b34b87bfbe421754bc622f72d8cddebb6537d2232ea.
 - Predicted Jetton Wallets: Founder EQB8AerdUs4kIiwgXYNXn97vInNGz1i6mM82aRz6Qk-yLXT8; Mining EQDSRCdDD6aozmwM7RIHyt9D-RyayizOMu5xENy0SPXwnWqd; Treasury EQDVyMsB_lGSxbI9-GSfr_Np3NohePKdYpaBEUitvAYFGsy-; Liquidity EQAnRjBQl3D9c0s5GV0t8RlTMReOFQRNNXoc3oyVVgjzl5MH; Ecosystem EQCtNm8cneWOwU_JFfK_rf9Os7_Y8yItALCtI0ZYvoHQX8xs.
 - Preview amounts are confirmed as 420,000,000 / 1,050,000,000 / 210,000,000 / 210,000,000 / 210,000,000 VCOIN, totaling exactly 2,100,000,000. The corresponding base-unit values are generated from the canonical deployment config and validated against its total supply.
-- These are predicted addresses and unsigned payloads only. Independent clean-room hash reproduction of this revised build, third-party contract audit, live fee simulation, successful Testnet rehearsal, deployed-Master getter checks, and owner signatures remain outstanding.
+- These are predicted addresses and unsigned payloads only. Independent clean-room hash reproduction of this revised build, live fee simulation, successful Testnet rehearsal, deployed-Master getter checks, and owner signatures remain outstanding.
 
 
 ## Action #37 — 2.1B release reconciliation and database migration repair
@@ -475,7 +480,7 @@ This is confirmation of the intended allocation plan, not a signature authorizat
 - Liquidity / Market Jetton Wallet: `EQCD8fnJoad9jE543l5o9KH71TGkinQEk4MgmrECavxRu_6N`; hash `83f1f9c9a1a77d8c4e78de5e68f4a1fbd531a48a74049383209ab1026afc51bb`.
 - Ecosystem / Marketing Jetton Wallet: `EQCDG9Bz_yAP0qZ34lH_vHhj_2eLbCVHPu-dHnG5BtBC7nPR`; hash `831bd073ff200fd2a677e251ffbc7863ff678b6c25473eef9d1e71b906d042ee`.
 - An independent Python BOC parser recalculated the Master StateInit hash, Master code cell hash, Jetton Wallet code cell hash, and all five Jetton Wallet StateInit hashes; all matched the CI artifact. The hash bytes embedded in all six friendly addresses and all six CRC16-XMODEM checksums also verified.
-- This is deterministic build/hash verification, not a third-party security audit or on-chain verification. Testnet rehearsal, external audit, live fee simulation, Mainnet deployment, and five allocation mints remain pending.
+- This is deterministic build/hash verification, not a security certification or on-chain verification. Testnet rehearsal, live fee simulation, Mainnet deployment, and five allocation mints remain pending.
 
 ## Action #42 — Enforce Founder-only GAS role, sequential issuance, and regenerate addresses
 

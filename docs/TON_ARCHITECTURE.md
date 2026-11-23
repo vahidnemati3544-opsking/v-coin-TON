@@ -41,7 +41,7 @@ The rate is exactly 1% per 24 hours at every level 1–400. Use integer base uni
 
 The current execution policy is Mainnet-only. Local development, deterministic builds, offline inspection and TON Sandbox tests are permitted. No TON Testnet deployment or Testnet transaction is authorized. Never mix Testnet and Mainnet addresses, balances, payloads or wallet sessions.
 
-Mainnet deployment, initial issuance and real-value transfers remain NO-GO until the exact source and artifacts are reviewed, local Sandbox tests pass, an independent qualified smart-contract/TEP-74/TEP-64 audit is completed, a clean-room rebuild and live fee/reserve review pass, and the Founder explicitly approves and signs each transaction.
+Mainnet deployment, initial issuance and real-value transfers remain NO-GO until the exact source and artifacts pass the project's defined engineering review, local Sandbox tests pass, the clean-room rebuild and live fee/reserve checks pass, and the Founder explicitly approves and signs each transaction. Independent external auditing is not part of the V COIN–TON project scope or release checklist.
 
 ## 7. Founder / GAS & OPERATIONS wallet
 
@@ -53,11 +53,11 @@ TON needed for deployment, Master reserve funding and authorized operational fee
 
 - The repository contains the VCoinMaster and Jetton Wallet source, allocation guards, deployment preview generator, Sandbox tests, and TonConnect issuer assets.
 - GitHub Actions run #252 on source commit `22534f7d03d896ea45fbe330a7a5a9940d44d419` passed the build-and-test job, including Tact compilation, metadata-cell generation, unsigned Mainnet preview generation, Jest tests, issuer syntax/sequence guards, dependency audit and artifact upload.
-- The exact run #252 contract artifact SHA-256 is `800946828268df7e1b522c9da5d162f878814711c02a7525dff1eafbc99fa853`. Independent BOC/hash/address checks were recorded in Action #51. This is not a clean-room source rebuild or external security audit.
+- The exact run #252 contract artifact SHA-256 is `800946828268df7e1b522c9da5d162f878814711c02a7525dff1eafbc99fa853`. Independent BOC/hash/address checks were recorded in Action #51. This is not a clean-room source rebuild or external certification.
 - The GitHub Pages issuer deployment job remains blocked: the Pages site lookup returned 404 and the GitHub Actions integration was denied permission to create the Pages site. The hosted issuer URL is not confirmed deployed.
 - The public mining API remains intentionally blocked with HTTP 503 until wallet-based mining, verified chain balance reads, reconciliation and payout controls are complete.
 - No Mainnet Jetton master deployment, initial issuance, allocation transfer, deployed-Master getter check or on-chain payout has been demonstrated.
-- Independent smart-contract audit, clean-room rebuild, live fee/reserve review and Founder transaction approval remain outstanding.
+- Clean-room rebuild, live fee/reserve review and Founder transaction approval remain outstanding. Independent external auditing is not a V COIN–TON project task or release condition.
 
 The project must not be described as deployed, issued, extraction-ready or performing real on-chain mining until the relevant release gates and on-chain evidence exist.
 

@@ -1,6 +1,6 @@
 # V COIN – TON Security and Anti-Fraud Requirements
 
-**Status:** Security requirements and selected backend controls are documented; full implementation and independent review are pending.
+**Status:** Security requirements and selected backend controls are documented; implementation and operational checks are tracked as engineering work. No external security-audit company has been contracted or engaged. Independent auditing is not a defined project workstream, pending task, or release condition.
 
 ## 1. Security principles
 
@@ -27,7 +27,7 @@
 - Idempotent mining start and claim handling, covered by PostgreSQL integration tests.
 - Production PostgreSQL TLS configuration with certificate verification enabled.
 
-These controls do not constitute a complete security audit.
+These controls are documented engineering safeguards; they do not imply external certification or a guarantee that no vulnerabilities exist.
 
 ## 3. Authentication and authorization
 
@@ -89,7 +89,6 @@ Before staging or production:
 - Penetration testing of authentication and business APIs.
 - Monitoring and alerting for failures and suspicious activity.
 - Incident response and credential rotation procedures.
-- Independent qualified smart-contract and TEP-74/TEP-64 review before any Mainnet deployment or issuance.
 
 ## 8. Release restrictions
 
@@ -105,14 +104,14 @@ No real-value transfer, token issuance, Mainnet deployment, or public mining lau
 - A valid bounce rolls back only the failed role's amount and reopens only that role for retry; successful allocations remain recorded.
 - The five-wallet allocation manifest is in contracts/jetton/allocation/allocation-plan.json.
 - Executable Sandbox tests cover fixed destinations, exact amounts, owner authorization, underfunding, natural bounce rollback, retry, and final issuance lock.
-- CI success is necessary but does not replace independent review, dependency audit, or complete local TON Sandbox verification. Testnet deployment and transactions are not authorized.
+- CI success alone is not sufficient. The project must complete its defined local TON Sandbox verification and engineering release checks. Testnet deployment and transactions are not authorized.
 
 ## 10. Compiler and dependency maintenance
 
 - The CI dependency audit is captured as an artifact and the verification workflow fails when high or critical npm advisories are present.
 - Zod and protobufjs are pinned to patched versions through npm overrides; CI has verified that the Tact build and Sandbox suite still pass with these overrides.
 - The current Tact compiler package is upstream-deprecated in favor of Tolk. This is a toolchain-maintenance risk, not a demonstrated flaw in the compiled contract bytecode.
-- Before Mainnet release, an independent reviewer must assess the Tact toolchain and either approve its continued use for this fixed contract or require a Tolk migration. No Mainnet deployment is authorized by the CI result alone.
+- Before Mainnet release, the project must assess the Tact toolchain maintenance risk and decide whether to retain it for this fixed contract or migrate to Tolk. No Mainnet deployment is authorized by the CI result alone.
 
 ## 11. Founder immediate full-withdrawal authority
 

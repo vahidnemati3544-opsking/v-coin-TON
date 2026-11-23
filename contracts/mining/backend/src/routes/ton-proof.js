@@ -9,19 +9,27 @@ function createTonProofRouter({
   pool,
   expectedDomain,
   jettonMasterAddress,
+  mainnetJettonMasterAddress,
+  testnetJettonMasterAddress,
   mainnetRpcEndpoint,
   testnetRpcEndpoint,
   rpcApiKey
 }) {
   const router = express.Router();
   const service = createTonProofService({ pool, expectedDomain });
+  const masterForNetwork = (network) => {
+    if (network === 'mainnet') return mainnetJettonMasterAddress || jettonMasterAddress;
+    if (network === 'testnet') return testnetJettonMasterAddress;
+    return null;
+  };
   const snapshotService = createWalletSnapshotService({
     pool,
-    jettonMasterAddress,
+    jettonMasterAddress: masterForNetwork,
     providerFactory(network) {
+      const selectedMaster = masterForNetwork(network);
       return createTonRpcProvider({
         network,
-        jettonMasterAddress,
+        jettonMasterAddress: selectedMaster,
         endpoint: network === 'mainnet'
           ? (mainnetRpcEndpoint || NETWORKS.mainnet.defaultEndpoint)
           : (testnetRpcEndpoint || NETWORKS.testnet.defaultEndpoint),

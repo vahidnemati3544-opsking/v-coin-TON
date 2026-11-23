@@ -29,23 +29,23 @@ Status is based on repository evidence, not on the existence of documentation or
 | No. | File / area | Required action and acceptance evidence | Status | Next action |
 |---:|---|---|---|---|
 | 1 | Repository boundary | Work only in V-Coin-TON | DONE | Maintain boundary |
-| 2 | `contracts/mining/engine.js` | Replace internal-balance eligibility with immutable verified wallet snapshots | BLOCKED | Implement after master/network/provider are approved |
-| 3 | `contracts/mining/backend/src/routes/mining.js` | Expose only wallet-policy-compliant status/start/claim/end routes | BLOCKED | Keep public API disabled; add wallet routes after implementation |
-| 4 | PostgreSQL schema | Store wallet links, proof status, network/master, snapshots and payout lifecycle | PARTIAL | Migration 008 has snapshot/lease storage; add wallet-proof and payout lifecycle only after schema review |
+| 2 | `contracts/mining/engine.js` and `src/services/wallet-mining-engine.js` | Add wallet-snapshot-based accrual; preserve legacy engine only for isolated tests | CODE ADDED; RELEASE BLOCKED | Review provisional start/end balance rule and integrate only after live Mainnet verification |
+| 3 | `contracts/mining/backend/src/routes/mining.js` | Expose only wallet-policy-compliant status/start/claim/end routes | BLOCKED; HTTP 503 RETAINED | Keep public API disabled until live-chain, economic-policy and payout gates pass |
+| 4 | PostgreSQL schema and migrations 008, 010–012 | Store verified wallet links, chain-specific bindings, Jetton snapshots and mining snapshot basis | CODE ADDED; CI VERIFICATION PENDING | Review migration evidence; payout lifecycle remains separate |
 | 5 | Mining reserve migration | Preserve 1.05B VCOIN cap with atomic reservation/release | CODE PRESENT; TEST PENDING | Verify rollback and exhaustion on PostgreSQL 18 |
-| 6 | Ledger settlement | Separate pending reward from on-chain confirmed payout | BLOCKED | Implement payout-aware double-entry lifecycle |
+| 6 | Ledger settlement and payout lifecycle | Post wallet-backed mining accrual to internal double-entry ledger; keep on-chain payout separate | PARTIAL | Implement payout transaction, confirmation, bounce and reconciliation lifecycle |
 | 7 | Migration 003 | Existing migration snapshots internal balances, not wallet balances | NOT COMPLIANT | Replace/retire only through a reviewed migration |
 | 8 | Database setup | Verify ordered migrations and checksums on isolated PostgreSQL 18 | PENDING | Run against dedicated test DB after backup |
-| 9 | Reward arithmetic | Test exact integer formula and levels 1, 2, 100, 200, 399, 400 | PARTIAL | Add wallet-snapshot unit tests and execute suite |
-| 10 | PostgreSQL integration | Prove concurrency, idempotency, reserve rollback and ledger reconciliation | PENDING | Run against isolated PostgreSQL 18; do not count skipped tests |
-| 11 | GitHub Actions | Verify a successful PostgreSQL 18 CI run | NOT VERIFIED | Inspect actual workflow run and logs |
+| 9 | Reward arithmetic and wallet-mining engine | Test exact integer 1%/24h formula and wallet snapshot basis | PARTIAL; NEW INTEGRATION TEST ADDED | Complete current GitHub Actions run; owner review provisional interval basis |
+| 10 | PostgreSQL integration | Prove wallet snapshot ownership, stale-snapshot rejection, idempotency, reserve and ledger settlement | PARTIAL; NEW TESTS ADDED | Verify latest PostgreSQL 18 CI run; add concurrency and reserve-exhaustion cases |
+| 11 | GitHub Actions | Verify PostgreSQL 18 CI for wallet proof, RPC reader, snapshot persistence and mining engine | PRIOR RUNS PASS; LATEST RUN PENDING | Confirm current head SHA workflows and retain their run evidence |
 | 12 | Telegram authentication | Verify Mini App HMAC and revocable sessions | CODE PRESENT; TEST PENDING | Run integration suite |
 | 13 | Telegram bot / Mini App | Verify configured bot and owner's real login flow | PENDING | Configure secrets privately and test |
 | 14 | User account setup | Create owner test account with auditable onboarding | PENDING | Implement after wallet-link flow |
 | 15 | 400-level schedule | Seed and verify all 400 levels; keep rate invariant | PENDING | Define upgrade economics separately; do not invent costs |
-| 16 | Wallet ownership | Prove wallet control using TON Connect proof/signature | BLOCKED | Implement and test proof, expiry and revocation |
-| 17 | TON Jetton identity | Record the owner-supplied deployed master and independently verify its live getters/network | OWNER-PROVIDED DEPLOY TX; LIVE GETTERS PENDING | Verify exact deployed master; do not use prior predicted address |
-| 18 | Chain data | Read fresh verified balance and validate owner/master/network/source context | BLOCKED | Select trusted provider and implement fail-closed reader |
+| 16 | Wallet ownership / `ton-proof` | Verify TON Connect Ed25519 proof, StateInit address, domain, expiry and single-use challenge | CODE ADDED; CI PASSED ON PRIOR HEAD | Confirm latest CI; configure exact dApp domain before deployment |
+| 17 | TON Jetton identity | Record owner-supplied deployed Mainnet master and independently verify live getters/network | OWNER-PROVIDED DEPLOY TX; LIVE GETTERS PENDING | Read live Mainnet master data and compare with Tonviewer; Testnet master remains unset |
+| 18 | Chain data / `ton-rpc-provider.js` | Read fresh Jetton balance and validate derived wallet, owner, master, network and source context | CODE ADDED; LIVE RPC PENDING | Configure deployment RPC credentials and compare a live read with Tonviewer |
 | 19 | Payout | Send Jettons and reconcile transaction, finality, bounce and retries | BLOCKED | Approve sender/signing custody architecture; never collect seed phrases |
 | 20 | Controlled rehearsal | Use local TON Sandbox and isolated PostgreSQL; compare simulated wallet snapshot, reward and ledger | BLOCKED | All preceding technical gates must pass; no Testnet deployment/transaction |
 | 21 | Go / No-Go | Review evidence, security, reserve, backup and owner approval | BLOCKED | Explicit owner approval after evidence review |

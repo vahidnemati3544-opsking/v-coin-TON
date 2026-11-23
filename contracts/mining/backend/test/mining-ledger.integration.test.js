@@ -559,3 +559,89 @@ test('wallet-backed mining refuses a stale chain snapshot and does not accrue fr
     await pool.end();
   }
 });
+
+
+test('TON proof challenges are session-bound, single-use, and cannot silently replace a verified Mainnet wallet', {
+  skip: !databaseUrl
+}, async () => {
+  const pool = new Pool({ connectionString: databaseUrl, max: 4 });
+  try {
+    await applyTestMigrations(pool);
+    const { generateKeyPairSync, sign, createHash } = require('node:crypto');
+    const { WalletContractV4 } = require('@ton/ton');
+    const { beginCell, storeStateInit } = require('@ton/core');
+    const { createTonProofService, buildTonProofDigest, TonProofError } = require('../src/services/ton-proof');
+
+    const telegramId = String(BigInt(Date.now()) * 10000n + BigInt(process.pid) + 90n);
+    const userResult = await pool.query(
+      "INSERT INTO users (telegram_user_id, username) VALUES ($1::bigint, 'ci_ton_proof_test') RETURNING id",
+      [telegramId]
+    );
+    const userId = userResult.rows[0].id;
+    const tokenHash = createHash('sha256').update(randomUUID()).digest('hex');
+    const sessionResult = await pool.query(
+      'INSERT INTO user_sessions (user_id, token_hash, expires_at) ' +
+      "VALUES ($1, $2, clock_timestamp() + INTERVAL '1 hour') RETURNING id",
+      [userId, tokenHash]
+    );
+    const sessionId = sessionResult.rows[0].id;
+    const service = createTonProofService({ pool, expectedDomain: 'app.example.com' });
+
+    async function signedWalletProof(payload) {
+      const keyPair = generateKeyPairSync('ed25519');
+      const spki = keyPair.publicKey.export({ format: 'der', type: 'spki' });
+      const publicKey = spki.subarray(spki.length - 32);
+      const wallet = WalletContractV4.create({ workchain: 0, publicKey });
+      const walletStateInit = beginCell().store(storeStateInit(wallet.init)).endCell().toBoc().toString('base64');
+      const nowSeconds = Math.floor(Date.now() / 1000);
+      const proof = {
+        timestamp: nowSeconds,
+        domain: { lengthBytes: Buffer.byteLength('app.example.com', 'utf8'), value: 'app.example.com' },
+        payload
+      };
+      proof.signature = sign(null, buildTonProofDigest(wallet.address, proof), keyPair.privateKey).toString('base64');
+      return {
+        address: wallet.address.toString({ bounceable: true, urlSafe: true }),
+        network: '-239',
+        walletStateInit,
+        publicKey: publicKey.toString('hex'),
+        proof
+      };
+    }
+
+    const challenge = await service.createChallenge({ userId, sessionId, network: 'mainnet' });
+    const firstProof = await signedWalletProof(challenge.payload);
+    const verified = await service.verifyAndBind({ userId, sessionId, input: firstProof });
+    assert.equal(verified.walletVerified, true);
+    assert.equal(verified.network, 'mainnet');
+
+    const storedWallet = await pool.query(
+      "SELECT wallet_address, chain_global_id, is_verified FROM wallets " +
+      "WHERE user_id = $1 AND network = 'TON' AND chain_global_id = '-239'",
+      [userId]
+    );
+    assert.equal(storedWallet.rowCount, 1);
+    assert.equal(storedWallet.rows[0].wallet_address, verified.walletAddress);
+    assert.equal(storedWallet.rows[0].is_verified, true);
+
+    await assert.rejects(
+      service.verifyAndBind({ userId, sessionId, input: firstProof }),
+      (error) => error instanceof TonProofError && error.code === 'TON_PROOF_CHALLENGE_INVALID'
+    );
+
+    const replacementChallenge = await service.createChallenge({ userId, sessionId, network: 'mainnet' });
+    const replacementProof = await signedWalletProof(replacementChallenge.payload);
+    await assert.rejects(
+      service.verifyAndBind({ userId, sessionId, input: replacementProof }),
+      (error) => error instanceof TonProofError && error.code === 'WALLET_ALREADY_BOUND'
+    );
+
+    const replacementChallengeRow = await pool.query(
+      'SELECT consumed_at FROM ton_proof_challenges WHERE payload_sha256 = $1',
+      [createHash('sha256').update(replacementChallenge.payload).digest('hex')]
+    );
+    assert.equal(replacementChallengeRow.rows[0].consumed_at, null);
+  } finally {
+    await pool.end();
+  }
+});

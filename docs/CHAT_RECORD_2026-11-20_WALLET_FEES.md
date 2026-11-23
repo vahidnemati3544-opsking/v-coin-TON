@@ -1,3 +1,5 @@
+Historical conversation record — superseded (2026-11-23): The earlier decision recorded below for a separate GAS & OPERATIONS wallet and 10,000,000,000 VCOIN supply is no longer current. The controlling decision is 2,100,000,000 VCOIN total supply (6 decimals), exactly five allocation wallets, and the Founder wallet is also the sole GAS & OPERATIONS wallet. No sixth wallet or separate fee wallet exists. Mainnet-only execution applies; no Testnet deployment or transaction is authorized. Retain the following text solely as a historical record, not as current instructions.
+
 # V COIN – TON | Conversation Record: Operational TON Fee Wallet
 
 **Record ID:** VCT-CHAT-2026-11-20-FEES  

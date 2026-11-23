@@ -13,6 +13,7 @@ const {
 } = require("./config/database");
 const { createTelegramAuthRouter, createSessionAuthMiddleware } = require("./auth/telegram");
 const { createPriceReferenceRouter, startPriceReferenceScheduler } = require("./services/price-reference");
+const { createTonProofRouter } = require("./routes/ton-proof");
 
 const app = express();
 
@@ -76,9 +77,38 @@ app.use(
 // Public modelled reference price and 72-hour candle history.
 app.use("/api/v1/price-reference", createPriceReferenceRouter({ pool }));
 
-// Fail closed until the wallet-balance mining implementation is complete.
-// The current engine still uses internal PostgreSQL balances and must not be
-// exposed as an extraction API under the owner's approved TON-wallet rule.
+// Session-bound TON Connect proof authentication. This verifies wallet ownership
+// but does not enable mining or submit any blockchain transaction.
+const tonProofDomain = process.env.TON_PROOF_DOMAIN || "";
+const tonProofRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler(req, res) {
+    return res.status(429).json({ error: "RATE_LIMIT_EXCEEDED" });
+  }
+});
+app.use(
+  "/api/v1/wallet/ton-proof",
+  tonProofRateLimit,
+  createSessionAuthMiddleware({ pool }),
+  createTonProofRouter({
+    pool,
+    expectedDomain: tonProofDomain,
+    jettonMasterAddress: process.env.VCOIN_JETTON_MASTER_ADDRESS,
+    mainnetJettonMasterAddress: process.env.VCOIN_JETTON_MASTER_MAINNET,
+    testnetJettonMasterAddress: process.env.VCOIN_JETTON_MASTER_TESTNET,
+    mainnetRpcEndpoint: process.env.TON_MAINNET_RPC_ENDPOINT,
+    testnetRpcEndpoint: process.env.TON_TESTNET_RPC_ENDPOINT,
+    rpcApiKey: process.env.TON_RPC_API_KEY
+  })
+);
+
+// Fail closed: the legacy engine still uses internal PostgreSQL balances.
+// A separate wallet-backed engine and snapshot basis now exist, but public
+// mining remains disabled pending live-chain validation, security review,
+// and payout reconciliation under the owner's approved TON-wallet rule.
 app.use("/api/v1/mining", miningApiRateLimit, (req, res) => {
   return res.status(503).json({
     error: "WALLET_BALANCE_MINING_NOT_IMPLEMENTED",

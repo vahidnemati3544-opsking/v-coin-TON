@@ -65,6 +65,31 @@ async function applyTestMigrations(pool) {
       path.join(databaseDir, 'migrations/007-purchase-and-mining-payout-settlement.sql'), 'utf8'
     );
     await client.query(settlementMigration);
+
+    const walletSnapshotMigration = await fs.readFile(
+      path.join(databaseDir, 'migrations/008-wallet-snapshots-and-offline-mining.sql'), 'utf8'
+    );
+    await client.query(walletSnapshotMigration);
+
+    const allocationMigration = await fs.readFile(
+      path.join(databaseDir, 'migrations/009-21b-vcoin-allocation-baseline.sql'), 'utf8'
+    );
+    await client.query(allocationMigration);
+
+    const tonProofMigration = await fs.readFile(
+      path.join(databaseDir, 'migrations/010-ton-proof-challenges.sql'), 'utf8'
+    );
+    await client.query(tonProofMigration);
+
+    const walletChainMigration = await fs.readFile(
+      path.join(databaseDir, 'migrations/011-wallet-chain-separation.sql'), 'utf8'
+    );
+    await client.query(walletChainMigration);
+
+    const walletMiningMigration = await fs.readFile(
+      path.join(databaseDir, 'migrations/012-wallet-backed-mining-basis.sql'), 'utf8'
+    );
+    await client.query(walletMiningMigration);
   } finally {
     if (lockAcquired) {
       try { await client.query('SELECT pg_advisory_unlock(741230017)'); } catch (_) { /* preserve original error */ }
@@ -121,7 +146,7 @@ test('purchase and payout settlement schema is idempotent and remains gated by F
   }
 });
 
-test('owner-approved migrations apply the 1.05B mining cap, USD 0.008 baseline, and 50% annual compound rate', {
+test('owner-approved migrations apply the 1.05B mining cap, USD 0.004 baseline, and 50% annual compound rate', {
   skip: !databaseUrl
 }, async () => {
   const pool = new Pool({ connectionString: databaseUrl, max: 2 });
@@ -135,8 +160,8 @@ test('owner-approved migrations apply the 1.05B mining cap, USD 0.008 baseline, 
     const price = await pool.query(
       'SELECT initial_price_usd::text, current_price_usd::text, increase_rate_percent::text FROM price_reference_state WHERE singleton = TRUE'
     );
-    assert.equal(Number(price.rows[0].initial_price_usd), 0.008);
-    assert.equal(Number(price.rows[0].current_price_usd), 0.008);
+    assert.equal(Number(price.rows[0].initial_price_usd), 0.004);
+    assert.equal(Number(price.rows[0].current_price_usd), 0.004);
     assert.equal(price.rows[0].increase_rate_percent, '0.33381492');
   } finally {
     await pool.end();
@@ -372,6 +397,251 @@ test('Telegram login creates a hashed session that can be read and revoked in Po
     assert.equal(revokedResponse.status, 401);
   } finally {
     if (server) await new Promise((resolve) => server.close(resolve));
+    await pool.end();
+  }
+});
+
+
+test('wallet-backed mining accrues from finalized Jetton snapshots and settles to the internal ledger', {
+  skip: !databaseUrl
+}, async () => {
+  const pool = new Pool({ connectionString: databaseUrl, max: 4 });
+  try {
+    await applyTestMigrations(pool);
+    const { createWalletMiningEngine } = require('../src/services/wallet-mining-engine');
+
+    await pool.query(
+      'INSERT INTO levels (level, upgrade_cost_base_units, mining_rate_base_units_per_second) ' +
+      'VALUES (1, 0, 0) ON CONFLICT (level) DO NOTHING'
+    );
+
+    const telegramId = String(BigInt(Date.now()) * 10000n + BigInt(process.pid) + 88n);
+    const userResult = await pool.query(
+      "INSERT INTO users (telegram_user_id, username) VALUES ($1::bigint, 'ci_wallet_mining_test') RETURNING id",
+      [telegramId]
+    );
+    const userId = userResult.rows[0].id;
+    await pool.query(
+      'INSERT INTO user_levels (user_id, current_level) VALUES ($1, 1)',
+      [userId]
+    );
+
+    const owner = '0:' + 'a'.repeat(64);
+    const master = '0:' + 'b'.repeat(64);
+    const jettonWallet = '0:' + 'c'.repeat(64);
+    const walletResult = await pool.query(
+      "INSERT INTO wallets (user_id, network, chain_global_id, wallet_address, is_verified) " +
+      "VALUES ($1, 'TON', '-239', $2, TRUE) RETURNING id",
+      [userId, owner]
+    );
+    const walletId = walletResult.rows[0].id;
+
+    async function insertSnapshot(balance) {
+      const hash = require('node:crypto').createHash('sha256').update(randomUUID()).digest('hex');
+      const result = await pool.query(
+        'INSERT INTO jetton_wallet_balance_snapshots ' +
+        '(wallet_id, network, jetton_master_address, owner_wallet_address, jetton_wallet_address, ' +
+        'balance_base_units, chain_block_seqno, source, observed_at, finalized_at, is_final, source_payload_sha256) ' +
+        "VALUES ($1, 'mainnet', $2, $3, $4, $5::numeric, 100, 'ton_rpc', clock_timestamp(), clock_timestamp(), TRUE, $6) " +
+        'RETURNING id',
+        [walletId, master, owner, jettonWallet, balance, hash]
+      );
+      return result.rows[0].id;
+    }
+
+    const startSnapshotId = await insertSnapshot('1000000000000');
+    const engine = createWalletMiningEngine({ pool, jettonMasterAddresses: { mainnet: master } });
+    const session = await engine.startSession({
+      userId,
+      network: 'mainnet',
+      snapshotId: startSnapshotId
+    });
+    assert.ok(session.rate_wallet_snapshot_id);
+    assert.equal(session.wallet_chain_global_id, '-239');
+
+    await pool.query(
+      "UPDATE mining_sessions SET last_claim_at = clock_timestamp() - INTERVAL '60 seconds' WHERE id = $1",
+      [session.id]
+    );
+    const endSnapshotId = await insertSnapshot('900000000000');
+    const idempotencyKey = 'wallet-engine-claim:' + randomUUID();
+    const reward = await engine.claimReward({
+      userId,
+      network: 'mainnet',
+      snapshotId: endSnapshotId,
+      idempotencyKey
+    });
+
+    assert.equal(reward.status, 'confirmed');
+    assert.equal(reward.start_wallet_snapshot_id, startSnapshotId);
+    assert.equal(reward.end_wallet_snapshot_id, endSnapshotId);
+    assert.equal(String(reward.eligible_wallet_balance_base_units), '900000000000');
+    assert.ok(BigInt(reward.amount_base_units) >= 6000000n);
+    assert.ok(BigInt(reward.amount_base_units) <= 12000000n);
+
+    const duplicate = await engine.claimReward({
+      userId,
+      network: 'mainnet',
+      snapshotId: endSnapshotId,
+      idempotencyKey
+    });
+    assert.equal(duplicate.duplicate, true);
+    assert.equal(duplicate.status, 'confirmed');
+
+    const sessionAfterClaim = await pool.query(
+      'SELECT rate_wallet_snapshot_id, rate_balance_base_units::text AS rate_balance_base_units ' +
+      'FROM mining_sessions WHERE id = $1',
+      [session.id]
+    );
+    assert.equal(sessionAfterClaim.rows[0].rate_wallet_snapshot_id, endSnapshotId);
+    assert.equal(sessionAfterClaim.rows[0].rate_balance_base_units, '900000000000');
+
+    const ledger = await pool.query(
+      "SELECT available_base_units::text FROM balances WHERE user_id = $1 AND asset_code = 'VCOIN'",
+      [userId]
+    );
+    assert.equal(BigInt(ledger.rows[0].available_base_units), BigInt(reward.amount_base_units));
+  } finally {
+    await pool.end();
+  }
+});
+
+test('wallet-backed mining refuses a stale chain snapshot and does not accrue from internal balances', {
+  skip: !databaseUrl
+}, async () => {
+  const pool = new Pool({ connectionString: databaseUrl, max: 4 });
+  try {
+    await applyTestMigrations(pool);
+    const { createWalletMiningEngine } = require('../src/services/wallet-mining-engine');
+
+    await pool.query(
+      'INSERT INTO levels (level, upgrade_cost_base_units, mining_rate_base_units_per_second) ' +
+      'VALUES (1, 0, 0) ON CONFLICT (level) DO NOTHING'
+    );
+    const telegramId = String(BigInt(Date.now()) * 10000n + BigInt(process.pid) + 89n);
+    const userResult = await pool.query(
+      "INSERT INTO users (telegram_user_id, username) VALUES ($1::bigint, 'ci_wallet_stale_test') RETURNING id",
+      [telegramId]
+    );
+    const userId = userResult.rows[0].id;
+    await pool.query('INSERT INTO user_levels (user_id, current_level) VALUES ($1, 1)', [userId]);
+    await pool.query(
+      "INSERT INTO balances (user_id, asset_code, available_base_units) VALUES ($1, 'VCOIN', 999999999999)",
+      [userId]
+    );
+
+    const owner = '0:' + 'd'.repeat(64);
+    const master = '0:' + 'e'.repeat(64);
+    const jettonWallet = '0:' + 'f'.repeat(64);
+    const walletResult = await pool.query(
+      "INSERT INTO wallets (user_id, network, chain_global_id, wallet_address, is_verified) " +
+      "VALUES ($1, 'TON', '-239', $2, TRUE) RETURNING id",
+      [userId, owner]
+    );
+    const hash = require('node:crypto').createHash('sha256').update(randomUUID()).digest('hex');
+    const staleSnapshot = await pool.query(
+      'INSERT INTO jetton_wallet_balance_snapshots ' +
+      '(wallet_id, network, jetton_master_address, owner_wallet_address, jetton_wallet_address, ' +
+      'balance_base_units, chain_block_seqno, source, observed_at, finalized_at, is_final, source_payload_sha256) ' +
+      "VALUES ($1, 'mainnet', $2, $3, $4, 1000000000000, 100, 'ton_rpc', " +
+      "clock_timestamp() - INTERVAL '10 minutes', clock_timestamp(), TRUE, $5) RETURNING id",
+      [walletResult.rows[0].id, master, owner, jettonWallet, hash]
+    );
+
+    const engine = createWalletMiningEngine({ pool, jettonMasterAddresses: { mainnet: master } });
+    await assert.rejects(
+      engine.startSession({ userId, network: 'mainnet', snapshotId: staleSnapshot.rows[0].id }),
+      (error) => error.code === 'WALLET_SNAPSHOT_STALE_OR_INVALID'
+    );
+    const sessions = await pool.query('SELECT COUNT(*)::integer AS count FROM mining_sessions WHERE user_id = $1', [userId]);
+    assert.equal(sessions.rows[0].count, 0);
+  } finally {
+    await pool.end();
+  }
+});
+
+
+test('TON proof challenges are session-bound, single-use, and cannot silently replace a verified Mainnet wallet', {
+  skip: !databaseUrl
+}, async () => {
+  const pool = new Pool({ connectionString: databaseUrl, max: 4 });
+  try {
+    await applyTestMigrations(pool);
+    const { generateKeyPairSync, sign, createHash } = require('node:crypto');
+    const { WalletContractV4 } = require('@ton/ton');
+    const { beginCell, storeStateInit } = require('@ton/core');
+    const { createTonProofService, buildTonProofDigest, TonProofError } = require('../src/services/ton-proof');
+
+    const telegramId = String(BigInt(Date.now()) * 10000n + BigInt(process.pid) + 90n);
+    const userResult = await pool.query(
+      "INSERT INTO users (telegram_user_id, username) VALUES ($1::bigint, 'ci_ton_proof_test') RETURNING id",
+      [telegramId]
+    );
+    const userId = userResult.rows[0].id;
+    const tokenHash = createHash('sha256').update(randomUUID()).digest('hex');
+    const sessionResult = await pool.query(
+      'INSERT INTO user_sessions (user_id, token_hash, expires_at) ' +
+      "VALUES ($1, $2, clock_timestamp() + INTERVAL '1 hour') RETURNING id",
+      [userId, tokenHash]
+    );
+    const sessionId = sessionResult.rows[0].id;
+    const service = createTonProofService({ pool, expectedDomain: 'app.example.com' });
+
+    async function signedWalletProof(payload) {
+      const keyPair = generateKeyPairSync('ed25519');
+      const spki = keyPair.publicKey.export({ format: 'der', type: 'spki' });
+      const publicKey = spki.subarray(spki.length - 32);
+      const wallet = WalletContractV4.create({ workchain: 0, publicKey });
+      const walletStateInit = beginCell().store(storeStateInit(wallet.init)).endCell().toBoc().toString('base64');
+      const nowSeconds = Math.floor(Date.now() / 1000);
+      const proof = {
+        timestamp: nowSeconds,
+        domain: { lengthBytes: Buffer.byteLength('app.example.com', 'utf8'), value: 'app.example.com' },
+        payload
+      };
+      proof.signature = sign(null, buildTonProofDigest(wallet.address, proof), keyPair.privateKey).toString('base64');
+      return {
+        address: wallet.address.toString({ bounceable: true, urlSafe: true }),
+        network: '-239',
+        walletStateInit,
+        publicKey: publicKey.toString('hex'),
+        proof
+      };
+    }
+
+    const challenge = await service.createChallenge({ userId, sessionId, network: 'mainnet' });
+    const firstProof = await signedWalletProof(challenge.payload);
+    const verified = await service.verifyAndBind({ userId, sessionId, input: firstProof });
+    assert.equal(verified.walletVerified, true);
+    assert.equal(verified.network, 'mainnet');
+
+    const storedWallet = await pool.query(
+      "SELECT wallet_address, chain_global_id, is_verified FROM wallets " +
+      "WHERE user_id = $1 AND network = 'TON' AND chain_global_id = '-239'",
+      [userId]
+    );
+    assert.equal(storedWallet.rowCount, 1);
+    assert.equal(storedWallet.rows[0].wallet_address, verified.walletAddress);
+    assert.equal(storedWallet.rows[0].is_verified, true);
+
+    await assert.rejects(
+      service.verifyAndBind({ userId, sessionId, input: firstProof }),
+      (error) => error instanceof TonProofError && error.code === 'TON_PROOF_CHALLENGE_INVALID'
+    );
+
+    const replacementChallenge = await service.createChallenge({ userId, sessionId, network: 'mainnet' });
+    const replacementProof = await signedWalletProof(replacementChallenge.payload);
+    await assert.rejects(
+      service.verifyAndBind({ userId, sessionId, input: replacementProof }),
+      (error) => error instanceof TonProofError && error.code === 'WALLET_ALREADY_BOUND'
+    );
+
+    const replacementChallengeRow = await pool.query(
+      'SELECT consumed_at FROM ton_proof_challenges WHERE payload_sha256 = $1',
+      [createHash('sha256').update(replacementChallenge.payload).digest('hex')]
+    );
+    assert.equal(replacementChallengeRow.rows[0].consumed_at, null);
+  } finally {
     await pool.end();
   }
 });

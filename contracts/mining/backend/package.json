@@ -8,7 +8,7 @@
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
     "test": "node --test",
-    "check": "node --check src/server.js && node --check src/config/database.js && node --check src/auth/telegram.js && node --check src/routes/mining.js && node --check ../engine.js && node --check test/mining-engine.test.js && node --check test/telegram-auth.test.js && node --check test/mining-ledger.integration.test.js && node --check scripts/setup-database.js && node --check src/services/price-reference.js && node --check test/price-reference.test.js && node --check src/services/offline-lease-crypto.js && node --check test/offline-lease-crypto.test.js",
+    "check": "node --check src/server.js && node --check src/config/database.js && node --check src/auth/telegram.js && node --check src/routes/mining.js && node --check ../engine.js && node --check test/mining-engine.test.js && node --check test/telegram-auth.test.js && node --check test/mining-ledger.integration.test.js && node --check scripts/setup-database.js && node --check src/services/price-reference.js && node --check test/price-reference.test.js && node --check src/services/offline-lease-crypto.js && node --check test/offline-lease-crypto.test.js && node --check src/services/jetton-balance-reader.js && node --check test/jetton-balance-reader.test.js && node --check src/services/ton-proof.js && node --check src/routes/ton-proof.js && node --check test/ton-proof.test.js && node --check src/services/ton-rpc-provider.js && node --check src/services/wallet-snapshot.js && node --check test/wallet-snapshot.test.js && node --check test/ton-rpc-provider.test.js && node --check src/services/wallet-mining-engine.js",
     "db:setup": "node scripts/setup-database.js"
   },
   "engines": {
@@ -21,6 +21,8 @@
     "helmet": "^8.1.0",
     "pg": "^8.16.3",
     "zod": "^4.1.5",
-    "express-rate-limit": "^8.1.0"
+    "express-rate-limit": "^8.1.0",
+    "@ton/ton": "^16.0.0",
+    "@ton/core": "^0.63.1"
   }
 }

@@ -1,7 +1,7 @@
 # CURRENT MAINNET ADDRESS RECONCILIATION — 2026-11-23 (Action #61; supersedes all earlier preview records)
 
 **Current approved allocation baseline:** 2,100,000,000 VCOIN total; 6 decimals; 2,100,000,000,000,000 base units. Founder 420,000,000 (20%); mining rewards 1,050,000,000 (50%); Treasury, Liquidity/Market, and Ecosystem/Marketing 210,000,000 each (10% each).  
-**Current source commit:** `163d9f96bc97038c361ac19dda337ffb96cc3320`  
+**Last implementation/documentation baseline commit before this status note:** `d143ce545a8e4eca00dbbe92a0920c990d7f45e4`  
 **Exact-head CI for this corrected allocation revision:** pending verification; earlier CI runs do not verify the current source head.  
 **Current preview Master address / StateInit hash:** not generated for the corrected source head.  
 **Recipient Jetton Wallet predictions and artifact hashes:** cleared and invalidated; regenerate from the exact reviewed build and independently reproduce before any signature.  

@@ -28,13 +28,15 @@ Architecture Principles
 - Auditable financial records.
 - User-focused wallet security.
 
-Security
+Security and Audit Disclosure
 
-Security is a fundamental development priority. Smart contracts, wallet interactions, backend services and financial operations will require appropriate testing and independent security reviews before production deployment.
+Security is a fundamental development priority. As of 2026-11-23, V COIN–TON has no contract with an external security-audit company, no external audit firm has been engaged, and no independent third-party smart-contract security audit has been completed. Internal source reviews, CI workflows, automated tests, dependency scans, Sandbox tests, and hash checks are engineering verification activities only; they are not an independent audit and must not be represented as one.
+
+The project is not security-certified or audit-approved. Mainnet security clearance has not been granted. See [docs/INDEPENDENT_SECURITY_AUDIT_STATUS.md](docs/INDEPENDENT_SECURITY_AUDIT_STATUS.md) for the formal status, limitations, and conditions for changing it.
 
 Documentation
 
-Detailed architecture, API, database, security and tokenomics documents are maintained in the docs/ directory. Start with docs/README.md.
+Detailed architecture, API, database, security, audit-status and tokenomics documents are maintained in the docs/ directory. Start with docs/README.md.
 
 Development Status
 

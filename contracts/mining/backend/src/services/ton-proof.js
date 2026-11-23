@@ -257,23 +257,28 @@ function createTonProofService({ pool, expectedDomain, nowSeconds = () => Math.f
           throw new TonProofError('TON_PROOF_CHALLENGE_INVALID', 'TON proof challenge expired, was already used, or belongs to another login session.');
         }
 
+        const chainGlobalId = identity.network === 'mainnet'
+          ? TON_MAINNET_GLOBAL_ID
+          : TON_TESTNET_GLOBAL_ID;
         const existing = await client.query(
           'SELECT id, wallet_address, is_verified FROM wallets ' +
-          "WHERE user_id = $1 AND network = 'TON' FOR UPDATE",
-          [userId]
+          "WHERE user_id = $1 AND network = 'TON' AND chain_global_id = $2 FOR UPDATE",
+          [userId, chainGlobalId]
         );
         if (existing.rowCount === 1 && existing.rows[0].is_verified &&
             existing.rows[0].wallet_address !== identity.address) {
-          throw new TonProofError('WALLET_ALREADY_BOUND', 'A different verified TON wallet is already bound to this account.');
+          throw new TonProofError('WALLET_ALREADY_BOUND', 'A different verified wallet is already bound for this TON network.');
         }
 
         const wallet = await client.query(
-          "INSERT INTO wallets (user_id, network, wallet_address, is_verified) VALUES ($1, 'TON', $2, TRUE) " +
-          "ON CONFLICT (user_id, network) DO UPDATE SET wallet_address = EXCLUDED.wallet_address, " +
-          'is_verified = TRUE, updated_at = clock_timestamp() ' +
+          "INSERT INTO wallets (user_id, network, chain_global_id, wallet_address, is_verified) " +
+          "VALUES ($1, 'TON', $2, $3, TRUE) " +
+          "ON CONFLICT (user_id, network, chain_global_id) WHERE chain_global_id IS NOT NULL " +
+          "DO UPDATE SET wallet_address = EXCLUDED.wallet_address, is_verified = TRUE, " +
+          'updated_at = clock_timestamp() ' +
           'WHERE wallets.is_verified = FALSE OR wallets.wallet_address = EXCLUDED.wallet_address ' +
           'RETURNING id, wallet_address, is_verified',
-          [userId, identity.address]
+          [userId, chainGlobalId, identity.address]
         );
         if (wallet.rowCount !== 1) {
           throw new TonProofError('WALLET_ALREADY_BOUND', 'This TON wallet could not be bound to the account.');

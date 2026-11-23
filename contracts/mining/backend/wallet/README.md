@@ -1,3 +1,5 @@
+Current policy correction (2026-11-23): This file contains historical wallet-integration guidance. Any statement below requiring an independent security audit as an active project task or release gate is superseded and is not part of the approved V COIN–TON workstream. Current allocation baseline is five Mainnet wallets only; Founder is also the sole GAS & OPERATIONS wallet. Mainnet-only execution applies; no Testnet deployment or transaction is authorized. Wallet integration remains subject to local engineering tests and explicit Founder authorization for any Mainnet transaction.
+
 V COIN – TON Wallet Architecture
 
 1. Purpose

@@ -100,6 +100,11 @@ const migrations = [
     version: '011_wallet_chain_separation',
     description: 'Keep TON Mainnet and Testnet wallet bindings independent',
     file: path.resolve(__dirname, '../database/migrations/011-wallet-chain-separation.sql')
+  },
+  {
+    version: '012_wallet_backed_mining_basis',
+    description: 'Record finalized Jetton wallet snapshots used as mining reward basis',
+    file: path.resolve(__dirname, '../database/migrations/012-wallet-backed-mining-basis.sql')
   }
 ];
 

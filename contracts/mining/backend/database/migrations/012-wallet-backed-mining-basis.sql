@@ -24,7 +24,7 @@ BEGIN
       CHECK (
         (rate_wallet_snapshot_id IS NULL AND wallet_chain_global_id IS NULL)
         OR
-        (rate_wallet_snapshot_id IS NOT NULL AND wallet_chain_global_id IN ('-239', '-3'))
+        (rate_wallet_snapshot_id IS NOT NULL AND wallet_chain_global_id IS NOT NULL AND wallet_chain_global_id IN ('-239', '-3'))
       );
   END IF;
 

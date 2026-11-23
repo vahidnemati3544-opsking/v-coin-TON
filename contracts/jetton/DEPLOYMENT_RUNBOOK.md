@@ -49,7 +49,7 @@ Never request or store a seed phrase, private key, PIN, or recovery code. The Fo
 - Treasury: 210,000,000 VCOIN (10%).
 - Liquidity / market: 210,000,000 VCOIN (10%).
 - Ecosystem / marketing: 210,000,000 VCOIN (10%).
-- Six decimals; total supply is 1.0 × 10^16 base units.
+- Six decimals; total supply is 2.1 × 10^15 base units.
 - No additional minting after the five exact allocations have completed.
 - The five approved allocation destinations are recorded in `docs/WALLET_ALLOCATION_REGISTER.md`; the Founder wallet is one of those five.
 - The project owner explicitly confirmed the complete 2,100,000,000 VCOIN supply is to be issued and allocated across all five destinations (Founder 420M, Mining Reserve 1.05B, Treasury 210M, Liquidity/Market 210M, Ecosystem/Marketing 210M). Do not ask the owner to choose this allocation path again.
@@ -101,7 +101,7 @@ After deployment, the Founder wallet is the only VCoinMint authority. Each of th
 
 The Master reserve is intended to fund 0.1 TON for each deterministic destination Jetton-wallet credit. Confirm the actual required reserve and fee behavior in the exact-build simulation and transaction preview; do not rely on these documented nominal values as a substitute for a live fee estimate.
 
-After each confirmed credit, reconcile the corresponding Jetton wallet balance and role status. After all five credits succeed, verify total supply equals exactly 1.0 × 10^16 base units and mintable=false. If a natural bounce occurs, verify only the affected role rolled back before retrying it.
+After each confirmed credit, reconcile the corresponding Jetton wallet balance and role status. After all five credits succeed, verify total supply equals exactly 2.1 × 10^15 base units and mintable=false. If a natural bounce occurs, verify only the affected role rolled back before retrying it.
 
 ## 5. Build and verification gates
 

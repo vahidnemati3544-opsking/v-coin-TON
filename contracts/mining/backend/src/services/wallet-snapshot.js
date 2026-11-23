@@ -28,8 +28,11 @@ function createWalletSnapshotService({
         error.code = 'INVALID_NETWORK';
         throw error;
       }
-      if (typeof jettonMasterAddress !== 'string' || jettonMasterAddress.length === 0) {
-        const error = new Error('VCOIN Jetton master is not configured.');
+      const masterAddress = typeof jettonMasterAddress === 'function'
+        ? jettonMasterAddress(network)
+        : jettonMasterAddress;
+      if (typeof masterAddress !== 'string' || masterAddress.length === 0) {
+        const error = new Error('VCOIN Jetton master is not configured for the selected TON network.');
         error.code = 'JETTON_MASTER_NOT_CONFIGURED';
         throw error;
       }

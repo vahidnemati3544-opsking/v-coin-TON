@@ -4,7 +4,7 @@
 **Original sweep branch:** `main`  
 **Continuation branch:** `docs/action-65-complete-policy-sweep`  
 **Baseline before continuation:** `c9d5df5a57be414417726ee6e3729d4e2a966083`  
-**Continuation branch head before this report update:** `f6430ff8b1df5fffbb585db6b448e0da25187076`  
+**Continuation branch head before this report update:** `83c1bb408c38de159aa6f61f69861a57550e75eb`  
 **Merge commit:** recorded in the linked pull request after merge.
 
 ## Purpose

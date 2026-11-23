@@ -37,7 +37,7 @@ The repository contains design documents, tokenomics, contract specifications, b
 | Mining | “Wallet-based mining is a planned capability with a documented specification.” | “Mining is live”, “users are earning”, or any claim that internal pending balances are wallet-held tokens. |
 | Wallet / Telegram | “Wallet ownership verification and Telegram integration are in the technical plan.” | “Wallet connection, user verification or Telegram extraction is operational” without an end-to-end test record. |
 | Price | Do not include the internal modelled reference-price schedule in public introductions. If discussed in a technical context, label it a non-market simulation. | Any market-price forecast, automatic appreciation promise, guaranteed floor, liquidity promise or expected return. |
-| Security / audit | “Security review and independent audit are release gates.” | “Audited”, “fully secure”, “risk-free” or “approved” without a named, published, independent report and scope. |
+| Security / verification | “The project performs documented internal engineering verification and local TON Sandbox testing.” | “Externally audited”, “fully secure”, “risk-free” or “approved” without verifiable evidence. Independent external security auditing is not part of the current project scope. |
 | Partnerships / listings | Name a partner only after a signed agreement, partner approval to disclose, and legal review. | Any implied TON Foundation, wallet-provider, exchange, regulator, bank or institutional endorsement without written evidence. |
 | Adoption | “The project is preparing documentation for review.” | “Globally accepted”, “used worldwide”, “available in every country” or invented user/partner numbers. |
 
@@ -47,7 +47,7 @@ The repository contains design documents, tokenomics, contract specifications, b
 
 ### Short description
 
-V COIN – TON is an independent project in development exploring a TON-based Jetton design. Its published technical materials describe proposed token parameters, contract architecture, accounting controls and requirements for future wallet-based mining. The project is being developed in stages, with implementation, independent security review and jurisdiction-specific legal assessment treated as prerequisites to any public token distribution.
+V COIN – TON is an independent project in development exploring a TON-based Jetton design. Its published technical materials describe proposed token parameters, contract architecture, accounting controls and requirements for future wallet-based mining. The project is being developed in stages, with implementation, documented internal engineering verification and jurisdiction-specific legal assessment treated as prerequisites to any public token distribution.
 
 ### Public development update
 
@@ -55,7 +55,7 @@ V COIN – TON is an independent project in development exploring a TON-based Je
 
 V COIN – TON is an independent digital-asset project in development on the TON ecosystem. The current repository documents a proposed Jetton design, a planned tokenomics model and technical requirements for transparent accounting and future wallet-based reward calculations.
 
-The approved design specifies a proposed initial supply of 2,100,000,000 VCOIN with six decimal places. These are design parameters; they do not establish that VCOIN has been issued or deployed on-chain. The project’s wallet-verification, mining, payout, security-audit and market-compliance work remains subject to implementation and independent verification.
+The approved design specifies a proposed initial supply of 2,100,000,000 VCOIN with six decimal places. These are design parameters; they do not establish that VCOIN has been issued or deployed on-chain. The project’s wallet-verification, mining, payout, internal engineering verification and market-compliance work remains subject to implementation and evidence-based verification.
 
 No token price, return, liquidity, exchange listing, regulatory approval or global availability is promised or represented. Digital assets can involve substantial risk, including the possible loss of all value. Any future distribution or service will depend on technical readiness and applicable legal requirements.
 
@@ -172,7 +172,7 @@ We are developing V COIN – TON as an independent project exploring a Jetton ar
 
 The project is not presenting a public token offer or asking your organisation to promote, distribute, custody or trade VCOIN. Current materials describe a design and development programme; deployment, live wallet-based mining, production payouts and independent audit remain subject to completion and verification.
 
-If this area falls within your organisation's expertise, we would welcome an initial discussion limited to technical scope, independence, conflicts and the evidence required for a responsible review.
+If this area falls within your organisation's expertise, we would welcome an initial discussion limited to technical scope, conflicts and the evidence required for a responsible review.
 
 Regards,  
 V COIN – TON Project Team

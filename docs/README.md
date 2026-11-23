@@ -2,6 +2,10 @@
 
 This directory contains the authoritative design, implementation-status, and security documents for the independent TON project.
 
+## Controlling approved baseline (2026-11-23)
+
+The current approved baseline is 2,100,000,000 VCOIN at 6 decimals, with no additional minting; allocations are 420M Founder (immediate, no vesting), 1.05B Mining Reserve, and 210M each Treasury, Liquidity/Market, and Ecosystem/Marketing. The Founder wallet is also the sole GAS & OPERATIONS wallet; the project has five allocation wallets, not six. Execution is Mainnet-only after local engineering verification and explicit Founder authorization; Testnet deployment, transactions, and rehearsal are not authorized. Independent external auditing is not a project workstream, pending task, or release condition. Historical records are subordinate to these current decisions where they conflict.
+
 - [TON Architecture](TON_ARCHITECTURE.md) — system layers, Jetton model, wallet separation, and release gates.
 - [API Architecture](API_ARCHITECTURE.md) — implemented health endpoints and planned authenticated APIs.
 - [Database Architecture](DATABASE_ARCHITECTURE.md) — PostgreSQL tables, mining reserve, ledger, and outstanding database work.

@@ -442,7 +442,7 @@ test('wallet-backed mining accrues from finalized Jetton snapshots and settles t
         'INSERT INTO jetton_wallet_balance_snapshots ' +
         '(wallet_id, network, jetton_master_address, owner_wallet_address, jetton_wallet_address, ' +
         'balance_base_units, chain_block_seqno, source, observed_at, finalized_at, is_final, source_payload_sha256) ' +
-        "VALUES ($1, 'mainnet', $2, $3, $4, $5::numeric, 100, 'test_fixture', clock_timestamp(), clock_timestamp(), TRUE, $6) " +
+        "VALUES ($1, 'mainnet', $2, $3, $4, $5::numeric, 100, 'ton_rpc', clock_timestamp(), clock_timestamp(), TRUE, $6) " +
         'RETURNING id',
         [walletId, master, owner, jettonWallet, balance, hash]
       );
@@ -450,7 +450,7 @@ test('wallet-backed mining accrues from finalized Jetton snapshots and settles t
     }
 
     const startSnapshotId = await insertSnapshot('1000000000000');
-    const engine = createWalletMiningEngine({ pool });
+    const engine = createWalletMiningEngine({ pool, jettonMasterAddresses: { mainnet: master } });
     const session = await engine.startSession({
       userId,
       network: 'mainnet',
@@ -543,12 +543,12 @@ test('wallet-backed mining refuses a stale chain snapshot and does not accrue fr
       'INSERT INTO jetton_wallet_balance_snapshots ' +
       '(wallet_id, network, jetton_master_address, owner_wallet_address, jetton_wallet_address, ' +
       'balance_base_units, chain_block_seqno, source, observed_at, finalized_at, is_final, source_payload_sha256) ' +
-      "VALUES ($1, 'mainnet', $2, $3, $4, 1000000000000, 100, 'test_fixture', " +
+      "VALUES ($1, 'mainnet', $2, $3, $4, 1000000000000, 100, 'ton_rpc', " +
       "clock_timestamp() - INTERVAL '10 minutes', clock_timestamp(), TRUE, $5) RETURNING id",
       [walletResult.rows[0].id, master, owner, jettonWallet, hash]
     );
 
-    const engine = createWalletMiningEngine({ pool });
+    const engine = createWalletMiningEngine({ pool, jettonMasterAddresses: { mainnet: master } });
     await assert.rejects(
       engine.startSession({ userId, network: 'mainnet', snapshotId: staleSnapshot.rows[0].id }),
       (error) => error.code === 'WALLET_SNAPSHOT_STALE_OR_INVALID'

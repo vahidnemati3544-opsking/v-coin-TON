@@ -23,11 +23,11 @@
 - npm run build compiles VCoinMaster, VCoinJettonWallet, and the test-only BounceRejector fixture.
 - npm test runs the allocation policy, manifest, and TON Sandbox suites.
 - The Sandbox suite verifies the five deterministic wallet balances and the Master supply.
-- The separate GAS & OPERATIONS wallet is not one of the five VCOIN allocation destinations.
+- The Founder allocation wallet is also the sole GAS & OPERATIONS wallet; it is one of the five VCOIN allocation destinations, not a sixth wallet.
 - No Testnet or Mainnet transaction is sent during CI.
 
 ## Deployment restrictions
 
 - The five destination addresses must be checked against the approved operational register before Master deployment.
 - The deployed Master allocation config must be read back and compared with the approved register before any issuance.
-- No Mainnet deployment or issuance is authorized until independent smart-contract review and a separate explicit approval.
+- No Mainnet deployment or issuance is authorized until the project's documented engineering release checks pass and the Founder separately approves the exact operation.

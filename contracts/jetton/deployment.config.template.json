@@ -5,8 +5,8 @@
   "standard": "TEP-74",
   "metadata_standard": "TEP-64",
   "decimals": 6,
-  "initial_supply_tokens": "2100000000",
-  "initial_supply_base_units": "2100000000000000",
+  "initial_supply_tokens": "10000000000",
+  "initial_supply_base_units": "10000000000000000",
   "additional_minting": false,
   "target_network": "mainnet",
   "master_address": null,
@@ -22,11 +22,11 @@
     "role_sharing": "identical address to allocation_wallets.founder"
   },
   "allocation_base_units": {
-    "founder": "420000000000000",
-    "mining_reserve": "1050000000000000",
-    "treasury": "210000000000000",
-    "liquidity_market": "210000000000000",
-    "ecosystem_marketing": "210000000000000"
+    "founder": "2000000000000000",
+    "mining_reserve": "5000000000000000",
+    "treasury": "1000000000000000",
+    "liquidity_market": "1000000000000000",
+    "ecosystem_marketing": "1000000000000000"
   },
   "allocation_wallets": {
     "founder": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
@@ -47,7 +47,7 @@
   },
   "deployment_authorized": false,
   "mainnet_authorized": false,
-  "notes": "Owner-approved fixed supply is 2,100,000,000 VCOIN at 6 decimals, allocated across exactly five owner-provided wallets in shares 20/50/10/10/10. Founder is the sole GAS & OPERATIONS wallet, deployment signer, and Master reserve funder. No separate GAS address or sixth wallet exists. All derived Master and Jetton Wallet addresses are intentionally omitted from this template and must be regenerated from the reviewed exact-build StateInit; verify each Jetton Wallet with the deployed Master's get_wallet_address getter before issuance. This template is unsigned; deployment_authorized and mainnet_authorized remain false. Never commit secrets.",
+  "notes": "Owner-approved fixed supply is 10,000,000,000 VCOIN at 6 decimals, allocated across exactly five owner-provided wallets in shares 20/50/10/10/10. Founder is the sole GAS & OPERATIONS wallet, deployment signer, and Master reserve funder. No separate GAS address or sixth wallet exists. All derived Master and Jetton Wallet addresses are intentionally omitted from this template and must be regenerated from the reviewed exact-build StateInit; verify each Jetton Wallet with the deployed Master's get_wallet_address getter before issuance. This template is unsigned; deployment_authorized and mainnet_authorized remain false. Never commit secrets.",
   "allocation_wallet_verification": {
     "status": "founder_address_review_pending_before_mainnet_signature",
     "note": "The five owner-provided Mainnet owner addresses below are the canonical allocation destinations. Derived Jetton Wallet addresses are intentionally not stored here because previous predictions are stale; regenerate from the exact reviewed Master StateInit and confirm each on-chain get_wallet_address result after deployment.",
@@ -62,13 +62,13 @@
   "release_intent": {
     "founder_confirmed": true,
     "scope": "issue_and_allocate_full_fixed_supply_to_all_five_registered_wallets",
-    "total_tokens": "2100000000",
+    "total_tokens": "10000000000",
     "allocations": {
-      "founder": "420000000",
-      "mining_reserve": "1050000000",
-      "treasury": "210000000",
-      "liquidity_market": "210000000",
-      "ecosystem_marketing": "210000000"
+      "founder": "2000000000",
+      "mining_reserve": "5000000000",
+      "treasury": "1000000000",
+      "liquidity_market": "1000000000",
+      "ecosystem_marketing": "1000000000"
     },
     "founder_is_one_of_five_wallets": true,
     "gas_operations_wallet_is_not_an_allocation_wallet": false,
@@ -76,7 +76,7 @@
     "gas_operations_wallet_is_founder_wallet": true
   },
   "price_reference": {
-    "initial_price_usd": "0.008",
+    "initial_price_usd": "0.004",
     "currency": "USD",
     "price_type": "modelled_reference_not_market_price",
     "not_a_market_quote": true

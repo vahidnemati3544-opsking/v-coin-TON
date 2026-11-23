@@ -17,12 +17,12 @@ describe('VCOIN five-wallet allocation manifest', () => {
     ]);
   });
 
-  test('allocations sum to 100 percent and the fixed 2.1 billion supply', () => {
+  test('allocations sum to 100 percent and the fixed 10 billion supply', () => {
     const percentTotal = plan.allocations.reduce((sum: number, item: { percent: number }) => sum + item.percent, 0);
     const baseUnitTotal = plan.allocations.reduce((sum: bigint, item: { amountBaseUnits: string }) => sum + BigInt(item.amountBaseUnits), 0n);
     expect(percentTotal).toBe(100);
     expect(baseUnitTotal).toBe(BigInt(plan.totalSupplyBaseUnits));
-    expect(plan.totalSupplyTokens).toBe('2100000000');
+    expect(plan.totalSupplyTokens).toBe('10000000000');
     expect(plan.decimals).toBe(6);
   });
 

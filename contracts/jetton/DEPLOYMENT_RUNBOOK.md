@@ -1,16 +1,15 @@
-# CURRENT CONTROLLING RELEASE ADDENDUM — 2026-11-22
+# CURRENT CONTROLLING RELEASE ADDENDUM — 2026-11-23
 
 > This addendum governs this runbook. Older historical statements below that conflict with it are superseded and must not be used for signing or funding decisions.
 
 ## Current verified repository state
 
-- Reviewed main commit: `86e71916f442bc9f24d343fea15b9080bc5238e8` (PR #12 merge).
-- GitHub Actions run #214 (`45028973747`) on that exact commit: the `build-and-test` job succeeded. It completed lockfile installation, dependency audit enforcement, Tact compilation, TEP-64 metadata-cell build, unsigned Mainnet preview generation, Jest tests, issuer syntax/sequence guards, and artifact upload.
-- The overall workflow is marked failed solely because the separate `deploy-issuer` job could not create the repository Pages site. Its log reports `Get Pages site failed: Not Found`, followed by `Create Pages site failed: Resource not accessible by integration`. The issuer deployment step was skipped. This is a repository Pages administration/enablement permission issue, not a contract compilation or test failure.
-- Do not describe the Pages site as deployed. The repository owner must enable GitHub Pages with **Settings → Pages → Build and deployment → Source = GitHub Actions** (if the owner UI permits it), then rerun the workflow. The connected GitHub App cannot perform this administrative setup.
+- The controlling economic baseline is now 10,000,000,000 VCOIN with six decimals, allocated 20% Founder / 50% Mining Reserve / 10% Treasury / 10% Liquidity-Market / 10% Ecosystem-Marketing. The exact-head release commit and artifacts must be taken from the latest successful CI run after the 10B revision.
+- GitHub Actions run #295 (`45117468256`) on commit `b3b707113e0115d5523e0195390248ce142c756c`: `build-and-test` and `deploy-issuer` both succeeded, including Tact compilation, generated unsigned Mainnet preview, Jest Sandbox tests, issuer syntax/sequence guards, artifact upload, and GitHub Pages endpoint verification. Run #296 is the latest exact-head verification after invalidating stale address predictions and must be checked before release.
+- The TonConnect issuer Pages deployment is now successful. Do not rely on older run #214 failure notes; they are historical.
 - The single approved signer, deployment sender, and TON reserve funder is the Founder wallet. `gasOperatorWallet` must equal `owner`. There is no separate GAS wallet and no sixth VCOIN allocation destination.
 - Fixed supply remains exactly 10,000,000,000 VCOIN, six decimals, allocated 20% Founder / 50% Mining Reserve / 10% Treasury / 10% Liquidity-Market / 10% Ecosystem-Marketing. No additional minting is permitted.
-- The deployment preview is unsigned and is not evidence of deployment. No Mainnet deployment, issuance, or transfer has been broadcast or confirmed.
+- The deployment preview is unsigned and is not evidence of deployment. No Mainnet deployment, issuance, or transfer has been broadcast or confirmed. All earlier predicted Master/Jetton Wallet addresses were invalidated by the 10B supply revision and must be regenerated from the latest exact-head build.
 
 ## Material reserve limitation
 
@@ -52,7 +51,7 @@ Never request or store a seed phrase, private key, PIN, or recovery code. The Fo
 - Six decimals; total supply is 1.0 × 10^16 base units.
 - No additional minting after the five exact allocations have completed.
 - The five approved allocation destinations are recorded in `docs/WALLET_ALLOCATION_REGISTER.md`; the Founder wallet is one of those five.
-- The project owner explicitly confirmed the complete 10,000,000,000 VCOIN supply is to be issued and allocated across all five destinations (Founder 420M, Mining Reserve 1.05B, Treasury 210M, Liquidity/Market 210M, Ecosystem/Marketing 210M). Do not ask the owner to choose this allocation path again.
+- The project owner explicitly confirmed the complete 10,000,000,000 VCOIN supply is to be issued and allocated across all five destinations (Founder 2B, Mining Reserve 5B, Treasury 1B, Liquidity/Market 1B, Ecosystem/Marketing 1B). Do not ask the owner to choose this allocation path again.
 - The Founder wallet also serves as GAS & OPERATIONS, a TON-fee funding role only; it is not a sixth VCOIN allocation destination. The previously configured inaccessible GAS address is retired and must never be funded.
 
 The implementation must enforce the cap and per-role amounts in contract code, not merely in deployment scripts. No hidden freeze, confiscation, arbitrary clawback, or post-transfer seizure functionality is permitted. After a successful credit, the Master contract has no method to pull tokens back from a recipient Jetton Wallet. Normal TEP-74 transfers remain under the holder's wallet authority; the Founder cannot reverse a completed transfer or confiscate a holder's balance.
@@ -145,8 +144,8 @@ The Founder personally reviews and signs in the wallet only after explicit readi
 - Deployment transaction is prepared to be signed by GAS & OPERATIONS wallet with StateInit + VCoinFund body and 0.75 TON minimum attached value. Founder signs five separate VCoinMint allocations after on-chain getter verification. Neither deployment nor issuance has been broadcast.
 - Independent security audit: pending.
 - Founder review of the exact five owner-provided TON addresses and post-deployment deterministic Jetton Wallet address derivation: pending.
-- Historical 10B Master address `EQCvOZBRDK51sk2k1qSWksk6jnhXT11MHquhD06FFLOKrh77` is superseded. Current 2.1B predicted Master address is recorded in the fresh exact-head CI preview; it is not deployed yet.
-- Predicted deterministic recipient Jetton Wallet addresses are recorded in `contracts/jetton/allocation-manifest.template.json`; they were derived from the same Master address and independently hash-checked. Confirm each with the deployed Master's `get_wallet_address` getter before issuance.
+- Historical 10B Master address `EQCvOZBRDK51sk2k1qSWksk6jnhXT11MHquhD06FFLOKrh77` is superseded. The previous 2.1B predicted Master address is invalidated; a new 10B Master address must be generated from the latest exact-head CI preview and is not deployed yet.
+- The allocation manifest intentionally contains no predicted recipient Jetton Wallet addresses after the 10B revision. Regenerate them from the latest exact-head build and confirm each with the deployed Master's `get_wallet_address` getter before issuance.
 - Unsigned deployment preview is generated by `scripts/prepare-mainnet-deployment.ts`; deployment sender is the Founder wallet (also GAS & OPERATIONS), deployment body is VCoinFund, and attached value is taken from the exact generated preview (currently 1.00 TON), plus live wallet/network fees.
 - Initial mint and allocation transactions: none recorded.
 - Mainnet deployment or issuance: not performed; the owner has confirmed the five-wallet full-supply allocation intent, but no Mainnet transaction is authorized until all release gates pass and the exact transaction is separately approved.

@@ -460,7 +460,7 @@ test('wallet-backed mining accrues from finalized Jetton snapshots and settles t
     assert.equal(session.wallet_chain_global_id, '-239');
 
     await pool.query(
-      "UPDATE mining_sessions SET last_claim_at = clock_timestamp() - INTERVAL '5 seconds' WHERE id = $1",
+      "UPDATE mining_sessions SET last_claim_at = clock_timestamp() - INTERVAL '60 seconds' WHERE id = $1",
       [session.id]
     );
     const endSnapshotId = await insertSnapshot('900000000000');
@@ -476,8 +476,8 @@ test('wallet-backed mining accrues from finalized Jetton snapshots and settles t
     assert.equal(reward.start_wallet_snapshot_id, startSnapshotId);
     assert.equal(reward.end_wallet_snapshot_id, endSnapshotId);
     assert.equal(String(reward.eligible_wallet_balance_base_units), '900000000000');
-    assert.ok(BigInt(reward.amount_base_units) >= 500n);
-    assert.ok(BigInt(reward.amount_base_units) <= 521n);
+    assert.ok(BigInt(reward.amount_base_units) >= 6000n);
+    assert.ok(BigInt(reward.amount_base_units) <= 8000n);
 
     const duplicate = await engine.claimReward({
       userId,

@@ -95,6 +95,11 @@ const migrations = [
     version: '010_ton_proof_challenges',
     description: 'Add session-bound single-use TON Connect proof challenges',
     file: path.resolve(__dirname, '../database/migrations/010-ton-proof-challenges.sql')
+  },
+  {
+    version: '011_wallet_chain_separation',
+    description: 'Keep TON Mainnet and Testnet wallet bindings independent',
+    file: path.resolve(__dirname, '../database/migrations/011-wallet-chain-separation.sql')
   }
 ];
 

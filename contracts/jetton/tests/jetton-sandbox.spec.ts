@@ -5,10 +5,10 @@ import { VCoinMaster } from '../build/VCoinMaster_VCoinMaster';
 import { VCoinJettonWallet } from '../build/VCoinMaster_VCoinJettonWallet';
 import { BounceRejector } from '../build-test/BounceRejector_BounceRejector';
 
-const FOUNDER_ALLOCATION = 2_000_000_000_000_000n;
-const MINING_ALLOCATION = 5_000_000_000_000_000n;
-const ONE_BILLION_ALLOCATION = 1_000_000_000_000_000n;
-const MAX_SUPPLY = 10_000_000_000_000_000n;
+const FOUNDER_ALLOCATION = 420_000_000_000_000n;
+const MINING_ALLOCATION = 1_050_000_000_000_000n;
+const TWO_HUNDRED_TEN_MILLION_ALLOCATION = 210_000_000_000_000n;
+const MAX_SUPPLY = 2_100_000_000_000_000n;
 
 async function deployMaster(
   blockchain: Blockchain,
@@ -259,9 +259,9 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     const expected = [
       { address: owner.address, amount: FOUNDER_ALLOCATION },
       { address: miningReserve.address, amount: MINING_ALLOCATION },
-      { address: treasury.address, amount: ONE_BILLION_ALLOCATION },
-      { address: liquidity.address, amount: ONE_BILLION_ALLOCATION },
-      { address: ecosystem.address, amount: ONE_BILLION_ALLOCATION },
+      { address: treasury.address, amount: TWO_HUNDRED_TEN_MILLION_ALLOCATION },
+      { address: liquidity.address, amount: TWO_HUNDRED_TEN_MILLION_ALLOCATION },
+      { address: ecosystem.address, amount: TWO_HUNDRED_TEN_MILLION_ALLOCATION },
     ];
 
     const config = await master.getGetAllocationConfig();
@@ -317,9 +317,9 @@ describe('VCOIN Jetton Sandbox release gates', () => {
     const roles = [
       { statusField: 'founder_issued', select: (d: Awaited<ReturnType<typeof deployMaster>>, owner: SandboxContract<TreasuryContract>) => ({ address: owner.address, amount: FOUNDER_ALLOCATION }) },
       { statusField: 'mining_reserve_issued', select: (d: Awaited<ReturnType<typeof deployMaster>>) => ({ address: d.miningReserve.address, amount: MINING_ALLOCATION }) },
-      { statusField: 'treasury_issued', select: (d: Awaited<ReturnType<typeof deployMaster>>) => ({ address: d.treasury.address, amount: ONE_BILLION_ALLOCATION }) },
-      { statusField: 'liquidity_issued', select: (d: Awaited<ReturnType<typeof deployMaster>>) => ({ address: d.liquidity.address, amount: ONE_BILLION_ALLOCATION }) },
-      { statusField: 'ecosystem_issued', select: (d: Awaited<ReturnType<typeof deployMaster>>) => ({ address: d.ecosystem.address, amount: ONE_BILLION_ALLOCATION }) },
+      { statusField: 'treasury_issued', select: (d: Awaited<ReturnType<typeof deployMaster>>) => ({ address: d.treasury.address, amount: TWO_HUNDRED_TEN_MILLION_ALLOCATION }) },
+      { statusField: 'liquidity_issued', select: (d: Awaited<ReturnType<typeof deployMaster>>) => ({ address: d.liquidity.address, amount: TWO_HUNDRED_TEN_MILLION_ALLOCATION }) },
+      { statusField: 'ecosystem_issued', select: (d: Awaited<ReturnType<typeof deployMaster>>) => ({ address: d.ecosystem.address, amount: TWO_HUNDRED_TEN_MILLION_ALLOCATION }) },
     ] as const;
 
     for (const role of roles) {

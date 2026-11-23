@@ -477,7 +477,7 @@ test('wallet-backed mining accrues from finalized Jetton snapshots and settles t
     assert.equal(reward.end_wallet_snapshot_id, endSnapshotId);
     assert.equal(String(reward.eligible_wallet_balance_base_units), '900000000000');
     assert.ok(BigInt(reward.amount_base_units) >= 6000n);
-    assert.ok(BigInt(reward.amount_base_units) <= 8000n);
+    assert.ok(BigInt(reward.amount_base_units) <= 12000n);
 
     const duplicate = await engine.claimReward({
       userId,

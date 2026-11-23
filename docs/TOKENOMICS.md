@@ -1,11 +1,11 @@
 V COIN – TON Tokenomics
 
-Document version: 1.4
+Document version: 1.5
 Status: Owner-approved economic design
 Network: TON Blockchain
 Token standard: Jetton (TEP-74)
 Token symbol: VCOIN
-Initial USD reference price: 0.008 per VCOIN (modelled reference only; not a market quote or guarantee)
+Initial USD reference price: 0.004 per VCOIN (modelled reference only; not a market quote or guarantee)
 
 1. Purpose
 
@@ -16,13 +16,13 @@ This document records the approved economic design. It does not represent a depl
 2. Token specifications
 
 Parameter| Approved specification
-Total initial supply| 2,100,000,000 VCOIN
+Total initial supply| 10,000,000,000 VCOIN
 Decimal precision| 6
 Token standard| TON Jetton
 Additional minting| Not permitted
 Network| TON Blockchain
 
-The initial supply is equivalent to 2,100,000,000,000,000 indivisible base units.
+The initial supply is equivalent to 10,000,000,000,000,000 indivisible base units.
 
 The implementation must ensure that the approved initial supply is issued only once and that further minting is permanently disabled through a verified contract mechanism.
 
@@ -31,20 +31,20 @@ Token burning, if supported, must not create any mechanism for issuing replaceme
 3. Supply allocation
 
 Allocation| Percentage| Amount
-Founder allocation| 20%| 420,000,000 VCOIN
-User mining rewards reserve| 50%| 1,050,000,000 VCOIN
-Project treasury| 10%| 210,000,000 VCOIN
-Liquidity and market| 10%| 210,000,000 VCOIN
-Ecosystem development and marketing| 10%| 210,000,000 VCOIN
-Total| 100%| 2,100,000,000 VCOIN
+Founder allocation| 20%| 2,000,000,000 VCOIN
+User mining rewards reserve| 50%| 5,000,000,000 VCOIN
+Project treasury| 10%| 1,000,000,000 VCOIN
+Liquidity and market| 10%| 1,000,000,000 VCOIN
+Ecosystem development and marketing| 10%| 1,000,000,000 VCOIN
+Total| 100%| 10,000,000,000 VCOIN
 
 The five official allocation destination addresses are recorded in `docs/WALLET_ALLOCATION_REGISTER.md`. Those five addresses are the sole approved allocation destinations unless the project owner explicitly approves a documented change. Tonkeeper and Gram Wallet addresses mentioned for general wallet use are not additional allocation destinations.
 
 4. Founder allocation — immediate full withdrawal right
 
-The founder allocation is fixed at 420,000,000 VCOIN, representing 20% of the total initial supply.
+The founder allocation is fixed at 2,000,000,000 VCOIN, representing 20% of the total initial supply.
 
-The founder has the explicit right to receive and withdraw the entire 420,000,000 VCOIN allocation at once. No vesting period, monthly installments, time lock, or staged release applies to this allocation.
+The founder has the explicit right to receive and withdraw the entire 2,000,000,000 VCOIN allocation at once. No vesting period, monthly installments, time lock, or staged release applies to this allocation.
 
 The founder's full allocation is credited to the founder's designated wallet as one exact allocation. After receipt, the founder controls and may transfer or withdraw the full amount, subject to ordinary TON network rules and applicable law.
 
@@ -52,7 +52,7 @@ No additional founder allocation is authorized by this document.
 
 5. User mining rewards
 
-A total of 1,050,000,000 VCOIN is reserved for user mining rewards.
+A total of 5,000,000,000 VCOIN is reserved for user mining rewards.
 
 The distribution model has a minimum target period of two years.
 
@@ -64,7 +64,7 @@ The rewards system must distribute only from the pre-existing reserve and must n
 
 6. Project treasury
 
-A 210,000,000 VCOIN allocation is reserved for project treasury purposes.
+A 1,000,000,000 VCOIN allocation is reserved for project treasury purposes.
 
 Public project documentation must not disclose the founder's identity, the treasury controller's identity, or confidential treasury addresses and operational details.
 
@@ -72,13 +72,13 @@ Any treasury operations must follow applicable legal requirements and the projec
 
 7. Liquidity and market allocation
 
-A total of 210,000,000 VCOIN is allocated to liquidity and market-related purposes.
+A total of 1,000,000,000 VCOIN is allocated to liquidity and market-related purposes.
 
 The exact deployment strategy, liquidity venues, lock arrangements, and release controls remain subject to a separate approved implementation plan.
 
 8. Ecosystem development and marketing
 
-A total of 210,000,000 VCOIN is allocated to ecosystem development and marketing.
+A total of 1,000,000,000 VCOIN is allocated to ecosystem development and marketing.
 
 Permitted uses and distribution procedures must be documented before funds are committed.
 
@@ -102,7 +102,7 @@ Standard-compatible Jetton Wallet contracts.
 Fixed initial supply.
 Verified disabling of additional minting.
 Controlled allocation and distribution of the approved reserves.
-Immediate, unrestricted founder access to the full 420,000,000 VCOIN founder allocation.
+Immediate, unrestricted founder access to the full 2,000,000,000 VCOIN founder allocation.
 Secure accounting and transaction verification.
 Contract implementation must be reviewed against the applicable TON standards and security requirements.
 
@@ -129,7 +129,7 @@ The canonical five-wallet allocation map is maintained in docs/WALLET_ALLOCATION
 
 15. Modelled USD reference-price policy
 
-- Initial modelled USD reference baseline: 0.008 per VCOIN.
+- Initial modelled USD reference baseline: 0.004 per VCOIN.
 - Approved target: 50% compound growth per 365-day year, applied gradually.
 - Backend cadence: one modelled update every 72 hours, using a fixed-point multiplier of 1.003338149181 (approximately 0.3338149181% per 72-hour period).
 - The annualized multiplier is approximately 1.5 over 365 days.
@@ -142,6 +142,6 @@ The canonical five-wallet allocation map is maintained in docs/WALLET_ALLOCATION
 - A user purchase exchanges TON for already-issued VCOIN. The TON consideration is directed to the Founder allocation wallet; the corresponding VCOIN is transferred from the Founder Jetton wallet to the user's verified Jetton wallet. Purchases never invoke minting.
 - The user's level-qualifying amount is the sum of eligible purchased VCOIN and eligible mining rewards. Ledger history must continue to distinguish purchased and mining-origin balances.
 - Mining rewards remain internal eligible claims during the mining period. They must not be represented as VCOIN already held in the user's TON wallet.
-- Following the Founder's formal announcement that mining has ended, the project reconciles all claims against the fixed 1,050,000,000 VCOIN mining allocation and transfers each user's approved reward from the mining-reserve Jetton wallet to the user's verified Jetton wallet.
+- Following the Founder's formal announcement that mining has ended, the project reconciles all claims against the fixed 5,000,000,000 VCOIN mining allocation and transfers each user's approved reward from the mining-reserve Jetton wallet to the user's verified Jetton wallet.
 - A payout is complete only after successful on-chain confirmation. Unique idempotency keys, anti-replay controls, bounce/failure handling, and immutable accounting are mandatory.
-- This policy does not increase the 2,100,000,000 VCOIN total supply and does not permit additional minting.
+- This policy does not increase the 10,000,000,000 VCOIN total supply and does not permit additional minting.

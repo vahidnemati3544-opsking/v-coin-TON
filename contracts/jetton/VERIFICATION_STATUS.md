@@ -624,3 +624,31 @@ The earlier logo-pending statements in this historical verification log are supe
 - Metadata BOC SHA-256: `005aeddd589838a3b603ccbe58a6e893015e7f5dbaf4c5f43edb3fb2a82ee287`.
 - Predicted Master address for this metadata/build: `EQBn4hW8bKhFTSz9riY5q3Pr3SfJmv2VYKZQl_NWMbK--5fP` (prediction only; not deployed).
 - Mainnet deployment and allocation transactions remain unsigned and unbroadcast. Independent security audit, clean-room rebuild, final live fee review, and Founder payload approval remain outstanding.
+
+
+## Action #69 — Restore the Founder-approved five-stage receipt flow (2026-11-24)
+
+**Status:** Five-stage source, accounting, testnet preview, CI guards, and documentation have been implemented on feat/five-stage-founder-receipt. Exact-head CI and independent review are pending. No Testnet or Mainnet transaction has been signed or broadcast. Mainnet remains HOLD / NO-GO.
+
+The controlling initial receipt amounts are the Founder’s five-stage instruction, superseding the two-stage draft recorded in Action #66 and PR #21:
+
+| Stage | VCOIN | Base units (6 decimals) |
+|---:|---:|---:|
+| 1 | 420,000,000 | 420000000000000 |
+| 2 | 1,050,000,000 | 1050000000000000 |
+| 3 | 210,000,000 | 210000000000000 |
+| 4 | 210,000,000 | 210000000000000 |
+| 5 | 210,000,000 | 210000000000000 |
+| **Total** | **2,100,000,000** | **2100000000000000** |
+
+- All five receipts go only to the Founder Mainnet wallet UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT.
+- The Master enforces the exact next-stage amount and sequence, one pending stage at a time, and a hard 2.1B cap. The fifth acknowledged receipt disables minting permanently.
+- The deterministic Founder Jetton wallet records acknowledgement state and allows the Founder to resend the same acknowledgement. The Master treats a duplicate acknowledged stage idempotently; a natural bounce rolls back only the pending stage and leaves earlier confirmed stages intact.
+- Backend reconciliation accepts only the five exact stage amounts in order, after finalized Mainnet event verification against the expected Master, Founder owner, and deterministic Jetton wallet. Four subsequent allocations are blocked until all five receipt stages are recorded.
+- Mainnet transaction planner remains deliberately disabled; CI generates no Mainnet payloads and never signs/broadcasts. Testnet generator emits five unsigned inspection previews only, isolated from Mainnet addresses and signing.
+- PR #21's two-stage amounts (1B + 1.1B) are superseded and must not be used. The legacy Action #66 record is historical only.
+- Required exact-head CI: Tact compilation, strict npm audit, all Sandbox tests, five-stage Testnet preview validation, backend syntax/unit tests, and PostgreSQL integration/migration tests.
+- Required release gates after CI: review generated BOC/cell/StateInit hashes, verify all five Jetton wallet derivations, test real Testnet execution only after fee/emulator review and separate Founder approval, obtain independent security review, verify wallet control and current fees. None of these is represented as completed by this source change.
+
+**Mainnet authorization flags remain false.** No deployment, mint, receipt, or allocation transfer is authorized by this implementation task.
+

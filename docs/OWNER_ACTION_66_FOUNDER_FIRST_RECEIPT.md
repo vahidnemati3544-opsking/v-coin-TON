@@ -1,3 +1,5 @@
+> **Historical record — superseded by Action #69.** The two-stage amounts and flow documented below are not controlling and must not be used. The current Founder-approved receipt plan is five exact stages: 420M, 1,050M, 210M, 210M, 210M VCOIN, each separately authorized. See docs/OWNER_ACTION_69_FIVE_STAGE_RECEIPT.md and contracts/jetton/VERIFICATION_STATUS.md.
+
 # Action #66 — Founder-First Two-Stage Mainnet Receipt Policy
 
 **Date:** 2026-11-24  

@@ -21,6 +21,7 @@ contract VCoinMaster with JettonMaster {
     first_receipt_amount: Int as coins = 0;
     first_receipt_issued: Bool = false;
     second_receipt_issued: Bool = false;
+    second_receipt_amount: Int as coins = 0;
 
     init(owner: Address, content: Cell) {
         self.total_supply = 0;
@@ -30,6 +31,7 @@ contract VCoinMaster with JettonMaster {
         self.first_receipt_amount = 0;
         self.first_receipt_issued = false;
         self.second_receipt_issued = false;
+        self.second_receipt_amount = 0;
     }
 
     receive(msg: VCoinFund) {
@@ -77,10 +79,11 @@ contract VCoinMaster with JettonMaster {
         } else {
             require(!self.second_receipt_issued, "Stage 2 already issued");
             require(
-                msg.amount == VCOIN_MAX_SUPPLY - self.first_receipt_amount,
+                msg.amount == VCOIN_MAX_SUPPLY - self.total_supply,
                 "Stage 2 must equal the exact remaining supply"
             );
             self.second_receipt_issued = true;
+            self.second_receipt_amount = msg.amount;
             self.mintTo(self.owner, msg.amount, self.owner, 2);
             self.mintable = false;
         }
@@ -105,11 +108,12 @@ contract VCoinMaster with JettonMaster {
         } else if (msg.query_id == 2) {
             require(self.second_receipt_issued, "No Stage 2 receipt is pending");
             require(
-                msg.amount == VCOIN_MAX_SUPPLY - self.first_receipt_amount,
+                msg.amount == self.second_receipt_amount,
                 "Invalid Stage 2 bounce amount"
             );
             self.total_supply = self.total_supply - msg.amount;
             self.second_receipt_issued = false;
+            self.second_receipt_amount = 0;
             self.mintable = true;
         } else {
             require(false, "Unknown receipt stage bounce");

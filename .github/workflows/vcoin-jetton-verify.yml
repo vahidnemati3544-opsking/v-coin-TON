@@ -111,20 +111,25 @@ jobs:
           const source = fs.readFileSync('src/vcoin.tact', 'utf8');
           const tests = fs.readFileSync('tests/jetton-sandbox.spec.ts', 'utf8');
           const checks = {
-            stageOneMessage: source.includes('VCoinMintStageOne'),
-            stageTwoMessage: source.includes('VCoinMintStageTwo'),
-            stageOneState: source.includes('founder_stage_one_issued'),
-            stageTwoState: source.includes('founder_stage_two_issued'),
-            stageOneSandboxCase: /Founder Stage 1/i.test(tests),
-            stageTwoSandboxCase: /Founder Stage 2/i.test(tests),
+            founderOnlyReceipt: source.includes('msg.receiver == self.owner'),
+            stageOneIssuedState: source.includes('first_receipt_issued'),
+            stageOneCreditAcknowledgement: source.includes('first_receipt_confirmed'),
+            stageTwoIssuedState: source.includes('second_receipt_issued'),
+            stageTwoCreditAcknowledgement: source.includes('second_receipt_confirmed'),
+            stageTwoExactRemainder: source.includes('VCOIN_MAX_SUPPLY - self.total_supply'),
+            stageOneSandboxCase: tests.includes('only Founder can initiate Stage 1'),
+            stageTwoSandboxCase: tests.includes('Stage 2 must equal the exact remainder'),
+            stageOneBounceSandboxCase: tests.includes('natural Stage 1 bounce'),
+            stageTwoBounceSandboxCase: tests.includes('natural Stage 2 bounce'),
+            founderDistributionSandboxCase: tests.includes('Founder can distribute the credited Jettons'),
           };
           const missing = Object.entries(checks).filter(([, passed]) => !passed).map(([name]) => name);
           if (missing.length) {
             throw new Error(
-              'Mainnet release remains blocked: the current VCoinMaster still lacks the approved Founder-first two-stage receipt implementation and matching Sandbox cases. Missing: ' + missing.join(', ')
+              'Mainnet release remains blocked: the current VCoinMaster lacks required Founder-first receipt/acknowledgement behavior or matching Sandbox cases. Missing: ' + missing.join(', ')
             );
           }
-          console.log('Founder-first two-stage receipt implementation and Sandbox coverage markers are present.');
+          console.log('Founder-first receipt, credit acknowledgements, exact-remainder Stage 2, bounce and distribution Sandbox markers are present.');
           NODE
       - name: Preserve complete V COIN–TON source snapshot
         if: success()

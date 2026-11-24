@@ -401,7 +401,7 @@ test('Founder-first receipt and allocation reconciliation is exact, idempotent, 
     );
     assert.equal(first.rows[0].status, 'confirmed');
     const duplicateFirst = await pool.query(
-      'SELECT record_vcoin_receipt_stage(1, $1::numeric, $2, $3, $4) AS status',
+      'SELECT record_vcoin_receipt_stage(1::smallint, $1::numeric, $2, $3, $4) AS status',
       [stage1, tx1, master, founder]
     );
     assert.equal(duplicateFirst.rows[0].status, 'duplicate');
@@ -414,7 +414,7 @@ test('Founder-first receipt and allocation reconciliation is exact, idempotent, 
     );
 
     const second = await pool.query(
-      'SELECT record_vcoin_receipt_stage(2, $1::numeric, $2, $3, $4) AS status',
+      'SELECT record_vcoin_receipt_stage(2::smallint, $1::numeric, $2, $3, $4) AS status',
       [stage2, tx2, master, founder]
     );
     assert.equal(second.rows[0].status, 'confirmed');

@@ -650,7 +650,7 @@ The controlling initial receipt amounts are the Founder’s five-stage instructi
 - Mainnet transaction planner remains deliberately disabled; CI generates no Mainnet payloads and never signs/broadcasts. Testnet generator emits five unsigned inspection previews only, isolated from Mainnet addresses and signing.
 - PR #21's two-stage amounts (1B + 1.1B) are superseded and must not be used. The legacy Action #66 record is historical only.
 - Required exact-head CI: Tact compilation, strict npm audit, all Sandbox tests, five-stage Testnet preview validation, backend syntax/unit tests, and PostgreSQL integration/migration tests.
-- Required release gates after CI: review generated BOC/cell/StateInit hashes, verify all five Jetton wallet derivations, test real Testnet execution only after fee/emulator review and separate Founder approval, obtain independent security review, verify wallet control and current fees. None of these is represented as completed by this source change.
+- Required release gates after CI: review generated BOC/cell/StateInit hashes, verify all five Jetton wallet derivations, test real Testnet execution only after fee/emulator review and separate Founder approval, complete documented internal security review; external auditing is not a project release gate, verify wallet control and current fees. None of these is represented as completed by this source change.
 
 **Mainnet authorization flags remain false.** No deployment, mint, receipt, or allocation transfer is authorized by this implementation task.
 

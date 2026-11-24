@@ -52,8 +52,10 @@ jobs:
         run: |
           node <<'NODE'
           const fs = require('node:fs');
+          const { Address } = require('@ton/core');
           const p = JSON.parse(fs.readFileSync('build/testnet-rehearsal-preview.json', 'utf8'));
           if (p.network !== 'testnet' || p.test_only !== true) throw new Error('Testnet-only network guard failed');
+          if (!Address.parseFriendly(p.master_address).isTestOnly || !Address.parseFriendly(p.founder_jetton_wallet_address).isTestOnly) throw new Error('Friendly address testOnly flag is missing');
           if (p.fixed_supply_tokens !== '2100000000' || p.decimals !== 6) throw new Error('Fixed supply mismatch');
           if (p.unsigned_messages.stage_1.token_amount !== '1000000000') throw new Error('Stage 1 amount mismatch');
           if (p.unsigned_messages.stage_2.token_amount !== '1100000000') throw new Error('Stage 2 amount mismatch');

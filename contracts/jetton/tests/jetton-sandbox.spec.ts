@@ -75,7 +75,8 @@ describe('VCOIN five-stage Founder-first issuance', () => {
       const status = await master.getGetReceiptStatus();
       expect(status.next_receipt_stage).toBe(BigInt(i + 2));
       expect(status.receipt_pending).toBe(false);
-      expect(status['stage_' + (i + 1) + '_confirmed']).toBe(true);
+      const confirmations = [status.stage_1_confirmed, status.stage_2_confirmed, status.stage_3_confirmed, status.stage_4_confirmed, status.stage_5_confirmed];
+      expect(confirmations[i]).toBe(true);
     }
     expect(total).toBe(MAX_SUPPLY);
     const data = await master.getGetJettonData();

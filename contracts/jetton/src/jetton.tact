@@ -91,11 +91,37 @@ contract VCoinJettonWallet {
     balance: Int as coins = 0;
     owner: Address;
     master: Address;
+    receipt_ack_pending: Bool = false;
+    pending_receipt_stage: Int = 0;
+    pending_receipt_amount: Int as coins = 0;
 
     init(owner: Address, master: Address) {
         self.balance = 0;
         self.owner = owner;
         self.master = master;
+        self.receipt_ack_pending = false;
+        self.pending_receipt_stage = 0;
+        self.pending_receipt_amount = 0;
+    }
+
+    fun sendReceiptAcknowledgement() {
+        require(self.receipt_ack_pending, "No receipt acknowledgement is pending");
+        send(SendParameters{
+            to: self.master,
+            value: ton("0.01"),
+            mode: SendPayGasSeparately,
+            bounce: false,
+            body: VCoinReceiptAcknowledgement{
+                query_id: self.pending_receipt_stage,
+                amount: self.pending_receipt_amount
+            }.toCell()
+        });
+    }
+
+    receive(msg: VCoinRetryReceiptAcknowledgement) {
+        let ctx: Context = context();
+        require(ctx.sender == self.owner, "Only Founder wallet owner may retry receipt acknowledgement");
+        self.sendReceiptAcknowledgement();
     }
 
     receive(msg: TokenTransfer) {
@@ -132,14 +158,11 @@ contract VCoinJettonWallet {
         }
         require(msg.amount > 0, "Transfer amount must be positive");
         self.balance = self.balance + msg.amount;
-        if (ctx.sender == self.master && (msg.query_id == 1 || msg.query_id == 2)) {
-            send(SendParameters{
-                to: self.master,
-                value: ton("0.01"),
-                mode: SendPayGasSeparately,
-                bounce: false,
-                body: VCoinReceiptAcknowledgement{query_id: msg.query_id, amount: msg.amount}.toCell()
-            });
+        if (ctx.sender == self.master && msg.query_id >= 1 && msg.query_id <= 5) {
+            self.receipt_ack_pending = true;
+            self.pending_receipt_stage = msg.query_id;
+            self.pending_receipt_amount = msg.amount;
+            self.sendReceiptAcknowledgement();
         }
         let remaining: Int = ctx.value - self.gasConsumption;
         if (msg.forward_ton_amount > 0) {

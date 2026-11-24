@@ -45,6 +45,7 @@ The following active documents and machine-readable allocation records were alig
 - `docs/PURCHASE_AND_MINING_PAYOUT_POLICY.md`
 - `docs/README.md`
 - `contracts/jetton/allocation/allocation-plan.json`
+- `contracts/mining/backend/scripts/setup-database.js` (registered migration 010 in the local-only migration runner)
 - `docs/JETTON_CONTRACT_SPEC.md`
 - `docs/GLOBAL_DUE_DILIGENCE_READINESS.md`
 - `docs/PROJECT_REVIEW_ACTION_52.md`
@@ -59,7 +60,7 @@ Historical actions and pre-deployment snapshots remain historical records. Their
 
 ## 4. Contract and tooling review
 
-The current repository source already defines the five exact base-unit constants, Founder-only receipt requests, one pending stage at a time, deterministic Founder-wallet acknowledgement, acknowledgement retry, stage-specific bounce rollback, and permanent mint disablement after Stage 5. The Sandbox suite contains a five-stage sequential-receipt test and tests for Stage 1/2 natural bounce rollback. The allocation manifest and deployment template also describe the five stages.
+The current repository source already defines the five exact base-unit constants, Founder-only receipt requests, one pending stage at a time, deterministic Founder-wallet acknowledgement, acknowledgement retry, stage-specific bounce rollback, and permanent mint disablement after Stage 5. The Sandbox suite contains a five-stage sequential-receipt test and tests for Stage 1/2 natural bounce rollback. The allocation manifest and deployment template also describe the five stages. The local-only PostgreSQL setup runner now registers migration 010, so the five-stage reconciliation schema is included in the ordered local setup path; the runner still refuses production and non-local database hosts.
 
 The Mainnet preparation script intentionally remains disabled. The public Testnet rehearsal generator is disabled/archived. CI and local TON Sandbox are the permitted engineering verification paths; this action does not authorize public Testnet transactions.
 

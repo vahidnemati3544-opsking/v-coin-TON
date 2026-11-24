@@ -1,6 +1,6 @@
 # V COIN — Isolated TON Testnet rehearsal
 
-**Status:** preparation tooling added; build/runtime verification and public Testnet execution remain pending.  
+**Status:** exact-head GitHub CI build and unsigned Testnet preview validation passed at commit `4643d6c9b27ae24aca69abbb13ba88a9bea69fce`; wallet-compatible fee/emulation and public Testnet execution remain pending.  
 **Scope:** Testnet only. Mainnet remains HOLD / NO-GO.
 
 ## Files
@@ -54,6 +54,16 @@ The preview must identify `network: testnet`, `test_only: true`, the registered 
 ## Completion criteria
 
 This action is not complete until the exact branch head builds, the preview script runs successfully, all generated addresses carry Testnet-only formatting, and the public Testnet deployment plus Stage 1/Stage 2 receipts are verified on-chain. Sandbox CI alone does not satisfy public Testnet execution.
+
+## Exact-head CI verification — 2026-11-24
+
+At branch head `4643d6c9b27ae24aca69abbb13ba88a9bea69fce`, GitHub Actions completed successfully:
+
+- Jetton verification run `45333518846`: Tact compilation, metadata build, unsigned Testnet rehearsal preview generation, Testnet-only artifact validation, Jest tests, and read-only release-page validation all passed.
+- Backend CI run `45333518874`: syntax checks, PostgreSQL schema/migrations, migration idempotency, and backend unit/integration tests passed.
+- Mining CI run `45333518857`: syntax/static checks and unit/PostgreSQL integration tests passed.
+
+These CI results verify the exact branch head in GitHub's runner. They do **not** establish a live fee quote, a wallet-generated signed message, public Testnet deployment, on-chain receipt, or Mainnet readiness. Those remain separate gates.
 
 ## Fee-estimation audit gate — 2026-11-24
 

@@ -1,3 +1,5 @@
+> **Controlling V COIN–TON receipt rule (2026-11-24):** The full fixed 2,100,000,000 VCOIN supply is first credited only to Founder Mainnet wallet `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT` in five sequential, separately Founder-announced and Founder-signed stages: 420,000,000; 1,050,000,000; 210,000,000; 210,000,000; 210,000,000 VCOIN. Confirm each credit before authorizing the next. After all five receipts, the Founder signs four separate allocations: Mining 1.05B, Treasury 210M, Liquidity 210M, Ecosystem 210M; Founder retains 420M. This is an accounting/architecture rule, not evidence of receipt or permission to transact. Mainnet remains HOLD; public Testnet operations are not authorized.
+
 # V COIN – TON Database Architecture
 
 **Database:** PostgreSQL  
@@ -85,7 +87,7 @@ From `contracts/mining/backend`:
 5. Run `npm install`, then `npm run check` and `npm test`.
 6. Run `npm run db:setup` only after confirming the target.
 
-The setup script applies the core schema and migrations 001–009 in order. Migration 009 applies the current 2,100,000,000 VCOIN allocation model and 1,050,000,000 VCOIN mining reserve. The USD 0.004 modelled reference baseline remains a separate model input, not a market price. The runner records versions and SHA-256 checksums in `schema_migrations`, uses a PostgreSQL advisory lock, skips unchanged migrations, and refuses checksum drift. It refuses `NODE_ENV=production` and rejects non-local database hosts. It is a local development setup command, not a production migration system.
+The setup script applies the core schema and migrations 001–010 in order; migration 010 adds the Founder-first five-stage receipt and subsequent allocation reconciliation ledger. Migration 009 applies the current 2,100,000,000 VCOIN allocation model and 1,050,000,000 VCOIN mining reserve. The USD 0.004 modelled reference baseline remains a separate model input, not a market price. The runner records versions and SHA-256 checksums in `schema_migrations`, uses a PostgreSQL advisory lock, skips unchanged migrations, and refuses checksum drift. It refuses `NODE_ENV=production` and rejects non-local database hosts. It is a local development setup command, not a production migration system.
 
 The integration suite uses `TEST_DATABASE_URL` and must point to a separate, disposable test database — never the development database and never production.
 
@@ -109,3 +111,8 @@ A successful JavaScript CI run does not prove that SQL has been applied to the u
 - After the Founder formally declares the mining period complete, the system reconciles the 1,050,000,000 VCOIN mining rewards allocation, validates each user's eligible rewards and payout destination, and transfers each payable amount from the designated mining reserve Jetton wallet to the user's verified Jetton wallet.
 - Payouts require idempotency, reserve-cap enforcement, transaction finality/bounce verification, and an immutable audit trail. Never mark a payout paid before chain confirmation.
 - Historical migration 001 seeded the original reserve; migration 005 reduced the cap to 1,050,000,000 VCOIN. Migration 005 remains immutable, and migration 009 is the forward-only correction that establishes the current 1,050,000,000 VCOIN effective cap.
+
+
+## Founder-first five-stage receipt reconciliation
+
+The backend must record the five exact Founder receipt stages (420M, 1.05B, 210M, 210M, 210M VCOIN) only after each matching Mainnet transaction and Founder Jetton-wallet credit are independently confirmed. Migration `010-founder-first-five-stage-reconciliation.sql` provides the chain-receipt and subsequent allocation reconciliation layer. Database balances and pending mining rewards are not evidence of on-chain receipt. Public Testnet transactions are not authorized; use local Sandbox only.

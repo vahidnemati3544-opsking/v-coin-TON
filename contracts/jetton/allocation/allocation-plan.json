@@ -1,11 +1,11 @@
 {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
   "token": "VCOIN",
   "network": "TON",
   "decimals": 6,
   "totalSupplyBaseUnits": "2100000000000000",
   "totalSupplyTokens": "2100000000",
-  "issuance": "five fixed per-wallet allocations; owner-authorized; each allocation one-time; no additional minting",
+  "issuance": "Founder-first custody: receive the fixed 2,100,000,000 VCOIN supply in two separately authorized transfers to the Founder Mainnet wallet, then Founder-sign the four other allocation distributions; no additional minting",
   "allocations": [
     {
       "role": "founder",
@@ -44,20 +44,42 @@
     }
   ],
   "releaseConstraints": [
-    "The VCoinMaster StateInit permanently fixes the five destination addresses.",
-    "The Master accepts only the exact approved amount for the matching destination wallet.",
-    "Each allocation can be issued once; only that allocation can be retried after an authenticated natural bounce.",
-    "After all five wallet credits succeed, minting is permanently disabled.",
+    "This manifest describes the final five economic allocation categories; it does not authorize direct five-wallet initial issuance.",
+    "The entire fixed supply must first be received by the Founder Mainnet wallet in two separately authorized transfers; installment amounts remain unset until recorded in an approved transaction plan.",
+    "After full receipt, the Founder personally signs the four other allocation transfers to their registered destination wallets and retains the 420,000,000 VCOIN Founder allocation.",
+    "The previous Founder address was Testnet-only and must not be used for Mainnet.",
+    "The current fixed-five-destination VCoinMaster logic must be revised and locally tested for Founder-first receipt and subsequent distributions before this manifest is used for deployment or signing.",
+    "The hard total supply is 2,100,000,000 VCOIN; no additional minting is permitted.",
     "Never send Mainnet transactions from CI.",
-    "Verify the deployed Master allocation config against the approved operational register before signing any issuance messages.",
-    "Reconcile each Jetton wallet balance against this manifest after issuance.",
-    "The Founder allocation wallet is also the GAS & OPERATIONS wallet; it is not a sixth destination. The Founder alone signs deployment and each separate issuance request.",
-    "The founder/owner signs each VCoinMint request with at least 0.01 TON; the Master reserve funds 0.1 TON for each destination wallet credit.",
-    "Execution is Mainnet-only after all release gates; no Testnet deployment or Testnet transaction is authorized. Local TON Sandbox tests are required."
+    "Verify the exact Mainnet Master, all owner addresses, Jetton wallet derivations, fee/reserve sufficiency, and transaction finality before accounting transfers as complete.",
+    "The Founder is the sole signer for the initial receipt instructions and all subsequent allocation transfers.",
+    "No Testnet deployment or Testnet transaction is authorized; local TON Sandbox tests are required."
   ],
   "priceReference": {
     "initialPriceUsd": "0.004",
     "currency": "USD",
     "type": "modelled_reference_not_market_price"
+  },
+  "initialReceipt": {
+    "network": "mainnet",
+    "founderReceivingWallet": "UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT",
+    "totalSupplyTokens": "2100000000",
+    "totalSupplyBaseUnits": "2100000000000000",
+    "installments": [
+      {
+        "stage": 1,
+        "amountTokens": null,
+        "amountBaseUnits": null,
+        "founderAuthorizationRequired": true
+      },
+      {
+        "stage": 2,
+        "amountTokens": null,
+        "amountBaseUnits": null,
+        "founderAuthorizationRequired": true
+      }
+    ],
+    "stage2RequiresFreshFounderAnnouncement": true,
+    "status": "amounts_pending_contract_revision"
   }
 }

@@ -1,5 +1,25 @@
 # CURRENT CONTROLLING VERIFICATION STATUS — 2026-11-24 (Action #66)
 
+**Status: Engineering candidate passes automated CI on isolated feature branch; Mainnet remains HOLD / NO-GO.**
+
+- Feature branch: `feat/founder-first-two-stage`; latest recorded branch head: `5548ea95db951142ebcfe2a9bbb7544f306a89b2`.
+- Jetton CI [run #45326599824](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45326599824) passed on contract/config commit `9f7e060aef326f408ec69cfdc69de9970c44ceb7`: Tact build, metadata cell, unsigned preview, Jest Sandbox tests, read-only issuer guard, and artifacts.
+- Backend/PostgreSQL CI [run #45326689464](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45326689464) passed on backend test commit `5548ea95db951142ebcfe2a9bbb7544f306a89b2`: syntax checks and integration tests for migration 010, both receipt stages, idempotency, exact four-role transfers, and mismatch rejection.
+- The revised Master is Founder-first. Stage 1 mints only to the Founder Jetton wallet. The wallet sends an authenticated acknowledgement after credit; Stage 2 is blocked until that acknowledgement is received.
+- Stage 2 is a separate Founder-authorized request for the exact remaining supply. Its wallet credit is also acknowledged; minting becomes permanently disabled only after Stage 2 credit acknowledgement.
+- Token burns are blocked while either initial receipt stage is incomplete. Natural bounces from the deterministic Founder Jetton wallet roll back only the matching stage.
+- The four subsequent allocation movements are Founder-signed TEP-74 transfers from the Founder Jetton wallet, not additional mint operations.
+- The Stage 1 amount remains unspecified. The CI preview therefore generated no receipt transaction payloads.
+- The old TonConnect direct-mint issuer is read-only HOLD / NO-GO on the feature branch. A safety-only read-only issuer update has also been committed to main; its Pages publication is subject to the main-branch workflow.
+- The database migration records confirmed receipts and allocations, but a production indexer/backend integration that verifies actual on-chain finality and calls the database functions remains pending.
+- No verified Mainnet deployment or receipt is claimed. The feature branch has not been merged to main.
+
+The older verification snapshots below are historical. Any descriptions of the former seven-argument constructor, direct five-wallet mint operations, five role flags, or old transaction issuer are superseded by this controlling status and Action #66.
+
+---
+
+# CURRENT CONTROLLING VERIFICATION STATUS — 2026-11-24 (Action #66)
+
 **Status: HOLD / NO-GO for all Mainnet deployment, minting, receipt, and allocation transfers.**
 
 - The current implementation candidate is on branch `feat/founder-first-two-stage`; it is not merged to `main`.

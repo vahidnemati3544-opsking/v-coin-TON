@@ -1,3 +1,5 @@
+> **Historical record notice — superseded by Owner Action #69 and the controlling 2026-11-24 instruction:** This file preserves earlier engineering history only. Its prior direct-five-wallet issuance, one-step/two-step receipt, or Testnet rehearsal wording is not current policy and must not be used as an executable instruction. The controlling receipt is five sequential Founder-authorized stages to the Founder Mainnet wallet (420M, 1.05B, 210M, 210M, 210M VCOIN), followed by four Founder-signed allocation transfers after all five credits are confirmed. Public Testnet deployment and transactions are not authorized; local TON Sandbox is the permitted simulation path. Mainnet remains HOLD / NO-GO pending all release gates.
+
 # Action #67 — Disable Superseded Direct-Mint Mainnet Preview
 
 **Date:** 2026-11-24  

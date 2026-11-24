@@ -2,13 +2,13 @@
 
 - Fixed total supply: **2,100,000,000 VCOIN**, six decimals; no additional minting.
 - Sole initial receiving wallet: Founder-designated **TON Mainnet** address `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT`.
-- The entire supply is to reach this wallet in **two separate incoming transfers**. Installment amounts and timing remain to be entered in the transaction plan. Installment 2 occurs only after the Founder explicitly announces and authorizes it. This instruction does not assert that either transfer has occurred.
+- The entire fixed supply is received by the Founder Mainnet wallet through five separate, sequential, Founder-authorized stages: 420,000,000; 1,050,000,000; 210,000,000; 210,000,000; and 210,000,000 VCOIN. Each stage requires a fresh Founder announcement and signature, and the next stage is blocked until the preceding Founder Jetton-wallet credit is independently confirmed. This does not assert that any receipt has occurred.
 - After receipt, the Founder personally controls and signs distributions to the four registered allocation wallets: Mining Reserve 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN. The Founder retains 420,000,000 VCOIN (20%).
 - Former Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` was **Testnet-only**. It is historical/test-only and must never be used as the Mainnet receiving address.
 - This instruction supersedes direct five-wallet initial issuance, any one-operation five-wallet issuance description, and any designation of the former Founder address as Mainnet.
-- Documentation changes do not authorize a Mainnet transaction. The exact deployed Jetton Master, Mainnet status, contract compatibility with the Founder-first two-stage flow, wallet-control proof, installment amounts, fees, and local Sandbox evidence must be verified before signing. Existing fixed-five-destination contract logic must be revised and tested if incompatible.
+- Documentation changes do not authorize a Mainnet transaction. The exact deployed Jetton Master, Mainnet status, contract compatibility with the Founder-first five-stage flow, wallet-control proof, exact five-stage amounts, fees, and local Sandbox evidence must be verified before signing. The five-stage contract implementation must pass exact-head CI, local Sandbox, deployed-Master compatibility, source-wallet, and address/hash checks before any signing.
 
-Current policy correction (2026-11-24): Founder Mainnet wallet first receives the full 2.1B VCOIN supply in two separate transfers; Founder then signs distributions to the four other allocation wallets and retains 420M VCOIN. The previous Founder address was Testnet-only. Legacy fixed-five-destination direct issuance logic is superseded and must be adapted and tested. No Testnet deployment or transaction is authorized; local Sandbox testing is permitted.
+Current policy correction (2026-11-24): Founder Mainnet wallet first receives the full 2.1B VCOIN supply through five separate, sequential Founder-authorized receipt stages; Founder then signs distributions to the four other allocation wallets and retains 420M VCOIN. The previous Founder address was Testnet-only. Legacy direct-to-five-wallet issuance is superseded; the five-stage Founder-first contract and its exact deployed-Master compatibility remain subject to release verification. No Testnet deployment or transaction is authorized; local Sandbox testing is permitted.
 
 # V COIN – TON Security and Anti-Fraud Requirements
 
@@ -106,9 +106,9 @@ Before staging or production:
 
 No real-value transfer, token issuance, Mainnet deployment, or public mining launch is authorized by this document. Each requires a separate readiness review and explicit approval.
 
-## 9. Jetton issuance, Founder-first receipt, distribution and Bounce protection (contract revision required)
+## 9. Jetton issuance, five-stage Founder-first receipt, distribution and Bounce protection
 
-- The approved flow is two-stage receipt of the entire fixed supply by the Founder Mainnet Jetton wallet, followed by Founder-signed transfers of the four other allocations.
+- The approved flow is five-stage receipt of the entire fixed supply by the Founder Mainnet Jetton wallet, followed by Founder-signed transfers of the four other allocations.
 - The current five-destination direct-issuance logic is incompatible unless explicitly redesigned; do not deploy it unchanged for this owner instruction.
 - Contract changes must enforce the fixed 2.1B total, prevent additional minting, and support exact Founder-first receipt plus capped, auditable distributions to the four registered destinations.
 - The Master requires a minimum TON funding amount before starting a wallet-credit operation, preventing an underfunded request from recording supply without enough value to create the destination wallet.
@@ -127,9 +127,9 @@ No real-value transfer, token issuance, Mainnet deployment, or public mining lau
 
 ## 11. Founder immediate full-withdrawal authority
 
-- The Founder retains the 420,000,000 VCOIN (20%) personal allocation after receiving the full supply temporarily in two stages.
+- The Founder retains the 420,000,000 VCOIN (20%) personal allocation after receiving the full supply temporarily in five stages.
 - No vesting, time lock, monthly installments, or staged release applies to the founder allocation.
-- The current VCoinMaster's legacy one-operation Founder allocation path is superseded; contract adaptation is required before Mainnet use. The Founder receives the full supply in two incoming transfers and then signs the four other allocation distributions.
+- The current VCoinMaster's legacy one-operation Founder allocation path is superseded; contract adaptation is required before Mainnet use. The Founder receives the full supply through five separately signed stages and then signs the four other allocation distributions.
 - Once the Jetton wallet credit is confirmed, the founder may transfer or withdraw the full amount using the standard Jetton wallet owner authorization.
 - This is the founder's fixed 20% allocation, not permission to mint beyond the approved total supply.
 

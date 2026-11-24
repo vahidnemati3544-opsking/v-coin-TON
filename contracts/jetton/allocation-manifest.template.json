@@ -14,7 +14,7 @@
       "destination": "UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT",
       "requires_founder_signature": true,
       "transfer_kind": "retained_from_five_stage_founder_receipt",
-      "destination_verification": "Owner-designated Mainnet address recorded; wallet control and revised-contract Jetton wallet derivation pending. This row is the retained Founder balance, not a separate transfer."
+      "destination_verification": "Owner-designated Mainnet address recorded; wallet control and exact deployed-Master Jetton Wallet derivation pending. This row is the retained Founder balance, not a separate transfer."
     },
     {
       "allocation": "mining_reserve",
@@ -80,7 +80,7 @@
     "The former Founder address UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy is Testnet-only historical data and must never be used on Mainnet.",
     "Previous two-stage amounts and previews are superseded. Do not sign, deploy, or use any legacy preview or derived addresses.",
     "All recipient TON addresses are owner-designated records; their control is not proven by this manifest. Jetton Wallet addresses must be derived from the revised exact-build Master and checked before any transfer.",
-    "CI may create unsigned Testnet inspection artifacts only. No Testnet signing or broadcast is implied; emulator traces and fees must be reviewed first.",
+    "CI may create local TON Sandbox artifacts only. Public Testnet deployment, wallet requests, signing, broadcast, and transactions are not authorized.",
     "Never send Mainnet transactions from CI. Mainnet deployment_authorized and mainnet_authorized remain false.",
     "Never commit or request seed phrases, private keys, wallet PINs, or recovery codes."
   ],
@@ -105,8 +105,8 @@
   "preview_artifact_sha256": null,
   "gas_wallet_unification_status": "Founder Mainnet wallet is the sole GAS & OPERATIONS wallet; no separate GAS wallet or sixth allocation recipient exists.",
   "clean_room_hash_reproduction": {
-    "status": "pending_after_founder_first_contract_redesign",
-    "note": "Previous BOC/hash results belong to a superseded direct-mint design and are not a current deployment package. Rebuild the redesigned exact source and independently reproduce all TON code-cell, metadata, Master StateInit, and Jetton Wallet StateInit hashes before signing."
+    "status": "pending_exact_head_clean_room_reproduction",
+    "note": "Previous BOC/hash results belong to a superseded direct-mint design and are not a current deployment package. Independently rebuild the current five-stage source and reproduce all TON code-cell, metadata, Master StateInit, and Jetton Wallet StateInit hashes before signing."
   },
   "preview_status": "HOLD / NO-GO — five-stage Founder-first contract under exact-head verification; no Mainnet transaction payloads",
   "initial_receipt": {
@@ -146,7 +146,7 @@
         "requires_fresh_founder_signature": true
       }
     ],
-    "status": "five_exact_stages_recorded_testnet_preview_only_mainnet_hold",
+    "status": "five_exact_stages_recorded_local_sandbox_only_mainnet_hold",
     "stage_5_requires_fresh_founder_announcement": true
   }
 }

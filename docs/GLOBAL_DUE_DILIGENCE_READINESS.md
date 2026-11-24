@@ -1,3 +1,5 @@
+> **Controlling update — 2026-11-24 / Owner Action #82:** The current approved initial receipt is five sequential, separately Founder-authorized transfers to Mainnet Founder wallet UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT: 420,000,000; 1,050,000,000; 210,000,000; 210,000,000; 210,000,000 VCOIN. Each stage requires a fresh Founder announcement/signature and confirmation of the prior credit. After all five receipts, the Founder personally signs four allocation transfers and retains 420,000,000 VCOIN. Any older one-step, two-step, or direct-five-wallet issuance description below is historical only and is not an executable instruction. No Testnet deployment/transaction, Mainnet deployment, mint, or transfer is authorized by this documentation update.
+
 Current policy correction (2026-11-23): This register is a historical/internal readiness snapshot. Its references to independent external audits, penetration tests, or audit completion as project tasks or release gates are superseded and are not active V COIN–TON work items. The approved supply is 2,100,000,000 VCOIN (6 decimals); Founder allocation is 420,000,000 VCOIN credited in one operation with no vesting or time lock; exactly five allocation wallets are used, with Founder also the sole GAS & OPERATIONS wallet. Mainnet-only execution applies: local Sandbox testing is permitted; no Testnet deployment or transaction is authorized. Do not treat older tables below as current release requirements.
 
 # V COIN – TON | Global Due Diligence Readiness Register
@@ -94,7 +96,7 @@ The current owner-approved design totals 2,100,000,000 VCOIN:
 
 At six decimals, the planned total is 2,100,000,000,000,000 base units. This is arithmetic for the design only, not proof of on-chain issuance.
 
-The Founder allocation is 420,000,000 VCOIN, payable in one immediate allocation with no vesting or time lock. Continue to define and verify mining reserve custody and payout model; treasury wallet controls; liquidity release controls; ecosystem budget controls; and a reconciliation method preventing double-counting.
+The Founder retains 420,000,000 VCOIN (20%) after the full supply is received in five sequential stages and the Founder personally signs the four other allocation distributions; no vesting or time lock applies to this retained share. Continue to define and verify mining reserve custody and payout model; treasury wallet controls; liquidity release controls; ecosystem budget controls; and a reconciliation method preventing double-counting.
 
 The proposed referral terms (100 VCOIN per qualifying invitation and 2% of referred-user activity while active) remain unapproved for implementation until the activity definition, eligibility, caps, anti-abuse rules, accounting and legal review are complete.
 

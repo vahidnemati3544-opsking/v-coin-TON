@@ -8,6 +8,8 @@
 - This instruction supersedes direct five-wallet initial issuance, the earlier two-stage draft, and any designation of the former Founder address as Mainnet.
 - Documentation changes do not authorize a Mainnet transaction. The exact deployed Jetton Master, Mainnet status, contract compatibility with the five-stage Founder-first flow, wallet-control proof, installment amounts, fees, and local Sandbox evidence must be verified before signing. The merged five-stage Founder-first contract implementation and its exact-head CI evidence are recorded in Action #70; no deployment or token receipt is implied.
 
+[Owner Action #83 — Repository-wide five-stage Founder-first alignment](docs/OWNER_ACTION_83_REPOSITORY_FIVE_STAGE_ALIGNMENT.md)
+
 V COIN – TON
 
 Independent TON Blockchain Ecosystem

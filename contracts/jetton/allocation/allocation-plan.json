@@ -5,7 +5,7 @@
   "decimals": 6,
   "totalSupplyBaseUnits": "2100000000000000",
   "totalSupplyTokens": "2100000000",
-  "issuance": "Founder-first custody: receive the fixed 2,100,000,000 VCOIN supply in two separately authorized transfers to the Founder Mainnet wallet, then Founder-sign the four other allocation distributions; no additional minting",
+  "issuance": "Founder-first custody: receive the fixed 2,100,000,000 VCOIN supply in five separately authorized exact transfers to the Founder Mainnet wallet, then Founder-sign the four other allocation distributions; no additional minting",
   "allocations": [
     {
       "role": "founder",
@@ -44,11 +44,11 @@
     }
   ],
   "releaseConstraints": [
-    "This manifest describes the final five economic allocation categories; it does not authorize direct five-wallet initial issuance.",
-    "The entire fixed supply must first be received by the Founder Mainnet wallet in two separately authorized transfers; installment amounts remain unset until recorded in an approved transaction plan.",
-    "After full receipt, the Founder personally signs the four other allocation transfers to their registered destination wallets and retains the 420,000,000 VCOIN Founder allocation.",
+    "This manifest describes the final five economic allocation categories; the initial five-stage receipt is sent only to the Founder Mainnet wallet.",
+    "The entire fixed supply is received by the Founder Mainnet wallet in five separately signed stages: 420,000,000; 1,050,000,000; 210,000,000; 210,000,000; 210,000,000 VCOIN.",
+    "Each stage requires a fresh Founder signature and on-chain confirmation of the preceding stage. After all five receipts, the Founder personally signs the four other allocation transfers and retains 420,000,000 VCOIN.",
     "The previous Founder address was Testnet-only and must not be used for Mainnet.",
-    "The Founder-first two-stage VCoinMaster candidate is isolated on feat/founder-first-two-stage; latest exact-head build, Sandbox, acknowledgement, bounce/retry, and backend reconciliation checks must pass before any deployment or signing.",
+    "The Founder-first five sequentially authorized exact receipt stages VCoinMaster candidate is isolated on feat/founder-first-five sequentially authorized exact receipt stages; latest exact-head build, Sandbox, acknowledgement, bounce/retry, and backend reconciliation checks must pass before any deployment or signing.",
     "The hard total supply is 2,100,000,000 VCOIN; no additional minting is permitted.",
     "Never send Mainnet transactions from CI.",
     "Verify the exact Mainnet Master, all owner addresses, Jetton wallet derivations, fee/reserve sufficiency, and transaction finality before accounting transfers as complete.",
@@ -68,25 +68,70 @@
     "installments": [
       {
         "stage": 1,
-        "amountTokens": "1000000000",
-        "amountBaseUnits": "1000000000000000",
+        "amountTokens": "420000000",
+        "amountBaseUnits": "420000000000000",
         "founderAuthorizationRequired": true
       },
       {
         "stage": 2,
-        "amountTokens": "1100000000",
-        "amountBaseUnits": "1100000000000000",
+        "amountTokens": "1050000000",
+        "amountBaseUnits": "1050000000000000",
+        "founderAuthorizationRequired": true
+      },
+      {
+        "stage": 3,
+        "amountTokens": "210000000",
+        "amountBaseUnits": "210000000000000",
+        "founderAuthorizationRequired": true
+      },
+      {
+        "stage": 4,
+        "amountTokens": "210000000",
+        "amountBaseUnits": "210000000000000",
+        "founderAuthorizationRequired": true
+      },
+      {
+        "stage": 5,
+        "amountTokens": "210000000",
+        "amountBaseUnits": "210000000000000",
         "founderAuthorizationRequired": true
       }
     ],
-    "stage2RequiresFreshFounderAnnouncement": true,
-    "status": "amounts_recorded_testnet_rehearsal_pending_mainnet_hold",
+    "status": "five_stage_amounts_recorded_testnet_rehearsal_pending_mainnet_hold",
     "testnetRehearsal": {
       "authorizedByFounder": true,
       "authorizationDate": "2026-11-24",
       "testnetOnlyFounderWallet": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
       "mainnetTransactionsAuthorized": false,
-      "publicNetworkExecutionStatus": "pending_wallet_review_and_manual_testnet_signing"
-    }
+      "publicNetworkExecutionStatus": "pending_wallet_review_and_manual_testnet_signing",
+      "stages": [
+        {
+          "stage": 1,
+          "amountTokens": "420000000",
+          "amountBaseUnits": "420000000000000"
+        },
+        {
+          "stage": 2,
+          "amountTokens": "1050000000",
+          "amountBaseUnits": "1050000000000000"
+        },
+        {
+          "stage": 3,
+          "amountTokens": "210000000",
+          "amountBaseUnits": "210000000000000"
+        },
+        {
+          "stage": 4,
+          "amountTokens": "210000000",
+          "amountBaseUnits": "210000000000000"
+        },
+        {
+          "stage": 5,
+          "amountTokens": "210000000",
+          "amountBaseUnits": "210000000000000"
+        }
+      ]
+    },
+    "stage5RequiresFreshFounderAnnouncement": true
   }
 }

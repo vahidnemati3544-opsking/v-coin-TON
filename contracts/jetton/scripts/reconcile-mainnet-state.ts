@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { Address, Cell } from '@ton/core';
+import { Address, beginCell, Cell } from '@ton/core';
 
 const API_BASE = (process.env.TONCENTER_API_BASE || 'https://toncenter.com/api/v2').replace(/\/$/, '');
 const API_KEY = process.env.TONCENTER_API_KEY;

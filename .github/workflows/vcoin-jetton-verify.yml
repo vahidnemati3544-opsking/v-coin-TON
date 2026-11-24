@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build-and-test:
@@ -83,49 +83,18 @@ jobs:
           test -s ../../issuer/vcoin-canonical-logo.jpg
           test -f ../../issuer/.nojekyll
           echo "Verified Pages artifact entry files at issuer/ root."
-      - name: Validate TonConnect issuer syntax and transaction sequencing guards
+      - name: Validate read-only Founder-first release status page
         run: |
           node <<'NODE'
           const fs = require('node:fs');
           const html = fs.readFileSync('../../issuer/index.html', 'utf8');
-          const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((match) => match[1]);
-          if (scripts.length !== 1) throw new Error('Expected exactly one inline issuer script');
-          new Function(scripts[0]);
-          const required = [
-            "walletRole() !== 'founder-operator'",
-            "wallet.account.chain !== '-239'",
-            "button.dataset.sequence",
-            "nextAllocationIndex",
-            "verifyInput.disabled = false",
-            "deployButton.dataset.submitted = 'true'",
-            "preview.signing.signer_raw",
-            "preview.signing.allocation_issuance_signer_raw",
-            "tonToNano(preview.unsigned_deploy_message.attached_ton)",
-            "preview.unsigned_deploy_message.network_fee_quote_required"
-          ];
-          for (const guard of required) {
-            if (!html.includes(guard)) throw new Error('Missing issuer safety guard: ' + guard);
-          }
-          if (html.includes("walletRole() !== 'gas'")) throw new Error('Obsolete separate GAS signer guard remains');
-          if (html.includes("amount: '750000000'")) throw new Error('Hard-coded deployment TON value must not override the release preview');
-          if (html.includes("amount: '1000000000'")) throw new Error('Hard-coded deployment TON value must not override the release preview');
-          console.log('TonConnect issuer syntax and safety guards passed.');
+          if (!html.includes('MAINNET RELEASE — HOLD / NO-GO')) throw new Error('Mainnet hold banner is required');
+          if (!html.includes('Stage 2: a separate, fresh Founder signature')) throw new Error('Stage 2 fresh-signature guard is missing');
+          if (!html.includes('2,100,000,000 VCOIN')) throw new Error('Fixed supply display is missing');
+          if (html.includes('TON_CONNECT_UI') || html.includes('sendTransaction(')) throw new Error('Read-only status page must not create or send transactions');
+          if (html.includes('issuance_transactions')) throw new Error('Legacy direct-mint issuance UI must be removed');
+          console.log('Read-only Founder-first Mainnet hold page validated.');
           NODE
-      - name: Commit generated dependency lockfile when missing or changed
-        if: success()
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # The issuer preview is generated for the Pages artifact, not committed here.
-          # Avoids concurrent CI runs racing on source_commit-specific preview JSON.
-          git add package-lock.json
-          if git diff --cached --quiet; then
-            echo "Dependency lockfile is already current."
-          else
-            git commit -m "build(jetton): commit reproducible npm lockfile"
-            git pull --rebase origin main
-            git push origin HEAD:main
-          fi
       - name: Upload TonConnect issuer site
         if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3

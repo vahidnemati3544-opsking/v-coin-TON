@@ -73,7 +73,27 @@ jobs:
       - name: Prepare and validate root-level Pages site assets
         run: |
           python ../../issuer/generate_icon.py
-          cp build/mainnet-deployment-preview.json ../../issuer/deployment-preview.json
+          cat > ../../issuer/deployment-preview.json <<'JSON'
+          {
+            "project": "V COIN – TON",
+            "status": "HOLD / NO-GO",
+            "network": "mainnet",
+            "fixed_supply_tokens": "2100000000",
+            "decimals": 6,
+            "initial_receipt": {
+              "model": "Founder-first two-stage receipt",
+              "founder_mainnet_wallet": "UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT",
+              "stage_1_amount_tokens": null,
+              "stage_2_amount_tokens": null,
+              "stage_2_requires_fresh_founder_signature": true
+            },
+            "legacy_direct_mint_preview_suppressed": true,
+            "transaction_payloads": null,
+            "broadcasted": false,
+            "deployment_authorized": false,
+            "mainnet_authorized": false
+          }
+          JSON
           cp assets/vcoin-canonical-logo.jpg ../../issuer/vcoin-canonical-logo.jpg
           touch ../../issuer/.nojekyll
           test -s ../../issuer/index.html

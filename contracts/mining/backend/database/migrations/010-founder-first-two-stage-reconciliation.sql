@@ -171,6 +171,7 @@ AS $$
 DECLARE
     v_state vcoin_initial_receipt_state%ROWTYPE;
     v_expected NUMERIC(38,0);
+    v_expected_destination TEXT;
     v_existing vcoin_allocation_transfer_events%ROWTYPE;
 BEGIN
     IF p_role NOT IN ('mining_reserve','treasury','liquidity_market','ecosystem_marketing')
@@ -198,8 +199,17 @@ BEGIN
         WHEN 'ecosystem_marketing' THEN 210000000000000
     END;
 
+    v_expected_destination := CASE p_role
+        WHEN 'mining_reserve' THEN 'UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0'
+        WHEN 'treasury' THEN 'UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ'
+        WHEN 'liquidity_market' THEN 'UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn'
+        WHEN 'ecosystem_marketing' THEN 'UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE'
+    END;
     IF p_amount_base_units <> v_expected THEN
         RAISE EXCEPTION 'Allocation amount does not match approved role amount';
+    END IF;
+    IF p_destination_owner_address <> v_expected_destination THEN
+        RAISE EXCEPTION 'Allocation destination does not match the registered wallet for this role';
     END IF;
 
     SELECT * INTO v_existing

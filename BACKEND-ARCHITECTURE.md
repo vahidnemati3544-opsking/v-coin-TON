@@ -4,6 +4,8 @@ V COIN – TON Backend Architecture
 
 The backend is the central operational layer of the V COIN – TON ecosystem.
 
+The blockchain integration must honor the controlling Founder-first five-stage VCOIN receipt: 420M, 1.05B, 210M, 210M, and 210M VCOIN, each separately announced and signed by the Founder to the single Founder Mainnet wallet. Only after all five receipts are confirmed may the Founder sign the four allocation transfers. Backend reconciliation records verified chain events; it never mints or signs on behalf of the Founder.
+
 It manages user accounts, mining sessions, reward calculations, level progression, referral systems, wallet integration, blockchain interactions, and platform operations.
 
 The architecture is designed to be secure, scalable, modular, and maintainable.

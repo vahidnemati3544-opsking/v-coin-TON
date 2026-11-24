@@ -45,7 +45,7 @@ trait JettonMaster {
         return initOf VCoinJettonWallet(ownerAddress, myAddress());
     }
 
-    fun mintTo(receiver: Address, amount: Int, response: Address) {
+    fun mintTo(receiver: Address, amount: Int, response: Address, stageQueryId: Int) {
         require(self.mintable, "Minting permanently disabled");
         require(amount > 0, "Mint amount must be positive");
         self.total_supply = self.total_supply + amount;
@@ -56,7 +56,7 @@ trait JettonMaster {
             bounce: true,
             mode: SendPayGasSeparately,
             body: TokenTransferInternal{
-                query_id: 0,
+                query_id: stageQueryId,
                 amount: amount,
                 from: myAddress(),
                 response_destination: response,
@@ -179,12 +179,8 @@ contract VCoinJettonWallet {
         });
     }
 
-    bounced(msg: bounced<TokenTransferInternal>) {
-        self.balance = self.balance + msg.amount;
-    }
-    bounced(msg: bounced<TokenBurnNotification>) {
-        self.balance = self.balance + msg.amount;
-    }
+    bounced(msg: bounced<TokenTransferInternal>) { self.balance = self.balance + msg.amount; }
+    bounced(msg: bounced<TokenBurnNotification>) { self.balance = self.balance + msg.amount; }
 
     get fun get_wallet_data(): JettonWalletData {
         return JettonWalletData{

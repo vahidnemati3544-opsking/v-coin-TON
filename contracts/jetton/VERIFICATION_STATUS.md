@@ -1,3 +1,17 @@
+# ACTION #91 — Read legacy Master allocation configuration and issuance flags (2026-11-24)
+
+**Status:** Mainnet read-only getters succeeded. The active Master exposes the old five-allocation design, not the new five-stage Founder receipt.
+
+- `get_allocation_config` returned five address cells; the first (Founder/owner) decodes to the legacy admin `EQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWuE3`.
+- `get_allocation_status` returned five TVM boolean values, all `-1` (true): `founder_issued`, `mining_reserve_issued`, `treasury_issued`, `liquidity_issued`, and `ecosystem_issued`.
+- This getter evidence independently confirms that all five old allocation issuance flags are complete. Together with Action #90 wallet balances, the active Master is fully allocated in the older five-wallet pattern.
+- The active Master does not expose `get_receipt_status` and its old source has no `change_admin` message/receiver. Its owner is immutable; there is no supported way to switch the Master admin to the current Founder wallet.
+- Action #92 extends the report to decode every address returned by `get_allocation_config` and explicitly decode the five boolean flags, so the exact constructor destinations can be compared against the current register.
+
+**Decision:** Do not attempt new issuance, deploy a second Master, or transfer existing allocations until the Founder decides whether to retain the current old Master/distribution or approve a formal migration. Any migration requires control proof for all source wallets and separate Founder signatures.
+
+---
+
 # ACTION #90 — Reconcile all five registered Mainnet Jetton Wallet balances (2026-11-24)
 
 **Status:** Read-only Mainnet wallet derivation and balance queries succeeded; exact-head build-and-test and fresh-runner hash reproduction both passed. No transaction was created, signed, or broadcast.

@@ -3,7 +3,7 @@
 **Date:** 2026-11-24  
 **Status:** Contract redesign and automated verification passed on isolated feature branch; backend ingestion and Mainnet release gates remain pending  
 **Branch:** `feat/founder-first-two-stage`  
-**Latest feature-branch head at this checkpoint:** `15af89846c454b6390f0a3cdc9760bd2dfc905ed`  
+**Latest feature-branch head at this checkpoint:** `b9c41653898d3ad395b0060025e67cd7d26c13a7`  
 **Scope:** V COIN–TON only; no changes to the legacy BNB project
 
 ## Owner instruction
@@ -21,14 +21,17 @@ The former Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is
 5. `contracts/jetton/scripts/prepare-mainnet-deployment.ts`: derives revised StateInit and Jetton wallets; receipt payloads are generated only when an explicit Stage 1 amount is supplied. Stage 2 is calculated as the exact remainder and requires a separate signature.
 6. `issuer/index.html`: legacy transaction console retired and replaced with a read-only HOLD / NO-GO status page.
 7. `contracts/mining/backend/database/migrations/010-founder-first-two-stage-reconciliation.sql`: adds idempotent chain-receipt and four-role allocation reconciliation functions, exact amount and destination checks, and a reconciliation view.
-8. `contracts/mining/backend/test/mining-ledger.integration.test.js`: applies migration 010 and verifies both receipt stages, idempotency, exact four destination transfers, and mismatch rejection.
-9. Deployment template, allocation manifest, runbook, verification status, and contract README updated to the Founder-first architecture.
+8. `contracts/mining/backend/src/services/vcoin-chain-reconciliation.js`: strict Mainnet-only adapter requires finalized event status, exact Master address, Founder owner addresses, and all derived Jetton wallet addresses before recording events.
+9. `contracts/mining/backend/test/vcoin-chain-reconciliation.test.js`: verifies the event adapter rejects Testnet, unfinalized events, wrong Master/Founder, wrong Jetton wallets, invalid hashes, and wrong allocation amounts/destinations.
+10. `contracts/mining/backend/test/mining-ledger.integration.test.js`: applies migration 010 and verifies both receipt stages, idempotency, exact four destination transfers, and mismatch rejection.
+11. Deployment template, allocation manifest, runbook, verification status, and contract README updated to the Founder-first architecture.
 
 ## Automated verification evidence
 
 - **Jetton CI:** [Run #45326855010](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45326855010) — **success** on latest branch head `15af89846c454b6390f0a3cdc9760bd2dfc905ed`. Tact compilation, metadata cell generation, unsigned deployment preview, Jest Sandbox tests, read-only issuer checks, and artifact preservation passed.
 - **Backend CI:** [Run #45326854872](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45326854872) — **success** on the same head; backend syntax, PostgreSQL schema/migrations, migration-runner idempotency, and integration tests passed.
 - **Mining/PostgreSQL CI:** [Run #45326854945](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45326854945) — **success** on the same head; migration 010, both receipt stages, idempotency, all four allocation roles, and mismatch rejection passed.
+- **Latest backend reconciliation adapter test:** [Run #45327118111](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45327118111) — **success** on commit `b9c41653898d3ad395b0060025e67cd7d26c13a7`; strict Mainnet finality/Master/Jetton-wallet checks and PostgreSQL integration tests passed.
 - The Stage 1 amount is still unset. CI generated no receipt payloads.
 - The new predicted Master address and Jetton wallet addresses are build-derived preview values only; none is evidence of Mainnet deployment.
 - The feature branch is not merged into `main`.

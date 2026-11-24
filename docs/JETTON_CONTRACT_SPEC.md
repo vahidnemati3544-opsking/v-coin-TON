@@ -9,6 +9,8 @@
 
 > This specification supersedes the earlier draft and its conflicting Testnet / founder-vesting assumptions. It describes the current implementation and approved economic rules. It is not proof of TEP compliance, independent audit, deployment, issuance, or authorization to broadcast a transaction.
 
+> **Branch correction / supersession notice — 2026-11-24:** Sections 2–9 below contain legacy five-destination issuance and constructor assumptions that do **not** match the current `feat/founder-first-two-stage` implementation. For the current Founder-first two-stage design, use `docs/OWNER_ACTION_66_FOUNDER_FIRST_RECEIPT.md`, `contracts/jetton/src/vcoin.tact`, `contracts/jetton/src/jetton.tact`, and `contracts/jetton/testnet.rehearsal.config.json`. The active Testnet rehearsal is separately authorized and documented in `contracts/jetton/TESTNET_REHEARSAL.md`; this file's older statement that no Testnet deployment is in the execution path is superseded for that rehearsal only. Do not use this legacy specification as a deployment or signing instruction. A full specification rewrite remains required before release.
+
 ## 1. Approved token parameters
 
 | Parameter | Approved value |

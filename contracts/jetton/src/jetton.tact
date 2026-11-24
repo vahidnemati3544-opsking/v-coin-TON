@@ -137,7 +137,7 @@ contract VCoinJettonWallet {
                 to: self.master,
                 value: ton("0.01"),
                 mode: SendPayGasSeparately,
-                bounce: true,
+                bounce: false,
                 body: VCoinReceiptAcknowledgement{query_id: msg.query_id, amount: msg.amount}.toCell()
             });
         }

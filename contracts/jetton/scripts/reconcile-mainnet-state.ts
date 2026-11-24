@@ -99,8 +99,7 @@ function firstStackEntry(response: ApiResult): any {
   return response.data?.stack?.[0] ?? null;
 }
 
-function decodeStackAddress(response: ApiResult): string | null {
-  const entry = firstStackEntry(response);
+function decodeStackAddressEntry(entry: any): string | null {
   if (!entry) return null;
   try {
     const payload = Array.isArray(entry) ? entry[1] : entry;
@@ -115,6 +114,10 @@ function decodeStackAddress(response: ApiResult): string | null {
   } catch {
     return null;
   }
+}
+
+function decodeStackAddress(response: ApiResult): string | null {
+  return decodeStackAddressEntry(firstStackEntry(response));
 }
 
 function decodeJettonInternalTransfer(bodyBoc: string | null | undefined) {
@@ -140,7 +143,10 @@ function decodeStackNumber(entry: any): string | null {
     const payload = entry[1];
     if (kind === 'num' || kind === 'tvm.Number') {
       if (typeof payload === 'string') {
-        try { return BigInt(payload).toString(); } catch { return null; }
+        try {
+          if (payload.startsWith('-0x')) return (-BigInt(payload.slice(1))).toString();
+          return BigInt(payload).toString();
+        } catch { return null; }
       }
       if (typeof payload === 'number' || typeof payload === 'bigint') return String(payload);
     }
@@ -327,12 +333,18 @@ async function main() {
         error: reportedAllocationConfigResponse.status === 'unavailable' ? reportedAllocationConfigResponse.error : null,
         exit_code: reportedAllocationConfigResponse.status === 'ok' ? reportedAllocationConfigResponse.data.exit_code : null,
         raw_stack: reportedAllocationConfigResponse.status === 'ok' ? reportedAllocationConfigResponse.data.stack : null,
+        decoded_addresses: reportedAllocationConfigResponse.status === 'ok'
+          ? (reportedAllocationConfigResponse.data.stack ?? []).map((entry: any) => decodeStackAddressEntry(entry))
+          : [],
       },
       allocation_status_getter: {
         status: reportedAllocationStatusResponse.status,
         error: reportedAllocationStatusResponse.status === 'unavailable' ? reportedAllocationStatusResponse.error : null,
         exit_code: reportedAllocationStatusResponse.status === 'ok' ? reportedAllocationStatusResponse.data.exit_code : null,
         raw_stack: reportedAllocationStatusResponse.status === 'ok' ? reportedAllocationStatusResponse.data.stack : null,
+        decoded_issued_flags: reportedAllocationStatusResponse.status === 'ok'
+          ? (reportedAllocationStatusResponse.data.stack ?? []).map((entry: any) => decodeStackNumber(entry) === '-1')
+          : [],
       },
       admin_jetton_wallet: {
         owner_address: reportedAdminAddress,

@@ -1,3 +1,18 @@
+# Actions #89–90 — Superseding live Mainnet evidence (2026-11-24)
+
+This addendum supersedes historical statements below that the Master is undeployed or that no VCOIN has been issued.
+
+- TON Center Mainnet confirms active Jetton Master `EQBn4hW8bKhFTSz9riY5q3Pr3SfJmv2VYKZQl_NWMbK--5fP`, total supply 2,100,000,000 VCOIN, `mintable=false`, metadata URI matching the pinned project metadata.
+- Active code hash `5087c882019324e9d8e309c78f42e3bcee9433a54d7d0367d49320a7bbabcc36` differs from the current Founder-first build hash `e08c11238070eeaffbbe783077eb49f61ad770a71f2e3096f83956776ed28ed8`.
+- Master admin is legacy address `EQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWuE3`, corresponding to previously mislabeled `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy`. `UQ...` is a non-bounceable Mainnet format, not Testnet-only.
+- The active Master-derived legacy admin Jetton Wallet holds 420,000,000 VCOIN. The four other registered allocation Jetton Wallets hold 1,050,000,000 Mining, and 210,000,000 each in Treasury, Liquidity/Market and Ecosystem/Marketing. The current Founder address `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT` has an uninitialized Master-derived Jetton Wallet and zero VCOIN.
+- The full 2.1B supply is already distributed in the older five-wallet allocation pattern. The requested new five-stage Founder-first receipt has not occurred to the current Founder Jetton Wallet. The old Master has no `get_receipt_status` getter or supported `change_admin` path.
+- Do not deploy a second Master or move existing balances without a separately approved migration plan, proof of control for every source wallet, and separate Founder signatures.
+
+Current status: Mainnet is live and the older VCOIN Master is active, but it is not the current Founder-first build. HOLD / NO-GO for new deployment, issuance and transfers until Founder decides whether to retain the old distribution or approve a migration.
+
+---
+
 Current policy correction (2026-11-23): This is a historical internal review. Its references to an independent external audit as an outstanding task, requirement, or release condition are superseded and excluded from the V COIN–TON workstream. Mainnet-only execution applies; no Testnet deployment or transaction is authorized. Local Sandbox verification, clean-room source rebuild, live fee/reserve simulation, and explicit Founder approval remain distinct engineering/owner gates. This correction does not claim those remaining gates are complete.
 
 # V COIN–TON Internal Security and Mainnet Fee Review

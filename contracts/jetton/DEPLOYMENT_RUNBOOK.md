@@ -1,3 +1,30 @@
+# CURRENT CONTROLLING RELEASE ADDENDUM — 2026-11-24 (Action #66)
+
+> This addendum supersedes every older section below that describes direct five-wallet minting, five VCoinMint allocation calls, immediate one-operation Founder minting, or the former seven-argument Master constructor. Those instructions are historical and MUST NOT be used for deployment or signing.
+
+## Founder-first contract flow
+
+- Fixed supply: 2,100,000,000 VCOIN, six decimals, maximum 2,100,000,000,000,000 base units.
+- The revised Master constructor is `VCoinMaster(ownerFounder, contentCell)`. The owner is the Founder Mainnet wallet.
+- Stage 1: one Founder-signed `VCoinMint` request with recipient equal to the Founder and a positive amount strictly below the hard cap. The amount remains unset until explicitly approved by the Founder.
+- Stage 2: a separate fresh Founder-signed `VCoinMint` request to the same Founder Jetton wallet for exactly `MAX_SUPPLY - current_total_supply`. The Master disables minting after Stage 2.
+- Each internal mint-to-wallet message carries a stage query ID. A natural bounce from the deterministic Founder Jetton wallet rolls back only the corresponding stage.
+- After the complete supply is credited to the Founder Jetton wallet, the Founder personally signs four ordinary TEP-74 transfers: Mining 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN. The Founder retains 420,000,000.
+- The former Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is Testnet-only historical data. Mainnet Founder address: `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT`.
+
+## Current engineering evidence
+
+- Revised source, tests, deployment preview generator, and read-only issuer status page are isolated on branch `feat/founder-first-two-stage`.
+- A prior CI run for the earlier feature-branch commit passed compilation, deployment-preview generation, and Jest tests. The later Stage 2 bounce-accounting refinement and read-only issuer/workflow changes require the latest exact-head run to pass before acceptance.
+- The TonConnect transaction issuer has been retired to a read-only HOLD / NO-GO status page. It must not create or submit transactions until a reviewed Founder-first signing flow is implemented.
+- Backend accounting/reconciliation and release runbook exact-head artifacts remain pending.
+
+## Mandatory HOLD / NO-GO
+
+No Mainnet deployment, stage receipt, or allocation transfer is authorized by this addendum. Do not sign or broadcast until latest exact-head Tact build, all Sandbox tests, backend reconciliation, StateInit/BOC hashes, wallet derivations, address-control checks, and live fee/reserve checks pass. Stage 2 requires a fresh Founder authorization after Stage 1 is confirmed. The branch is not merged to main.
+
+---
+
 # CURRENT CONTROLLING RELEASE ADDENDUM — 2026-11-23
 
 > **Scope correction (Action #64):** Independent specialist/external security auditing is not a V COIN–TON project activity, pending task, or release condition. Any older checklist statements below that list such an audit as required or pending are historical and superseded by this addendum. The project uses its own engineering checks and release controls.

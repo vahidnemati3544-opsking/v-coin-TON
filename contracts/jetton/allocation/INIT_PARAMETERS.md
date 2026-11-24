@@ -54,4 +54,4 @@ The Founder wallet, serving as both owner and GAS & OPERATIONS, funds the Master
 
 ## Founder allocation
 
-The Founder receives exactly 420,000,000 VCOIN as one allocation. This release design has no vesting contract or time lock. This does not waive independent contract review, clean-room rebuild, local Sandbox tests, live fee/reserve review, or explicit Mainnet authorization. Testnet deployment and transactions are not authorized.
+The Founder retains exactly 420,000,000 VCOIN as the final 20% economic allocation after the five-stage receipt and subsequent four Founder-signed distributions; this is not a one-step initial receipt. This release design has no vesting contract or time lock. This does not waive independent contract review, clean-room rebuild, local Sandbox tests, live fee/reserve review, or explicit Mainnet authorization. Testnet deployment and transactions are not authorized.

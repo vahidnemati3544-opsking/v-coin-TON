@@ -59,26 +59,6 @@ jobs:
           if (result.deployment_authorized !== false || result.mainnet_authorized !== false || result.transaction_created !== false || result.transaction_signed !== false || result.transaction_broadcast !== false) throw new Error('Address derivation must remain offline and unauthorized.');
           console.log('Master StateInit and all five Jetton Wallet addresses derived; no transaction created or authorized.');
           NODE
-      - name: Derive deterministic Mainnet Master and five Jetton Wallet addresses
-        env:
-          GITHUB_SHA: ${{ github.sha }}
-        run: |
-          npm run derive:addresses
-          node <<'NODE'
-          const fs = require('node:fs');
-          const result = JSON.parse(fs.readFileSync('build/mainnet-address-derivation.json', 'utf8'));
-          if (!result.master.address || !result.master.state_init_hash || result.jetton_wallets.length !== 5) {
-            throw new Error('Deterministic Master / five-wallet derivation output is incomplete.');
-          }
-          if (new Set(result.jetton_wallets.map((item) => item.jetton_wallet_address)).size !== 5) {
-            throw new Error('Derived Jetton Wallet addresses are not pairwise unique.');
-          }
-          if (result.deployment_authorized !== false || result.mainnet_authorized !== false ||
-              result.transaction_created !== false || result.transaction_signed !== false || result.transaction_broadcast !== false) {
-            throw new Error('Address derivation must remain offline and unauthorized.');
-          }
-          console.log('Master StateInit and all five Jetton Wallet addresses derived; no transaction created or authorized.');
-          NODE
       - name: Enforce local Sandbox-only simulation policy
         run: |
           node <<'NODE'

@@ -1,3 +1,20 @@
+# CURRENT CONTROLLING VERIFICATION STATUS — 2026-11-24 (Action #66)
+
+**Status: HOLD / NO-GO for all Mainnet deployment, minting, receipt, and allocation transfers.**
+
+- The current implementation candidate is on branch `feat/founder-first-two-stage`; it is not merged to `main`.
+- The revised contract is Founder-first: Stage 1 mints only to the Founder Jetton wallet; Stage 2 is a separate Founder-authorized call for the exact remaining supply; after Stage 2, minting is disabled.
+- Four subsequent allocation movements are Founder-signed TEP-74 transfers from the Founder Jetton wallet, not additional mint calls.
+- The Stage 1 amount has not been approved or specified. No receipt payloads are generated unless an explicit Stage 1 amount is supplied to the preview generator.
+- A prior feature-branch CI run passed Tact compilation, deployment preview generation, and Jest tests for the earlier commit. The latest Stage 2 bounce refinement and read-only issuer page must be verified by the newest exact-head run; do not treat the earlier pass as proof for later commits.
+- The old TonConnect issuer has been replaced on the feature branch by a read-only HOLD / NO-GO page. No Mainnet transaction UI is currently enabled.
+- Backend accounting/reconciliation, exact-head release artifact verification, Mainnet wallet-control verification, and live fee/reserve review remain pending.
+- No Mainnet deployment or token receipt is claimed. No Testnet deployment or transaction is authorized.
+
+The older verification snapshots below are historical. Any statements below that describe the former seven-argument constructor, five direct mint operations, five role flags, the old Founder one-operation issuance, or the old transaction issuer are superseded by this controlling status and Action #66.
+
+---
+
 Current controlling status correction (2026-11-23): This file preserves historical verification snapshots. Any older checklist entry below that lists an independent external security audit, specialist audit, or independent TEP audit as a pending task or release gate is superseded and is not an active V COIN–TON work item. Current policy: 2,100,000,000 VCOIN (6 decimals); Founder 420,000,000 immediate/no vesting; exactly five allocation wallets, Founder also sole GAS & OPERATIONS wallet; Mainnet-only execution, local Sandbox permitted, no Testnet deployment or transaction authorized. Remaining engineering/owner gates must be judged only from current evidence, not historical checklists.
 
 > **Controlling baseline correction (2026-11-23):** This file contains historical verification snapshots. Current policy: 2,100,000,000 VCOIN total supply, six decimals, 420M Founder allocation credited immediately with no vesting/time lock/installments, 1.05B Mining reserve, 210M each Treasury/Liquidity/Ecosystem; Founder wallet is also the sole GAS & OPERATIONS wallet; Mainnet-only execution after local engineering verification; no Testnet deployment, transaction, or rehearsal; no independent external audit workstream, pending task, or release condition. Any older checklist entry below requiring external audit, Testnet rehearsal, Founder vesting, a separate fee wallet, or conflicting supply/price assumptions is historical and superseded. The current modelled USD reference baseline is 0.004, not a market quote or guarantee. Current technical release gates remain clean-room rebuild, engineering tests, wallet-control verification, live fee/reserve and exact-payload checks, and explicit Founder authorization. No Mainnet transaction is authorized by this document.

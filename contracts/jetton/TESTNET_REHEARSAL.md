@@ -57,16 +57,33 @@ This action is not complete until the exact branch head builds, the preview scri
 
 ## Fee-estimation audit gate — 2026-11-24
 
-A source review of `scripts/prepare-testnet-rehearsal.ts` found that the current preview contains separate StateInit BOCs and contract-body BOCs. It does **not** yet serialize the complete wallet-originated transaction/message envelope required for an end-to-end emulation of the Founder wallet send and the destination deployment transaction.
+A source review of `scripts/prepare-testnet-rehearsal.ts` found that the original preview contained separate StateInit BOCs and contract-body BOCs only. The script has now been extended to emit explicit unsigned TON Connect `sendTransaction` request payload previews for deployment, Stage 1 and Stage 2. These are request payloads for wallet review, **not** signed wallet external messages or proof of an end-to-end emulator trace.
 
 Consequently:
 
 - Do not treat the preview BOCs alone as a live fee-estimation input for the complete Tonkeeper operation.
 - Do not treat the contract's `0.75 TON` `VCoinFund` minimum as a network fee quote. It is the contract's required attached value/reserve funding.
-- Before any wallet review, construct the exact unsigned wallet transaction for the registered Testnet Founder wallet, including destination, attached TON value, StateInit, body, and wallet transaction envelope as applicable.
-- Run Testnet transaction emulation/fee estimation against that exact payload, inspect the complete trace and all outbound messages, and record the returned fee breakdown and required attached value.
+- The script now constructs TON Connect request payload previews with explicit `network: -3`, the registered Founder Testnet sender in raw format, a 10-minute `validUntil`, destination, attached nanoton value, StateInit (deployment only), and body payload.
+- TON Connect request preview is not the wallet-signed external message. Do not call it a complete signed wallet transaction and do not submit it automatically.
+- Run a valid Testnet emulation/fee-estimation path for the actual wallet/contract execution path, inspect the complete trace and all outbound messages, and record the returned fee breakdown and required attached value. If the emulator requires a signed external wallet message, do not bypass that requirement or create a signature for this preparation step; use a documented wallet-compatible simulation method or stop and escalate.
 - Reconcile the estimated total against the live Testnet wallet balance and preserve a safety margin. If emulation is unavailable or returns incomplete data, stop.
 - No signing, broadcasting, or Mainnet operation is authorized by this audit note.
 
 **Current gate:** BLOCKED — complete wallet transaction payload and successful Testnet emulation/fee quote are not yet available.
 
+
+
+## TON Connect request preview extension — 2026-11-24
+
+The existing rehearsal script now writes a `ton_connect_request` object for each of the three ordered operations:
+
+1. Deploy Master with `VCoinFund`, StateInit, and 0.75 TON attached (750,000,000 nanoton).
+2. Stage 1 mint with 0.01 TON attached (10,000,000 nanoton).
+3. Stage 2 mint with 0.01 TON attached (10,000,000 nanoton), marked as requiring a fresh Founder approval and a confirmed Stage 1 receipt.
+
+Each request pins the Testnet global ID `-3`, the registered Testnet Founder sender, and a 10-minute expiry. The request payloads are generated for inspection only. The script contains no wallet connector, signing call, send call, or broadcast call.
+
+**Important:** the attached values above are the configured contract-call values/minima, not measured network fees. A TON Connect request preview is not the wallet-generated signed external message and does not establish a fee quote. The fee/emulation gate remains BLOCKED until a valid trace and fee breakdown are obtained for the actual execution path.
+
+The generated preview file is local build output:
+`build/testnet-rehearsal-preview.json`. Do not commit generated BOCs or preview JSON without a separate review.

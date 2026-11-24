@@ -1,11 +1,11 @@
-> **LATEST CONTROLLING UPDATE — Action #78 (2026-11-24):** The five-stage Founder-first Jetton implementation is on current `main`; exact-head Mining CI #481 and Backend CI #390 passed on `f12ea01f916a8c169600f9a119c705dfca5cc83f`. Jetton Build/Pages CI #504 also passed on its immediately preceding commit, with contract source unchanged in the follow-up. Public mining remains HTTP 503. **Mainnet is HOLD / NO-GO:** no verified deployed Master, no issued tokens, and no transfer has been established. See the current release gates below and Actions #76–#78 at the end.
+> **LATEST CONTROLLING UPDATE — Action #79 (2026-11-24):** Exact-current-main Jetton workflow #506 passed both build-and-test and read-only TonConnect issuer Pages deployment on commit `fb37ab2fd166a1c52616f1c66abc9af75b238923`. Mining #481 and Backend #390 also passed on the prior code head. Current Mainnet readiness remains HOLD / NO-GO: no verified Master deployment, no token issuance, and no transfer. See Actions #78–#79.
 
 # CURRENT CONTROLLING RELEASE STATUS — 2026-11-24 (Action #78)
 
 ## Verified repository and CI state
 - Repository: `vahidnemati3544-opsking/v-coin-TON`, branch `main`; latest reviewed code commit: `f12ea01f916a8c169600f9a119c705dfca5cc83f`.
 - Mining CI #481: SUCCESS; Backend CI #390: SUCCESS, both on exact HEAD `f12ea01`.
-- Jetton build-and-test plus read-only issuer publication workflow #504: SUCCESS on preceding commit `a5cda253401c2714722de24cd6e2c49c0d6ea6d2`. The follow-up commit changed only test harness and status documentation; Jetton contract source/configuration remained unchanged.
+- Exact-current-main Jetton workflow #506: SUCCESS on `fb37ab2fd166a1c52616f1c66abc9af75b238923`, including lockfile verification, clean install, zero moderate/high/critical dependency advisories, Tact compilation, TEP-64 content-cell generation, Founder-first manifest and authorization checks, Jest Sandbox tests, source snapshot, read-only status page validation, Pages publication, and published endpoint verification. Mining #481 and Backend #390 passed on the immediately preceding code head; the later #78 change was documentation-only.
 - Five-stage Founder-first contract is present on current main. Sandbox tests cover stage ordering, exact amounts, acknowledgement retry, natural bounce/retry, and Founder-signed allocation transfers.
 - Public mining API remains hard-disabled with HTTP 503; legacy internal-PostgreSQL-balance engine is not mounted on public routes.
 
@@ -832,3 +832,22 @@ The controlling initial receipt amounts are the Founder’s five-stage instructi
 **Next:** Complete clean-room artifact reproduction and independent security review, verify Founder wallet control and recipient addresses, then prepare a reviewed unsigned deployment package. Each later on-chain action still requires separate Founder approval.
 
 **No authorization is implied by this documentation update.**
+
+
+## Action #79 — Exact-current-main Jetton build and read-only issuer publication verified (2026-11-24)
+
+**Status:** Exact-head build-and-test and read-only Pages publication passed. Mainnet remains HOLD / NO-GO.
+
+- Exact current-main commit: `fb37ab2fd166a1c52616f1c66abc9af75b238923`.
+- Jetton workflow #506: SUCCESS — [GitHub Actions](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45402023739).
+- Build job passed deterministic lockfile generation and verification, clean install, strict dependency audit with zero moderate/high/critical advisories, Tact compilation, TEP-64 content-cell generation, Sandbox tests, Founder-first manifest/authorization guards, read-only status page validation, and exact-head release artifact preservation.
+- Read-only issuer Pages deployment job passed configuration, publication, and published endpoint verification. This publishes the status/issuer web assets only; it does not deploy the Jetton Master or issue tokens.
+- Exact-head release artifacts:
+  - Jetton release ZIP artifact ID `14924301153`, SHA-256 `9c9af07019f14280757c4e452ef985cc00e4722e0b5e68e777196c119f255c42`.
+  - Full source snapshot artifact ID `14923132529`, SHA-256 `50ab0a5ffdab23a01c692180d04cb6d0ac3203f39479063cb3e2b5877928a7c3`.
+- Mining CI #481 and Backend CI #390 previously passed on `f12ea01`; the changes through #79 after that code head are documentation-only, while #506 verifies the current Jetton source and build.
+- No Mainnet wallet was connected; no deployment payload was signed; no TON was spent; no Master was deployed; no VCOIN was minted or transferred.
+
+**Next release gates:** independent clean-room rebuild and security review; Founder wallet-control proof and destination confirmation; live fee/reserve review; only then a reviewed unsigned Mainnet deployment package. The five receipt stages and four allocations remain separate Founder-approved operations.
+
+**No authorization is implied by CI success or Pages publication.**

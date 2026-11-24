@@ -40,7 +40,7 @@ The PostgreSQL integration tests are skipped unless `TEST_DATABASE_URL` points t
 
 After creating and verifying a dedicated development database and configuring `.env`:
 
-- The setup script accepts only local PostgreSQL hosts: `localhost`, `127.0.0.1`, or `::1`.
+- The setup script accepts only local PostgreSQL hosts: `localhost`, `127.0.0.1`, or `::1`. It registers migrations 001–010, including the Founder-first five-stage receipt and allocation reconciliation migration.
 - It refuses `NODE_ENV=production`.
 - It records migration versions and SHA-256 checksums and refuses to silently change an already-applied migration.
 - Back up the target database and verify the database name and role before setup.
@@ -108,7 +108,7 @@ The schedule marks itself completed only when the `USER_MINING` reserve's confir
 The database migration must be applied before starting the backend. No front-end dashboard was present in the inspected repository, so rendering these API candles on the public home page remains a separate client-side task.
 
 
-## Founder-first five-stage Mainnet receipt reconciliation (supersedes Action #66 five-stage draft)
+## Founder-first five-stage Mainnet receipt reconciliation (supersedes Action #66 two-stage draft)
 
 Migration `database/migrations/010-founder-first-five-stage-reconciliation.sql` adds a chain-confirmed reconciliation ledger for the five exact initial receipt stages and the four subsequent Founder-signed allocation transfers.
 

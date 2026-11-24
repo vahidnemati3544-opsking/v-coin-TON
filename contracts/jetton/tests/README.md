@@ -1,33 +1,28 @@
 # V COIN Jetton Sandbox verification
 
-**Scope:** Tact compilation, fixed five-wallet allocation enforcement, initial issuance, and authenticated Natural Bounce rollback.
-
-**Current release gate:** The suite is implemented and must pass in CI. This file describes executable tests; the latest CI run is the source of truth for pass/fail evidence.
+**Scope:** Founder-first two-stage initial receipt, fixed 2.1 billion supply, Founder-controlled distribution, and natural bounce recovery.
 
 ## Automated coverage
 
-1. **Owner-only issuance:** reject any issuance request not signed by the configured founder/owner.
-2. **Fixed destination set:** accept only the five addresses stored immutably in Master StateInit; reject any unregistered receiver.
-3. **Exact per-wallet allocations:** Founder 420M, mining reserve 1,050M, treasury 210M, liquidity/market 210M, ecosystem/marketing 210M VCOIN (six decimals; total 2.1B).
-4. **No partial or over-allocation:** reject wrong amounts for each destination and prevent aggregate supply from exceeding 2.1B VCOIN.
-5. **One-time role issuance:** each destination allocation can be issued only once.
-6. **Master reserve funding:** accept the exact Founder-funded Master reserve amount in the reviewed deployment flow (current runbook baseline: 1.00 TON; exact-build fee/reserve simulation remains required) only from the Founder wallet, which is also GAS & OPERATIONS; reject funding from any other sender.
-7. **Owner request fee:** accept a 0.01 TON owner-signed issuance request when the Master gas reserve is funded; reject issuance when that reserve is empty.
-8. **Natural Bounce rollback:** a real bounce from each of the five deterministic destination Jetton wallets rolls back only that role's allocation.
-9. **Authenticated bounce source:** only the deterministic wallet for the corresponding approved role can roll back that allocation.
-10. **Retry after valid bounce:** after a role's wallet-credit message naturally bounces, allow that exact role's allocation to be retried.
-11. **Final issuance lock:** once all five allocations have been credited, set mintable=false and reject all further issuance.
+1. Only the Founder may initiate either receipt stage.
+2. Stage 1 credits only the Founder Jetton wallet and must be positive but below the full supply.
+3. Stage 2 must equal the exact remaining supply; the second call is a separate Founder-signed transaction.
+4. The contract rejects non-Founder recipients, duplicate Stage 1, zero values, over-cap values, incorrect Stage 2 remainder, and any issuance after completion.
+5. After Stage 2, total supply is exactly 2,100,000,000 VCOIN at six decimals and mintable is false.
+6. The Founder can distribute four shares from the Founder Jetton wallet: 1,050,000,000 mining; 210,000,000 treasury; 210,000,000 liquidity/market; 210,000,000 ecosystem/marketing. Founder retains 420,000,000.
+7. A natural bounce from the deterministic Founder Jetton wallet rolls back only the matching receipt stage and permits a safe retry.
+8. Founder-only TON reserve funding and protected withdrawals are tested.
 
 ## CI acceptance
 
-- npm run build compiles VCoinMaster, VCoinJettonWallet, and the test-only BounceRejector fixture.
-- npm test runs the allocation policy, manifest, and TON Sandbox suites.
-- The Sandbox suite verifies the five deterministic wallet balances and the Master supply.
-- The Founder allocation wallet is also the sole GAS & OPERATIONS wallet; it is one of the five VCOIN allocation destinations, not a sixth wallet.
+- `npm run build` compiles VCoinMaster, VCoinJettonWallet, and the test-only BounceRejector fixture.
+- `npm test` runs the fixed-supply, allocation manifest, and Sandbox suites.
 - No Testnet or Mainnet transaction is sent during CI.
 
-## Deployment restrictions
+## Mainnet restrictions
 
-- The five destination addresses must be checked against the approved operational register before Master deployment.
-- The deployed Master allocation config must be read back and compared with the approved register before any issuance.
-- No Mainnet deployment or issuance is authorized until the project's documented engineering release checks pass and the Founder separately approves the exact operation.
+- The first and second receipt amounts are not predetermined in source; Stage 1 amount must be explicitly entered into the approved deployment plan. Stage 2 is mathematically the exact remainder.
+- Stage 2 requires a fresh Founder-signed transaction after Stage 1 is confirmed.
+- The four subsequent allocations are ordinary Founder-signed Jetton wallet transfers, not additional mint operations.
+- The former Founder Testnet address must never be used on Mainnet.
+- No Mainnet deployment or transfer is authorized until exact-head build, Sandbox tests, StateInit hashes, wallet derivations, network fees/reserves, and address-control checks pass.

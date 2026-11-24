@@ -103,7 +103,10 @@ function decodeStackAddress(response: ApiResult): string | null {
   const entry = firstStackEntry(response);
   if (!entry) return null;
   try {
-    const value = Array.isArray(entry) ? entry[1] : entry.slice?.bytes;
+    const payload = Array.isArray(entry) ? entry[1] : entry;
+    const value = typeof payload === 'string'
+      ? payload
+      : payload?.bytes ?? payload?.slice?.bytes ?? payload?.cell?.bytes;
     if (typeof value !== 'string') return null;
     const roots = Cell.fromBoc(Buffer.from(value, 'base64'));
     const slice = roots[0]?.beginParse();
@@ -199,6 +202,7 @@ async function main() {
         status: reportedOwnerResponse.status,
         error: reportedOwnerResponse.status === 'unavailable' ? reportedOwnerResponse.error : null,
         raw_stack: reportedOwnerResponse.status === 'ok' ? reportedOwnerResponse.data.stack : null,
+        exit_code: reportedOwnerResponse.status === 'ok' ? reportedOwnerResponse.data.exit_code : null,
         decoded_owner_address: decodeStackAddress(reportedOwnerResponse),
         decoded_owner_is_founder: sameAddress(decodeStackAddress(reportedOwnerResponse), founder),
       },
@@ -210,6 +214,12 @@ async function main() {
       },
       founder_jetton_wallet: {
         address: reportedFounderJettonWallet,
+        address_getter: {
+          status: reportedFounderWalletResponse.status,
+          error: reportedFounderWalletResponse.status === 'unavailable' ? reportedFounderWalletResponse.error : null,
+          exit_code: reportedFounderWalletResponse.status === 'ok' ? reportedFounderWalletResponse.data.exit_code : null,
+          raw_stack: reportedFounderWalletResponse.status === 'ok' ? reportedFounderWalletResponse.data.stack : null,
+        },
         account: reportedFounderJettonWalletInfoResponse.status === 'ok'
           ? summarizeAccount(reportedFounderJettonWallet!, reportedFounderJettonWalletInfoResponse)
           : { status: 'unavailable', error: reportedFounderJettonWalletInfoResponse.error },

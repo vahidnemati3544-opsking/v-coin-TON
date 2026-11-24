@@ -1,7 +1,7 @@
 # Owner Action #69 — Five-stage Founder-first VCOIN receipt
 
 **Date:** 2026-11-24  
-**Status:** Implemented on an integration branch; exact-head CI and review pending. Mainnet remains HOLD / NO-GO.
+**Status:** Merged to main; exact-head Jetton, Backend, and Mining/PostgreSQL CI passed. Mainnet remains HOLD / NO-GO.
 
 ## Controlling Founder instruction
 

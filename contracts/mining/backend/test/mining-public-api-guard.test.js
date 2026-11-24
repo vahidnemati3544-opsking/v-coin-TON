@@ -2,6 +2,10 @@
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
+// The server module constructs a lazy PostgreSQL pool at import time. The
+// public mining guard test never opens a database connection, so provide a
+// syntactically valid inert URL rather than requiring CI secrets.
+process.env.DATABASE_URL = process.env.DATABASE_URL || 'postgres://test:test@127.0.0.1:1/vcoin_test';
 const { app } = require('../src/server');
 
 let server;

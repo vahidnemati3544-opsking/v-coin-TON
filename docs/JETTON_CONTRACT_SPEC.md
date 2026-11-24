@@ -38,7 +38,7 @@ All token arithmetic must use integer base units. Floating-point token arithmeti
 | Ecosystem / marketing | 10% | 210,000,000 | 210,000,000,000,000 |
 | **Total** | **100%** | **2,100,000,000** | **2,100,000,000,000,000** |
 
-The Founder receives the full 420,000,000 VCOIN allocation in one operation. No vesting, time lock, or installment schedule applies to the Founder allocation. The five owner-designated allocation addresses are recorded in `docs/WALLET_ALLOCATION_REGISTER.md`. The Founder wallet is one of the five allocation recipients and also serves as the sole GAS & OPERATIONS wallet; there is no separate fee wallet or sixth address.
+The Founder retains 420,000,000 VCOIN (20%) as the final economic allocation after the full supply has first been received through the five sequential Founder-first stages and the Founder has personally signed the four other allocation transfers. This retained share is not a description of the initial receipt sequence. No vesting or time lock applies. The five owner-designated allocation addresses are recorded in `docs/WALLET_ALLOCATION_REGISTER.md`. The Founder wallet is one of the five allocation recipients and also serves as the sole GAS & OPERATIONS wallet; there is no separate fee wallet or sixth address.
 
 ## 3. Current Master contract behavior
 
@@ -126,7 +126,7 @@ Deployment, gas-reserve funding, and each of the five initial Founder receipt st
 **Mainnet release status: NO-GO / NOT DEPLOYED.**
 
 - Contract source and Sandbox tests: present.
-- Exact-head CI for the current five-stage 2.1B allocation revision: pending.
+- Exact-head CI for the five-stage Founder-first contract and policy guards: passed in the recorded current-main verification run; this does not prove live Mainnet contract compatibility, deployment, or token receipt.
 - `package-lock.json`: committed to `main`; clean `npm ci` must be verified again on the current exact head.
 - Metadata JSON, immutable commit-pinned URI, content cell, and canonical logo URL: generated and verified in exact-head CI; external TEP-64 parser review remains a release gate.
 - Engineering verification against TON standards: pending where not yet evidenced.

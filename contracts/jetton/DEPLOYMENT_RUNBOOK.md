@@ -60,7 +60,7 @@ These four operations transfer already-issued tokens; they do not mint additiona
 A Testnet-only rehearsal was separately authorized on 2026-11-24. It uses only the historical Founder Testnet wallet and unsigned request previews. Public Testnet signing/broadcast still requires emulator trace, fee review, and separate explicit Founder approval. Testnet approval never authorizes Mainnet.
 
 ## 7. Current release status
-- Five-stage contract and backend implementation: on feat/five-stage-founder-receipt; exact-head CI pending.
+- Five-stage contract and backend implementation: merged to main; exact-head Jetton, Backend, and Mining/PostgreSQL CI passed.
 - Mainnet deployment and token issuance: not performed.
 - Mainnet allocation transfers: not performed.
 - Testnet public execution: not performed.

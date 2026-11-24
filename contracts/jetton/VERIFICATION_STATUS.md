@@ -5,6 +5,7 @@
 - `get_allocation_config` returned five address cells; the first (Founder/owner) decodes to the legacy admin `EQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWuE3`.
 - `get_allocation_status` returned five TVM boolean values, all `-1` (true): `founder_issued`, `mining_reserve_issued`, `treasury_issued`, `liquidity_issued`, and `ecosystem_issued`.
 - This getter evidence independently confirms that all five old allocation issuance flags are complete. Together with Action #90 wallet balances, the active Master is fully allocated in the older five-wallet pattern.
+- Exact-head workflow #45436702230 on commit `b9928b0e9a40400ebf01d587569152484ae67df2` passed `build-and-test` and fresh-runner `hash-reproduction`; Pages issuer job skipped on the review branch. Release artifact ID `14941302176`, SHA-256 `a9063799ea71b03682e40e54f5eeee201bb5b866f629c1ce98a710636994396d`; full-source artifact ID `14941322285`, SHA-256 `628c6607ac72089cfbeadfa83ebe18ae56f0bc1ee4163efdd9d7bbcef650730c`; clean-room report artifact ID `14940514287`, SHA-256 `4d8d6c5ae87ef422bb990455980c1ff3820c2f6bd76385cedf2884d34e7533ab`.
 - The active Master does not expose `get_receipt_status` and its old source has no `change_admin` message/receiver. Its owner is immutable; there is no supported way to switch the Master admin to the current Founder wallet.
 - Action #92 extends the report to decode every address returned by `get_allocation_config` and explicitly decode the five boolean flags, so the exact constructor destinations can be compared against the current register.
 

@@ -159,6 +159,36 @@ describe('VCOIN Founder-first two-stage issuance', () => {
     expect((await master.getGetReceiptStatus()).first_receipt_issued).toBe(false);
   });
 
+  test('a natural Stage 2 bounce rolls back only Stage 2 and preserves Stage 1', async () => {
+    const chain = await Blockchain.create();
+    const owner = await chain.treasury('owner');
+    const master = await deployMaster(chain, owner);
+    await master.send(owner.getSender(), { value: toNano('0.5') }, {
+      $type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
+    });
+    const walletAddress = await master.getGetWalletAddress(owner.address);
+    const rejector = await BounceRejector.fromInit();
+    if (!rejector.init) throw new Error('BounceRejector StateInit missing');
+    await chain.setShardAccount(walletAddress, createShardAccount({
+      address: walletAddress, code: rejector.init.code, data: rejector.init.data,
+      balance: toNano('1'), workchain: 0,
+    }));
+
+    const bounced = await master.send(owner.getSender(), { value: toNano('0.5') }, {
+      $type: 'VCoinMint', receiver: owner.address, amount: STAGE_TWO,
+    });
+    expect(bounced.transactions).toHaveTransaction({
+      from: walletAddress, to: master.address, inMessageBounced: true, success: true,
+    });
+    const data = await master.getGetJettonData();
+    const status = await master.getGetReceiptStatus();
+    expect(data.total_supply).toBe(STAGE_ONE);
+    expect(data.mintable).toBe(true);
+    expect(status.first_receipt_issued).toBe(true);
+    expect(status.second_receipt_issued).toBe(false);
+    expect(status.remaining_supply).toBe(STAGE_TWO);
+  });
+
   test('Founder alone may fund and withdraw Master operational TON within reserve limits', async () => {
     const chain = await Blockchain.create();
     const owner = await chain.treasury('owner');

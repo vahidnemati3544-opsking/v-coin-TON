@@ -2,11 +2,11 @@
 
 - Fixed total supply: **2,100,000,000 VCOIN**, six decimals; no additional minting.
 - Sole initial receiving wallet: Founder-designated **TON Mainnet** address `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT`.
-- The entire supply is to reach this wallet in **two separate incoming transfers**. Installment amounts and timing remain to be entered in the transaction plan. Installment 2 occurs only after the Founder explicitly announces and authorizes it. This instruction does not assert that either transfer has occurred.
-- After receipt, the Founder personally controls and signs distributions to the four registered allocation wallets: Mining Reserve 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN. The Founder retains 420,000,000 VCOIN (20%).
+- The full supply is received by this wallet through **five separate, sequential Founder-signed receipt stages**: 420,000,000; 1,050,000,000; 210,000,000; 210,000,000; and 210,000,000 VCOIN. Each stage requires a fresh Founder signature after the prior Founder Jetton-wallet credit is acknowledged. This records the approved contract flow; it does not assert that any receipt has occurred.
+- After all five receipts, the Founder personally signs distributions to the four registered allocation wallets: Mining Reserve 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN. The Founder retains 420,000,000 VCOIN (20%).
 - Former Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` was **Testnet-only**. It is historical/test-only and must never be used as the Mainnet receiving address.
 - This instruction supersedes direct five-wallet initial issuance, any one-operation five-wallet issuance description, and any designation of the former Founder address as Mainnet.
-- Documentation changes do not authorize a Mainnet transaction. The exact deployed Jetton Master, Mainnet status, contract compatibility with the Founder-first two-stage flow, wallet-control proof, installment amounts, fees, and local Sandbox evidence must be verified before signing. Existing fixed-five-destination contract logic must be revised and tested if incompatible.
+- Documentation changes do not authorize a Mainnet transaction. The exact deployed Jetton Master, Mainnet status, contract compatibility with the five-stage Founder-first flow, wallet-control proof, installment amounts, fees, and local Sandbox evidence must be verified before signing. Existing fixed-five-destination contract logic must be revised and tested if incompatible.
 
 # V COIN – TON Architecture
 
@@ -55,7 +55,7 @@ Mainnet deployment, initial issuance and real-value transfers remain NO-GO until
 
 ## 7. Founder / GAS & OPERATIONS wallet
 
-The Founder Mainnet wallet in `docs/WALLET_ALLOCATION_REGISTER.md` is the initial receiving wallet for the full 2,100,000,000 VCOIN supply in two separate transfers, the sole GAS & OPERATIONS wallet, and the signer for later distributions. After receipt, the Founder signs transfers of the four other allocations to their registered destination wallets. The former Founder address was Testnet-only.
+The Founder Mainnet wallet in `docs/WALLET_ALLOCATION_REGISTER.md` is the initial receiving wallet for the full 2,100,000,000 VCOIN supply in five sequential, separately signed receipt stages, the sole GAS & OPERATIONS wallet, and the signer for later distributions. After receipt, the Founder signs transfers of the four other allocations to their registered destination wallets. The former Founder address was Testnet-only.
 
 TON needed for deployment, Master reserve funding and authorized operational fees must be handled through this Founder wallet. Verify the address and TON Mainnet network in Tonkeeper before any funding or signature. Never request or store recovery phrases or private keys.
 
@@ -74,3 +74,13 @@ The project must not be described as deployed, issued, extraction-ready or perfo
 ## 9. Founder authority and allocation controls
 
 Founder authority over distribution approvals, custody operations and transaction signing is specified in `docs/FOUNDER_CONTROL_AND_ALLOCATION.md`. The Founder allocation destination is also the sole GAS & OPERATIONS wallet; no separate operational-fee address or sixth wallet exists. Founder authority does not override TON consensus or reverse confirmed transfers from independently controlled recipient wallets. Initial supply remains fixed and additional minting is prohibited.
+
+## 10. Latest verified integration checkpoint — Action #70 (2026-11-24)
+
+- PR #22 was merged to `main` as merge commit `41c34aa78bd9dde4b6b5ef94c7de2f50b0397872`; exact source head before merge: `7154bba34f0dce7030b271234a7d4700133c4e5e`.
+- Exact-head GitHub Actions completed successfully for Jetton verification (run #45391538194), Backend CI (run #45391538237), and Mining/PostgreSQL CI (run #45391538229).
+- The verified scope includes Tact compilation, strict dependency audit, metadata-cell generation, unsigned Testnet preview generation and isolation checks, Mainnet planner suppression, Sandbox tests, five-stage contract guards, backend syntax/unit/integration tests, PostgreSQL schema/migration checks, and mining integration tests.
+- The controlling receipt sequence is five stages: 420M, 1,050M, 210M, 210M, 210M VCOIN. The earlier two-stage 1B + 1.1B draft is superseded.
+- This CI evidence is local/automated engineering verification only. It does not prove a public Testnet rehearsal, Mainnet deployment, token receipt, wallet balance, or live payout.
+- Mainnet remains HOLD / NO-GO. `deployment_authorized=false` and `mainnet_authorized=false`; no signing or broadcast is authorized by this checkpoint.
+- The read-only issuer/Pages deployment and public site availability still require separate live verification. The previous Pages setup issue is not represented as resolved here.

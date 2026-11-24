@@ -33,7 +33,7 @@ After all five receipts, the Founder retains 420,000,000 VCOIN and personally si
 
 ## Current status
 - Five-stage implementation is under exact-head build and automated verification on `feat/five-stage-founder-receipt`.
-- Mainnet deployment, minting, and transfers remain **HOLD / NO-GO** until all release gates and independent review pass.
+- Mainnet deployment, minting, and transfers remain **HOLD / NO-GO** until all release gates and documented internal security review pass.
 - No on-chain deployment or token receipt is claimed.
 
 See `contracts/jetton/DEPLOYMENT_RUNBOOK.md`, `contracts/jetton/VERIFICATION_STATUS.md`, and `docs/WALLET_ALLOCATION_REGISTER.md`.

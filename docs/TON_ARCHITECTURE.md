@@ -5,7 +5,7 @@
 - The full supply is received by this wallet through **five separate, sequential Founder-signed receipt stages**: 420,000,000; 1,050,000,000; 210,000,000; 210,000,000; and 210,000,000 VCOIN. Each stage requires a fresh Founder signature after the prior Founder Jetton-wallet credit is acknowledged. This records the approved contract flow; it does not assert that any receipt has occurred.
 - After all five receipts, the Founder personally signs distributions to the four registered allocation wallets: Mining Reserve 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN. The Founder retains 420,000,000 VCOIN (20%).
 - Former Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` was **Testnet-only**. It is historical/test-only and must never be used as the Mainnet receiving address.
-- This instruction supersedes direct five-wallet initial issuance, any one-operation five-wallet issuance description, and any designation of the former Founder address as Mainnet.
+- This instruction supersedes direct five-wallet initial issuance, the earlier two-stage draft, and any designation of the former Founder address as Mainnet.
 - Documentation changes do not authorize a Mainnet transaction. The exact deployed Jetton Master, Mainnet status, contract compatibility with the five-stage Founder-first flow, wallet-control proof, installment amounts, fees, and local Sandbox evidence must be verified before signing. Existing fixed-five-destination contract logic must be revised and tested if incompatible.
 
 # V COIN – TON Architecture

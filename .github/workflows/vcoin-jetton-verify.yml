@@ -46,6 +46,30 @@ jobs:
         run: npm run build
       - name: Build immutable TEP-64 metadata content cell
         run: node scripts/build-metadata-cell.cjs "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/e17bcb9d82ea182bff3358b9fac6b5fa25c166ee/contracts/jetton/metadata.json"
+      - name: Generate unsigned Testnet five-stage rehearsal preview
+        run: npx tsx scripts/prepare-testnet-rehearsal.ts
+      - name: Validate isolated five-stage Testnet preview
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const { Address } = require('@ton/core');
+          const p = JSON.parse(fs.readFileSync('build/testnet-rehearsal-preview.json', 'utf8'));
+          const expected = ['420000000','1050000000','210000000','210000000','210000000'];
+          if (p.network !== 'testnet' || p.test_only !== true) throw new Error('Testnet-only network guard failed');
+          if (!Address.parseFriendly(p.master_address).isTestOnly || !Address.parseFriendly(p.founder_jetton_wallet_address).isTestOnly) throw new Error('Testnet-only address flag missing');
+          if (p.fixed_supply_tokens !== '2100000000' || p.decimals !== 6) throw new Error('Fixed supply mismatch');
+          if (!Array.isArray(p.unsigned_messages.stages) || p.unsigned_messages.stages.length !== 5) throw new Error('Exactly five unsigned receipt requests are required');
+          p.unsigned_messages.stages.forEach((stage, i) => {
+            if (stage.stage !== i + 1 || stage.token_amount !== expected[i]) throw new Error('Five-stage receipt amount or sequence mismatch at stage ' + (i + 1));
+            if (!stage.requires_fresh_founder_signature || !stage.ton_connect_request) throw new Error('Founder signature gate missing');
+          });
+          if (p.safety.mainnet_wallets_loaded !== false || p.safety.mainnet_addresses_emitted !== false || p.safety.mainnet_payloads_generated !== false) throw new Error('Mainnet isolation guard failed');
+          if (p.safety.signing_performed !== false || p.safety.broadcast_performed !== false) throw new Error('Unsigned-only guard failed');
+          for (const file of ['build/VCoinMaster.testnet.state-init.boc','build/VCoinFounderJettonWallet.testnet.state-init.boc']) {
+            if (!fs.existsSync(file) || fs.statSync(file).size === 0) throw new Error('Missing Testnet StateInit artifact: ' + file);
+          }
+          console.log('Five unsigned Testnet receipt previews validated; no signing or broadcast performed.');
+          NODE
       - name: Block obsolete direct-mint Mainnet transaction preview
         run: |
           node <<'NODE'
@@ -97,8 +121,22 @@ jobs:
           }
           if (!manifest.status.includes('HOLD / NO-GO') || !manifest.preview_status.includes('HOLD / NO-GO')) throw new Error('Manifest must remain HOLD / NO-GO.');
           if (config.deployment_authorized !== false || config.mainnet_authorized !== false || manifest.founder_confirmed_release_intent.mainnet_transaction_authorized !== false) throw new Error('Mainnet authorization flags must remain false.');
-          if (config.initial_receipt.installments[0].amount_tokens !== null || config.initial_receipt.installments[1].amount_tokens !== null || config.initial_receipt.second_stage_requires_fresh_founder_announcement !== true) throw new Error('Unapproved staged receipt amounts or authorization state found.');
-          if (manifest.initial_receipt.installments[0].amount_tokens !== null || manifest.initial_receipt.installments[1].amount_tokens !== null || manifest.initial_receipt.stage_2_requires_fresh_founder_announcement !== true) throw new Error('Manifest staged receipt amounts or authorization state mismatch.');
+          const receiptStages = [
+            ['420000000','420000000000000'],
+            ['1050000000','1050000000000000'],
+            ['210000000','210000000000000'],
+            ['210000000','210000000000000'],
+            ['210000000','210000000000000'],
+          ];
+          if (config.initial_receipt.installments.length !== 5 || manifest.initial_receipt.installments.length !== 5) throw new Error('Exactly five receipt stages must be configured.');
+          for (let i = 0; i < receiptStages.length; i++) {
+            const [tokens, baseUnits] = receiptStages[i];
+            const c = config.initial_receipt.installments[i];
+            const m = manifest.initial_receipt.installments[i];
+            if (c.stage !== i + 1 || c.amount_tokens !== tokens || c.amount_base_units !== baseUnits || c.founder_authorization_required !== true) throw new Error('Deployment config stage mismatch: ' + (i + 1));
+            if (m.stage !== i + 1 || m.amount_tokens !== tokens || m.amount_base_units !== baseUnits || m.requires_fresh_founder_signature !== true) throw new Error('Allocation manifest stage mismatch: ' + (i + 1));
+          }
+          if (config.initial_receipt.fifth_stage_requires_fresh_founder_announcement !== true || manifest.initial_receipt.stage_5_requires_fresh_founder_announcement !== true) throw new Error('Stage 5 Founder authorization gate missing.');
           if (manifest.predicted_jetton_master_address !== null || manifest.predicted_master_state_init_hash !== null || manifest.preview_source_commit !== null) throw new Error('Superseded deployment predictions must remain cleared.');
           console.log('Founder-first wallet register, allocation totals, shared Founder/GAS role, and Mainnet HOLD flags validated.');
           NODE
@@ -112,16 +150,18 @@ jobs:
           const tests = fs.readFileSync('tests/jetton-sandbox.spec.ts', 'utf8');
           const checks = {
             founderOnlyReceipt: source.includes('msg.receiver == self.owner'),
-            stageOneIssuedState: source.includes('first_receipt_issued'),
-            stageOneCreditAcknowledgement: source.includes('first_receipt_confirmed'),
-            stageTwoIssuedState: source.includes('second_receipt_issued'),
-            stageTwoCreditAcknowledgement: source.includes('second_receipt_confirmed'),
-            stageTwoExactRemainder: source.includes('VCOIN_MAX_SUPPLY - self.total_supply'),
-            stageOneSandboxCase: tests.includes('only Founder can initiate Stage 1'),
-            stageTwoSandboxCase: tests.includes('Stage 2 must equal the exact remainder'),
-            stageOneBounceSandboxCase: tests.includes('natural Stage 1 bounce'),
-            stageTwoBounceSandboxCase: tests.includes('natural Stage 2 bounce'),
-            founderDistributionSandboxCase: tests.includes('Founder can distribute the credited Jettons'),
+            fixedFiveStageSequence: source.includes('expectedReceiptAmount') && source.includes('next_receipt_stage'),
+            pendingReceiptLock: source.includes('receipt_pending'),
+            exactStageAmounts: ['VCOIN_STAGE_1','VCOIN_STAGE_2','VCOIN_STAGE_3','VCOIN_STAGE_4','VCOIN_STAGE_5'].every((name) => source.includes(name)),
+            fiveCreditAcknowledgements: ['stage_1_confirmed','stage_2_confirmed','stage_3_confirmed','stage_4_confirmed','stage_5_confirmed'].every((name) => source.includes(name)),
+            idempotentAcknowledgement: source.includes('msg.query_id < self.next_receipt_stage'),
+            walletAckRetry: fs.readFileSync('src/jetton.tact','utf8').includes('VCoinRetryReceiptAcknowledgement'),
+            stageFiveDisablesMint: source.includes('self.mintable = false'),
+            exactFiveStageSandbox: tests.includes('all five exact stages are credited to Founder in sequence'),
+            acknowledgementRetrySandbox: tests.includes('retry an acknowledgement without double-issuing'),
+            stageOneBounceSandbox: tests.includes('natural Stage 1 bounce'),
+            stageTwoBounceSandbox: tests.includes('natural Stage 2 bounce'),
+            founderDistributionSandbox: tests.includes('distribute four registered allocations only after all five receipts'),
           };
           const missing = Object.entries(checks).filter(([, passed]) => !passed).map(([name]) => name);
           if (missing.length) {
@@ -164,11 +204,15 @@ jobs:
             "fixed_supply_tokens": "2100000000",
             "decimals": 6,
             "initial_receipt": {
-              "model": "Founder-first two-stage receipt",
+              "model": "Founder-first five-stage receipt",
               "founder_mainnet_wallet": "UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT",
-              "stage_1_amount_tokens": null,
-              "stage_2_amount_tokens": null,
-              "stage_2_requires_fresh_founder_signature": true
+              "stages": [
+                {"stage":1,"amount_tokens":"420000000","requires_fresh_founder_signature":true},
+                {"stage":2,"amount_tokens":"1050000000","requires_fresh_founder_signature":true},
+                {"stage":3,"amount_tokens":"210000000","requires_fresh_founder_signature":true},
+                {"stage":4,"amount_tokens":"210000000","requires_fresh_founder_signature":true},
+                {"stage":5,"amount_tokens":"210000000","requires_fresh_founder_signature":true}
+              ]
             },
             "legacy_direct_mint_preview_suppressed": true,
             "transaction_payloads": null,
@@ -193,8 +237,11 @@ jobs:
           const html = fs.readFileSync('../../issuer/index.html', 'utf8');
           const preview = JSON.parse(fs.readFileSync('../../issuer/deployment-preview.json', 'utf8'));
           if (preview.status !== 'HOLD / NO-GO' || preview.transaction_payloads !== null || preview.legacy_direct_mint_preview_suppressed !== true) throw new Error('Public deployment preview must be sanitized and read-only');
+          const publicStages = ['420000000','1050000000','210000000','210000000','210000000'];
+          if (preview.initial_receipt.model !== 'Founder-first five-stage receipt' || preview.initial_receipt.stages.length !== 5) throw new Error('Public preview must expose exactly five approved receipt stages.');
+          preview.initial_receipt.stages.forEach((stage, i) => { if (stage.stage !== i + 1 || stage.amount_tokens !== publicStages[i] || stage.requires_fresh_founder_signature !== true) throw new Error('Public preview receipt stage mismatch: ' + (i + 1)); });
           if (!html.includes('MAINNET RELEASE — HOLD / NO-GO')) throw new Error('Mainnet hold banner is required');
-          if (!html.includes('Stage 2: a separate, fresh Founder signature')) throw new Error('Stage 2 fresh-signature guard is missing');
+          if (!html.includes('Stage 2: 1,050,000,000 VCOIN') || !html.includes('Stage 5: 210,000,000 VCOIN')) throw new Error('Five-stage Founder receipt display is missing');
           if (!html.includes('2,100,000,000 VCOIN')) throw new Error('Fixed supply display is missing');
           if (html.includes('TON_CONNECT_UI') || html.includes('sendTransaction(')) throw new Error('Read-only status page must not create or send transactions');
           if (html.includes('issuance_transactions')) throw new Error('Legacy direct-mint issuance UI must be removed');

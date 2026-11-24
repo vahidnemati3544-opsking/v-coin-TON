@@ -9,6 +9,8 @@
 
 > This specification supersedes the earlier draft and its conflicting Testnet / founder-vesting assumptions. It describes the current implementation and approved economic rules. It is not proof of TEP compliance, independent audit, deployment, issuance, or authorization to broadcast a transaction.
 
+> **Controlling architecture update — 2026-11-24 / Action #69:** The historical sections below contain legacy constructor and issuance assumptions and must not be used as deployment instructions. The current Founder-first architecture is five exact sequential receipts to the Founder Mainnet wallet: 420M, 1,050M, 210M, 210M, 210M VCOIN. Each requires a separate Founder signature and prior-stage wallet-credit acknowledgement. Use docs/OWNER_ACTION_69_FIVE_STAGE_RECEIPT.md, contracts/jetton/src/vcoin.tact, contracts/jetton/src/jetton.tact, and contracts/jetton/testnet.rehearsal.config.json as the controlling implementation. The Testnet rehearsal is unsigned-preview-only pending emulator/fee review and separate Founder approval. Mainnet remains HOLD / NO-GO.
+
 ## 1. Approved token parameters
 
 | Parameter | Approved value |
@@ -117,14 +119,14 @@ Before any Founder signature, present:
 - Source commit, toolchain, lockfile, BOC checksums, TON cell / StateInit hashes, and engineering verification status.
 - Clear explanation of irreversibility and residual risks.
 
-Deployment, gas-reserve funding, and each of the five allocation issuance messages are separate on-chain operations. Do not sign or broadcast any of them until the corresponding complete transaction review has been presented and the Founder has explicitly approved it. Never send Mainnet transactions from CI.
+Deployment, gas-reserve funding, and each of the five initial Founder receipt stages followed by four Founder-signed allocation transfers are separate on-chain operations. Do not sign or broadcast any of them until the corresponding complete transaction review has been presented and the Founder has explicitly approved it. Never send Mainnet transactions from CI.
 
 ## 9. Current disposition
 
 **Mainnet release status: NO-GO / NOT DEPLOYED.**
 
 - Contract source and Sandbox tests: present.
-- Exact-head CI for the current 2.1B allocation revision: pending.
+- Exact-head CI for the current five-stage 2.1B allocation revision: pending.
 - `package-lock.json`: committed to `main`; clean `npm ci` must be verified again on the current exact head.
 - Metadata JSON, immutable commit-pinned URI, content cell, and canonical logo URL: generated and verified in exact-head CI; external TEP-64 parser review remains a release gate.
 - Engineering verification against TON standards: pending where not yet evidenced.
@@ -134,7 +136,7 @@ Deployment, gas-reserve funding, and each of the five allocation issuance messag
 - VCOIN issuance or transfers: none.
 - Mainnet authorization: false.
 
-No Testnet deployment is included in the current execution path. This specification does not authorize deployment, issuance, or transfer.
+Unsigned Testnet-only rehearsal previews may be generated for inspection; no Testnet signing or broadcast is implied. This specification does not authorize Mainnet deployment, issuance, or transfer.
 
 
 ## 10. Purchase and mining distribution policy (owner-approved)

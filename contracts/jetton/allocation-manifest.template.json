@@ -1,6 +1,6 @@
 {
   "project": "V COIN – TON",
-  "status": "HOLD / NO-GO — Founder-first two-stage receipt; no transaction payloads prepared",
+  "status": "HOLD / NO-GO — Founder-first five-stage receipt; no Mainnet transaction payloads prepared",
   "network": "mainnet",
   "jetton_master_address": null,
   "decimals": 6,
@@ -13,7 +13,7 @@
       "base_units": "420000000000000",
       "destination": "UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT",
       "requires_founder_signature": true,
-      "transfer_kind": "retained_from_initial_two_stage_receipt",
+      "transfer_kind": "retained_from_five_stage_founder_receipt",
       "destination_verification": "Owner-designated Mainnet address recorded; wallet control and revised-contract Jetton wallet derivation pending. This row is the retained Founder balance, not a separate transfer."
     },
     {
@@ -72,20 +72,20 @@
     "note": "The Founder Mainnet wallet is the sole GAS & OPERATIONS wallet. No separate GAS wallet and no sixth allocation recipient exist."
   },
   "notes": [
-    "Template only; HOLD / NO-GO. No deployment, mint, transfer, or transaction is authorized.",
-    "The full fixed 2,100,000,000 VCOIN supply is to be received by the Founder Mainnet wallet in two separately authorized incoming stages; installment amounts remain unset until the Founder approves a transaction plan.",
-    "Stage 2 requires a fresh explicit Founder authorization after Stage 1 is confirmed. Stage 1 does not authorize Stage 2.",
-    "After full receipt and reconciliation, the Founder retains 420,000,000 VCOIN and personally signs four transfers: Mining 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000.",
+    "Template only; HOLD / NO-GO. No Mainnet deployment, mint, transfer, or transaction is authorized.",
+    "The fixed 2,100,000,000 VCOIN supply is received only by the Founder Mainnet wallet in five separately signed exact stages: 420,000,000; 1,050,000,000; 210,000,000; 210,000,000; 210,000,000 VCOIN.",
+    "Each stage is enabled only after the preceding Founder Jetton-wallet credit acknowledgement is confirmed. The contract rejects wrong amounts, skipped stages, duplicate issuance, and any amount above the fixed cap.",
+    "After all five receipts, the Founder retains 420,000,000 VCOIN and personally signs four ordinary TEP-74 transfers: Mining 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000.",
     "The Founder Mainnet wallet UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT is also the sole GAS & OPERATIONS wallet; there is no separate GAS address.",
     "The former Founder address UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy is Testnet-only historical data and must never be used on Mainnet.",
-    "The former five-wallet direct-mint VCoinMint preview is superseded and disabled. Do not sign, deploy, or use any legacy preview or derived addresses.",
-    "The current VCoinMaster contract and transaction planner must be redesigned for the Founder-first staged receipt and four capped distributions before a new deployment package is generated.",
+    "Previous two-stage amounts and previews are superseded. Do not sign, deploy, or use any legacy preview or derived addresses.",
     "All recipient TON addresses are owner-designated records; their control is not proven by this manifest. Jetton Wallet addresses must be derived from the revised exact-build Master and checked before any transfer.",
-    "Never send Mainnet transactions from CI. No Testnet deployment or transaction is authorized; use local TON Sandbox only.",
+    "CI may create unsigned Testnet inspection artifacts only. No Testnet signing or broadcast is implied; emulator traces and fees must be reviewed first.",
+    "Never send Mainnet transactions from CI. Mainnet deployment_authorized and mainnet_authorized remain false.",
     "Never commit or request seed phrases, private keys, wallet PINs, or recovery codes."
   ],
   "founder_confirmed_release_intent": {
-    "scope": "founder_first_two_stage_receipt_then_four_founder_signed_distributions",
+    "scope": "founder_first_five_exact_receipt_stages_then_four_founder_signed_distributions",
     "total_tokens": "2100000000",
     "founder_is_one_of_five": true,
     "confirmation_status": "owner_instruction_recorded_2026-11-24",
@@ -108,7 +108,7 @@
     "status": "pending_after_founder_first_contract_redesign",
     "note": "Previous BOC/hash results belong to a superseded direct-mint design and are not a current deployment package. Rebuild the redesigned exact source and independently reproduce all TON code-cell, metadata, Master StateInit, and Jetton Wallet StateInit hashes before signing."
   },
-  "preview_status": "HOLD / NO-GO — legacy direct-mint preview suppressed; no transaction payloads may be generated until Founder-first contract adaptation and exact-head verification are complete.",
+  "preview_status": "HOLD / NO-GO — five-stage Founder-first contract under exact-head verification; no Mainnet transaction payloads",
   "initial_receipt": {
     "network": "mainnet",
     "founder_wallet": "UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT",
@@ -117,18 +117,36 @@
     "installments": [
       {
         "stage": 1,
-        "amount_tokens": null,
-        "amount_base_units": null,
+        "amount_tokens": "420000000",
+        "amount_base_units": "420000000000000",
         "requires_fresh_founder_signature": true
       },
       {
         "stage": 2,
-        "amount_tokens": null,
-        "amount_base_units": null,
+        "amount_tokens": "1050000000",
+        "amount_base_units": "1050000000000000",
+        "requires_fresh_founder_signature": true
+      },
+      {
+        "stage": 3,
+        "amount_tokens": "210000000",
+        "amount_base_units": "210000000000000",
+        "requires_fresh_founder_signature": true
+      },
+      {
+        "stage": 4,
+        "amount_tokens": "210000000",
+        "amount_base_units": "210000000000000",
+        "requires_fresh_founder_signature": true
+      },
+      {
+        "stage": 5,
+        "amount_tokens": "210000000",
+        "amount_base_units": "210000000000000",
         "requires_fresh_founder_signature": true
       }
     ],
-    "stage_2_requires_fresh_founder_announcement": true,
-    "status": "pending_installment_amounts_contract_revision_and_transaction_plan"
+    "status": "five_exact_stages_recorded_testnet_preview_only_mainnet_hold",
+    "stage_5_requires_fresh_founder_announcement": true
   }
 }

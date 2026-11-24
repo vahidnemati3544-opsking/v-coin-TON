@@ -4,7 +4,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs/promises');
 const path = require('node:path');
-const { randomUUID } = require('node:crypto');
+const { randomUUID, randomBytes } = require('node:crypto');
 const { Pool } = require('pg');
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
@@ -65,6 +65,11 @@ async function applyTestMigrations(pool) {
       path.join(databaseDir, 'migrations/007-purchase-and-mining-payout-settlement.sql'), 'utf8'
     );
     await client.query(settlementMigration);
+
+    const founderFirstMigration = await fs.readFile(
+      path.join(databaseDir, 'migrations/010-founder-first-five-stage-reconciliation.sql'), 'utf8'
+    );
+    await client.query(founderFirstMigration);
   } finally {
     if (lockAcquired) {
       try { await client.query('SELECT pg_advisory_unlock(741230017)'); } catch (_) { /* preserve original error */ }
@@ -372,6 +377,94 @@ test('Telegram login creates a hashed session that can be read and revoked in Po
     assert.equal(revokedResponse.status, 401);
   } finally {
     if (server) await new Promise((resolve) => server.close(resolve));
+    await pool.end();
+  }
+});
+
+
+test('Founder-first five-stage receipt and allocation reconciliation is exact, idempotent, and rejects mismatches', {
+  skip: !databaseUrl
+}, async () => {
+  const pool = new Pool({ connectionString: databaseUrl, max: 2 });
+  try {
+    await applyTestMigrations(pool);
+    const founder = 'UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT';
+    const master = 'EQ' + 'a'.repeat(46);
+    const amounts = ['420000000000000','1050000000000000','210000000000000','210000000000000','210000000000000'];
+    const hashes = amounts.map(() => randomBytes(32).toString('hex'));
+
+    await assert.rejects(
+      pool.query('SELECT record_vcoin_receipt_stage(2::smallint, $1::numeric, $2, $3, $4)', [
+        amounts[1], hashes[1], master, founder
+      ]),
+      /exact sequence/i
+    );
+    for (let index = 0; index < amounts.length; index++) {
+      const stage = index + 1;
+      const result = await pool.query(
+        'SELECT record_vcoin_receipt_stage($1::smallint, $2::numeric, $3, $4, $5) AS status',
+        [stage, amounts[index], hashes[index], master, founder]
+      );
+      assert.equal(result.rows[0].status, 'confirmed');
+      const duplicate = await pool.query(
+        'SELECT record_vcoin_receipt_stage($1::smallint, $2::numeric, $3, $4, $5) AS status',
+        [stage, amounts[index], hashes[index], master, founder]
+      );
+      assert.equal(duplicate.rows[0].status, 'duplicate');
+    }
+    await assert.rejects(
+      pool.query('SELECT record_vcoin_receipt_stage(5::smallint, $1::numeric, $2, $3, $4)', [
+        '210000000000001', randomBytes(32).toString('hex'), master, founder
+      ]),
+      /exact approved stage amount/i
+    );
+
+    const miningHash = randomBytes(32).toString('hex');
+    const miningDestination = 'UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0';
+    const mining = await pool.query(
+      'SELECT record_vcoin_allocation_transfer($1, $2::numeric, $3, $4, $5) AS status',
+      ['mining_reserve','1050000000000000',miningHash,founder,miningDestination]
+    );
+    assert.equal(mining.rows[0].status, 'confirmed');
+    const duplicateMining = await pool.query(
+      'SELECT record_vcoin_allocation_transfer($1, $2::numeric, $3, $4, $5) AS status',
+      ['mining_reserve','1050000000000000',miningHash,founder,miningDestination]
+    );
+    assert.equal(duplicateMining.rows[0].status, 'duplicate');
+
+    await assert.rejects(
+      pool.query('SELECT record_vcoin_allocation_transfer($1,$2::numeric,$3,$4,$5)', [
+        'treasury','210000000000001',randomBytes(32).toString('hex'),founder,
+        'UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ'
+      ]),
+      /approved role amount/i
+    );
+    await assert.rejects(
+      pool.query('SELECT record_vcoin_allocation_transfer($1,$2::numeric,$3,$4,$5)', [
+        'treasury','210000000000000',randomBytes(32).toString('hex'),founder,miningDestination
+      ]),
+      /registered wallet/i
+    );
+
+    const otherTransfers = [
+      ['treasury','210000000000000','UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ'],
+      ['liquidity_market','210000000000000','UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn'],
+      ['ecosystem_marketing','210000000000000','UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE']
+    ];
+    for (const [role, amount, destination] of otherTransfers) {
+      const result = await pool.query(
+        'SELECT record_vcoin_allocation_transfer($1,$2::numeric,$3,$4,$5) AS status',
+        [role,amount,randomBytes(32).toString('hex'),founder,destination]
+      );
+      assert.equal(result.rows[0].status, 'confirmed');
+    }
+    const reconciliation = await pool.query('SELECT * FROM vcoin_founder_first_reconciliation');
+    assert.equal(reconciliation.rows[0].confirmed_receipt_base_units, '2100000000000000');
+    assert.equal(reconciliation.rows[0].confirmed_receipt_count, '5');
+    assert.equal(reconciliation.rows[0].founder_signed_distributions_base_units, '1680000000000000');
+    assert.equal(reconciliation.rows[0].confirmed_distribution_count, '4');
+    assert.equal(reconciliation.rows[0].full_supply_receipt_confirmed, true);
+  } finally {
     await pool.end();
   }
 });

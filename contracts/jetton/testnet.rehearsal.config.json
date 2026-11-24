@@ -1,0 +1,47 @@
+{
+  "project": "V COIN – TON",
+  "purpose": "Founder-first five-stage public Testnet rehearsal only",
+  "network": "testnet",
+  "testOnly": true,
+  "decimals": 6,
+  "fixedSupplyTokens": "2100000000",
+  "fixedSupplyBaseUnits": "2100000000000000",
+  "founderTestnetWallet": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
+  "mainnetWalletsIncluded": false,
+  "mainnetPayloadsAllowed": false,
+  "broadcastEnabled": false,
+  "signingEnabled": false,
+  "notes": [
+    "This file is isolated from deployment.config.template.json.",
+    "Only the historical Founder Testnet wallet may be used.",
+    "No Mainnet address, signer, destination, or transaction payload may be loaded or emitted.",
+    "The script creates unsigned Testnet-only wallet request previews for five exact sequential stages; no signing or broadcast is performed."
+  ],
+  "stages": [
+    {
+      "stage": 1,
+      "amountTokens": "420000000",
+      "amountBaseUnits": "420000000000000"
+    },
+    {
+      "stage": 2,
+      "amountTokens": "1050000000",
+      "amountBaseUnits": "1050000000000000"
+    },
+    {
+      "stage": 3,
+      "amountTokens": "210000000",
+      "amountBaseUnits": "210000000000000"
+    },
+    {
+      "stage": 4,
+      "amountTokens": "210000000",
+      "amountBaseUnits": "210000000000000"
+    },
+    {
+      "stage": 5,
+      "amountTokens": "210000000",
+      "amountBaseUnits": "210000000000000"
+    }
+  ]
+}

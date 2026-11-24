@@ -106,3 +106,24 @@ The schedule marks itself completed only when the `USER_MINING` reserve's confir
 - `GET /api/v1/price-reference/candles?limit=100`
 
 The database migration must be applied before starting the backend. No front-end dashboard was present in the inspected repository, so rendering these API candles on the public home page remains a separate client-side task.
+
+
+## Founder-first five-stage Mainnet receipt reconciliation (supersedes Action #66 five-stage draft)
+
+Migration `database/migrations/010-founder-first-five-stage-reconciliation.sql` adds a chain-confirmed reconciliation ledger for the five exact initial receipt stages and the four subsequent Founder-signed allocation transfers.
+
+- Record each of the five stages only after its exact Mainnet transaction is independently confirmed and its Master, Founder recipient, deterministic Jetton wallet, and stage amount are validated.
+- Stages must be recorded in strict order with exact amounts: 420M, 1,050M, 210M, 210M, 210M VCOIN.
+- Repeated ingestion of the same transaction hash and identical event is idempotent; conflicting hashes, amounts, stages, or allocation roles are rejected.
+- The four distribution roles are recorded only after all five receipt stages are confirmed, only from the registered Founder wallet, and only at their exact approved amounts.
+- The reconciliation view reports receipt base units and confirmed Founder distributions separately. Distribution transfers do not create new supply.
+- This migration creates accounting controls; it does not itself connect an indexer, verify chain finality, sign a transaction, or broadcast to TON. The backend ingestion service must validate the actual Mainnet transaction and call the database functions only after finality checks.
+
+Do not run the migration against production until the latest backend integration checks and schema review pass. Mainnet remains HOLD / NO-GO.
+
+
+### Verified-event adapter
+
+`src/services/vcoin-chain-reconciliation.js` provides a strict backend adapter for finalized Mainnet receipt and allocation events. It rejects Testnet, non-finalized events, an unconfigured or mismatched Jetton Master, missing/mismatched deterministic Jetton wallet addresses, wrong Founder source/recipient, invalid transaction hashes, and any role amount or destination that differs from the approved register.
+
+The adapter requires the caller to inject the exact deployed Master address and all five derived Jetton Wallet addresses. Those values must come from the reviewed exact-head deployment artifact and post-deployment on-chain getters; they are intentionally not guessed or hard-coded before deployment. This adapter is not an indexer or a source of finality by itself. A trusted TON indexer/provider must supply the verified event and proof of finality before the adapter is called.

@@ -1,27 +1,39 @@
 # V COIN – TON Smart Contracts
 
 ## Purpose
-This directory contains the independent V COIN Jetton implementation for The Open Network (TON), including the Master and Wallet contracts, fixed-allocation controls, deployment tooling, and local verification tests. It does not modify or reuse the legacy BNB Smart Chain project.
+Independent V COIN Jetton implementation for TON (TEP-74 / TEP-64), separate from the legacy BNB Smart Chain project.
 
-## Approved execution baseline
-- Jetton standard: TEP-74; metadata: TEP-64.
-- Fixed total supply: **2,100,000,000 VCOIN**, six decimals; no additional minting.
-- Allocation: Founder 420,000,000 (20%), Mining Reserve 1,050,000,000 (50%), Treasury 210,000,000 (10%), Liquidity/Market 210,000,000 (10%), Ecosystem/Marketing 210,000,000 (10%).
-- Exactly five allocation destinations. The Founder allocation wallet is also the sole GAS & OPERATIONS wallet and deployment/issuance signer; there is no separate fee wallet or sixth allocation destination.
-- Founder allocation is credited in one operation; no vesting, time lock, monthly installments, or staged release.
-- Execution is Mainnet-only after all project engineering gates and explicit Founder authorization. Local TON Sandbox and isolated tests are permitted. Testnet deployment, transactions, and rehearsal are not authorized.
-- Independent external security auditing is not a V COIN–TON task, pending work item, or release condition.
+## Approved economic baseline
+- Fixed supply: **2,100,000,000 VCOIN**, six decimals.
+- Founder: 420,000,000 (20%).
+- Mining reserve: 1,050,000,000 (50%).
+- Treasury: 210,000,000 (10%).
+- Liquidity/Market: 210,000,000 (10%).
+- Ecosystem/Marketing: 210,000,000 (10%).
+- Hard cap: 2,100,000,000,000,000 base units. No additional minting.
 
-## Security and development rules
-- Enforce the fixed supply, exact per-role allocations, one-time issuance, owner-only mint authority, and post-allocation mint disablement in contract code.
-- Protect transfer, burn, bounce/retry, authorization, and reserve behavior with automated local TON Sandbox tests.
+## Controlling initial receipt flow — five exact Founder stages
+The VCoinMaster owner is the registered Founder Mainnet wallet. Initial issuance credits only the deterministic Founder Jetton wallet, in this exact order:
+
+1. **420,000,000 VCOIN** — 420,000,000,000,000 base units.
+2. **1,050,000,000 VCOIN** — 1,050,000,000,000,000 base units.
+3. **210,000,000 VCOIN** — 210,000,000,000,000 base units.
+4. **210,000,000 VCOIN** — 210,000,000,000,000 base units.
+5. **210,000,000 VCOIN** — 210,000,000,000,000 base units.
+
+Every stage requires a separate Founder signature and the preceding stage's wallet-credit acknowledgement. Only after Stage 5 is acknowledged does the Master permanently set `mintable=false`. A natural bounce rolls back only the pending stage; the same stage can be retried. A lost acknowledgement can be resent by the Founder wallet owner without double issuance.
+
+After all five receipts, the Founder retains 420,000,000 VCOIN and personally signs four ordinary TEP-74 transfers: Mining 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000. These transfers do not mint new supply.
+
+## Security and release rules
+- Enforce Founder-only authority, exact stage sequence and amounts, a hard 2.1B cap, idempotent acknowledgement, bounce rollback, and permanent mint disablement after Stage 5.
+- Test transfer, burn, acknowledgement retry, bounce, replay, database reconciliation, and TON reserve behavior in local Sandbox/isolated PostgreSQL tests.
 - Never request, store, or expose a seed phrase, private key, PIN, or recovery code.
-- Never deploy or broadcast without the Founder’s explicit approval of the exact Mainnet transaction payload.
+- Never deploy, sign, or broadcast without separate explicit Founder approval of the exact operation. CI must never send Mainnet transactions.
 
 ## Current status
-- Master/Wallet source, allocation controls, deployment preview tooling, and Sandbox tests are present in the repository.
-- The existence of source files or a successful CI run is not proof of Mainnet deployment, issuance, or production readiness.
-- No verified Mainnet deployment, initial issuance, or allocation transfer is claimed here.
-- The deployment runbook and verification status document remain the controlling evidence for current technical release status.
+- Five-stage implementation is under exact-head build and automated verification on `feat/five-stage-founder-receipt`.
+- Mainnet deployment, minting, and transfers remain **HOLD / NO-GO** until all release gates and documented internal security review pass.
+- No on-chain deployment or token receipt is claimed.
 
-See `contracts/jetton/DEPLOYMENT_RUNBOOK.md`, `contracts/jetton/VERIFICATION_STATUS.md`, and `docs/WALLET_ALLOCATION_REGISTER.md` for current release and wallet records.
+See `contracts/jetton/DEPLOYMENT_RUNBOOK.md`, `contracts/jetton/VERIFICATION_STATUS.md`, and `docs/WALLET_ALLOCATION_REGISTER.md`.

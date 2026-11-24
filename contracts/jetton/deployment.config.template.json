@@ -47,7 +47,7 @@
   },
   "deployment_authorized": false,
   "mainnet_authorized": false,
-  "notes": "Owner-approved fixed supply is 2,100,000,000 VCOIN at 6 decimals. The Founder-first contract receives the fixed supply only in five exact stages at the Founder Mainnet wallet: 420M, 1.05B, 210M, 210M, 210M VCOIN. Every stage requires a separate Founder signature and the preceding stage's on-chain credit confirmation. After all five receipts, the Founder signs four ordinary TEP-74 transfers and retains 420M VCOIN. This template remains unsigned; deployment_authorized and mainnet_authorized remain false.",
+  "notes": "Owner-approved fixed supply is 2,100,000,000 VCOIN at 6 decimals. The Founder-first contract receives the fixed supply only in five exact stages at the Founder Mainnet wallet: 420M, 1.05B, 210M, 210M, 210M VCOIN. Every stage requires a separate Founder signature and the preceding stage's on-chain credit confirmation. After all five receipts, the Founder signs four ordinary TEP-74 transfers and retains 420M VCOIN. This template remains unsigned; deployment_authorized and mainnet_authorized remain false. Mainnet deployment, issuance and payout remain disabled; no Testnet deployment or transaction is authorized. This file is a configuration template, not proof of a deployed Master.",
   "allocation_wallet_verification": {
     "status": "founder_address_review_pending_before_mainnet_signature",
     "note": "The Founder Mainnet receiving address and four other owner-provided allocation destination addresses are recorded here/register. Derived Jetton Wallet addresses must be regenerated from the revised exact-build Master StateInit and confirmed with the deployed Master's get_wallet_address getter after deployment.",
@@ -81,7 +81,7 @@
     "price_type": "modelled_reference_not_market_price",
     "not_a_market_quote": true
   },
-  "preview_status": "Founder-first five-stage preview candidate; unsigned; exact-head CI and release checks required",
+  "preview_status": "Mainnet-only deployment preparation; unsigned; deployment blocked pending exact-head release gates and Founder wallet approval",
   "initial_receipt": {
     "network": "mainnet",
     "founder_wallet": "UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT",
@@ -118,43 +118,19 @@
         "founder_authorization_required": true
       }
     ],
-    "status": "five_stage_amounts_recorded_testnet_rehearsal_pending_mainnet_hold",
+    "status": "mainnet_master_not_deployed_or_verified",
     "fifth_stage_requires_fresh_founder_announcement": true
   },
-  "testnet_rehearsal": {
-    "authorized_by_founder": true,
-    "authorization_date": "2026-11-24",
-    "network": "testnet",
-    "founder_testnet_wallet": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
-    "status": "pending_public_testnet_execution_and_founder_wallet_signature",
-    "no_mainnet_authority": true,
-    "no_seed_phrase_or_private_key_collection": true,
-    "stages": [
-      {
-        "stage": 1,
-        "amount_tokens": "420000000",
-        "amount_base_units": "420000000000000"
-      },
-      {
-        "stage": 2,
-        "amount_tokens": "1050000000",
-        "amount_base_units": "1050000000000000"
-      },
-      {
-        "stage": 3,
-        "amount_tokens": "210000000",
-        "amount_base_units": "210000000000000"
-      },
-      {
-        "stage": 4,
-        "amount_tokens": "210000000",
-        "amount_base_units": "210000000000000"
-      },
-      {
-        "stage": 5,
-        "amount_tokens": "210000000",
-        "amount_base_units": "210000000000000"
-      }
-    ]
+  "network_policy": {
+    "target_network": "mainnet",
+    "local_sandbox_only_for_simulation": true,
+    "testnet_deployment_authorized": false,
+    "testnet_transactions_authorized": false,
+    "mainnet_deployment_authorized": false,
+    "mainnet_issuance_authorized": false,
+    "mainnet_payouts_authorized": false,
+    "master_address_status": "not_deployed_or_independently_verified",
+    "deployment_transaction_status": "none_recorded",
+    "rule": "Do not sign, broadcast, fund, deploy, mint, or transfer until all documented release gates pass and the Founder explicitly approves that exact operation."
   }
 }

@@ -654,3 +654,21 @@ The controlling initial receipt amounts are the Founder’s five-stage instructi
 
 **Mainnet authorization flags remain false.** No deployment, mint, receipt, or allocation transfer is authorized by this implementation task.
 
+
+
+## Action #70 — Five-stage integration merged and exact-head CI passed (2026-11-24)
+
+**Status:** Merged to main. Exact pre-merge source head passed all three required CI workflows. Mainnet remains HOLD / NO-GO; no deployment, mint, receipt, or allocation transfer was signed or broadcast.
+
+- PR #22: https://github.com/vahidnemati3544-opsking/v-coin-TON/pull/22 — merged by squash.
+- Merge commit on main: 41c34aa78bd9dde4b6b5ef94c7de2f50b0397872.
+- Exact verified source head: 7154bba34f0dce7030b271234a7d4700133c4e5e.
+- Jetton verification run #45391538194: SUCCESS. Tact compilation, strict dependency audit (zero moderate/high/critical advisories), metadata cell generation, five-stage unsigned Testnet preview generation and isolation validation, Mainnet planner suppression, five-stage allocation manifest validation, Jest Sandbox tests, five-stage contract guards, and read-only Founder status page validation all passed. The deploy-issuer job was skipped on the PR branch, as intended.
+- Backend CI run #45391538237: SUCCESS. JavaScript syntax, PostgreSQL schema/migrations, migration-runner idempotency, backend unit tests, and integration tests passed.
+- Mining CI run #45391538229: SUCCESS. Static checks, unit tests, and PostgreSQL integration tests passed.
+- Jetton release artifact: vcoin-jetton-release-b732c7f63fc38e65c3de27df059269dba4fcad52; SHA-256 08371f72775ca45fda01ae618ea12ee3595104ce2c07336f6d508c518b8a439b.
+- Full source snapshot artifact: vcoin-ton-full-source-b732c7f63fc38e65c3de27df059269dba4fcad52; SHA-256 009fcf895d736594bedc0316c4d81e2b191458992a34dbb38713e66210ccdd8f.
+- Superseded PR #21 (two-stage 1B + 1.1B) was closed unmerged. PR #22 is the controlling five-stage implementation.
+- The current five exact receipt stages remain 420M, 1,050M, 210M, 210M, 210M VCOIN. The Mainnet transaction planner remains disabled; deployment_authorized=false and mainnet_authorized=false. Unsigned Testnet preview generation is not Testnet execution.
+
+**Next release boundary:** verify the post-merge main workflow and public read-only Pages deployment. Do not sign or broadcast any Testnet or Mainnet request without separate approval for that exact operation. Mainnet remains NO-GO.

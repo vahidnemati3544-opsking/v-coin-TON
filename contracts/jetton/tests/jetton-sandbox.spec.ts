@@ -47,6 +47,7 @@ describe('VCOIN Founder-first two-stage issuance', () => {
     expect((await (await founderWallet(chain, master, owner)).getGetWalletData()).balance).toBe(STAGE_ONE);
     const status = await master.getGetReceiptStatus();
     expect(status.first_receipt_issued).toBe(true);
+    expect(status.first_receipt_confirmed).toBe(true);
     expect(status.second_receipt_issued).toBe(false);
     expect(status.remaining_supply).toBe(STAGE_TWO);
   });
@@ -71,6 +72,7 @@ describe('VCOIN Founder-first two-stage issuance', () => {
     const data = await master.getGetJettonData();
     expect(data.total_supply).toBe(MAX_SUPPLY);
     expect(data.mintable).toBe(false);
+    expect((await master.getGetReceiptStatus()).second_receipt_confirmed).toBe(true);
     const wallet = await founderWallet(chain, master, owner);
     expect((await wallet.getGetWalletData()).balance).toBe(MAX_SUPPLY);
 
@@ -185,7 +187,9 @@ describe('VCOIN Founder-first two-stage issuance', () => {
     expect(data.total_supply).toBe(STAGE_ONE);
     expect(data.mintable).toBe(true);
     expect(status.first_receipt_issued).toBe(true);
+    expect(status.first_receipt_confirmed).toBe(true);
     expect(status.second_receipt_issued).toBe(false);
+    expect(status.second_receipt_confirmed).toBe(false);
     expect(status.remaining_supply).toBe(STAGE_TWO);
   });
 

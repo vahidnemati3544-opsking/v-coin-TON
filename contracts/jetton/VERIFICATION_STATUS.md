@@ -1,4 +1,4 @@
-> **LATEST CONTROLLING UPDATE — Action #76 (2026-11-24):** Added an HTTP-level regression test proving that all four public mining endpoints remain fail-closed with HTTP 503 until verified Mainnet Jetton wallet balances and confirmed payouts are implemented. No mining activation or transaction is authorized. See Action #76 at the end.
+> **LATEST CONTROLLING UPDATE — Action #77 (2026-11-24):** Action #76's HTTP-level public-mining fail-closed regression test now passes on exact-head CI (Mining #481 and Backend #390). The separate Jetton build-and-test plus read-only issuer deployment workflow #504 also passed on its own earlier commit. A source review confirms the internal-balance mining engine remains unmounted from public routes; Mainnet wallet-balance mining, proof, payout, and reconciliation are still not implemented. See Actions #76–#77 at the end.
 
 > **CONTROLLING UPDATE — Action #69 (2026-11-24):** The current approved receipt flow is five exact Founder-first stages: 420M, 1,050M, 210M, 210M, 210M VCOIN. Earlier two-stage notes below are historical and superseded. Use the Action #69 section at the end of this file for current implementation and release status. Mainnet remains HOLD / NO-GO.
 
@@ -755,11 +755,30 @@ The controlling initial receipt amounts are the Founder’s five-stage instructi
 
 ## Action #76 — Add HTTP-level regression coverage for the public mining fail-closed gate
 
-**Status:** Test committed; exact-head CI verification pending.
+**Status:** Committed and exact-head CI-tested successfully (Mining workflow #481 and Backend workflow #390, commit `f12ea01f916a8c169600f9a119c705dfca5cc83f`).
 
 - Added `contracts/mining/backend/test/mining-public-api-guard.test.js`.
 - The test starts the actual Express application on an ephemeral loopback port and checks all four public extraction routes: status, start, claim, and end.
 - Each route must return HTTP 503 with the exact `WALLET_BALANCE_MINING_NOT_IMPLEMENTED` response. This proves the public API does not accidentally expose the legacy internal-balance mining router.
 - The test performs no database connection, wallet connection, TON RPC call, signing, broadcast, token issuance, or payout.
 - This is regression coverage for the existing safety gate; it does not implement Mainnet mining or change any economic rule.
-- Next verification: exact-head GitHub Actions must run the backend test suite successfully. If the test fails, fix the test or guard before any mining integration work.
+- Exact-head verification passed: [Mining CI #481](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45401349184) and [Backend CI #390](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45401348953). The preceding failure was solely the test process importing the server without `DATABASE_URL`; the test now supplies an inert local URL and does not open a database connection.
+
+
+## Action #77 — Post-fix security and release-boundary review (2026-11-24)
+
+**Status:** Review recorded; no additional production-code change was justified by the reviewed evidence. Exact-head Actions #481 and #390 passed for commit `f12ea01f916a8c169600f9a119c705dfca5cc83f`.
+
+- Confirmed the public Express application mounts a hard HTTP 503 gate for every `/api/v1/mining` route. The legacy internal-balance mining router is not mounted in the public server.
+- Confirmed the HTTP regression test covers GET status and POST start, claim, and end. It runs on an ephemeral loopback port and does not connect to PostgreSQL, TON, or a wallet.
+- Confirmed the legacy engine and internal ledger still calculate/settle against PostgreSQL balances. This is not compliant with the approved Mainnet wallet-balance source-of-truth rule and must remain isolated; it must not be enabled as real extraction.
+- Confirmed Telegram HMAC validation uses the documented WebAppData derivation, rejects duplicate parameters, checks auth-date age, and issues hashed opaque session tokens. This authenticates Telegram WebApp data only; it does not prove TON wallet ownership.
+- Confirmed the chain-reconciliation module validates caller-supplied event fields against expected Master, finalized Mainnet label, stage amount, owner and Jetton-wallet addresses before invoking database procedures. This module is not itself a trusted chain indexer/provider and does not independently prove event finality. Production must only call it with independently verified provider data.
+- Confirmed price-reference endpoints explicitly label their output as a modelled reference, not a market price. No external market-price or guaranteed-value claim is established.
+- No new on-chain action, Mainnet Master address, wallet ownership proof, live provider, TON Connect proof, payout sender, or finalized payout reconciliation was discovered.
+- The separate Jetton workflow [#504](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45401010408) passed build-and-test and the read-only issuer deployment job on its then-current commit; it is not a substitute for the exact-head backend/mining runs #481 and #390.
+- No tokenomics, supply, allocation, wallet address, contract source, or transaction authorization was changed in this review.
+
+**Remaining hard blockers before real extraction:** verified/deployed Mainnet Jetton Master; TON Connect wallet-ownership proof; trusted Mainnet provider and immutable finalized balance snapshots; secure payout sender; finalized on-chain payout reconciliation; replay/idempotency/concurrency/bounce recovery tests; independent contract security review and clean-room build. Public mining remains HTTP 503 and Mainnet remains HOLD / NO-GO.
+
+**No authorization is implied by this review or commit.**

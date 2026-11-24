@@ -1,3 +1,5 @@
+> **Controlling update — 2026-11-24 / Owner Action #82:** The current approved initial receipt is five sequential, separately Founder-authorized transfers to Mainnet Founder wallet UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT: 420,000,000; 1,050,000,000; 210,000,000; 210,000,000; 210,000,000 VCOIN. Each stage requires a fresh Founder announcement/signature and confirmation of the prior credit. After all five receipts, the Founder personally signs four allocation transfers and retains 420,000,000 VCOIN. Any older one-step, two-step, or direct-five-wallet issuance description below is historical only and is not an executable instruction. No Testnet deployment/transaction, Mainnet deployment, mint, or transfer is authorized by this documentation update.
+
 # Repository Policy Consistency Sweep — Action #65
 
 **Date:** 2026-11-23  
@@ -14,7 +16,7 @@ Review repository documentation for historical statements that conflict with the
 ## Controlling policy restated
 
 - Fixed total supply: **2,100,000,000 VCOIN**, 6 decimals.
-- Founder: **420,000,000 VCOIN**, credited in one operation; no vesting, time lock, monthly installments, or staged release.
+- Founder retained economic allocation: **420,000,000 VCOIN** after the current five-stage Founder-first receipt and subsequent Founder-signed distributions. This historical line does not define the initial receipt sequence; no vesting or time lock applies.
 - Exactly five allocation wallets. Founder wallet is also the sole **GAS & OPERATIONS** wallet; no separate fee wallet and no sixth allocation destination.
 - Mainnet-only execution policy. Local TON Sandbox and isolated tests are permitted. No Testnet deployment, transaction, or rehearsal is authorized.
 - Independent external security auditing is not a V COIN–TON project task, pending work item, or release condition.

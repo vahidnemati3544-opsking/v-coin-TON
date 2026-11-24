@@ -25,6 +25,8 @@ The current approved baseline is 2,100,000,000 VCOIN at 6 decimals, with no addi
 
 Architecture documents describe intended behavior unless a section explicitly identifies functionality as implemented. Internal reviews, CI, automated tests, dependency scans, Sandbox tests, and hash checks are engineering verification activities. No document certifies production readiness or authorizes TON Mainnet deployment.
 
+- [Owner Instruction — Founder-first two-stage Mainnet receipt (2026-11-24)](OWNER_INSTRUCTION_2026-11-24.md) — controlling change to initial custody and Founder-signed distribution.
+
 ## Latest repository consistency record
 
 - [Action #65 — Repository Policy Consistency Sweep](REPOSITORY_POLICY_SWEEP_ACTION_65.md): documents the 2026-11-23 correction of superseded historical policy statements and the post-sweep CI status.

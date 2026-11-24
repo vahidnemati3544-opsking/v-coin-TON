@@ -690,3 +690,20 @@ The controlling initial receipt amounts are the Founder’s five-stage instructi
 - Official TON guidance requires verifying the Jetton master and deriving each holder's Jetton wallet with the Master's `get_wallet_address`; token name, symbol, and image are not proof of identity. Mainnet deployment spends real TON and must be confirmed by the Founder in the wallet.
 
 **No authorization is implied by this documentation or commit.**
+
+
+## Action #72 — Resolve stale two-stage and Testnet documentation (2026-11-24)
+
+**Status:** Documentation and disabled-planner guard corrected on main. The latest Jetton workflow run #495 is pending; this action is not marked CI-tested until that exact head completes. Mainnet remains HOLD / NO-GO.
+
+- Rewrote `docs/OWNER_INSTRUCTION_2026-11-24.md` to make the five-stage Founder-first sequence the controlling instruction and explicitly supersede the earlier two-installment draft: 420M, 1.05B, 210M, 210M, 210M VCOIN.
+- Corrected `contracts/jetton/DEPLOYMENT_RUNBOOK.md` to state Mainnet-only operations, local TON Sandbox-only simulation, and no Testnet deployment, wallet request, signing, broadcast, receipt, or distribution authorization.
+- Quarantined `contracts/jetton/TESTNET_REHEARSAL.md` as archived/do-not-run historical material; its old authorization language is no longer valid.
+- Corrected `contracts/jetton/tests/README.md` to describe local Sandbox as the only permitted simulation environment.
+- Corrected the disabled Mainnet planner's stale two-stage explanation. The planner remains intentionally disabled pending exact-head release gates and separate explicit Founder approval.
+- No contract bytecode, supply, allocation, wallet address, deployment flag, or on-chain state was changed. No transaction was created, signed, or broadcast.
+- Latest exact-head Jetton workflow: run #495, commit `4b9e1a907de40963094ee360de109a71701eb775`, pending at the time this entry was written: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45398811466
+
+**Remaining blockers:** independent clean-room build and security review; exact Master StateInit and five Jetton-wallet derivation reproduction; Founder wallet-control verification; Mainnet Master deployment and on-chain getter verification; trusted finalized Mainnet balance provider; wallet ownership proof; payout adapter and finality reconciliation; non-skipped PostgreSQL integration verification for the production configuration. Public mining remains HTTP 503. No Mainnet deployment, token issuance, transfer, or real extraction is claimed complete.
+
+**No authorization is implied by this documentation or commit.**

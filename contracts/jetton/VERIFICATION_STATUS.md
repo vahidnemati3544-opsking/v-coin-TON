@@ -1,3 +1,17 @@
+# ACTION #86 — Mainnet release-gate reconciliation (2026-11-24)
+
+**Status:** Documentation reconciled on the PR review branch only. PR #24 remains open/Draft and is not merged to `main`. Mainnet remains HOLD / NO-GO.
+
+- PR #24 exact-head CI #535 and updated PR CI #539 passed `build-and-test` and fresh-runner `hash-reproduction`; the review branch has 20 Sandbox tests across 3 suites and reproducible Master/Wallet/metadata BOCs across two isolated CI runners.
+- The review branch adds burn rejection/success and ordinary transfer bounce/refund regression coverage. This is not Mainnet deployment evidence.
+- Current project policy follows the already-merged decisions in PRs #18 and #20: a third-party audit is not a current project release condition. Internal source/security review, exact-head CI, dependency audit, Sandbox edge-case coverage, clean-room reproduction, fee/reserve analysis, wallet-control proof, and Founder approval remain required. Historical documents that still list a third-party audit as a mandatory gate are superseded.
+- The Founder Jetton Wallet ordinary `TokenTransfer` method is owner-authorized and checks balance/fees, but is not contract-locked until Stage 5. The five-stage receipt followed by four allocations is a mandatory Founder operating procedure for this release. Before each allocation transfer, independently verify on the deployed Master: Stage 5 confirmed, next stage 6, no receipt pending, `mintable=false`, and total supply exactly `2100000000000000`; verify the Founder Jetton Wallet balance and recipient owner address as well. If any condition fails, do not transfer.
+- Mainnet fee estimate and exact-message emulation, Founder wallet-control proof, destination confirmation, and reviewed unsigned deployment payload remain pending.
+- Founder reports operational TON funding; deposit and balance are not independently verified on-chain.
+- No deployment, issuance, transfer, signing, or broadcast is performed or authorized. Authorization flags remain false.
+
+---
+
 # ACTION #85 — Fresh-runner clean-room build and deterministic hash reproduction (2026-11-24)
 
 **Status:** Passed on the exact PR head in two separate GitHub-hosted runners. This is internal CI reproducibility evidence, not an independent third-party audit. Mainnet remains HOLD / NO-GO.
@@ -11,7 +25,7 @@
 - Source-policy finding: the ordinary Founder Jetton-wallet `TokenTransfer` path checks owner, balance and fee sufficiency, but does not check that all five receipt stages are complete. Therefore Founder can technically transfer already credited tokens before Stage 5. This is not an unauthorized-user bypass; it is a mismatch if the documented “no allocation before all five receipts” rule is intended to be enforced on-chain. Either add a Stage-5 transfer lock plus a regression test, or explicitly classify the sequence as a Founder operating procedure rather than a contract invariant.
 - No source contract logic, supply, allocations, owner addresses, authorization flags, or on-chain state changed. No transaction was created, signed, or broadcast.
 
-**Remaining Mainnet gates:** (1) independent third-party security audit of exact source/artifacts; (2) safe Founder wallet-control proof and explicit confirmation of the four recipient owner addresses; (3) current Mainnet config/fee and exact deployment-message emulation; (4) reviewed unsigned deployment payload; (5) separate Founder review/signature and subsequent on-chain verification. Public mining remains disabled pending its own wallet-proof, balance-snapshot, payout and reconciliation gates.
+**Remaining Mainnet gates:** (1) safe Founder wallet-control proof and explicit confirmation of the four recipient owner addresses; (2) current Mainnet config/fee and exact deployment-message emulation; (3) reviewed unsigned deployment payload; (4) separate Founder review/signature and subsequent on-chain verification. Internal source/security review and engineering controls remain required. A third-party audit is not a current project release condition under the already-merged project decision; do not describe internal review as an external audit. Public mining remains disabled pending its own wallet-proof, balance-snapshot, payout and reconciliation gates.
 
 ---
 

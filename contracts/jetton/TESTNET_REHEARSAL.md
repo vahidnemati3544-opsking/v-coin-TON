@@ -54,3 +54,19 @@ The preview must identify `network: testnet`, `test_only: true`, the registered 
 ## Completion criteria
 
 This action is not complete until the exact branch head builds, the preview script runs successfully, all generated addresses carry Testnet-only formatting, and the public Testnet deployment plus Stage 1/Stage 2 receipts are verified on-chain. Sandbox CI alone does not satisfy public Testnet execution.
+
+## Fee-estimation audit gate — 2026-11-24
+
+A source review of `scripts/prepare-testnet-rehearsal.ts` found that the current preview contains separate StateInit BOCs and contract-body BOCs. It does **not** yet serialize the complete wallet-originated transaction/message envelope required for an end-to-end emulation of the Founder wallet send and the destination deployment transaction.
+
+Consequently:
+
+- Do not treat the preview BOCs alone as a live fee-estimation input for the complete Tonkeeper operation.
+- Do not treat the contract's `0.75 TON` `VCoinFund` minimum as a network fee quote. It is the contract's required attached value/reserve funding.
+- Before any wallet review, construct the exact unsigned wallet transaction for the registered Testnet Founder wallet, including destination, attached TON value, StateInit, body, and wallet transaction envelope as applicable.
+- Run Testnet transaction emulation/fee estimation against that exact payload, inspect the complete trace and all outbound messages, and record the returned fee breakdown and required attached value.
+- Reconcile the estimated total against the live Testnet wallet balance and preserve a safety margin. If emulation is unavailable or returns incomplete data, stop.
+- No signing, broadcasting, or Mainnet operation is authorized by this audit note.
+
+**Current gate:** BLOCKED — complete wallet transaction payload and successful Testnet emulation/fee quote are not yet available.
+

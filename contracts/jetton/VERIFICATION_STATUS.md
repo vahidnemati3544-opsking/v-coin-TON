@@ -1,3 +1,19 @@
+# ACTION #85 — Fresh-runner clean-room build and deterministic hash reproduction (2026-11-24)
+
+**Status:** Passed on the exact PR head in two separate GitHub-hosted runners. This is internal CI reproducibility evidence, not an independent third-party audit. Mainnet remains HOLD / NO-GO.
+
+- Exact PR head: `0b1d4438d63ebb629799a2a2bd05ee388842847a`; PR #24 remains open as a draft and is not merged to `main`.
+- Workflow run #535: [GitHub Actions](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45415086294) — SUCCESS.
+- `build-and-test`: dependency lockfile check, clean `npm ci`, zero moderate/high/critical npm audit gate, Tact compile, metadata content-cell generation, deterministic Master/five-wallet derivation, release guards, and all 3 Jest suites / 20 tests passed.
+- `hash-reproduction`: a second fresh runner installed the exact lockfile, rebuilt Tact contracts and metadata, independently re-derived the Master and five Jetton Wallet candidates, and compared the JSON derivation plus Master code BOC, Wallet code BOC, and metadata content BOC byte-for-byte against the first runner. All comparisons passed.
+- Clean-room artifact ID `14931822214`, SHA-256 `01780f39a9c510458afccd689e05daa5854fe514e18469ac0b1b3bbc6489108d`. Release artifact ID `14932386211`, SHA-256 `60fdea5668ba8b4f79a46027beff6deacf3bf44b98212e2f991c50fc45b6a113`.
+- This establishes reproducible builds and deterministic derivation across two isolated CI runners under the same GitHub Actions workflow. It does **not** establish independent ownership, independent third-party review, live Mainnet fee sufficiency, or on-chain deployment.
+- No source contract logic, supply, allocations, owner addresses, authorization flags, or on-chain state changed. No transaction was created, signed, or broadcast.
+
+**Remaining Mainnet gates:** (1) independent third-party security audit of exact source/artifacts; (2) safe Founder wallet-control proof and explicit confirmation of the four recipient owner addresses; (3) current Mainnet config/fee and exact deployment-message emulation; (4) reviewed unsigned deployment payload; (5) separate Founder review/signature and subsequent on-chain verification. Public mining remains disabled pending its own wallet-proof, balance-snapshot, payout and reconciliation gates.
+
+---
+
 # ACTION #84 — Deterministic Mainnet Master and five Jetton Wallet derivation (2026-11-24)
 
 **Status:** CI derivation passed on a fresh GitHub Actions runner; candidate addresses are computed and recorded. Independent third-party reproduction and security review remain pending. Mainnet remains HOLD / NO-GO.

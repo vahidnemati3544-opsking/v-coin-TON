@@ -12,6 +12,22 @@ This addendum supersedes historical statements below that describe the previousl
 
 **Current decision:** Mainnet is live and an active VCOIN Jetton Master exists, but its admin and code do not match the current Founder-first build. Do not deploy another Master or send allocation transfers until Founder control of the admin account, current Founder Jetton balance, and the five receipt transactions are independently verified.
 
+
+# Action #90 — Existing 2.1B supply and five-wallet distribution verified (2026-11-24)
+
+TON Center read-only calls derived all five registered Jetton Wallets from the active Master and read their on-chain balances:
+- Current Founder owner address: Jetton Wallet uninitialized, **0 VCOIN**.
+- Treasury: **210,000,000 VCOIN**.
+- Liquidity / Market: **210,000,000 VCOIN**.
+- Ecosystem / Marketing: **210,000,000 VCOIN**.
+- Mining Reserve: **1,050,000,000 VCOIN**.
+- Legacy Master-admin / former Founder wallet: **420,000,000 VCOIN**.
+
+The four non-Founder registered balances total 1.68B; adding the legacy Founder/admin balance gives exactly 2.1B, matching the active Master supply. This is the older direct five-wallet allocation, not the new five-stage receipt to the current Founder wallet. The old Master has no `get_receipt_status` getter and no supported `change_admin` path. Do not deploy a second Master or consolidate existing balances without a separate Founder-approved migration plan and control proof for every source wallet.
+
+Exact-head workflow #45436098986 on commit `2369d75aba103c1efcdbf5ca9cf6e9f76b5d12f0` passed build-and-test and fresh-runner hash-reproduction. The release, full-source and clean-room artifact digests are recorded in `contracts/jetton/VERIFICATION_STATUS.md` Action #90.
+
+
 ---
 
 Additional controlling correction (2026-11-23): Historical sections below that refer to four-year Founder vesting, allocation-specific vesting controls, Testnet deployment/rehearsal, a separate GAS wallet, or independent external audit as a release gate are superseded. Current Founder allocation is 420,000,000 VCOIN in one operation with no vesting or time lock; Founder is also the sole GAS & OPERATIONS wallet; no Testnet deployment/transaction and no independent audit workstream are authorized. The current 2.1B/five-wallet/Mainnet-only baseline at the top controls.

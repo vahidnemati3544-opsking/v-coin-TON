@@ -1,6 +1,6 @@
 # V COIN Mainnet Issuer
 
-This static TonConnect console is a Founder-controlled interface for reviewing and requesting signatures for the V COIN TON Jetton deployment and its five separate allocations.
+This static TonConnect console is a Founder-controlled interface for reviewing and requesting signatures for the V COIN TON Jetton the five-stage Founder-first initial receipt, followed by the four Founder-signed allocation transfers.
 
 ## Build and deployment
 

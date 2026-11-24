@@ -106,3 +106,17 @@ The schedule marks itself completed only when the `USER_MINING` reserve's confir
 - `GET /api/v1/price-reference/candles?limit=100`
 
 The database migration must be applied before starting the backend. No front-end dashboard was present in the inspected repository, so rendering these API candles on the public home page remains a separate client-side task.
+
+
+## Founder-first Mainnet receipt reconciliation (Action #66)
+
+Migration `database/migrations/010-founder-first-two-stage-reconciliation.sql` adds a chain-confirmed reconciliation ledger for the two initial receipt stages and the four subsequent Founder-signed allocation transfers.
+
+- Record Stage 1 only after the exact Mainnet transaction is independently confirmed and its Master, recipient, and amount are validated.
+- Record Stage 2 only after Stage 1 is recorded; its amount must equal the exact remaining fixed supply.
+- Repeated ingestion of the same transaction hash and identical event is idempotent; conflicting hashes, amounts, stages, or allocation roles are rejected.
+- The four distribution roles are recorded only after Stage 2 is confirmed, only from the registered Founder wallet, and only at their exact approved amounts.
+- The reconciliation view reports receipt base units and confirmed Founder distributions separately. Distribution transfers do not create new supply.
+- This migration creates accounting controls; it does not itself connect an indexer, verify chain finality, sign a transaction, or broadcast to TON. The backend ingestion service must validate the actual Mainnet transaction and call the database functions only after finality checks.
+
+Do not run the migration against production until the latest backend integration checks and schema review pass. Mainnet remains HOLD / NO-GO.

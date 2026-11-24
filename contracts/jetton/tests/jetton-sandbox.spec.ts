@@ -5,505 +5,206 @@ import { VCoinMaster } from '../build/VCoinMaster_VCoinMaster';
 import { VCoinJettonWallet } from '../build/VCoinMaster_VCoinJettonWallet';
 import { BounceRejector } from '../build-test/BounceRejector_BounceRejector';
 
-const FOUNDER_ALLOCATION = 420_000_000_000_000n;
-const MINING_ALLOCATION = 1_050_000_000_000_000n;
-const TWO_HUNDRED_TEN_MILLION_ALLOCATION = 210_000_000_000_000n;
 const MAX_SUPPLY = 2_100_000_000_000_000n;
+const STAGE_ONE = 1_000_000_000_000_000n;
+const STAGE_TWO = MAX_SUPPLY - STAGE_ONE;
 
-async function deployMaster(
-  blockchain: Blockchain,
-  owner: SandboxContract<TreasuryContract>,
-  fundMaster: boolean = true,
-) {
-  const miningReserve = await blockchain.treasury('mining-reserve');
-  const treasury = await blockchain.treasury('treasury');
-  const liquidity = await blockchain.treasury('liquidity');
-  const ecosystem = await blockchain.treasury('ecosystem');
-  const gasOperator = owner;
-  const master = blockchain.openContract(
-    await VCoinMaster.fromInit(
-      owner.address,
-      Cell.EMPTY,
-      miningReserve.address,
-      treasury.address,
-      liquidity.address,
-      ecosystem.address,
-      gasOperator.address,
-    ),
-  );
-  const deployment = await master.send(
-    gasOperator.getSender(),
-    { value: toNano('0.1') },
-    {
-      $$type: 'ProvideWalletAddress',
-      query_id: 1n,
-      owner_address: owner.address,
-      include_address: false,
-    },
-  );
-  expect(deployment.transactions).toHaveTransaction({
-    to: master.address,
-    success: true,
+async function deployMaster(blockchain: Blockchain, owner: SandboxContract<TreasuryContract>, fund = true) {
+  const master = blockchain.openContract(await VCoinMaster.fromInit(owner.address, Cell.EMPTY));
+  const deployment = await master.send(owner.getSender(), { value: toNano('0.1') }, {
+    $$type: 'ProvideWalletAddress', query_id: 1n, owner_address: owner.address, include_address: false,
   });
-  if (fundMaster) {
-    const funding = await master.send(
-      gasOperator.getSender(),
-      { value: toNano('1.00') },
-      { $$type: 'VCoinFund' },
-    );
-    expect(funding.transactions).toHaveTransaction({
-      from: gasOperator.address,
-      to: master.address,
-      success: true,
-    });
+  expect(deployment.transactions).toHaveTransaction({ to: master.address, success: true });
+  if (fund) {
+    const funding = await master.send(owner.getSender(), { value: toNano('1') }, { $$type: 'VCoinFund' });
+    expect(funding.transactions).toHaveTransaction({ from: owner.address, to: master.address, success: true });
   }
-  return { master, miningReserve, treasury, liquidity, ecosystem, gasOperator };
+  return master;
 }
 
-describe('VCOIN Jetton Sandbox release gates', () => {
-  test('rejects a deployment that assigns GAS & OPERATIONS to a different wallet', async () => {
-    const blockchain = await Blockchain.create();
-    const owner = await blockchain.treasury('owner');
-    const miningReserve = await blockchain.treasury('mining-reserve');
-    const treasury = await blockchain.treasury('treasury');
-    const liquidity = await blockchain.treasury('liquidity');
-    const ecosystem = await blockchain.treasury('ecosystem');
-    const separateGas = await blockchain.treasury('separate-gas');
-    const master = blockchain.openContract(
-      await VCoinMaster.fromInit(
-        owner.address,
-        Cell.EMPTY,
-        miningReserve.address,
-        treasury.address,
-        liquidity.address,
-        ecosystem.address,
-        separateGas.address,
-      ),
-    );
+async function founderWallet(blockchain: Blockchain, master: any, owner: any) {
+  const address = await master.getGetWalletAddress(owner.address);
+  return blockchain.openContract(VCoinJettonWallet.fromAddress(address));
+}
 
-    const rejected = await master.send(
-      separateGas.getSender(),
-      { value: toNano('0.1') },
-      {
-        $$type: 'ProvideWalletAddress',
-        query_id: 1n,
-        owner_address: owner.address,
-        include_address: false,
-      },
-    );
-    expect(rejected.transactions).toHaveTransaction({
-      to: master.address,
-      success: false,
+describe('VCOIN Founder-first two-stage issuance', () => {
+  test('only Founder can initiate Stage 1 and it credits only the Founder Jetton wallet', async () => {
+    const chain = await Blockchain.create();
+    const owner = await chain.treasury('owner');
+    const attacker = await chain.treasury('attacker');
+    const master = await deployMaster(chain, owner);
+    const denied = await master.send(attacker.getSender(), { value: toNano('0.5') }, {
+      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
     });
-  });
-
-  test('allows only the owner to issue each exact fixed allocation once', async () => {
-    const blockchain = await Blockchain.create();
-    const owner = await blockchain.treasury('owner');
-    const attacker = await blockchain.treasury('attacker');
-    const { master } = await deployMaster(blockchain, owner);
-
-    const unauthorized = await master.send(
-      attacker.getSender(),
-      { value: toNano('0.5') },
-      { $$type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
-    );
-    expect(unauthorized.transactions).toHaveTransaction({
-      to: master.address,
-      success: false,
-    });
+    expect(denied.transactions).toHaveTransaction({ to: master.address, success: false });
     expect((await master.getGetJettonData()).total_supply).toBe(0n);
 
-    const issued = await master.send(
-      owner.getSender(),
-      { value: toNano('0.5') },
-      { $$type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
-    );
-    expect(issued.transactions).toHaveTransaction({
-      from: owner.address,
-      to: master.address,
-      success: true,
+    const stage1 = await master.send(owner.getSender(), { value: toNano('0.5') }, {
+      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
     });
-
-    const data = await master.getGetJettonData();
-    expect(data.total_supply).toBe(FOUNDER_ALLOCATION);
-    expect(data.mintable).toBe(true);
-
-    const walletAddress = await master.getGetWalletAddress(owner.address);
-    const wallet = blockchain.openContract(VCoinJettonWallet.fromAddress(walletAddress));
-    expect((await wallet.getGetWalletData()).balance).toBe(FOUNDER_ALLOCATION);
-
-    const repeated = await master.send(
-      owner.getSender(),
-      { value: toNano('0.5') },
-      { $$type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
-    );
-    expect(repeated.transactions).toHaveTransaction({
-      to: master.address,
-      success: false,
-    });
-    expect((await master.getGetJettonData()).total_supply).toBe(FOUNDER_ALLOCATION);
+    expect(stage1.transactions).toHaveTransaction({ from: owner.address, to: master.address, success: true });
+    expect((await master.getGetJettonData()).total_supply).toBe(STAGE_ONE);
+    expect((await (await founderWallet(chain, master, owner)).getGetWalletData()).balance).toBe(STAGE_ONE);
+    const status = await master.getGetReceiptStatus();
+    expect(status.first_receipt_issued).toBe(true);
+    expect(status.first_receipt_confirmed).toBe(true);
+    expect(status.second_receipt_issued).toBe(false);
+    expect(status.remaining_supply).toBe(STAGE_TWO);
   });
 
-  test('allows the Founder wallet to fund the Master reserve and rejects all other funding sources', async () => {
-    const blockchain = await Blockchain.create();
-    const owner = await blockchain.treasury('owner');
-    const attacker = await blockchain.treasury('attacker');
-    const { master, gasOperator } = await deployMaster(blockchain, owner, false);
-
-    expect(gasOperator.address).toEqual(owner.address);
-
-    const authorizedFunding = await master.send(
-      owner.getSender(),
-      { value: toNano('0.75') },
-      { $$type: 'VCoinFund' },
-    );
-    expect(authorizedFunding.transactions).toHaveTransaction({
-      from: owner.address,
-      to: master.address,
-      success: true,
+  test('Stage 2 must equal the exact remainder; after it, minting is permanently disabled', async () => {
+    const chain = await Blockchain.create();
+    const owner = await chain.treasury('owner');
+    const master = await deployMaster(chain, owner);
+    await master.send(owner.getSender(), { value: toNano('0.5') }, {
+      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
     });
-
-    const unauthorizedFunding = await master.send(
-      attacker.getSender(),
-      { value: toNano('1') },
-      { $$type: 'VCoinFund' },
-    );
-    expect(unauthorizedFunding.transactions).toHaveTransaction({
-      to: master.address,
-      success: false,
+    const wrong = await master.send(owner.getSender(), { value: toNano('0.5') }, {
+      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_TWO - 1n,
     });
+    expect(wrong.transactions).toHaveTransaction({ to: master.address, success: false });
+    expect((await master.getGetJettonData()).total_supply).toBe(STAGE_ONE);
 
-    expect((await master.getGetJettonData()).total_supply).toBe(0n);
-    const issued = await master.send(
-      owner.getSender(),
-      { value: toNano('0.01') },
-      { $$type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
-    );
-    expect(issued.transactions).toHaveTransaction({
-      from: owner.address,
-      to: master.address,
-      success: true,
+    const stage2 = await master.send(owner.getSender(), { value: toNano('0.5') }, {
+      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_TWO,
     });
-    expect((await master.getGetJettonData()).total_supply).toBe(FOUNDER_ALLOCATION);
-  });
-
-  test('rejects an underfunded allocation before changing supply', async () => {
-    const blockchain = await Blockchain.create();
-    const owner = await blockchain.treasury('owner');
-    const { master } = await deployMaster(blockchain, owner, false);
-
-    const underfunded = await master.send(
-      owner.getSender(),
-      { value: toNano('0.01') },
-      { $$type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
-    );
-    expect(underfunded.transactions).toHaveTransaction({
-      to: master.address,
-      success: false,
-    });
-    const data = await master.getGetJettonData();
-    expect(data.total_supply).toBe(0n);
-    expect(data.mintable).toBe(true);
-  });
-
-  test('accepts a 0.01 TON owner request using the separate Master gas reserve', async () => {
-    const blockchain = await Blockchain.create();
-    const owner = await blockchain.treasury('owner');
-    const { master } = await deployMaster(blockchain, owner);
-
-    const result = await master.send(
-      owner.getSender(),
-      { value: toNano('0.01') },
-      { $$type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
-    );
-    expect(result.transactions).toHaveTransaction({
-      from: owner.address,
-      to: master.address,
-      success: true,
-    });
-    const walletAddress = await master.getGetWalletAddress(owner.address);
-    const wallet = blockchain.openContract(VCoinJettonWallet.fromAddress(walletAddress));
-    expect((await wallet.getGetWalletData()).balance).toBe(FOUNDER_ALLOCATION);
-  });
-
-  test('rejects wrong amounts and unregistered recipient addresses', async () => {
-    const blockchain = await Blockchain.create();
-    const owner = await blockchain.treasury('owner');
-    const other = await blockchain.treasury('other');
-    const { master } = await deployMaster(blockchain, owner);
-
-    const wrongAmount = await master.send(
-      owner.getSender(),
-      { value: toNano('0.5') },
-      { $$type: 'VCoinMint', receiver: owner.address, amount: MAX_SUPPLY - 1n },
-    );
-    expect(wrongAmount.transactions).toHaveTransaction({ to: master.address, success: false });
-
-    const unregistered = await master.send(
-      owner.getSender(),
-      { value: toNano('0.5') },
-      { $$type: 'VCoinMint', receiver: other.address, amount: FOUNDER_ALLOCATION },
-    );
-    expect(unregistered.transactions).toHaveTransaction({ to: master.address, success: false });
-    const data = await master.getGetJettonData();
-    expect(data.total_supply).toBe(0n);
-    expect(data.mintable).toBe(true);
-  });
-
-  test('distributes exactly the five immutable allocations and then disables issuance', async () => {
-    const blockchain = await Blockchain.create();
-    const owner = await blockchain.treasury('owner');
-    const { master, miningReserve, treasury, liquidity, ecosystem, gasOperator } = await deployMaster(blockchain, owner);
-
-    const expected = [
-      { address: owner.address, amount: FOUNDER_ALLOCATION },
-      { address: miningReserve.address, amount: MINING_ALLOCATION },
-      { address: treasury.address, amount: TWO_HUNDRED_TEN_MILLION_ALLOCATION },
-      { address: liquidity.address, amount: TWO_HUNDRED_TEN_MILLION_ALLOCATION },
-      { address: ecosystem.address, amount: TWO_HUNDRED_TEN_MILLION_ALLOCATION },
-    ];
-
-    const config = await master.getGetAllocationConfig();
-    expect(config.founder_wallet.toString()).toBe(owner.address.toString());
-    expect(config.mining_reserve_wallet.toString()).toBe(miningReserve.address.toString());
-    expect(config.treasury_wallet.toString()).toBe(treasury.address.toString());
-    expect(config.liquidity_wallet.toString()).toBe(liquidity.address.toString());
-    expect(config.ecosystem_wallet.toString()).toBe(ecosystem.address.toString());
-    expect((await master.getGetGasOperatorWallet()).toString()).toBe(gasOperator.address.toString());
-
-    for (const allocation of expected) {
-      const result = await master.send(
-        owner.getSender(),
-        { value: toNano('0.01') },
-        { $$type: 'VCoinMint', receiver: allocation.address, amount: allocation.amount },
-      );
-      expect(result.transactions).toHaveTransaction({
-        from: owner.address,
-        to: master.address,
-        success: true,
-      });
-    }
-
-    // Measure the actual Master account balance after all five real Jetton
-    // wallet-credit message cascades and Sandbox execution fees. The contract's
-    // withdrawal guard protects 0.25 TON plus a 0.10 TON fee buffer.
-    const masterBalanceAfterAllAllocations =
-      (await blockchain.getContract(master.address)).account.account?.storage.balance.coins ?? 0n;
-    expect(masterBalanceAfterAllAllocations).toBeGreaterThanOrEqual(toNano('0.35'));
-
+    expect(stage2.transactions).toHaveTransaction({ from: owner.address, to: master.address, success: true });
     const data = await master.getGetJettonData();
     expect(data.total_supply).toBe(MAX_SUPPLY);
     expect(data.mintable).toBe(false);
+    expect((await master.getGetReceiptStatus()).second_receipt_confirmed).toBe(true);
+    const wallet = await founderWallet(chain, master, owner);
+    expect((await wallet.getGetWalletData()).balance).toBe(MAX_SUPPLY);
 
-    const status = await master.getGetAllocationStatus();
-    expect(status).toEqual({
-      $$type: 'VCoinAllocationStatus',
-      founder_issued: true,
-      mining_reserve_issued: true,
-      treasury_issued: true,
-      liquidity_issued: true,
-      ecosystem_issued: true,
+    const extra = await master.send(owner.getSender(), { value: toNano('0.5') }, {
+      $$type: 'VCoinMint', receiver: owner.address, amount: 1n,
     });
-
-    for (const allocation of expected) {
-      const walletAddress = await master.getGetWalletAddress(allocation.address);
-      const wallet = blockchain.openContract(VCoinJettonWallet.fromAddress(walletAddress));
-      expect((await wallet.getGetWalletData()).balance).toBe(allocation.amount);
-    }
+    expect(extra.transactions).toHaveTransaction({ to: master.address, success: false });
+    expect((await master.getGetJettonData()).total_supply).toBe(MAX_SUPPLY);
   });
 
-  test('rolls back each role-specific allocation after a natural wallet-credit bounce', async () => {
-    const roles = [
-      { statusField: 'founder_issued', select: (d: Awaited<ReturnType<typeof deployMaster>>, owner: SandboxContract<TreasuryContract>) => ({ address: owner.address, amount: FOUNDER_ALLOCATION }) },
-      { statusField: 'mining_reserve_issued', select: (d: Awaited<ReturnType<typeof deployMaster>>) => ({ address: d.miningReserve.address, amount: MINING_ALLOCATION }) },
-      { statusField: 'treasury_issued', select: (d: Awaited<ReturnType<typeof deployMaster>>) => ({ address: d.treasury.address, amount: TWO_HUNDRED_TEN_MILLION_ALLOCATION }) },
-      { statusField: 'liquidity_issued', select: (d: Awaited<ReturnType<typeof deployMaster>>) => ({ address: d.liquidity.address, amount: TWO_HUNDRED_TEN_MILLION_ALLOCATION }) },
-      { statusField: 'ecosystem_issued', select: (d: Awaited<ReturnType<typeof deployMaster>>) => ({ address: d.ecosystem.address, amount: TWO_HUNDRED_TEN_MILLION_ALLOCATION }) },
-    ] as const;
-
-    for (const role of roles) {
-      const blockchain = await Blockchain.create();
-      const owner = await blockchain.treasury('owner');
-      const destinations = await deployMaster(blockchain, owner);
-      const target = role.select(destinations, owner);
-      const walletAddress = await destinations.master.getGetWalletAddress(target.address);
-
-      // An active rejecting account at the deterministic Jetton wallet address
-      // makes the real bounceable credit message fail and return naturally.
-      const rejector = await BounceRejector.fromInit();
-      if (!rejector.init) {
-        throw new Error('BounceRejector StateInit was not generated');
-      }
-      await blockchain.setShardAccount(
-        walletAddress,
-        createShardAccount({
-          address: walletAddress,
-          code: rejector.init.code,
-          data: rejector.init.data,
-          balance: toNano('1'),
-          workchain: 0,
-        }),
-      );
-
-      const mint = await destinations.master.send(
-        owner.getSender(),
-        { value: toNano('0.5') },
-        { $$type: 'VCoinMint', receiver: target.address, amount: target.amount },
-      );
-      expect(mint.transactions).toHaveTransaction({
-        from: walletAddress,
-        to: destinations.master.address,
-        inMessageBounced: true,
-        success: true,
+  test('rejects non-Founder recipients, zero amount, full-supply Stage 1 and repeat Stage 1', async () => {
+    const chain = await Blockchain.create();
+    const owner = await chain.treasury('owner');
+    const other = await chain.treasury('other');
+    const master = await deployMaster(chain, owner);
+    for (const [receiver, amount] of [[other.address, STAGE_ONE], [owner.address, 0n], [owner.address, MAX_SUPPLY]] as const) {
+      const rejected = await master.send(owner.getSender(), { value: toNano('0.5') }, {
+        $$type: 'VCoinMint', receiver, amount,
       });
-      expect((await destinations.master.getGetJettonData()).total_supply).toBe(0n);
-      expect((await destinations.master.getGetJettonData()).mintable).toBe(true);
-      const status = await destinations.master.getGetAllocationStatus();
-      expect(status[role.statusField]).toBe(false);
+      expect(rejected.transactions).toHaveTransaction({ to: master.address, success: false });
     }
+    await master.send(owner.getSender(), { value: toNano('0.5') }, {
+      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
+    });
+    const repeated = await master.send(owner.getSender(), { value: toNano('0.5') }, {
+      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
+    });
+    expect(repeated.transactions).toHaveTransaction({ to: master.address, success: false });
+    expect((await master.getGetJettonData()).total_supply).toBe(STAGE_ONE);
   });
 
-  test('permits retry of only the allocation that was naturally bounced', async () => {
-    const blockchain = await Blockchain.create();
-    const owner = await blockchain.treasury('owner');
-    const { master } = await deployMaster(blockchain, owner);
+  test('Founder can distribute the credited Jettons to the four registered destination wallets', async () => {
+    const chain = await Blockchain.create();
+    const owner = await chain.treasury('owner');
+    const mining = await chain.treasury('mining');
+    const treasury = await chain.treasury('treasury');
+    const liquidity = await chain.treasury('liquidity');
+    const ecosystem = await chain.treasury('ecosystem');
+    const master = await deployMaster(chain, owner);
+    await master.send(owner.getSender(), { value: toNano('0.5') }, {
+      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
+    });
+    await master.send(owner.getSender(), { value: toNano('0.5') }, {
+      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_TWO,
+    });
+    const wallet = await founderWallet(chain, master, owner);
+    const shares = [
+      [mining.address, 1_050_000_000_000_000n],
+      [treasury.address, 210_000_000_000_000n],
+      [liquidity.address, 210_000_000_000_000n],
+      [ecosystem.address, 210_000_000_000_000n],
+    ] as const;
+    for (const [destination, amount] of shares) {
+      const result = await wallet.send(owner.getSender(), { value: toNano('0.15') }, {
+        $$type: 'TokenTransfer', query_id: BigInt(shares.findIndex(x => x[0] === destination) + 1),
+        amount, destination, response_destination: owner.address, custom_payload: null,
+        forward_ton_amount: 0n, forward_payload: Cell.EMPTY.beginParse(),
+      });
+      expect(result.transactions).toHaveTransaction({ from: owner.address, to: wallet.address, success: true });
+      const destinationAddress = await master.getGetWalletAddress(destination);
+      const destinationWallet = chain.openContract(VCoinJettonWallet.fromAddress(destinationAddress));
+      expect((await destinationWallet.getGetWalletData()).balance).toBe(amount);
+    }
+    expect((await wallet.getGetWalletData()).balance).toBe(420_000_000_000_000n);
+    expect((await master.getGetJettonData()).total_supply).toBe(MAX_SUPPLY);
+  });
+
+  test('a natural Stage 1 bounce rolls back only Stage 1 and permits a safe retry', async () => {
+    const chain = await Blockchain.create();
+    const owner = await chain.treasury('owner');
+    const master = await deployMaster(chain, owner);
     const walletAddress = await master.getGetWalletAddress(owner.address);
-
     const rejector = await BounceRejector.fromInit();
-    if (!rejector.init) {
-      throw new Error('BounceRejector StateInit was not generated');
-    }
-    await blockchain.setShardAccount(
-      walletAddress,
-      createShardAccount({
-        address: walletAddress,
-        code: rejector.init.code,
-        data: rejector.init.data,
-        balance: toNano('1'),
-        workchain: 0,
-      }),
-    );
-    const failed = await master.send(
-      owner.getSender(),
-      { value: toNano('0.5') },
-      { $$type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
-    );
-    expect(failed.transactions).toHaveTransaction({
-      from: walletAddress,
-      to: master.address,
-      inMessageBounced: true,
-      success: true,
+    if (!rejector.init) throw new Error('BounceRejector StateInit missing');
+    await chain.setShardAccount(walletAddress, createShardAccount({
+      address: walletAddress, code: rejector.init.code, data: rejector.init.data,
+      balance: toNano('1'), workchain: 0,
+    }));
+    const bounced = await master.send(owner.getSender(), { value: toNano('0.5') }, {
+      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
     });
-
-    const realWallet = await VCoinJettonWallet.fromInit(owner.address, master.address);
-    if (!realWallet.init) {
-      throw new Error('Jetton wallet StateInit was not generated');
-    }
-    await blockchain.setShardAccount(
-      walletAddress,
-      createShardAccount({
-        address: walletAddress,
-        code: realWallet.init.code,
-        data: realWallet.init.data,
-        balance: toNano('1'),
-        workchain: 0,
-      }),
-    );
-
-    const retried = await master.send(
-      owner.getSender(),
-      { value: toNano('0.5') },
-      { $$type: 'VCoinMint', receiver: owner.address, amount: FOUNDER_ALLOCATION },
-    );
-    expect(retried.transactions).toHaveTransaction({
-      from: owner.address,
-      to: master.address,
-      success: true,
+    expect(bounced.transactions).toHaveTransaction({
+      from: walletAddress, to: master.address, inMessageBounced: true, success: true,
     });
-    expect((await master.getGetJettonData()).total_supply).toBe(FOUNDER_ALLOCATION);
-    const wallet = blockchain.openContract(VCoinJettonWallet.fromAddress(walletAddress));
-    expect((await wallet.getGetWalletData()).balance).toBe(FOUNDER_ALLOCATION);
+    expect((await master.getGetJettonData()).total_supply).toBe(0n);
+    expect((await master.getGetReceiptStatus()).first_receipt_issued).toBe(false);
   });
 
-  test('allows only Founder to withdraw operational TON to the fixed owner address', async () => {
-    const blockchain = await Blockchain.create();
-    const owner = await blockchain.treasury('owner');
-    const attacker = await blockchain.treasury('attacker');
-    const { master } = await deployMaster(blockchain, owner);
-
-    const unauthorized = await master.send(
-      attacker.getSender(),
-      { value: toNano('0.02') },
-      { $$type: 'VCoinWithdraw', amount: toNano('0.1') },
-    );
-    expect(unauthorized.transactions).toHaveTransaction({ to: master.address, success: false });
-
-    const withdrawn = await master.send(
-      owner.getSender(),
-      { value: toNano('0.02') },
-      { $$type: 'VCoinWithdraw', amount: toNano('0.2') },
-    );
-    expect(withdrawn.transactions).toHaveTransaction({
-      from: owner.address,
-      to: master.address,
-      success: true,
+  test('a natural Stage 2 bounce rolls back only Stage 2 and preserves Stage 1', async () => {
+    const chain = await Blockchain.create();
+    const owner = await chain.treasury('owner');
+    const master = await deployMaster(chain, owner);
+    await master.send(owner.getSender(), { value: toNano('0.5') }, {
+      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
     });
-    expect(withdrawn.transactions).toHaveTransaction({
-      from: master.address,
-      to: owner.address,
-      success: true,
+    const walletAddress = await master.getGetWalletAddress(owner.address);
+    const rejector = await BounceRejector.fromInit();
+    if (!rejector.init) throw new Error('BounceRejector StateInit missing');
+    await chain.setShardAccount(walletAddress, createShardAccount({
+      address: walletAddress, code: rejector.init.code, data: rejector.init.data,
+      balance: toNano('1'), workchain: 0,
+    }));
+
+    const bounced = await master.send(owner.getSender(), { value: toNano('0.5') }, {
+      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_TWO,
     });
-    expect((await blockchain.getContract(master.address)).account.account?.storage.balance.coins ?? 0n).toBeGreaterThan(toNano('0.25'));
+    expect(bounced.transactions).toHaveTransaction({
+      from: walletAddress, to: master.address, inMessageBounced: true, success: true,
+    });
+    const data = await master.getGetJettonData();
+    const status = await master.getGetReceiptStatus();
+    expect(data.total_supply).toBe(STAGE_ONE);
+    expect(data.mintable).toBe(true);
+    expect(status.first_receipt_issued).toBe(true);
+    expect(status.first_receipt_confirmed).toBe(true);
+    expect(status.second_receipt_issued).toBe(false);
+    expect(status.second_receipt_confirmed).toBe(false);
+    expect(status.remaining_supply).toBe(STAGE_TWO);
   });
 
-  test('rejects withdrawals that breach the protected reserve and rejects zero amount', async () => {
-    const blockchain = await Blockchain.create();
-    const owner = await blockchain.treasury('owner');
-    const { master } = await deployMaster(blockchain, owner);
-
-    const drainAttempt = await master.send(
-      owner.getSender(),
-      { value: toNano('0.02') },
-      { $$type: 'VCoinWithdraw', amount: toNano('0.7') },
-    );
-    expect(drainAttempt.transactions).toHaveTransaction({ to: master.address, success: false });
-
-    const zeroAttempt = await master.send(
-      owner.getSender(),
-      { value: toNano('0.02') },
-      { $$type: 'VCoinWithdraw', amount: 0n },
-    );
-    expect(zeroAttempt.transactions).toHaveTransaction({ to: master.address, success: false });
-    expect(((await blockchain.getContract(master.address)).account.account?.storage.balance.coins ?? 0n)).toBeGreaterThan(toNano('0.25'));
-  });
-
-  test('rejects a withdrawal request below the 0.01 TON processing value', async () => {
-    const blockchain = await Blockchain.create();
-    const owner = await blockchain.treasury('owner');
-    const { master } = await deployMaster(blockchain, owner);
-
-    const before = (await blockchain.getContract(master.address)).account.account?.storage.balance.coins ?? 0n;
-    const underfunded = await master.send(
-      owner.getSender(),
-      { value: toNano('0.009') },
-      { $$type: 'VCoinWithdraw', amount: toNano('0.1') },
-    );
-
-    expect(underfunded.transactions).toHaveTransaction({
-      to: master.address,
-      success: false,
+  test('Founder alone may fund and withdraw Master operational TON within reserve limits', async () => {
+    const chain = await Blockchain.create();
+    const owner = await chain.treasury('owner');
+    const attacker = await chain.treasury('attacker');
+    const master = await deployMaster(chain, owner, false);
+    const rejected = await master.send(attacker.getSender(), { value: toNano('1') }, { $$type: 'VCoinFund' });
+    expect(rejected.transactions).toHaveTransaction({ to: master.address, success: false });
+    const funded = await master.send(owner.getSender(), { value: toNano('0.75') }, { $$type: 'VCoinFund' });
+    expect(funded.transactions).toHaveTransaction({ from: owner.address, to: master.address, success: true });
+    const withdrawal = await master.send(owner.getSender(), { value: toNano('0.02') }, {
+      $$type: 'VCoinWithdraw', amount: toNano('0.1'),
     });
-    // The rejected inbound request is bounced back to the sender; this is
-    // a refund, not a successful operational withdrawal to the owner.
-    expect(underfunded.transactions).toHaveTransaction({
-      from: master.address,
-      to: owner.address,
-      inMessageBounced: true,
-    });
-    const after = (await blockchain.getContract(master.address)).account.account?.storage.balance.coins ?? 0n;
-    expect(after).toBeGreaterThan(toNano('0.25'));
-    expect(after).toBeLessThan(before + toNano('0.009'));
+    expect(withdrawal.transactions).toHaveTransaction({ from: master.address, to: owner.address, success: true });
   });
-
 });

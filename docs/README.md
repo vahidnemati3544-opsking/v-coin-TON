@@ -29,6 +29,8 @@ Architecture documents describe intended behavior unless a section explicitly id
 
 - [Action #66 — Founder-First Two-Stage Mainnet Receipt](OWNER_ACTION_66_FOUNDER_FIRST_RECEIPT.md): records the new owner instruction, completed documentation/template updates, and pending contract/test work.
 
+- [Action #67 — Disable Superseded Direct-Mint Preview](WORKFLOW_PREVIEW_SUPPRESSION_ACTION_67.md): records the fail-closed CI and planner changes that prevent use of outdated transaction payloads.
+
 ## Latest repository consistency record
 
 - [Action #65 — Repository Policy Consistency Sweep](REPOSITORY_POLICY_SWEEP_ACTION_65.md): documents the 2026-11-23 correction of superseded historical policy statements and the post-sweep CI status.

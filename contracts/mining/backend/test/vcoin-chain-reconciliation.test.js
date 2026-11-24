@@ -106,7 +106,7 @@ test('allocation ingestion accepts exact Founder-signed role transfers only', as
     network: 'mainnet', finality: 'finalized', jettonMasterAddress: MASTER,
     transactionHash: HASH, sourceOwnerAddress: FOUNDER_MAINNET_WALLET, allocationRole: 'treasury',
     amountBaseUnits: ALLOCATION_ROLES.treasury.amount, sourceJettonWalletAddress: JETTON_WALLETS.founder,
-    destinationJettonWalletAddress: JETTON_WALLETS.mining_reserve, destinationOwnerAddress: ALLOCATION_ROLES.mining_reserve.destination
+    destinationJettonWalletAddress: JETTON_WALLETS.treasury, destinationOwnerAddress: ALLOCATION_ROLES.mining_reserve.destination
   }), /DESTINATION_MISMATCH/);
   assert.equal(calls.length, 4);
 });

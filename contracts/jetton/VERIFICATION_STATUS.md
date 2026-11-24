@@ -1,3 +1,5 @@
+> **LATEST CONTROLLING UPDATE — Action #71 (2026-11-24):** Mainnet-only configuration correction committed. Obsolete Testnet rehearsal authorization removed from the deployment template; Testnet deployment/transactions, Mainnet deployment, issuance, and payouts are explicitly disabled. Master address and deployment transaction remain unset because no Mainnet deployment has been verified. This is preparation only; do not sign or broadcast. See the Action #71 section at the end.
+
 > **CONTROLLING UPDATE — Action #69 (2026-11-24):** The current approved receipt flow is five exact Founder-first stages: 420M, 1,050M, 210M, 210M, 210M VCOIN. Earlier two-stage notes below are historical and superseded. Use the Action #69 section at the end of this file for current implementation and release status. Mainnet remains HOLD / NO-GO.
 
 # CURRENT CONTROLLING RELEASE STATUS — 2026-11-24 (Action #68)
@@ -672,3 +674,19 @@ The controlling initial receipt amounts are the Founder’s five-stage instructi
 - The current five exact receipt stages remain 420M, 1,050M, 210M, 210M, 210M VCOIN. The Mainnet transaction planner remains disabled; deployment_authorized=false and mainnet_authorized=false. Unsigned Testnet preview generation is not Testnet execution.
 
 **Next release boundary:** verify the post-merge main workflow and public read-only Pages deployment. Do not sign or broadcast any Testnet or Mainnet request without separate approval for that exact operation. Mainnet remains NO-GO.
+
+
+## Action #71 — Mainnet-only deployment configuration correction (2026-11-24)
+
+**Status:** Configuration corrected and committed; Mainnet remains HOLD / NO-GO. No blockchain transaction was created, signed, or broadcast.
+
+- Removed the obsolete `testnet_rehearsal` block from `contracts/jetton/deployment.config.template.json`; it incorrectly described a Testnet rehearsal as authorized and pending.
+- Added explicit network policy: Mainnet is the sole intended production network; local TON Sandbox is the only simulation environment; Testnet deployment and transactions are unauthorized.
+- Explicitly set Mainnet deployment, issuance, and payout authorization to false. The Master address and deployment transaction remain unset because no deployed Master has been independently verified.
+- Updated the initial receipt status to `mainnet_master_not_deployed_or_verified`. The five approved receipt amounts and the 2.1B fixed supply are unchanged.
+- This correction does not create a Master address, deploy a contract, issue tokens, or activate mining.
+- Current mining implementation remains blocked: the public mining API returns HTTP 503 until wallet ownership proof, verified Mainnet Jetton balance snapshots, payout sending, finality checks, and reconciliation are implemented. Do not expose the internal-PostgreSQL-balance engine as real extraction.
+- Mainnet release gates still required: exact-current-main source build and Sandbox tests; independent reproduction of the exact Master StateInit and all five Jetton wallet derivations; verified Founder wallet control; deployed Master account/code/getter verification; trusted Mainnet provider configuration; fee/reserve review; and separate explicit Founder approval for each irreversible deployment or issuance operation.
+- Official TON guidance requires verifying the Jetton master and deriving each holder's Jetton wallet with the Master's `get_wallet_address`; token name, symbol, and image are not proof of identity. Mainnet deployment spends real TON and must be confirmed by the Founder in the wallet.
+
+**No authorization is implied by this documentation or commit.**

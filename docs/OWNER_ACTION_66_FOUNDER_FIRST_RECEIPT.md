@@ -3,12 +3,12 @@
 **Date:** 2026-11-24  
 **Status:** Contract redesign and automated verification passed on isolated feature branch; backend ingestion and Mainnet release gates remain pending  
 **Branch:** `feat/founder-first-two-stage`  
-**Latest feature-branch head at this checkpoint:** `b9c41653898d3ad395b0060025e67cd7d26c13a7`  
+**Latest feature-branch head before this owner-amount update:** `9e83562d5d963a836b4d24bea6a663e4295d6422`  
 **Scope:** V COIN–TON only; no changes to the legacy BNB project
 
 ## Owner instruction
 
-The full fixed supply of 2,100,000,000 VCOIN is to be received by Founder Mainnet wallet `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT` in two separate, Founder-authorized stages. Stage 2 requires a fresh Founder-signed transaction and must equal the exact remaining supply. Stage 1 amount remains unspecified until explicitly approved by the Founder. After full receipt, the Founder personally signs four Jetton transfers: Mining 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN. The Founder retains 420,000,000 VCOIN.
+The full fixed supply of 2,100,000,000 VCOIN is to be received by Founder Mainnet wallet `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT` in two separate, Founder-authorized stages. Stage 2 requires a fresh Founder-signed transaction and must equal the exact remaining supply. Founder explicitly approved Stage 1 at 1,000,000,000 VCOIN (1,000,000,000,000,000 base units). Stage 2 is the exact remainder: 1,100,000,000 VCOIN (1,100,000,000,000,000 base units). This records a calculation/configuration choice only; it is not a Mainnet signing or broadcast authorization. After full receipt, the Founder personally signs four Jetton transfers: Mining 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN. The Founder retains 420,000,000 VCOIN.
 
 The former Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is Testnet-only historical data and must not be used on Mainnet.
 
@@ -36,7 +36,7 @@ The former Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is
 - **Latest exact-head Backend CI:** [Run #45327687002](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45327687002) — **success**.
 - **Latest exact-head Mining/PostgreSQL CI:** [Run #45327686925](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45327686925) — **success**.
 - Exact-head verification for contract code and the sanitized Pages workflow completed successfully on source commit `2d448d2f9304b2eb6910ce2ba8ae4f2876f67e06`; the current head `4898a631b27cba68578d55d290c1c5626fd2a5c7` adds only this checkpoint documentation.
-- The Stage 1 amount is still unset. CI generated no Mainnet receipt payloads.
+- Owner amount decision recorded: Stage 1 = 1,000,000,000 VCOIN; Stage 2 = 1,100,000,000 VCOIN. Total = 2,100,000,000 VCOIN (6 decimals; exact base-unit sum = 2,100,000,000,000,000). This does not authorize Mainnet payload signing or broadcast.
 - The new predicted Master address and Jetton wallet addresses are build-derived preview values only; none is evidence of Mainnet deployment.
 - The feature branch is not merged into `main`.
 
@@ -46,8 +46,16 @@ The former Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is
 2. Review the exact latest feature-branch head and regenerate/reconcile final artifacts and hashes.
 3. Verify Founder wallet control, all four registered destination addresses, deterministic Jetton Wallet addresses, Mainnet network, and current fees/reserves.
 4. Implement/review a new Founder-first signing interface; the issuer page is currently read-only and must remain so until that flow is approved.
-5. Record the Stage 1 amount only after the Founder explicitly chooses it. Stage 2 must be separately authorized after Stage 1 is confirmed.
+5. Stage 1 and Stage 2 amounts are now recorded for planning and Testnet rehearsal. Stage 2 must still be freshly authorized after Stage 1 is confirmed on the relevant network.
 6. Prepare unsigned payloads for personal Founder review only after all release gates pass.
+
+## Owner-approved Testnet rehearsal and installment calculation
+
+On 2026-11-24, the Founder explicitly selected Stage 1 = **1,000,000,000 VCOIN**. Stage 2 is calculated as **1,100,000,000 VCOIN**. With six decimals, the base-unit amounts are respectively `1000000000000000` and `1100000000000000`, summing exactly to `2100000000000000`.
+
+The Founder also explicitly authorized a **Testnet-only rehearsal** before any Mainnet operation. The historical Testnet wallet `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` may be used only on Testnet for this rehearsal. The new Founder Mainnet wallet must not be used on Testnet. A public Testnet rehearsal requires a Testnet deployment, funded Testnet gas, actual wallet review/signing by the Founder, and on-chain trace verification. No such public Testnet transaction is claimed completed by this documentation update. The Mainnet-only backend reconciliation adapter is not to be used to certify Testnet events.
+
+**Testnet rehearsal status: PENDING.** The contract/Sandbox CI results remain automated local tests, not public Testnet proof.
 
 ## Safety status
 

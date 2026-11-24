@@ -1,23 +1,18 @@
 {
   "project": "V COIN – TON",
-  "purpose": "Founder-first five-stage public Testnet rehearsal only",
-  "network": "testnet",
+  "status": "ARCHIVED_DO_NOT_USE",
+  "policy": "MAINNET_PRODUCTION_LOCAL_SANDBOX_SIMULATION_ONLY",
+  "network": "disabled",
   "testOnly": true,
-  "decimals": 6,
-  "fixedSupplyTokens": "2100000000",
-  "fixedSupplyBaseUnits": "2100000000000000",
-  "founderTestnetWallet": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
-  "mainnetWalletsIncluded": false,
-  "mainnetPayloadsAllowed": false,
-  "broadcastEnabled": false,
+  "publicTestnetDeploymentAuthorized": false,
+  "publicTestnetTransactionsAuthorized": false,
   "signingEnabled": false,
-  "notes": [
-    "This file is isolated from deployment.config.template.json.",
-    "Only the historical Founder Testnet wallet may be used.",
-    "No Mainnet address, signer, destination, or transaction payload may be loaded or emitted.",
-    "The script creates unsigned Testnet-only wallet request previews for five exact sequential stages; no signing or broadcast is performed."
-  ],
-  "stages": [
+  "broadcastEnabled": false,
+  "historicalFounderTestnetWallet": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
+  "warning": "Historical reference only. Do not connect this wallet, create a wallet request, sign, broadcast, or use this configuration for any current project operation. Local TON Sandbox is the only permitted simulation environment.",
+  "priorSupplyReference": "2100000000",
+  "decimals": 6,
+  "historicalStages": [
     {
       "stage": 1,
       "amountTokens": "420000000",

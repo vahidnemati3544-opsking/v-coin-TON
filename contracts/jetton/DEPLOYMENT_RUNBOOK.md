@@ -51,10 +51,15 @@ These transfers move already-issued tokens and do not create additional supply.
 ## 6. Testnet policy
 TON Testnet is not an authorized deployment, rehearsal, receipt, or transaction environment for the current project direction. Historical Testnet files and addresses are retained only as quarantined reference material and must not be used for current operations. Local TON Sandbox is the permitted simulation environment. No Testnet wallet signing or broadcast is authorized.
 
-## 7. Current release status
-- Five-stage contract and backend source: merged to main; exact-head CI run #491 completed successfully.
-- Mainnet deployment and token issuance: not performed.
-- Mainnet allocation transfers: not performed.
+## 7. Current release status — 2026-11-24
+
+- Five-stage Founder-first contract is present on `main`.
+- Exact-current-main Jetton workflow #506 passed: lockfile verification, clean dependency install, zero moderate/high/critical dependency advisories, Tact compilation, TEP-64 metadata-cell generation, Founder-first policy guards, Sandbox tests, and read-only issuer Pages endpoint verification.
+- Exact-head Mining CI #481 and Backend CI #390 passed on the immediately preceding code head; the follow-up Jetton status changes did not alter contract/backend code.
+- Release and full-source artifacts from #506 were downloaded and their SHA-256 digests matched GitHub's artifact digests. A separate local clean-room `npm ci` attempt timed out before the compiler was installed; independent rebuild and hash reproduction remain pending.
+- Mainnet Master deployment: **not performed or independently verified**.
+- Mainnet token issuance / five Founder receipts: **not performed**.
+- Four Mainnet allocation transfers: **not performed**.
 - Testnet public execution: not authorized and not performed.
-- Public mining and real-value payouts: disabled pending wallet-proof, verified Mainnet balance, payout, finality, and reconciliation implementation.
-- Mainnet readiness: **HOLD / NO-GO**.
+- Public mining and real-value payouts: disabled pending TON Connect wallet ownership proof, trusted finalized Mainnet balance snapshots, payout sender, and finalized reconciliation.
+- Mainnet readiness: **HOLD / NO-GO**. Deployment, reserve funding, each receipt, and each allocation transfer require separate Founder approval of the exact operation.

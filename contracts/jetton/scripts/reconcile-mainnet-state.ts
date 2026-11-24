@@ -90,6 +90,38 @@ async function readApi(method: string, body: Record<string, unknown>): Promise<A
   return { status: 'unavailable', error: lastError };
 }
 
+async function runGetMethod(address: string, method: string, stack: string[][] = []): Promise<ApiResult> {
+  return readApi('runGetMethod', { address, method, stack });
+}
+
+function firstStackEntry(response: ApiResult): any {
+  if (response.status !== 'ok') return null;
+  return response.data?.stack?.[0] ?? null;
+}
+
+function decodeStackAddress(response: ApiResult): string | null {
+  const entry = firstStackEntry(response);
+  if (!entry) return null;
+  try {
+    const value = Array.isArray(entry) ? entry[1] : entry.slice?.bytes;
+    if (typeof value !== 'string') return null;
+    const roots = Cell.fromBoc(Buffer.from(value, 'base64'));
+    const slice = roots[0]?.beginParse();
+    if (!slice) return null;
+    return slice.loadAddress().toString({ urlSafe: true, bounceable: true, testOnly: false });
+  } catch {
+    return null;
+  }
+}
+
+function decodeStackNumber(entry: any): string | null {
+  if (!entry) return null;
+  const raw = Array.isArray(entry) ? entry[1] : entry.number?.number ?? entry.number;
+  if (typeof raw === 'string' && /^-?\\d+$/.test(raw)) return raw;
+  if (typeof raw === 'number' || typeof raw === 'bigint') return String(raw);
+  return null;
+}
+
 function summarizeAccount(address: string, response: ApiResult) {
   if (response.status !== 'ok') return { address, status: 'unavailable', error: response.error };
   const info = response.data ?? {};
@@ -117,6 +149,17 @@ async function main() {
 
   const reportedInfoResponse = await readApi('getAddressInformation', { address: reportedMaster });
   const reportedTokenResponse = await readApi('getTokenData', { address: reportedMaster });
+  const reportedOwnerResponse = await runGetMethod(reportedMaster, 'get_gas_operator_wallet');
+  const reportedReceiptResponse = await runGetMethod(reportedMaster, 'get_receipt_status');
+  const founderOwnerCell = beginCell().storeAddress(Address.parse(founder)).endCell().toBoc().toString('base64');
+  const reportedFounderWalletResponse = await runGetMethod(reportedMaster, 'get_wallet_address', [['tvm.Slice', founderOwnerCell]]);
+  const reportedFounderJettonWallet = decodeStackAddress(reportedFounderWalletResponse);
+  const reportedFounderJettonWalletInfoResponse = reportedFounderJettonWallet
+    ? await readApi('getAddressInformation', { address: reportedFounderJettonWallet })
+    : { status: 'unavailable' as const, error: 'Master get_wallet_address did not return a decodable address' };
+  const reportedFounderWalletDataResponse = reportedFounderJettonWallet
+    ? await runGetMethod(reportedFounderJettonWallet, 'get_wallet_data')
+    : { status: 'unavailable' as const, error: 'Master get_wallet_address did not return a decodable address' };
   const derivedInfoResponse = await readApi('getAddressInformation', { address: derivedMaster });
   const derivedTokenResponse = await readApi('getTokenData', { address: derivedMaster });
 
@@ -152,6 +195,33 @@ async function main() {
     reported_tonkeeper_master: {
       account: reportedAccount,
       jetton_data: summarizeToken(reportedTokenResponse),
+      owner_getter: {
+        status: reportedOwnerResponse.status,
+        error: reportedOwnerResponse.status === 'unavailable' ? reportedOwnerResponse.error : null,
+        raw_stack: reportedOwnerResponse.status === 'ok' ? reportedOwnerResponse.data.stack : null,
+        decoded_owner_address: decodeStackAddress(reportedOwnerResponse),
+        decoded_owner_is_founder: sameAddress(decodeStackAddress(reportedOwnerResponse), founder),
+      },
+      receipt_status_getter: {
+        status: reportedReceiptResponse.status,
+        error: reportedReceiptResponse.status === 'unavailable' ? reportedReceiptResponse.error : null,
+        raw_stack: reportedReceiptResponse.status === 'ok' ? reportedReceiptResponse.data.stack : null,
+        exit_code: reportedReceiptResponse.status === 'ok' ? reportedReceiptResponse.data.exit_code : null,
+      },
+      founder_jetton_wallet: {
+        address: reportedFounderJettonWallet,
+        account: reportedFounderJettonWalletInfoResponse.status === 'ok'
+          ? summarizeAccount(reportedFounderJettonWallet!, reportedFounderJettonWalletInfoResponse)
+          : { status: 'unavailable', error: reportedFounderJettonWalletInfoResponse.error },
+        wallet_data_getter: {
+          status: reportedFounderWalletDataResponse.status,
+          error: reportedFounderWalletDataResponse.status === 'unavailable' ? reportedFounderWalletDataResponse.error : null,
+          raw_stack: reportedFounderWalletDataResponse.status === 'ok' ? reportedFounderWalletDataResponse.data.stack : null,
+          first_stack_number: reportedFounderWalletDataResponse.status === 'ok'
+            ? decodeStackNumber(firstStackEntry(reportedFounderWalletDataResponse))
+            : null,
+        },
+      },
     },
     exact_build_derived_master: {
       account: derivedAccount,

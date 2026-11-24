@@ -3,7 +3,9 @@ struct JettonWalletData { balance: Int; owner: Address; master: Address; code: C
 struct VCoinReceiptStatus {
     first_receipt_amount: Int;
     first_receipt_issued: Bool;
+    first_receipt_confirmed: Bool;
     second_receipt_issued: Bool;
+    second_receipt_confirmed: Bool;
     remaining_supply: Int;
 }
 message(0xf8a7ea5) TokenTransfer {
@@ -28,6 +30,7 @@ message(0x7bdd97de) TokenBurnNotification {
     query_id: Int as uint64; amount: Int as coins; sender: Address;
     response_destination: Address?;
 }
+message(0x6f8a2d41) VCoinReceiptAcknowledgement { query_id: Int as uint64; amount: Int as coins; }
 message(0xd53276db) TokenExcesses { query_id: Int as uint64; }
 message(0x2c76b973) ProvideWalletAddress {
     query_id: Int as uint64; owner_address: Address; include_address: Bool;

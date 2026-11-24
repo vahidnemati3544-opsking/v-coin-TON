@@ -1,19 +1,20 @@
 {
   "project": "V COIN – TON",
-  "status": "unsigned_mainnet_deployment_preview_only",
+  "status": "HOLD / NO-GO — Founder-first two-stage receipt; no transaction payloads prepared",
   "network": "mainnet",
   "jetton_master_address": null,
   "decimals": 6,
   "total_supply_base_units": "2100000000000000",
-  "founder_wallet_candidate": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
+  "founder_wallet_candidate": "UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT",
   "transfers": [
     {
       "allocation": "founder",
       "tokens": "420000000",
       "base_units": "420000000000000",
-      "destination": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
+      "destination": "UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT",
       "requires_founder_signature": true,
-      "destination_verification": "INVALIDATED by the approved 2,100,000,000 VCOIN supply revision; regenerate from the exact-head CI build and verify against the deployed Master's get_wallet_address getter before any issuance."
+      "transfer_kind": "retained_from_initial_two_stage_receipt",
+      "destination_verification": "Owner-designated Mainnet address recorded; wallet control and revised-contract Jetton wallet derivation pending. This row is the retained Founder balance, not a separate transfer."
     },
     {
       "allocation": "mining_reserve",
@@ -21,7 +22,8 @@
       "base_units": "1050000000000000",
       "destination": "UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0",
       "requires_founder_signature": true,
-      "destination_verification": "INVALIDATED by the approved 2,100,000,000 VCOIN supply revision; regenerate from the exact-head CI build and verify against the deployed Master's get_wallet_address getter before any issuance."
+      "transfer_kind": "founder_signed_jetton_transfer_after_full_receipt",
+      "destination_verification": "Owner-designated Mainnet address recorded; wallet control and revised-contract Jetton wallet derivation pending."
     },
     {
       "allocation": "treasury",
@@ -29,7 +31,8 @@
       "base_units": "210000000000000",
       "destination": "UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ",
       "requires_founder_signature": true,
-      "destination_verification": "INVALIDATED by the approved 2,100,000,000 VCOIN supply revision; regenerate from the exact-head CI build and verify against the deployed Master's get_wallet_address getter before any issuance."
+      "transfer_kind": "founder_signed_jetton_transfer_after_full_receipt",
+      "destination_verification": "Owner-designated Mainnet address recorded; wallet control and revised-contract Jetton wallet derivation pending."
     },
     {
       "allocation": "liquidity_market",
@@ -37,7 +40,8 @@
       "base_units": "210000000000000",
       "destination": "UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn",
       "requires_founder_signature": true,
-      "destination_verification": "INVALIDATED by the approved 2,100,000,000 VCOIN supply revision; regenerate from the exact-head CI build and verify against the deployed Master's get_wallet_address getter before any issuance."
+      "transfer_kind": "founder_signed_jetton_transfer_after_full_receipt",
+      "destination_verification": "Owner-designated Mainnet address recorded; wallet control and revised-contract Jetton wallet derivation pending."
     },
     {
       "allocation": "ecosystem_marketing",
@@ -45,7 +49,8 @@
       "base_units": "210000000000000",
       "destination": "UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE",
       "requires_founder_signature": true,
-      "destination_verification": "INVALIDATED by the approved 2,100,000,000 VCOIN supply revision; regenerate from the exact-head CI build and verify against the deployed Master's get_wallet_address getter before any issuance."
+      "transfer_kind": "founder_signed_jetton_transfer_after_full_receipt",
+      "destination_verification": "Owner-designated Mainnet address recorded; wallet control and revised-contract Jetton wallet derivation pending."
     }
   ],
   "safeguards": [
@@ -59,26 +64,31 @@
   ],
   "secrets_must_never_be_committed": true,
   "gas_operations_wallet": {
-    "address": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
-    "purpose": "TON fees and operational funding only; same Founder address, not a sixth VCOIN allocation recipient",
-    "shared_role": "founder"
+    "address": "UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT",
+    "purpose": "TON deployment reserve and authorized operational network fees",
+    "shared_role": "Founder",
+    "is_separate_wallet": false,
+    "is_allocation_wallet": true,
+    "note": "The Founder Mainnet wallet is the sole GAS & OPERATIONS wallet. No separate GAS wallet and no sixth allocation recipient exist."
   },
   "notes": [
-    "Template only; Mainnet deployment and every issuance require explicit Founder approval after all release gates pass.",
-    "Founder allocation is one immediate 420,000,000 VCOIN issuance with no vesting or time lock.",
-    "The Founder wallet also serves as GAS & OPERATIONS for TON fees only; it is not a sixth VCOIN allocation recipient.",
-    "Every issuance request requires exact transaction review, Founder wallet signature, and on-chain finality reconciliation.",
-    "Project owner confirmed the complete 2,100,000,000 VCOIN supply is to be allocated across all five registered wallets, with the Founder wallet included as one of the five. This is not authorization to deploy or broadcast transactions; exact Mainnet signing approval remains separate.",
-    "All previous predicted Master and Jetton Wallet addresses are invalidated by the current 2.1B allocation revision. Regenerate from the exact reviewed source build; predictions are not on-chain addresses until Mainnet deployment is confirmed.",
-    "The Founder wallet signs the deployment/funding transaction as GAS & OPERATIONS (use the exact attached TON value generated by the current reviewed deployment preview; the current runbook baseline is 1.00 TON, subject to exact-build fee/reserve simulation), and signs the five exact VCoinMint issuance messages after deployment.",
-    "The previously configured inaccessible GAS wallet is retired and must never be funded or used.",
-    "Historical Action #51 predictions were generated for an earlier economic baseline. Those Master/Jetton Wallet predictions, BOC hashes, and artifact references are invalidated by the current 2.1B allocation revision and have been cleared; do not reuse them. A fresh exact-head build and independent hash reproduction are required."
+    "Template only; HOLD / NO-GO. No deployment, mint, transfer, or transaction is authorized.",
+    "The full fixed 2,100,000,000 VCOIN supply is to be received by the Founder Mainnet wallet in two separately authorized incoming stages; installment amounts remain unset until the Founder approves a transaction plan.",
+    "Stage 2 requires a fresh explicit Founder authorization after Stage 1 is confirmed. Stage 1 does not authorize Stage 2.",
+    "After full receipt and reconciliation, the Founder retains 420,000,000 VCOIN and personally signs four transfers: Mining 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000.",
+    "The Founder Mainnet wallet UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT is also the sole GAS & OPERATIONS wallet; there is no separate GAS address.",
+    "The former Founder address UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy is Testnet-only historical data and must never be used on Mainnet.",
+    "The former five-wallet direct-mint VCoinMint preview is superseded and disabled. Do not sign, deploy, or use any legacy preview or derived addresses.",
+    "The current VCoinMaster contract and transaction planner must be redesigned for the Founder-first staged receipt and four capped distributions before a new deployment package is generated.",
+    "All recipient TON addresses are owner-designated records; their control is not proven by this manifest. Jetton Wallet addresses must be derived from the revised exact-build Master and checked before any transfer.",
+    "Never send Mainnet transactions from CI. No Testnet deployment or transaction is authorized; use local TON Sandbox only.",
+    "Never commit or request seed phrases, private keys, wallet PINs, or recovery codes."
   ],
   "founder_confirmed_release_intent": {
-    "scope": "all_five_wallets_full_supply",
+    "scope": "founder_first_two_stage_receipt_then_four_founder_signed_distributions",
     "total_tokens": "2100000000",
     "founder_is_one_of_five": true,
-    "confirmation_status": "confirmed_by_project_owner",
+    "confirmation_status": "owner_instruction_recorded_2026-11-24",
     "mainnet_transaction_authorized": false
   },
   "predicted_jetton_master_address": null,
@@ -93,10 +103,32 @@
   "preview_workflow_run_id": null,
   "preview_artifact_id": null,
   "preview_artifact_sha256": null,
-  "gas_wallet_unification_status": "contract-enforced; Founder wallet is the only permitted GAS & OPERATIONS signer",
+  "gas_wallet_unification_status": "Founder Mainnet wallet is the sole GAS & OPERATIONS wallet; no separate GAS wallet or sixth allocation recipient exists.",
   "clean_room_hash_reproduction": {
-    "status": "INVALIDATED_BY_CURRENT_21B_ALLOCATION_REVISION",
-    "note": "All previous Master/Jetton wallet predictions and associated release artifact hashes are stale after the supply and allocation change. Regenerate from the exact reviewed source commit; perform an independent reproducible build and on-chain getter verification before signing."
+    "status": "pending_after_founder_first_contract_redesign",
+    "note": "Previous BOC/hash results belong to a superseded direct-mint design and are not a current deployment package. Rebuild the redesigned exact source and independently reproduce all TON code-cell, metadata, Master StateInit, and Jetton Wallet StateInit hashes before signing."
   },
-  "preview_status": "All derived addresses and artifact hashes invalidated by the current 2.1B allocation revision; regenerate from reviewed exact-head source. Unsigned template only."
+  "preview_status": "HOLD / NO-GO — legacy direct-mint preview suppressed; no transaction payloads may be generated until Founder-first contract adaptation and exact-head verification are complete.",
+  "initial_receipt": {
+    "network": "mainnet",
+    "founder_wallet": "UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT",
+    "total_tokens": "2100000000",
+    "total_base_units": "2100000000000000",
+    "installments": [
+      {
+        "stage": 1,
+        "amount_tokens": null,
+        "amount_base_units": null,
+        "requires_fresh_founder_signature": true
+      },
+      {
+        "stage": 2,
+        "amount_tokens": null,
+        "amount_base_units": null,
+        "requires_fresh_founder_signature": true
+      }
+    ],
+    "stage_2_requires_fresh_founder_announcement": true,
+    "status": "pending_installment_amounts_contract_revision_and_transaction_plan"
+  }
 }

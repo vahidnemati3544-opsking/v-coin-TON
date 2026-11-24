@@ -867,3 +867,18 @@ The controlling initial receipt amounts are the Founder’s five-stage instructi
 **Next:** Complete a reproducible independent build and compare Master/Wallet code and StateInit hashes; obtain independent security review; verify Founder and destination wallet control; complete live fee/reserve review. Only then prepare the unsigned Mainnet deployment package for Founder review.
 
 **No wallet was connected, no TON was spent, and no deployment, mint, or transfer was performed.**
+
+
+## Action #81 — Refresh the deployment runbook with current evidence (2026-11-24)
+
+**Status:** Documentation updated; Mainnet remains HOLD / NO-GO.
+
+- Updated `contracts/jetton/DEPLOYMENT_RUNBOOK.md` to replace stale CI run #491 as the current status with exact-current-main Jetton workflow #506, exact-head Mining #481, and Backend #390 evidence.
+- Recorded the successful Tact build, dependency audit, Sandbox tests, metadata generation, read-only Pages endpoint verification, and matching GitHub artifact SHA-256 digests.
+- Explicitly recorded that the independent local clean-room dependency install timed out before compilation, so independent rebuild/hash reproduction remains pending.
+- Reaffirmed that no Master deployment, Founder receipt, or allocation transfer has been performed or independently verified; Mainnet authorization remains false.
+- No contract, supply, allocation, wallet address, or on-chain state changed.
+
+**Next:** Independent clean-room build and security review, wallet-control confirmation, and live fee/reserve review before any deployment payload is presented for Founder approval.
+
+**No authorization is implied by this documentation update.**

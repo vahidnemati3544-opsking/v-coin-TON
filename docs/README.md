@@ -12,7 +12,7 @@
 
 This directory contains the authoritative design, implementation-status, and security documents for the independent TON project.
 
-## Controlling approved baseline (2026-11-23)
+## Controlling approved baseline (2026-11-24)
 
 The current approved baseline is 2,100,000,000 VCOIN at 6 decimals, with no additional minting; allocations are 420M Founder retained, 1.05B Mining Reserve, and 210M each Treasury, Liquidity/Market, and Ecosystem/Marketing. The entire supply is first received by the Founder Mainnet wallet in two transfers; the Founder then signs distributions to the four other registered wallets. The former Founder address was Testnet-only. Execution is Mainnet-only after local engineering verification and explicit Founder authorization; Testnet deployment, transactions, and rehearsal are not authorized. Independent external auditing is not a project workstream, pending task, or release condition. Historical records are subordinate to these current decisions where they conflict.
 
@@ -26,6 +26,8 @@ The current approved baseline is 2,100,000,000 VCOIN at 6 decimals, with no addi
 Architecture documents describe intended behavior unless a section explicitly identifies functionality as implemented. Internal reviews, CI, automated tests, dependency scans, Sandbox tests, and hash checks are engineering verification activities. No document certifies production readiness or authorizes TON Mainnet deployment.
 
 - [Owner Instruction — Founder-first two-stage Mainnet receipt (2026-11-24)](OWNER_INSTRUCTION_2026-11-24.md) — controlling change to initial custody and Founder-signed distribution.
+
+- [Action #66 — Founder-First Two-Stage Mainnet Receipt](OWNER_ACTION_66_FOUNDER_FIRST_RECEIPT.md): records the new owner instruction, completed documentation/template updates, and pending contract/test work.
 
 ## Latest repository consistency record
 

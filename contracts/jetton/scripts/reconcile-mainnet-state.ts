@@ -195,6 +195,22 @@ async function main() {
   const reportedFounderWalletDataResponse = reportedFounderJettonWallet
     ? await runGetMethod(reportedFounderJettonWallet, 'get_wallet_data')
     : { status: 'unavailable' as const, error: 'Master get_wallet_address did not return a decodable address' };
+  const reportedAdminAddress = reportedTokenResponse.status === 'ok'
+    ? reportedTokenResponse.data?.admin_address ?? null
+    : null;
+  const adminOwnerCell = reportedAdminAddress
+    ? beginCell().storeAddress(Address.parse(reportedAdminAddress)).endCell().toBoc().toString('base64')
+    : null;
+  const reportedAdminWalletResponse = reportedAdminAddress && adminOwnerCell
+    ? await runGetMethod(reportedMaster, 'get_wallet_address', [['tvm.Slice', adminOwnerCell]])
+    : { status: 'unavailable' as const, error: 'Master admin address is unavailable' };
+  const reportedAdminJettonWallet = decodeStackAddress(reportedAdminWalletResponse);
+  const reportedAdminWalletDataResponse = reportedAdminJettonWallet
+    ? await runGetMethod(reportedAdminJettonWallet, 'get_wallet_data')
+    : { status: 'unavailable' as const, error: 'Master get_wallet_address did not return a decodable admin wallet address' };
+  const reportedAdminJettonWalletInfoResponse = reportedAdminJettonWallet
+    ? await readApi('getAddressInformation', { address: reportedAdminJettonWallet })
+    : { status: 'unavailable' as const, error: 'Master get_wallet_address did not return a decodable admin wallet address' };
   const reportedFounderWalletTransactionsResponse = reportedFounderJettonWallet
     ? await readApi('getTransactions', { address: reportedFounderJettonWallet, limit: 100, archival: true })
     : { status: 'unavailable' as const, error: 'Master get_wallet_address did not return a decodable address' };
@@ -272,6 +288,28 @@ async function main() {
         error: reportedReceiptResponse.status === 'unavailable' ? reportedReceiptResponse.error : null,
         raw_stack: reportedReceiptResponse.status === 'ok' ? reportedReceiptResponse.data.stack : null,
         exit_code: reportedReceiptResponse.status === 'ok' ? reportedReceiptResponse.data.exit_code : null,
+      },
+      admin_jetton_wallet: {
+        owner_address: reportedAdminAddress,
+        address: reportedAdminJettonWallet,
+        address_getter: {
+          status: reportedAdminWalletResponse.status,
+          error: reportedAdminWalletResponse.status === 'unavailable' ? reportedAdminWalletResponse.error : null,
+          exit_code: reportedAdminWalletResponse.status === 'ok' ? reportedAdminWalletResponse.data.exit_code : null,
+          raw_stack: reportedAdminWalletResponse.status === 'ok' ? reportedAdminWalletResponse.data.stack : null,
+        },
+        account: reportedAdminJettonWalletInfoResponse.status === 'ok'
+          ? summarizeAccount(reportedAdminJettonWallet!, reportedAdminJettonWalletInfoResponse)
+          : { status: 'unavailable', error: reportedAdminJettonWalletInfoResponse.error },
+        wallet_data_getter: {
+          status: reportedAdminWalletDataResponse.status,
+          error: reportedAdminWalletDataResponse.status === 'unavailable' ? reportedAdminWalletDataResponse.error : null,
+          exit_code: reportedAdminWalletDataResponse.status === 'ok' ? reportedAdminWalletDataResponse.data.exit_code : null,
+          raw_stack: reportedAdminWalletDataResponse.status === 'ok' ? reportedAdminWalletDataResponse.data.stack : null,
+          balance_base_units: reportedAdminWalletDataResponse.status === 'ok'
+            ? decodeStackNumber(firstStackEntry(reportedAdminWalletDataResponse))
+            : null,
+        },
       },
       founder_jetton_wallet: {
         address: reportedFounderJettonWallet,

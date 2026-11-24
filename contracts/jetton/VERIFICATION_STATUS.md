@@ -1,3 +1,55 @@
+# CURRENT CONTROLLING RELEASE STATUS — 2026-11-24 (Action #68)
+
+> This section supersedes older Mainnet readiness claims below. It distinguishes the current `main` branch from the unmerged Founder-first candidate branch.
+
+## Current `main` branch — exact-head evidence
+
+- Main implementation/workflow commit reviewed: `31cb6fd6b7bbb4f1ede1b66661969ba3be4acb80` — [commit](https://github.com/vahidnemati3544-opsking/v-coin-TON/commit/31cb6fd6b7bbb4f1ede1b66661969ba3be4acb80).
+- Exact-head GitHub Actions [run #423](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45343133295) completed with **failure**. This is not a green release CI.
+- Passed before the release gate: committed lockfile drift check; clean `npm ci`; strict `npm audit --audit-level=moderate` with zero vulnerabilities; Tact compilation; TEP-64 content-cell generation; Founder-first manifest/authorization consistency check; Jest Sandbox **3 suites / 21 tests passed**.
+- Run #423 then failed deliberately at the Founder-first implementation gate. The current `main` contract still lacks the Stage 1/Stage 2 issued/acknowledged state and corresponding Sandbox coverage. The existing 21 passing tests are for the legacy direct-five-wallet mint implementation; they do not verify the approved Founder-first two-stage behavior.
+- `contracts/jetton/package-lock.json` exists on `main`, lockfileVersion 3, is committed, and was verified current before `npm ci`.
+- TEP-64 metadata JSON remains pinned to commit `e17bcb9d82ea182bff3358b9fac6b5fa25c166ee`. Run #423 regenerated its content cell successfully: `abadcbc42c4e6309bea1d595dbfd1b834a07bfb171b2b1e2cb6d4b7e244330ca`.
+- The main manifest keeps Stage 1 and Stage 2 amounts null, suppresses all obsolete direct-mint transaction previews, and keeps `deployment_authorized=false`, `mainnet_authorized=false`, and `mainnet_transaction_authorized=false`.
+- The five unique owner-designated Mainnet addresses in the deployment config match the five allocation rows in the manifest; the configured base-unit allocations sum to exactly `2100000000000000`. The Founder address is also the sole GAS & OPERATIONS address. There is **no separate GAS wallet** and no sixth allocation destination. Wallet control remains unverified.
+- The old Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` remains Testnet-only historical data; it is not the current Founder Mainnet address.
+- The `deploy-issuer` job was skipped because the build job stopped at the explicit release gate. The latest read-only Pages publication is therefore not verified by run #423. Earlier Pages success on run #320 belongs to an older source revision.
+
+## Unmerged Founder-first candidate branch
+
+- Candidate branch: `feat/founder-first-two-stage`, head `43b949901cb5d02830f5332c0d5b08b0a31060e0` — [commit](https://github.com/vahidnemati3544-opsking/v-coin-TON/commit/43b949901cb5d02830f5332c0d5b08b0a31060e0). It is **not merged to main**.
+- Exact-head [run #421](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45341503815) succeeded: Tact build, clean lockfile install, zero npm audit advisories, TEP-64 generation, unsigned previews, read-only status checks, and Jest **3 suites / 16 tests passed**. The Pages deploy job was skipped; this does not establish publication of the candidate page.
+- Candidate artifact ID `14896650621`, ZIP SHA-256 `10a640eda84501abf992cb120de4f6ca645c5cbdabf3553758733652bd5e81fd`. The downloaded archive's SHA-256 was independently matched to GitHub's artifact digest.
+- A separate BOC parser independently reproduced the candidate artifact's Master code-cell hash, Master data-cell hash, Master StateInit hash, TEP-64 content-cell hash, all five Jetton Wallet StateInit hashes, and the account-hash/CRC checks in the six friendly addresses. This is independent hash reproduction **from the CI BOCs**, not a clean-room rebuild/compilation from source, and these remain predictions rather than deployed addresses.
+- The candidate's Mainnet preview has no receipt payloads because its Mainnet Stage 1 amount is null. Do not use the candidate artifact as a Mainnet transaction package until it is merged, reverified on exact `main`, and all release gates pass.
+- Candidate-only Testnet configuration currently records Stage 1 = 1,000,000,000 and Stage 2 = 1,100,000,000 VCOIN and marks a Testnet rehearsal as Founder-authorized. The controlling `main` manifest does not approve those values or any Testnet transaction. Treat that candidate-only split/authorization claim as **unreconciled and not approved for execution**; no Testnet transaction was sent in this review.
+
+## Engineering/security review observations on the candidate
+
+- The candidate's two-stage Master credits only the Founder Jetton Wallet, waits for wallet acknowledgements, requires Stage 2 to equal the exact remaining supply, and rolls back the corresponding stage on a natural bounce. Its Sandbox suite covers Stage 1/Stage 2, exact remainder, and natural bounce cases.
+- **Open reliability issue:** the candidate Jetton Wallet sends `VCoinReceiptAcknowledgement` with bounce disabled, and the reviewed source has no acknowledgement retry/recovery path. If the acknowledgement is not processed, the credited stage can remain unconfirmed and Stage 2 can remain blocked. Add a tested recovery/acknowledgement retry design before integration.
+- **Allocation-control limitation:** the four later distributions are ordinary Founder-signed TEP-74 Jetton transfers. The candidate Master does not enforce the four destination addresses or per-destination caps on-chain; those amounts are represented in the off-chain plan/backend. Do not describe the four caps as on-chain enforced. Decide and document whether Founder-reviewed ordinary transfers are sufficient or whether an enforceable distribution control is required.
+- No independent third-party TEP-74/security audit is evidenced. The prior internal review applied to the superseded direct-mint design; the candidate has source-level review notes, not independent certification. No vulnerability-free or audited claim is made.
+- Production indexer/backend integration that verifies finalized on-chain receipts/transfers and reconciles the accounting database remains pending.
+- No clean-room rebuild from the exact source and pinned toolchain has been completed. The BOC hash reproduction above does not replace it.
+
+## Transaction and deployment boundary
+
+- No Mainnet or Testnet transaction was signed or broadcast by this review. No contract was deployed and no VCOIN was minted or transferred.
+- No exact transaction package is approved for signature: the main contract has not been updated to the candidate; the candidate stage split is unreconciled; the acknowledgement recovery and distribution-control questions remain open; wallet control and live fee/reserve simulation remain pending.
+- Mainnet authorization flags remain false. Never request or store seed phrases, private keys, PINs, or recovery codes.
+
+## Action #68 — Correct CI self-match and enforce Founder-first release gating
+
+**Status:** Workflow guard correction committed; exact-head CI correctly remains NO-GO.
+
+- Fixed a self-matching string check that caused run #419 to fail before Sandbox tests.
+- Added a static Founder-first implementation gate after Sandbox tests. The gate is aligned with the candidate's actual state/acknowledgement model and prevents the legacy direct-mint contract from appearing release-ready merely because its old tests pass.
+- Run #423 confirms the intended behavior: compilation, lockfile, audit, metadata, manifest checks and all 21 legacy tests passed; the explicit Founder-first gate failed because the current `main` source does not yet implement the new flow.
+- No contract code, allocation address, supply, stage amount, or transaction payload was changed by this action.
+
+---
+
 # CURRENT CONTROLLING RELEASE STATUS — 2026-11-24 (Action #67)
 
 > This section supersedes conflicting older policy/status summaries below. Historical run records remain historical and must not be treated as verification of the current Founder-first design.

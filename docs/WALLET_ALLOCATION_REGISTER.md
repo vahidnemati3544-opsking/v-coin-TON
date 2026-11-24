@@ -1,8 +1,18 @@
+## Controlling owner instruction — 2026-11-24 (supersedes conflicting legacy wording)
+
+- Fixed total supply: **2,100,000,000 VCOIN**, six decimals; no additional minting.
+- Sole initial receiving wallet: Founder-designated **TON Mainnet** address `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT`.
+- The entire supply is to reach this wallet in **two separate incoming transfers**. Installment amounts and timing remain to be entered in the transaction plan. Installment 2 occurs only after the Founder explicitly announces and authorizes it. This instruction does not assert that either transfer has occurred.
+- After receipt, the Founder personally controls and signs distributions to the four registered allocation wallets: Mining Reserve 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN. The Founder retains 420,000,000 VCOIN (20%).
+- Former Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` was **Testnet-only**. It is historical/test-only and must never be used as the Mainnet receiving address.
+- This instruction supersedes direct five-wallet initial issuance, any one-operation five-wallet issuance description, and any designation of the former Founder address as Mainnet.
+- Documentation changes do not authorize a Mainnet transaction. The exact deployed Jetton Master, Mainnet status, contract compatibility with the Founder-first two-stage flow, wallet-control proof, installment amounts, fees, and local Sandbox evidence must be verified before signing. Existing fixed-five-destination contract logic must be revised and tested if incompatible.
+
 # V COIN – TON Official Wallet Allocation Register
 
 **Document ID:** VCT-WALLET-ALLOC-001  
-**Version:** 1.1  
-**Status:** Owner-designated allocation destinations; fixed-role enforcement implemented in VCoinMaster source; deployed-address verification pending  
+**Version:** 1.2  
+**Status:** Owner-approved Founder-first, two-stage Mainnet receipt and Founder-controlled distribution; contract adaptation and deployed-address verification pending  
 **Network:** TON Blockchain  
 **Token:** VCOIN Jetton (TEP-74)  
 **Total initial supply:** 2,100,000,000 VCOIN  
@@ -11,15 +21,13 @@
 
 ## 1. Authority and scope
 
-This is the canonical register of the five wallet addresses designated by the project owner for the five approved VCOIN allocation categories. These five addresses are the only approved allocation destinations in the current design. Do not substitute, add, or silently reassign any wallet.
-
-This register records owner-provided addresses and intended allocations. The project owner has explicitly confirmed that the entire 2,100,000,000 VCOIN supply is to be issued and allocated across these five wallets; the Founder wallet is one of the five, not an additional sixth destination. This confirmation does not prove address ownership or control, establish a deployed Jetton balance, or evidence that any transfer has occurred.
+This register records the Founder Mainnet receiving wallet and four other allocation destination wallets. The full 2,100,000,000 VCOIN supply is first received by the Founder wallet in two separate incoming transfers. After receipt, the Founder personally signs distributions to the four other registered destinations. The Founder retains 420,000,000 VCOIN. This register does not prove wallet control, deployment, balances, or completed transfers.
 
 ## 2. Approved five-wallet allocation
 
 | No. | Allocation category | TON address supplied by project owner | Share | Allocation |
 |---:|---|---|---:|---:|
-| 1 | Founder | `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` | 20% | 420,000,000 VCOIN |
+| 1 | Founder Mainnet receiving wallet | `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT` | 20% retained | 420,000,000 VCOIN retained; temporarily receives full supply before distributions |
 | 2 | Treasury | `UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ` | 10% | 210,000,000 VCOIN |
 | 3 | Liquidity and market | `UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn` | 10% | 210,000,000 VCOIN |
 | 4 | Ecosystem and marketing | `UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE` | 10% | 210,000,000 VCOIN |
@@ -28,19 +36,19 @@ This register records owner-provided addresses and intended allocations. The pro
 
 ## 3. Founder wallet — GAS & OPERATIONS
 
-The Founder allocation wallet is also the only GAS & OPERATIONS wallet:
+The Founder Mainnet receiving wallet and sole GAS & OPERATIONS wallet is:
 
-`UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy`
+`UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT`
 
-There is no separate operational-fee address and no sixth wallet. The Founder wallet is one of the five allocation destinations, receives 420,000,000 VCOIN, funds the Master TON reserve, and is the sole deployment and issuance signer. Do not configure or use another address for GAS & OPERATIONS.
+It first receives the full 2,100,000,000 VCOIN supply in two transfers. After receipt, the Founder signs the four other allocation transfers and retains 420,000,000 VCOIN. The former address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is Testnet-only historical data and must never be used on Mainnet.
 
-The Founder must verify this same address in Tonkeeper on the intended TON network before any funding or signature. Never request or store seed phrases, private keys, PINs, or recovery codes. The Founder wallet's TON balance is used for deployment and network fees; the VCOIN allocation remains the Founder’s 420,000,000 VCOIN share.
+The Founder must verify the new address in Tonkeeper with TON Mainnet selected before any funding or signature. Never request or store seed phrases, private keys, PINs, or recovery codes. The Founder wallet's TON balance is used for deployment and network fees; the VCOIN allocation remains the Founder’s 420,000,000 VCOIN share.
 
 ## 4. Allocation wallet rules
 
 - Each allocation category must remain associated with its designated address.
 - The mining reserve address is the destination designated for the 1,050,000,000 VCOIN mining allocation.
-- The five allocations must not be consolidated into a single wallet by default.
+- The full supply is intentionally received temporarily in the Founder Mainnet wallet before Founder-controlled distributions to the four other allocation wallets.
 - The Founder allocation address is also the sole GAS & OPERATIONS address; it is not a separate or sixth wallet.
 - Any Gram Wallet address is likewise outside this five-address allocation map unless the project owner explicitly approves a change.
 - Do not infer wallet ownership from a pasted address. Before signing or sending, verify each address on the intended TON network and complete an appropriate wallet-control/signature check where required.

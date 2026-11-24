@@ -46,7 +46,7 @@ These four operations transfer already-issued tokens; they do not mint additiona
 4. Verify Founder wallet control and all four destination owner addresses; after deployment, compare each derived Jetton wallet against the deployed Master getter.
 5. Review actual TON fees, attached values, reserve sufficiency, bounce behavior, and any nonrecoverable TON remaining in the Master.
 6. Review trusted finalized-event indexing and PostgreSQL reconciliation; never infer finality from a wallet UI alone.
-7. Obtain independent qualified security review and resolve all findings.
+7. Complete the documented internal security review and resolve all findings. External security auditing is not a V COIN–TON project release requirement.
 8. Present each exact transaction payload and expected state changes to the Founder for separate explicit approval.
 
 ## 5. Signing and deployment boundary

@@ -117,6 +117,22 @@ function decodeStackAddress(response: ApiResult): string | null {
   }
 }
 
+function decodeJettonInternalTransfer(bodyBoc: string | null | undefined) {
+  if (!bodyBoc) return null;
+  try {
+    const roots = Cell.fromBoc(Buffer.from(bodyBoc, 'base64'));
+    const slice = roots[0]?.beginParse();
+    if (!slice || slice.remainingBits < 96) return null;
+    const opcode = Number(slice.loadUint(32));
+    if (opcode !== 0x178d4519) return null;
+    const queryId = slice.loadUintBig(64).toString();
+    const amount = slice.loadCoins().toString();
+    return { opcode: '0x178d4519', query_id: queryId, amount_base_units: amount };
+  } catch {
+    return null;
+  }
+}
+
 function decodeStackNumber(entry: any): string | null {
   if (!entry) return null;
   const raw = Array.isArray(entry) ? entry[1] : entry.number?.number ?? entry.number;
@@ -163,6 +179,34 @@ async function main() {
   const reportedFounderWalletDataResponse = reportedFounderJettonWallet
     ? await runGetMethod(reportedFounderJettonWallet, 'get_wallet_data')
     : { status: 'unavailable' as const, error: 'Master get_wallet_address did not return a decodable address' };
+  const reportedFounderWalletTransactionsResponse = reportedFounderJettonWallet
+    ? await readApi('getTransactions', { address: reportedFounderJettonWallet, limit: 50, archival: true })
+    : { status: 'unavailable' as const, error: 'Master get_wallet_address did not return a decodable address' };
+  const founderReceiptMessages = reportedFounderWalletTransactionsResponse.status === 'ok' && Array.isArray(reportedFounderWalletTransactionsResponse.data)
+    ? reportedFounderWalletTransactionsResponse.data
+        .filter((tx: any) => tx.in_msg?.source && sameAddress(tx.in_msg.source, reportedMaster))
+        .map((tx: any) => {
+          const body = tx.in_msg?.msg_data?.body ?? tx.in_msg?.body ?? null;
+          const decoded = decodeJettonInternalTransfer(body);
+          if (!decoded) return null;
+          const aborted = tx.description?.aborted ?? null;
+          const computeSuccess = tx.description?.compute_ph?.success ?? tx.description?.compute?.success ?? null;
+          const actionSuccess = tx.description?.action?.success ?? null;
+          return {
+            ...decoded,
+            source_master: tx.in_msg.source,
+            destination_jetton_wallet: tx.in_msg.destination ?? reportedFounderJettonWallet,
+            transaction_lt: tx.transaction_id?.lt ?? null,
+            transaction_hash: tx.transaction_id?.hash ?? null,
+            timestamp_utc: tx.utime ? new Date(Number(tx.utime) * 1000).toISOString() : null,
+            aborted,
+            compute_success: computeSuccess,
+            action_success: actionSuccess,
+            credited_successfully: aborted === false && computeSuccess !== false && actionSuccess !== false,
+          };
+        })
+        .filter((item: any) => item !== null)
+    : [];
   const derivedInfoResponse = await readApi('getAddressInformation', { address: derivedMaster });
   const derivedTokenResponse = await readApi('getTokenData', { address: derivedMaster });
 
@@ -226,10 +270,24 @@ async function main() {
         wallet_data_getter: {
           status: reportedFounderWalletDataResponse.status,
           error: reportedFounderWalletDataResponse.status === 'unavailable' ? reportedFounderWalletDataResponse.error : null,
+          exit_code: reportedFounderWalletDataResponse.status === 'ok' ? reportedFounderWalletDataResponse.data.exit_code : null,
           raw_stack: reportedFounderWalletDataResponse.status === 'ok' ? reportedFounderWalletDataResponse.data.stack : null,
           first_stack_number: reportedFounderWalletDataResponse.status === 'ok'
             ? decodeStackNumber(firstStackEntry(reportedFounderWalletDataResponse))
             : null,
+        },
+        transaction_history: {
+          status: reportedFounderWalletTransactionsResponse.status,
+          error: reportedFounderWalletTransactionsResponse.status === 'unavailable' ? reportedFounderWalletTransactionsResponse.error : null,
+          transactions_checked: reportedFounderWalletTransactionsResponse.status === 'ok' && Array.isArray(reportedFounderWalletTransactionsResponse.data)
+            ? reportedFounderWalletTransactionsResponse.data.length
+            : 0,
+          incoming_master_receipt_messages: founderReceiptMessages,
+          stage_receipts_confirmed: [1, 2, 3, 4, 5].map((stage) => {
+            const expected = ['420000000000000', '1050000000000000', '210000000000000', '210000000000000', '210000000000000'][stage - 1];
+            const matches = founderReceiptMessages.filter((message: any) => message.query_id === String(stage) && message.amount_base_units === expected && message.credited_successfully === true);
+            return { stage, expected_amount_base_units: expected, confirmed_count: matches.length, transaction_hashes: matches.map((message: any) => message.transaction_hash) };
+          }),
         },
       },
     },

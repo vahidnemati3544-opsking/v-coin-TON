@@ -6,7 +6,7 @@
 
 - Founder GAS wallet `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT`: active; **5.487534819 TON** at the observed block.
 - Previously Tonkeeper-reported Master `EQBn4hW8bKhFTSz9riY5q3Pr3SfJmv2VYKZQl_NWMbK--5fP`: active; 0.540643302 TON; indexed as `jetton_master`; supply **2,100,000,000 VCOIN**; `mintable=false`; metadata URI matches the pinned project metadata.
-- Active Master code hash: `5087c882019324e9d8e309c78f42e3bcee9433a54d7d0366f83956776ed28ed8` (observed exact hash: `5087c882019324e9d8e309c78f42e3bcee9433a54d7d0367d49320a7bbabcc36`). It differs from the current Founder-first exact-build code hash `e08c11238070eeaffbbe783077eb49f61ad770a71f2e3096f83956776ed28ed8`.
+- Active Master code hash: `5087c882019324e9d8e309c78f42e3bcee9433a54d7d0367d49320a7bbabcc36`. It differs from the current Founder-first exact-build code hash `e08c11238070eeaffbbe783077eb49f61ad770a71f2e3096f83956776ed28ed8`.
 - `get_gas_operator_wallet` returns admin `EQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWuE3`, not the current Founder wallet.
 - `get_receipt_status` is not implemented by the active Master (TON Center exit code 11 / method ID 85110). This old Master cannot prove the current five-stage acknowledgement state through that getter.
 - The admin's Master-derived Jetton Wallet is `EQCOzLnnSrR-mbM_AeiKU2wpMJ28cPoRncBuQHJ-6_q-Mn0T`, active, and `get_wallet_data` reports **420,000,000 VCOIN** (`420000000000000` base units).

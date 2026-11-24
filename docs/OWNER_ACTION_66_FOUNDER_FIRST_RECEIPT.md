@@ -3,7 +3,7 @@
 **Date:** 2026-11-24  
 **Status:** Contract redesign and automated verification passed on isolated feature branch; backend ingestion and Mainnet release gates remain pending  
 **Branch:** `feat/founder-first-two-stage`  
-**Latest feature-branch head at this checkpoint:** `5548ea95db951142ebcfe2a9bbb7544f306a89b2`  
+**Latest feature-branch head at this checkpoint:** `15af89846c454b6390f0a3cdc9760bd2dfc905ed`  
 **Scope:** V COIN–TON only; no changes to the legacy BNB project
 
 ## Owner instruction
@@ -26,8 +26,9 @@ The former Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is
 
 ## Automated verification evidence
 
-- **Jetton CI:** [Run #45326599824](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45326599824) — **success** on commit `9f7e060aef326f408ec69cfdc69de9970c44ceb7`. Tact compilation, metadata cell generation, unsigned deployment preview, Jest Sandbox tests, read-only issuer checks, and artifact preservation passed.
-- **Backend/PostgreSQL CI:** [Run #45326689464](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45326689464) — **success** on commit `5548ea95db951142ebcfe2a9bbb7544f306a89b2`. Syntax checks and PostgreSQL integration tests, including migration 010 and all four allocation roles, passed.
+- **Jetton CI:** [Run #45326855010](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45326855010) — **success** on latest branch head `15af89846c454b6390f0a3cdc9760bd2dfc905ed`. Tact compilation, metadata cell generation, unsigned deployment preview, Jest Sandbox tests, read-only issuer checks, and artifact preservation passed.
+- **Backend CI:** [Run #45326854872](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45326854872) — **success** on the same head; backend syntax, PostgreSQL schema/migrations, migration-runner idempotency, and integration tests passed.
+- **Mining/PostgreSQL CI:** [Run #45326854945](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45326854945) — **success** on the same head; migration 010, both receipt stages, idempotency, all four allocation roles, and mismatch rejection passed.
 - The Stage 1 amount is still unset. CI generated no receipt payloads.
 - The new predicted Master address and Jetton wallet addresses are build-derived preview values only; none is evidence of Mainnet deployment.
 - The feature branch is not merged into `main`.

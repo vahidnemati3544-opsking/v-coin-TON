@@ -1,10 +1,20 @@
+## Controlling owner instruction — 2026-11-24 (supersedes conflicting legacy wording)
+
+- Fixed total supply: **2,100,000,000 VCOIN**, six decimals; no additional minting.
+- Sole initial receiving wallet: Founder-designated **TON Mainnet** address `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT`.
+- The entire supply is to reach this wallet in **two separate incoming transfers**. Installment amounts and timing remain to be entered in the transaction plan. Installment 2 occurs only after the Founder explicitly announces and authorizes it. This instruction does not assert that either transfer has occurred.
+- After receipt, the Founder personally controls and signs distributions to the four registered allocation wallets: Mining Reserve 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN. The Founder retains 420,000,000 VCOIN (20%).
+- Former Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` was **Testnet-only**. It is historical/test-only and must never be used as the Mainnet receiving address.
+- This instruction supersedes direct five-wallet initial issuance, any one-operation five-wallet issuance description, and any designation of the former Founder address as Mainnet.
+- Documentation changes do not authorize a Mainnet transaction. The exact deployed Jetton Master, Mainnet status, contract compatibility with the Founder-first two-stage flow, wallet-control proof, installment amounts, fees, and local Sandbox evidence must be verified before signing. Existing fixed-five-destination contract logic must be revised and tested if incompatible.
+
 # V COIN – TON Documentation
 
 This directory contains the authoritative design, implementation-status, and security documents for the independent TON project.
 
 ## Controlling approved baseline (2026-11-23)
 
-The current approved baseline is 2,100,000,000 VCOIN at 6 decimals, with no additional minting; allocations are 420M Founder (immediate, no vesting), 1.05B Mining Reserve, and 210M each Treasury, Liquidity/Market, and Ecosystem/Marketing. The Founder wallet is also the sole GAS & OPERATIONS wallet; the project has five allocation wallets, not six. Execution is Mainnet-only after local engineering verification and explicit Founder authorization; Testnet deployment, transactions, and rehearsal are not authorized. Independent external auditing is not a project workstream, pending task, or release condition. Historical records are subordinate to these current decisions where they conflict.
+The current approved baseline is 2,100,000,000 VCOIN at 6 decimals, with no additional minting; allocations are 420M Founder retained, 1.05B Mining Reserve, and 210M each Treasury, Liquidity/Market, and Ecosystem/Marketing. The entire supply is first received by the Founder Mainnet wallet in two transfers; the Founder then signs distributions to the four other registered wallets. The former Founder address was Testnet-only. Execution is Mainnet-only after local engineering verification and explicit Founder authorization; Testnet deployment, transactions, and rehearsal are not authorized. Independent external auditing is not a project workstream, pending task, or release condition. Historical records are subordinate to these current decisions where they conflict.
 
 - [TON Architecture](TON_ARCHITECTURE.md) — system layers, Jetton model, wallet separation, and release gates.
 - [API Architecture](API_ARCHITECTURE.md) — implemented health endpoints and planned authenticated APIs.

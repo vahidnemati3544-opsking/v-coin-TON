@@ -1,3 +1,22 @@
+# ACTION #89 — First confirmed TON Mainnet state findings (2026-11-24)
+
+**Status:** Read-only Mainnet RPC returned valid account and Jetton data. Exact-head CI is running against this change set. No transaction was created, signed, or broadcast.
+
+- Founder GAS wallet `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT` is active and had **5.487534819 TON** at the observed block (masterchain seqno 107530882).
+- Previously Tonkeeper-reported Master `EQBn4hW8bKhFTSz9riY5q3Pr3SfJmv2VYKZQl_NWMbK--5fP` is **active** with **0.540643302 TON**, indexed as `jetton_master`, total supply `2100000000000000` base units (**2,100,000,000 VCOIN**), and `mintable=false`.
+- The same Mainnet query reports its admin as `EQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWuE3`, not the current Founder wallet. This has the same raw workchain/account ID as the previously labeled `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy`. **Correction:** `UQ...` is the non-bounceable Mainnet representation, not a Testnet-only prefix; Testnet-only user-friendly prefixes are `kQ...` and `0Q...`. The historical record that classified this address as Testnet must be treated as incorrect. This does not prove who controls the wallet; Founder must verify control through Tonkeeper / a safe wallet challenge.
+- The observed Master code hash is `5087c882019324e9d8e309c78f42e3bcee9433a54d7d0367d49320a7bbabcc36`, which does **not** match the current exact-build code hash `e08c11238070eeaffbbe783077eb49f61ad770a71f2e3096f83956776ed28ed8`.
+- The exact-build candidate `EQC_gSnjZTc2Kufgl5ltFF-b2zr5_j4diozxC-IvEp9zzVaL` is `uninitialized` with zero TON. It is not the active Master reported by Tonkeeper.
+- The active Master metadata URI matches the project's pinned metadata URL, but metadata/name/logo and a full supply alone do not prove that its code, admin, staged receipt history, or Founder wallet balance meet the current approved release design.
+- Action #89 extends the read-only reconciliation to call the active Master getters `get_gas_operator_wallet`, `get_receipt_status`, `get_wallet_address(founder)`, and the returned Founder Jetton Wallet's `get_wallet_data`. The generated report is required to determine whether the five receipt acknowledgements and Founder Jetton balance can be independently confirmed.
+- **No new Master deployment is authorized or advisable** until the active Master identity, admin control, Founder Jetton balance and receipt-stage state are reconciled. The current exact-build candidate must not be deployed merely because the template has `master_address=null`.
+
+## Action #89 release decision
+
+Mainnet network access and a funded Founder GAS wallet are confirmed by read-only chain data. The active VCOIN Jetton Master is also confirmed, but it is not the exact current contract build and its admin differs from the current Founder wallet. Mainnet therefore remains **HOLD / NO-GO for any new deployment, minting or transfers** pending Founder wallet control proof and verification of the active Master / Founder Jetton Wallet state. The reported 2.1B supply and `mintable=false` are observed facts, not proof of the requested five-stage receipt sequence.
+
+---
+
 # V COIN — TON Deployment and release runbook
 
 **Current disposition: HOLD / NO-GO.** This runbook records the approved five-stage design and release checks; it is not deployment authorization.

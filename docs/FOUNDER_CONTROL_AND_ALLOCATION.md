@@ -71,7 +71,7 @@ The Founder retains 420,000,000 VCOIN as the 20% Founder allocation, without ves
 | Ecosystem and marketing | 10% | 210,000,000 VCOIN |
 | **Total** | **100%** | **2,100,000,000 VCOIN** |
 
-The Founder Mainnet receiving address and four allocation destination addresses are maintained in `docs/WALLET_ALLOCATION_REGISTER.md`. The Founder receives the full fixed supply in two transfers and then signs distribution of 1.05B Mining, 210M Treasury, 210M Liquidity/Market, and 210M Ecosystem/Marketing. The Founder retains 420M VCOIN (20%). The mining reserve is funded by the Founder-signed distribution and must never mint new tokens.
+The Founder Mainnet receiving address and four allocation destination addresses are maintained in `docs/WALLET_ALLOCATION_REGISTER.md`. The Founder receives the full fixed supply in five exact receipt stages and, only after each credit is independently verified and all five stages are complete, signs distribution of 1.05B Mining, 210M Treasury, 210M Liquidity/Market, and 210M Ecosystem/Marketing. The Founder retains 420M VCOIN (20%). The mining reserve is funded by the Founder-signed distribution and must never mint new tokens.
 
 ## 6. Operational TON network-fee funding
 

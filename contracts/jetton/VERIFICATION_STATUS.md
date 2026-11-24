@@ -1,3 +1,22 @@
+# ACTION #92 — Decode active Master allocation config and verify exact destinations (2026-11-24)
+
+**Status:** Read-only Mainnet getters decoded successfully; exact-head build-and-test and fresh-runner hash reproduction passed. No transaction was created, signed, or broadcast.
+
+- `get_allocation_config` on active Master returned five addresses in constructor order:
+  1. Founder / owner: `EQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWuE3` (legacy address; does not match current Founder UQBh…).
+  2. Mining Reserve: `EQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsE0x`.
+  3. Treasury: `EQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBhaV`.
+  4. Liquidity / Market: `EQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzShi`.
+  5. Ecosystem / Marketing: `EQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqObB`.
+- The four non-Founder addresses normalize to the four current registered owner addresses. The sole owner/Founder address differs: active Master uses the legacy UQAd… account; current register uses UQBh….
+- `get_allocation_status` decodes to `[true, true, true, true, true]`; all five legacy direct allocation flags are complete.
+- Exact-head workflow #45437313527 on commit `e0b19aee50be1e6724b39edf905fe8bf385fb770` passed `build-and-test` and fresh-runner `hash-reproduction`; Pages issuer job skipped on the review branch.
+- Release artifact ID `14940519772`, SHA-256 `5b15b785b308691781f3edad51e0d80292b0cb89501c324f32fc3504f62b29b8`; full-source artifact ID `14942152711`, SHA-256 `8b74e3a123ef57d2c630c79c750de3fbac98b6804e06cd0b0ab659d4938663ba`; clean-room report artifact ID `14942052179`, SHA-256 `d0c4b8b00b7018f50092ad399f8a5a333ae85d354afcc2aa2a401a8e39722e66`.
+
+**Decision:** The old Master is fully allocated under its original five-wallet config. It cannot be converted to the new Founder-first five-stage contract by editing docs or changing an admin address. Keep Mainnet HOLD / NO-GO for new deployment or transfers until the Founder confirms access to the legacy admin and chooses a safe retention/migration path.
+
+---
+
 # ACTION #91 — Read legacy Master allocation configuration and issuance flags (2026-11-24)
 
 **Status:** Mainnet read-only getters succeeded. The active Master exposes the old five-allocation design, not the new five-stage Founder receipt.

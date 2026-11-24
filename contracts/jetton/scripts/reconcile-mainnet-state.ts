@@ -135,9 +135,26 @@ function decodeJettonInternalTransfer(bodyBoc: string | null | undefined) {
 
 function decodeStackNumber(entry: any): string | null {
   if (!entry) return null;
-  const raw = Array.isArray(entry) ? entry[1] : entry.number?.number ?? entry.number;
-  if (typeof raw === 'string' && /^-?\\d+$/.test(raw)) return raw;
+  if (Array.isArray(entry)) {
+    const kind = entry[0];
+    const payload = entry[1];
+    if (kind === 'num' || kind === 'tvm.Number') {
+      if (typeof payload === 'string') {
+        try { return BigInt(payload).toString(); } catch { return null; }
+      }
+      if (typeof payload === 'number' || typeof payload === 'bigint') return String(payload);
+    }
+    if ((kind === 'tvm.Tuple' || kind === 'tuple') && Array.isArray(payload?.elements)) {
+      return decodeStackNumber(payload.elements[0]);
+    }
+    return null;
+  }
+  const raw = entry.number?.number ?? entry.number;
+  if (typeof raw === 'string') {
+    try { return BigInt(raw).toString(); } catch { return null; }
+  }
   if (typeof raw === 'number' || typeof raw === 'bigint') return String(raw);
+  if (Array.isArray(entry.elements)) return decodeStackNumber(entry.elements[0]);
   return null;
 }
 

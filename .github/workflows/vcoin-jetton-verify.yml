@@ -60,6 +60,7 @@ jobs:
           console.log('Master StateInit and all five Jetton Wallet addresses derived; no transaction created or authorized.');
           NODE
       - name: Reconcile reported and exact-build Master addresses plus Founder fee wallet (read-only Mainnet query)
+        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         run: npm run reconcile:mainnet-state
       - name: Enforce local Sandbox-only simulation policy
         run: |

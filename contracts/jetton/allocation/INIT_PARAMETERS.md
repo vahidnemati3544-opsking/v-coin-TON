@@ -1,57 +1,60 @@
-# SUPERSEDED BY OWNER INSTRUCTION 2026-11-24
+# VCOIN Jetton initialization and release parameters
 
-The prior constructor/issuance mapping below describes the former direct five-wallet issuance model. It is **not valid for Mainnet deployment or signing** under the current Founder-first instruction. The full 2.1B VCOIN supply must first be received by Founder Mainnet wallet `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT` in two separately authorized transfers; the Founder then signs the four other allocation distributions. Former Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is Testnet-only. Contract constructor, allocation manifest, deployment configuration and tests must be redesigned together. Do not use the old five-wallet mint sequence until this redesign is complete.
+**Status:** Five-stage Founder-first policy. Mainnet deployment and transfers remain HOLD / NO-GO until the release checklist passes.
 
-See `docs/OWNER_INSTRUCTION_2026-11-24.md` and `docs/WALLET_ALLOCATION_REGISTER.md`.
+## Canonical contract constructor
 
----
-
-Current policy correction (2026-11-23): Any older requirement below for an independent qualified review/audit is superseded and is not an active project task or release gate. The approved execution policy is Mainnet-only, with local Sandbox tests permitted and no Testnet deployment/transactions authorized. Founder is also the sole GAS & OPERATIONS wallet; no separate fee wallet exists. This parameter document is not authorization to deploy or issue.
-
-# VCOIN Jetton Master initialization parameters
-
-This document defines the exact argument order for the VCoinMaster StateInit and the five approved VCOIN allocation destinations.
-
-## Constructor signature
+The active `VCoinMaster` constructor is defined by `contracts/jetton/src/vcoin.tact` and currently accepts:
 
 ```text
-VCoinMaster(
-  owner,
-  content,
-  miningReserveWallet,
-  treasuryWallet,
-  liquidityWallet,
-  ecosystemWallet,
-  gasOperatorWallet
-)
+VCoinMaster(owner, content)
 ```
 
-## Canonical source mapping
+Do not use the superseded seven-argument constructor described in earlier revisions. The Founder Mainnet address is the owner and sole GAS & OPERATIONS wallet:
 
-| Constructor argument | Role | Canonical source |
-|---|---|---|
-| owner | Founder — 20% / 420,000,000 VCOIN; also the sole GAS & OPERATIONS wallet | docs/WALLET_ALLOCATION_REGISTER.md, Founder row |
-| content | Jetton metadata cell | Approved token metadata package |
-| miningReserveWallet | Mining reserve — 50% / 1,050,000,000 VCOIN | Wallet register, Mining reserve row |
-| treasuryWallet | Treasury — 10% / 210,000,000 VCOIN | Wallet register, Treasury row |
-| liquidityWallet | Liquidity and market — 10% / 210,000,000 VCOIN | Wallet register, Liquidity row |
-| ecosystemWallet | Ecosystem and marketing — 10% / 210,000,000 VCOIN | Wallet register, Ecosystem row |
-| gasOperatorWallet | Must be exactly the same address as owner; no separate GAS address exists | Same Founder address as owner |
+`UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT`
 
-## Mandatory pre-deployment checks
+The former address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is Testnet-only historical data and must never be used on Mainnet.
 
-1. Read the five allocation addresses from the canonical wallet register.
-2. Set owner and gasOperatorWallet to the exact same Founder address.
-3. Do not configure, derive, fund, or use a sixth operational wallet.
-4. Confirm the five allocation addresses are pairwise distinct.
-5. Confirm the intended TON network and address control without requesting or storing seed phrases.
-6. Confirm get_allocation_config and get_gas_operator_wallet both report the Founder address in their respective roles.
-7. Do not issue VCOIN until independent qualified review, clean-room rebuild, live fee/reserve review, local Sandbox tests, and explicit Founder approval are complete. No Testnet deployment or transaction is authorized.
+## Fixed supply and five receipt stages
 
-## Issuance procedure
+- Token: VCOIN Jetton (TEP-74)
+- Network: TON Mainnet for eventual release; local TON Sandbox for tests
+- Decimals: 6
+- Maximum supply: 2,100,000,000 VCOIN = 2,100,000,000,000,000 base units
+- No additional minting after Stage 5 acknowledgement
 
-The Founder wallet, serving as both owner and GAS & OPERATIONS, funds the Master reserve with a VCoinFund message carrying at least 0.75 TON. The same Founder wallet signs the five separate VCoinMint requests, one per allocation, with the exact configured amount and at least 0.01 TON attached per request. The Master pays the destination-wallet credit costs from its reserve. A natural bounce rolls back only the affected role and permits that exact allocation to be retried. Once all five roles are credited, mintable becomes false.
+| Stage | VCOIN | Base units |
+|---:|---:|---:|
+| 1 | 420,000,000 | 420,000,000,000,000 |
+| 2 | 1,050,000,000 | 1,050,000,000,000,000 |
+| 3 | 210,000,000 | 210,000,000,000,000 |
+| 4 | 210,000,000 | 210,000,000,000,000 |
+| 5 | 210,000,000 | 210,000,000,000,000 |
 
-## Founder allocation
+Each stage requires a fresh Founder signature. A subsequent stage may be requested only after the previous Founder Jetton-wallet credit has been acknowledged and reconciled. A bounced stage may be retried only after its rollback is confirmed, at the same sequence and amount.
 
-The Founder receives exactly 420,000,000 VCOIN as one allocation. This release design has no vesting contract or time lock. This does not waive independent contract review, clean-room rebuild, local Sandbox tests, live fee/reserve review, or explicit Mainnet authorization. Testnet deployment and transactions are not authorized.
+## Four Founder-signed allocation transfers after receipt
+
+After all five receipts are finalized and reconciled, the Founder retains 420,000,000 VCOIN and personally signs four standard TEP-74 transfers:
+
+| Role | Destination address | VCOIN |
+|---|---|---:|
+| Mining reserve | `UQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsBD0` | 1,050,000,000 |
+| Treasury | `UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ` | 210,000,000 |
+| Liquidity and market | `UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn` | 210,000,000 |
+| Ecosystem and marketing | `UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE` | 210,000,000 |
+
+The generic TEP-74 wallet implementation does not hard-code these four recipient restrictions. The allocation transfer planner must therefore enforce exact destination allowlisting, exact amounts, uniqueness, and total-balance sufficiency before producing a human-reviewable unsigned plan. This is planner-side validation, not an on-chain restriction. The Founder must independently inspect and sign each transaction in Tonkeeper. No backend or CI process may sign or broadcast.
+
+## Mandatory release gates
+
+1. Build the exact contract source and preserve build artifacts/hashes.
+2. Pass all local TON Sandbox tests, including five-stage issuance, acknowledgement retry, natural bounce/retry, and all four allocations.
+3. Pass allocation-planner tests for correct destinations and amounts, and rejection of unknown, duplicate, missing, or altered transfers.
+4. Independently verify the Mainnet Jetton Master, Founder Jetton wallet, all four recipient Jetton wallets, network, token balance, and transaction previews.
+5. Check live Gram fee requirements and retain an adequate operational reserve; 2 Gram is not assumed sufficient.
+6. Reconcile on-chain transaction hashes and finality before recording any transfer as complete.
+7. Obtain the Founder's explicit approval for each real transaction.
+
+No document, test, PR, or generated unsigned plan is itself authorization to deploy, issue, or transfer. Never request or share recovery phrases, private keys, PINs, or wallet backup codes.

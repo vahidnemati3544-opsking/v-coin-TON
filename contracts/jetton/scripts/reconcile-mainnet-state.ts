@@ -62,7 +62,7 @@ async function readApi(method: string, body: Record<string, unknown>): Promise<A
   if (requestCount > 0) await delay(WAIT_MS);
   requestCount += 1;
   let lastError = 'Unknown API error';
-  for (let attempt = 0; attempt < 3; attempt += 1) {
+  for (let attempt = 0; attempt < 2; attempt += 1) {
     try {
       const headers: Record<string, string> = { 'content-type': 'application/json' };
       if (API_KEY) headers['X-API-Key'] = API_KEY;
@@ -70,6 +70,7 @@ async function readApi(method: string, body: Record<string, unknown>): Promise<A
         method: 'POST',
         headers,
         body: JSON.stringify(body),
+        signal: AbortSignal.timeout(8000),
       });
       const raw = await response.text();
       let parsed: any;
@@ -84,7 +85,7 @@ async function readApi(method: string, body: Record<string, unknown>): Promise<A
       return { status: 'ok', data: parsed.result };
     } catch (error) {
       lastError = error instanceof Error ? error.message : String(error);
-      if (attempt < 2) await delay(2000 * (attempt + 1));
+      if (attempt < 1) await delay(1500);
     }
   }
   return { status: 'unavailable', error: lastError };

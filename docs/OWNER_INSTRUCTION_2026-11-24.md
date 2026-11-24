@@ -41,6 +41,8 @@ These are transfers of the already-issued fixed supply, not additional minting. 
 
 **Action #89 address correction (2026-11-24):** The former address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is not Testnet-only: `UQ...` is the non-bounceable Mainnet representation; Testnet-only prefixes are `kQ...` and `0Q...`. TON Center reports the corresponding `EQ...` representation of this same raw account as the admin of the older active VCOIN Master. This address is distinct from the current Founder receiving wallet. Its control is not yet proven; do not use it for current operations until the Founder confirms control and role. No public Testnet deployment or transaction is authorized.
 
+**Action #90 live-balance correction (2026-11-24):** The active Master-derived wallet for the current Founder address is uninitialized and holds zero VCOIN. The four other registered allocation wallets already hold their target balances: Mining 1.05B, Treasury 210M, Liquidity/Market 210M, Ecosystem/Marketing 210M. The legacy Master-admin wallet holds 420M. These balances sum to the full 2.1B supply, but they are the old direct five-wallet allocation—not the current five-stage Founder-first receipt. No receipt stage should be marked complete for the current Founder wallet. See `contracts/jetton/VERIFICATION_STATUS.md` Action #90.
+
 ## 4. Contract and configuration requirements
 
 The controlling contract flow is the five-stage Founder-first sequence above, followed by four Founder-signed allocation transfers. Any two-stage draft, direct five-destination issuance plan, or planner inconsistent with this sequence is superseded and must remain disabled.

@@ -69,7 +69,7 @@ Consequently:
 - Reconcile the estimated total against the live Testnet wallet balance and preserve a safety margin. If emulation is unavailable or returns incomplete data, stop.
 - No signing, broadcasting, or Mainnet operation is authorized by this audit note.
 
-**Current gate:** BLOCKED — complete wallet transaction payload and successful Testnet emulation/fee quote are not yet available.
+**Current gate:** BLOCKED — unsigned TON Connect request previews are now generated, but the wallet-generated signed external message has not been produced, and successful Testnet emulation/fee quote is not yet available.
 
 
 

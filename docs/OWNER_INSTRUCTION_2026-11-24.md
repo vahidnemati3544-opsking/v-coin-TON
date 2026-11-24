@@ -7,13 +7,20 @@
 
 ## 1. Binding instruction
 
-The project owner has instructed that the full fixed initial supply of **2,100,000,000 VCOIN** (six decimals; **2,100,000,000,000,000 base units**) be received by the Founder Mainnet wallet below in two separate incoming transfers:
+The project owner has instructed that the full fixed initial supply of **2,100,000,000 VCOIN** (six decimals; **2,100,000,000,000,000 base units**) be received by the Founder Mainnet wallet below in **five separate, sequentially authorized receipt stages**:
 
 `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT`
 
-The two installment amounts and exact timing have not yet been specified. They must be recorded in a transaction plan before the first transfer. The second transfer must not be prepared or sent until the Founder explicitly announces and authorizes that second installment.
+| Stage | VCOIN | Base units |
+|---:|---:|---:|
+| 1 | 420,000,000 | 420,000,000,000,000 |
+| 2 | 1,050,000,000 | 1,050,000,000,000,000 |
+| 3 | 210,000,000 | 210,000,000,000,000 |
+| 4 | 210,000,000 | 210,000,000,000,000 |
+| 5 | 210,000,000 | 210,000,000,000,000 |
+| **Total** | **2,100,000,000** | **2,100,000,000,000,000** |
 
-This is an initial custody/receipt sequence, not a change to the token's fixed supply and not an increase in the Founder's personal allocation.
+Each stage is a separate Founder-authorized request to the same Founder Jetton wallet. A stage may proceed only after the preceding stage's Jetton-wallet credit has been acknowledged and reconciled. The next stage requires a fresh Founder signature. A bounced stage may be retried only at the same sequence and amount after its rollback is confirmed. This is an initial custody/receipt sequence, not a change to the fixed supply and not an increase in the Founder's personal allocation.
 
 ## 2. Allocation after receipt
 
@@ -36,19 +43,20 @@ The former address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` was used f
 
 ## 4. Contract and configuration impact
 
-The repository's previous design used fixed, direct, one-time issuance to five separate Jetton wallets. That design is not automatically compatible with the new Founder-first two-stage receipt and later Founder-signed distributions. The contract, allocation manifest, initialization parameters, deployment template, backend accounting, and Sandbox tests must be reviewed and revised together. Do not deploy or use stale five-destination direct-issuance artifacts under this new instruction.
+The active implementation uses the five exact receipt stages above. The contract, allocation manifest, initialization parameters, deployment template, backend accounting, and Sandbox tests must remain consistent with this instruction. Do not deploy or use stale two-stage or direct-five-wallet issuance artifacts.
 
-Required engineering changes include:
+Required engineering checks include:
 
 1. Preserve a hard cap of 2,100,000,000 VCOIN and permanently prohibit additional minting.
-2. Support the two separately authorized incoming supply receipts to the Founder wallet, with the second stage gated by a new explicit Founder authorization.
-3. Enforce the exact four subsequent distribution caps and destination addresses.
-4. Prevent duplicate transfers, over-allocation, wrong-network payloads, and double accounting.
+2. Support the five separately authorized Founder-first receipt stages, with each stage gated by acknowledgement of the preceding Founder Jetton-wallet credit.
+3. Confirm the four subsequent distribution amounts and destination addresses against the owner-approved allocation register. Founder signs each ordinary TEP-74 transfer.
+4. Prevent duplicate issuance, over-allocation, wrong-network payloads, and double accounting.
 5. Record each transfer's transaction hash, exact base-unit amount, sender, recipient, Jetton Master, status, and finality.
-6. Pass local TON Sandbox tests for stage 1, stage 2, second-stage authorization, all four distributions, bounce/retry behavior, and total-supply reconciliation.
+6. Pass local TON Sandbox tests for all five receipt stages, acknowledgement retry, natural bounce/retry, all four distributions, and total-supply reconciliation.
+7. Verify whether the contract itself enforces destination/allocation restrictions or whether these are enforced by a separately reviewed Founder-controlled transaction planner. Do not describe planner-side checks as on-chain enforcement.
 
 ## 5. Safety and authorization status
 
-This document records the owner's desired policy; it is not proof of wallet ownership, a deployed Mainnet Jetton Master, available VCOIN balance, or a completed transfer. No transaction is sent or authorized merely by this documentation update. Before the Founder signs, independently verify the Mainnet Jetton Master, actual supply and balances, Founder wallet control, four recipient addresses, installment amounts, fee/reserve requirements, and exact transaction previews. Never request or share recovery phrases or private keys.
+This document records the owner's desired policy; it is not proof of wallet ownership, a deployed Mainnet Jetton Master, available VCOIN balance, or a completed transfer. No transaction is sent or authorized merely by this documentation update. Before the Founder signs, independently verify the Mainnet Jetton Master, actual supply and balances, Founder wallet control, four recipient addresses, exact transaction previews, fee/reserve requirements, and local Sandbox evidence. Never request or share recovery phrases or private keys.
 
-**Current status:** Policy documented. Mainnet transfer readiness remains blocked until contract/configuration compatibility and all verification gates are complete.
+**Current status:** Five-stage policy documented. Mainnet transfer readiness remains **HOLD / NO-GO** until contract/configuration compatibility, allocation enforcement/accounting, and all verification gates are complete.

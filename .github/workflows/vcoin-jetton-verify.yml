@@ -55,7 +55,7 @@ jobs:
           for (const file of obsolete) {
             if (fs.existsSync(file)) throw new Error('Obsolete Mainnet transaction artifact must not be generated: ' + file);
           }
-          const walletArtifacts = fs.readdirSync('build').filter((name) => /^jetton-wallet-.*\\.state-init\\.boc$/.test(name));
+          const walletArtifacts = fs.readdirSync('build').filter((name) => /^jetton-wallet-.*\.state-init\.boc$/.test(name));
           if (walletArtifacts.length) throw new Error('Obsolete direct-mint Jetton wallet StateInit artifacts must not be generated.');
           console.log('Legacy direct-mint transaction preview generation is disabled pending Founder-first contract implementation.');
           NODE

@@ -89,32 +89,32 @@
     "installments": [
       {
         "stage": 1,
-        "amountTokens": "420000000",
-        "amountBaseUnits": "420000000000000",
+        "amount_tokens": "420000000",
+        "amount_base_units": "420000000000000",
         "founder_authorization_required": true
       },
       {
         "stage": 2,
-        "amountTokens": "1050000000",
-        "amountBaseUnits": "1050000000000000",
+        "amount_tokens": "1050000000",
+        "amount_base_units": "1050000000000000",
         "founder_authorization_required": true
       },
       {
         "stage": 3,
-        "amountTokens": "210000000",
-        "amountBaseUnits": "210000000000000",
+        "amount_tokens": "210000000",
+        "amount_base_units": "210000000000000",
         "founder_authorization_required": true
       },
       {
         "stage": 4,
-        "amountTokens": "210000000",
-        "amountBaseUnits": "210000000000000",
+        "amount_tokens": "210000000",
+        "amount_base_units": "210000000000000",
         "founder_authorization_required": true
       },
       {
         "stage": 5,
-        "amountTokens": "210000000",
-        "amountBaseUnits": "210000000000000",
+        "amount_tokens": "210000000",
+        "amount_base_units": "210000000000000",
         "founder_authorization_required": true
       }
     ],
@@ -132,28 +132,28 @@
     "stages": [
       {
         "stage": 1,
-        "amountTokens": "420000000",
-        "amountBaseUnits": "420000000000000"
+        "amount_tokens": "420000000",
+        "amount_base_units": "420000000000000"
       },
       {
         "stage": 2,
-        "amountTokens": "1050000000",
-        "amountBaseUnits": "1050000000000000"
+        "amount_tokens": "1050000000",
+        "amount_base_units": "1050000000000000"
       },
       {
         "stage": 3,
-        "amountTokens": "210000000",
-        "amountBaseUnits": "210000000000000"
+        "amount_tokens": "210000000",
+        "amount_base_units": "210000000000000"
       },
       {
         "stage": 4,
-        "amountTokens": "210000000",
-        "amountBaseUnits": "210000000000000"
+        "amount_tokens": "210000000",
+        "amount_base_units": "210000000000000"
       },
       {
         "stage": 5,
-        "amountTokens": "210000000",
-        "amountBaseUnits": "210000000000000"
+        "amount_tokens": "210000000",
+        "amount_base_units": "210000000000000"
       }
     ]
   }

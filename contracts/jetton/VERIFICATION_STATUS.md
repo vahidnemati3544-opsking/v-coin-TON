@@ -1,3 +1,202 @@
+# ACTION #92 — Decode active Master allocation config and verify exact destinations (2026-11-24)
+
+**Status:** Read-only Mainnet getters decoded successfully; exact-head build-and-test and fresh-runner hash reproduction passed. No transaction was created, signed, or broadcast.
+
+- `get_allocation_config` on active Master returned five addresses in constructor order:
+  1. Founder / owner: `EQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWuE3` (legacy address; does not match current Founder UQBh…).
+  2. Mining Reserve: `EQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsE0x`.
+  3. Treasury: `EQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBhaV`.
+  4. Liquidity / Market: `EQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzShi`.
+  5. Ecosystem / Marketing: `EQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqObB`.
+- The four non-Founder addresses normalize to the four current registered owner addresses. The sole owner/Founder address differs: active Master uses the legacy UQAd… account; current register uses UQBh….
+- `get_allocation_status` decodes to `[true, true, true, true, true]`; all five legacy direct allocation flags are complete.
+- Exact-head workflow #45437313527 on commit `e0b19aee50be1e6724b39edf905fe8bf385fb770` passed `build-and-test` and fresh-runner `hash-reproduction`; Pages issuer job skipped on the review branch.
+- Release artifact ID `14940519772`, SHA-256 `5b15b785b308691781f3edad51e0d80292b0cb89501c324f32fc3504f62b29b8`; full-source artifact ID `14942152711`, SHA-256 `8b74e3a123ef57d2c630c79c750de3fbac98b6804e06cd0b0ab659d4938663ba`; clean-room report artifact ID `14942052179`, SHA-256 `d0c4b8b00b7018f50092ad399f8a5a333ae85d354afcc2aa2a401a8e39722e66`.
+
+**Decision:** The old Master is fully allocated under its original five-wallet config. It cannot be converted to the new Founder-first five-stage contract by editing docs or changing an admin address. Keep Mainnet HOLD / NO-GO for new deployment or transfers until the Founder confirms access to the legacy admin and chooses a safe retention/migration path.
+
+---
+
+# ACTION #91 — Read legacy Master allocation configuration and issuance flags (2026-11-24)
+
+**Status:** Mainnet read-only getters succeeded. The active Master exposes the old five-allocation design, not the new five-stage Founder receipt.
+
+- `get_allocation_config` returned five address cells; the first (Founder/owner) decodes to the legacy admin `EQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWuE3`. The remaining four decode to Mining `EQDMEIvklqeBW0Pn74sBHzOpoFGsSWDHE5NxZwfN-1KVsE0x`, Treasury `EQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBhaV`, Liquidity `EQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzShi`, and Ecosystem `EQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqObB`. Each is the bounceable Mainnet representation of the corresponding UQ owner address in the current register; only the Founder owner differs.
+- `get_allocation_status` returned five TVM boolean values, all `-1` (true): `founder_issued`, `mining_reserve_issued`, `treasury_issued`, `liquidity_issued`, and `ecosystem_issued`.
+- This getter evidence independently confirms that all five old allocation issuance flags are complete. Together with Action #90 wallet balances, the active Master is fully allocated in the older five-wallet pattern.
+- Exact-head workflow #45436702230 on commit `b9928b0e9a40400ebf01d587569152484ae67df2` passed `build-and-test` and fresh-runner `hash-reproduction`; Pages issuer job skipped on the review branch. Release artifact ID `14941302176`, SHA-256 `a9063799ea71b03682e40e54f5eeee201bb5b866f629c1ce98a710636994396d`; full-source artifact ID `14941322285`, SHA-256 `628c6607ac72089cfbeadfa83ebe18ae56f0bc1ee4163efdd9d7bbcef650730c`; clean-room report artifact ID `14940514287`, SHA-256 `4d8d6c5ae87ef422bb990455980c1ff3820c2f6bd76385cedf2884d34e7533ab`.
+- The active Master does not expose `get_receipt_status` and its old source has no `change_admin` message/receiver. Its owner is immutable; there is no supported way to switch the Master admin to the current Founder wallet.
+- Action #92 extends the report to decode every address returned by `get_allocation_config` and explicitly decode the five boolean flags, so the exact constructor destinations can be compared against the current register.
+
+**Decision:** Do not attempt new issuance, deploy a second Master, or transfer existing allocations until the Founder decides whether to retain the current old Master/distribution or approve a formal migration. Any migration requires control proof for all source wallets and separate Founder signatures.
+
+---
+
+# ACTION #90 — Reconcile all five registered Mainnet Jetton Wallet balances (2026-11-24)
+
+**Status:** Read-only Mainnet wallet derivation and balance queries succeeded; exact-head build-and-test and fresh-runner hash reproduction both passed. No transaction was created, signed, or broadcast.
+
+## Active Master distribution observed
+
+Master: `EQBn4hW8bKhFTSz9riY5q3Pr3SfJmv2VYKZQl_NWMbK--5fP`  
+Supply: **2,100,000,000 VCOIN**; `mintable=false`.
+
+| Registered owner role | Master-derived Jetton Wallet | Account state | Observed VCOIN |
+|---|---|---|---:|
+| Founder (current registered address UQBh…) | `EQAuxau8FXYX_lCIBvxzFg6c8jVjqfqvaRszrcrofh5BVMFv` | uninitialized | 0 |
+| Treasury | `EQCXegSjHrFZxC_H2TVVaastC8CxBScqjAbdDZWEEm1GBZ2U` | active | 210,000,000 |
+| Liquidity / Market | `EQD5mlEiKvw0KYN8MKLUUfIsjRs1xS_NAb3YEhC_KyigrA59` | active | 210,000,000 |
+| Ecosystem / Marketing | `EQA2hJ0zEZilgcBGw_ycCT8_bzgUtoS6sxqohbXDCx2PEM6t` | active | 210,000,000 |
+| Mining Reserve | `EQAeVMNyrzMYA5dbHtGmTf37e7ikIbzUGSEoeqY5oIKA3kMa` | active | 1,050,000,000 |
+
+The five currently registered owner addresses therefore account for **1,680,000,000 VCOIN**; the current Founder wallet has zero. Separately, the active Master admin/legacy Founder wallet `EQCOzLnnSrR-mbM_AeiKU2wpMJ28cPoRncBuQHJ-6_q-Mn0T` holds **420,000,000 VCOIN**. Combined, the legacy Founder balance plus the four non-Founder registered allocation balances equal exactly **2,100,000,000 VCOIN**, matching Master total supply.
+
+- Exact-head CI run #45436098986 on commit `2369d75aba103c1efcdbf5ca9cf6e9f76b5d12f0`: `build-and-test` **SUCCESS** and fresh-runner `hash-reproduction` **SUCCESS**; `deploy-issuer` skipped as expected on the review branch. Release artifact ID `14941791938`, SHA-256 `7d63097ac3559906d727d0a5c16d0b22bdfe17c43f4d5e44ebed6a3e6310f588`; full-source artifact ID `14942240545`, SHA-256 `ef17a041e9433e5524ffb07a2ba10b364e67d95e0f3f462d77ee4b83a00917c1`; clean-room report artifact ID `14942086172`, SHA-256 `a8b765c79c67f672d4e48ab3bc2163d0ad42e4b5cb0505852820227f06c245d3`.
+
+## Interpretation and decision
+
+- The active Master already has the old five-wallet allocation pattern: 420M at the legacy admin/Founder address, 1.05B Mining, and 210M each in Treasury, Liquidity/Market and Ecosystem/Marketing.
+- This is **not** the requested current Founder-first five-stage receipt. The current Founder Jetton Wallet is uninitialized, has zero balance, and has no transaction history.
+- The active Master does not implement `get_receipt_status`; the read-only call returns exit code 11 / method ID 85110. The old contract therefore cannot attest to the new five-stage acknowledgement state.
+- Historical source at the matching Action #54 release commit stores `owner` as a constructor-set field and has no `change_admin` message/receiver. The active Master therefore has no supported owner/admin transfer path to the current Founder wallet. Its `VCoinFund` receiver is restricted to that same legacy owner/admin, so the current Founder GAS wallet's 5.487 TON cannot fund or operate the old Master by itself.
+- Do not deploy a second Master and do not move the 1.68B already sitting in the four allocation wallets merely to simulate the newer receipt flow. That would create unnecessary risk and fees.
+- Any migration of the 420M legacy Founder balance to the current Founder address, or any broader consolidation/re-distribution, requires a separate explicit Founder-approved migration plan, proof of control of every source wallet, exact fee/payload review, and a fresh signature for each transfer.
+- Before deciding whether to keep the current old Master as canonical, the Founder must confirm control of the legacy admin address. The old `UQ...` address is Mainnet non-bounceable, not Testnet; its `EQ...` representation is the same raw account.
+- Current Founder GAS wallet remains active with 5.487534819 TON at the observed block. This is an observed balance, not a fixed fee quote.
+
+**Mainnet decision: HOLD / NO-GO for new deployment, issuance or transfers.** The active Master and full supply are confirmed, but current Founder wallet, admin control, code compatibility and receipt sequence do not match the latest approved design. Public mining remains disabled.
+
+---
+
+# ACTION #89 — Live Mainnet Master and Founder wallet reconciliation (2026-11-24)
+
+**Status:** Read-only TON Center Mainnet queries succeeded. Current Founder receipt balance is not present in the active Master-derived Founder Jetton Wallet. Mainnet remains HOLD / NO-GO.
+
+## Confirmed chain observations
+
+- Founder GAS wallet `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT`: active; **5.487534819 TON** at the observed block.
+- Previously Tonkeeper-reported Master `EQBn4hW8bKhFTSz9riY5q3Pr3SfJmv2VYKZQl_NWMbK--5fP`: active; 0.540643302 TON; indexed as `jetton_master`; supply **2,100,000,000 VCOIN**; `mintable=false`; metadata URI matches the pinned project metadata.
+- Active Master code hash: `5087c882019324e9d8e309c78f42e3bcee9433a54d7d0367d49320a7bbabcc36`. It differs from the current Founder-first exact-build code hash `e08c11238070eeaffbbe783077eb49f61ad770a71f2e3096f83956776ed28ed8`.
+- `get_gas_operator_wallet` returns admin `EQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWuE3`, not the current Founder wallet.
+- `get_receipt_status` is not implemented by the active Master (TON Center exit code 11 / method ID 85110). This old Master cannot prove the current five-stage acknowledgement state through that getter.
+- The admin's Master-derived Jetton Wallet is `EQCOzLnnSrR-mbM_AeiKU2wpMJ28cPoRncBuQHJ-6_q-Mn0T`, active, and `get_wallet_data` reports **420,000,000 VCOIN** (`420000000000000` base units).
+- The current Founder address's Master-derived Jetton Wallet is `EQAuxau8FXYX_lCIBvxzFg6c8jVjqfqvaRszrcrofh5BVMFv`; account state is `uninitialized`, balance 0, and it has no transaction history. The active Master has not credited the current Founder wallet with the requested five receipts.
+- The formerly labeled `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is a non-bounceable Mainnet address, not Testnet. Its corresponding `EQ...` encoding is the active Master admin. Testnet-only prefixes are `kQ...` and `0Q...`; previous Testnet classification was incorrect.
+- Current exact-build candidate `EQC_gSnjZTc2Kufgl5ltFF-b2zr5_j4diozxC-IvEp9zzVaL` is `uninitialized` with zero TON. It must not be deployed as a second Master while the active Master exists.
+
+## Actions #89–90 and release decision
+
+- Action #89 adds read-only calls to `get_gas_operator_wallet`, `get_receipt_status`, `get_wallet_address`, and `get_wallet_data`, plus the Founder Jetton Wallet transaction-history check.
+- The current Founder wallet transaction history contains zero transactions because its Master-derived Jetton Wallet is uninitialized.
+- Action #90 extends the read-only report to all five registered allocation owners (Founder, Treasury, Liquidity/Market, Ecosystem/Marketing, Mining Reserve), deriving each Jetton Wallet from the active Master and comparing balances with the 2.1B Master supply. That reconciliation is required before deciding whether tokens are already held by the four other allocation wallets.
+- No new Master deployment, mint, transfer, signing, or broadcast is authorized or advisable until the five registered wallet balances, the legacy admin's wallet control, and the existing supply distribution are reconciled.
+- Founder reports that five-stage receipt operations were performed; chain evidence currently shows **no credit to the current Founder Jetton Wallet**. Do not record the five stages as complete.
+
+## Safety
+
+Mainnet network access and the Founder TON fee balance are confirmed. An active VCOIN Master exists, but it is an older contract with a different admin and code, and the current Founder Jetton Wallet is empty/uninitialized. Mainnet remains **HOLD / NO-GO** for new deployment, issuance, and allocation transfers. Public mining remains disabled.
+
+# ACTION #86 — Mainnet release-gate reconciliation (2026-11-24)
+
+**Status:** Documentation reconciled on the PR review branch only. PR #24 remains open/Draft and is not merged to `main`. Mainnet remains HOLD / NO-GO.
+
+- PR #24 exact-head CI #535 and updated PR CI #539 passed `build-and-test` and fresh-runner `hash-reproduction`; the review branch has 20 Sandbox tests across 3 suites and reproducible Master/Wallet/metadata BOCs across two isolated CI runners.
+- The review branch adds burn rejection/success and ordinary transfer bounce/refund regression coverage. This is not Mainnet deployment evidence.
+- Current project policy follows the already-merged decisions in PRs #18 and #20: a third-party audit is not a current project release condition. Internal source/security review, exact-head CI, dependency audit, Sandbox edge-case coverage, clean-room reproduction, fee/reserve analysis, wallet-control proof, and Founder approval remain required. Historical documents that still list a third-party audit as a mandatory gate are superseded.
+- The Founder Jetton Wallet ordinary `TokenTransfer` method is owner-authorized and checks balance/fees, but is not contract-locked until Stage 5. The five-stage receipt followed by four allocations is a mandatory Founder operating procedure for this release. Before each allocation transfer, independently verify on the deployed Master: Stage 5 confirmed, next stage 6, no receipt pending, `mintable=false`, and total supply exactly `2100000000000000`; verify the Founder Jetton Wallet balance and recipient owner address as well. If any condition fails, do not transfer.
+- Critical address reconciliation: a prior Tonkeeper report on 2026-11-22 named `EQBn4hW8bKhFTSz9riY5q3Pr3SfJmv2VYKZQl_NWMbK--5fP` as a Jetton Master and showed Active / 2.1B V COIN, but no transaction hash or independent on-chain confirmation was preserved. The exact-build offline derivation on this branch instead produced `EQC_gSnjZTc2Kufgl5ltFF-b2zr5_j4diozxC-IvEp9zzVaL`, while the Mainnet template still records `master_address=null`. Resolve this discrepancy by inspecting both addresses on TON Mainnet (account status, code/data hashes, Jetton getters, owner, metadata, supply and history). Do not deploy another Master or issue/transfer tokens until this is reconciled.
+- Action #87 adds a read-only TON Center Mainnet reconciliation step: current Founder account state/balance plus reported and derived Master account states, code/data hashes, and Jetton master supply/mintability/admin/metadata. It emits `build/mainnet-state-reconciliation.json`; it does not read Founder transaction history or submit any message. API failures are recorded as unavailable, never treated as success.
+- Mainnet fee estimate and exact-message emulation, Founder wallet-control proof, destination confirmation, and reviewed unsigned deployment payload remain pending.
+- Founder reports operational TON funding; deposit and balance are not independently verified on-chain.
+- No deployment, issuance, transfer, signing, or broadcast is performed or authorized. Authorization flags remain false.
+
+---
+
+# ACTION #85 — Fresh-runner clean-room build and deterministic hash reproduction (2026-11-24)
+
+**Status:** Passed on the exact PR head in two separate GitHub-hosted runners. This is internal CI reproducibility evidence, not an independent third-party audit. Mainnet remains HOLD / NO-GO.
+
+- Exact PR head: `0b1d4438d63ebb629799a2a2bd05ee388842847a`; PR #24 remains open as a draft and is not merged to `main`.
+- Workflow run #535: [GitHub Actions](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45415086294) — SUCCESS.
+- `build-and-test`: dependency lockfile check, clean `npm ci`, zero moderate/high/critical npm audit gate, Tact compile, metadata content-cell generation, deterministic Master/five-wallet derivation, release guards, and all 3 Jest suites / 20 tests passed.
+- `hash-reproduction`: a second fresh runner installed the exact lockfile, rebuilt Tact contracts and metadata, independently re-derived the Master and five Jetton Wallet candidates, and compared the JSON derivation plus Master code BOC, Wallet code BOC, and metadata content BOC byte-for-byte against the first runner. All comparisons passed.
+- Clean-room artifact ID `14931822214`, SHA-256 `01780f39a9c510458afccd689e05daa5854fe514e18469ac0b1b3bbc6489108d`. Release artifact ID `14932386211`, SHA-256 `60fdea5668ba8b4f79a46027beff6deacf3bf44b98212e2f991c50fc45b6a113`.
+- This establishes reproducible builds and deterministic derivation across two isolated CI runners under the same GitHub Actions workflow. It does **not** establish independent ownership, independent third-party review, live Mainnet fee sufficiency, or on-chain deployment.
+- Source-policy finding: the ordinary Founder Jetton-wallet `TokenTransfer` path checks owner, balance and fee sufficiency, but does not check that all five receipt stages are complete. Therefore Founder can technically transfer already credited tokens before Stage 5. This is not an unauthorized-user bypass; it is a mismatch if the documented “no allocation before all five receipts” rule is intended to be enforced on-chain. Either add a Stage-5 transfer lock plus a regression test, or explicitly classify the sequence as a Founder operating procedure rather than a contract invariant.
+- No source contract logic, supply, allocations, owner addresses, authorization flags, or on-chain state changed. No transaction was created, signed, or broadcast.
+
+**Remaining Mainnet gates:** (1) safe Founder wallet-control proof and explicit confirmation of the four recipient owner addresses; (2) current Mainnet config/fee and exact deployment-message emulation; (3) reviewed unsigned deployment payload; (4) separate Founder review/signature and subsequent on-chain verification. Internal source/security review and engineering controls remain required. A third-party audit is not a current project release condition under the already-merged project decision; do not describe internal review as an external audit. Public mining remains disabled pending its own wallet-proof, balance-snapshot, payout and reconciliation gates.
+
+---
+
+# ACTION #84 — Deterministic Mainnet Master and five Jetton Wallet derivation (2026-11-24)
+
+**Status:** CI derivation passed on a fresh GitHub Actions runner; candidate addresses are computed and recorded. Independent third-party reproduction and security review remain pending. Mainnet remains HOLD / NO-GO.
+
+- Branch: `audit/action-83-burn-transfer-bounce-tests`; not merged to `main`. Exact source head: `97fb9cf88914f3433d38502e357a84b1c4327cdd`.
+- Added `contracts/jetton/scripts/derive-mainnet-addresses.ts` and `npm run derive:addresses`.
+- Updated `.github/workflows/vcoin-jetton-verify.yml` to derive the Master StateInit and five deterministic Jetton Wallet addresses from the exact freshly compiled Tact wrappers, Founder owner address, and immutable metadata content cell.
+- Jetton workflow #522: [GitHub Actions](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45414164006) — SUCCESS. Tact compilation, metadata cell generation, deterministic address derivation, all release policy guards, and 3 Jest suites / 20 tests passed.
+- Release artifact ID `14931690742`, GitHub SHA-256 `aafaeaa9f48fc68b509102942b5fd0612a7ea14e166e3aa42ea3da690171c201`; the downloaded ZIP was locally hashed and matched exactly.
+- Full-source artifact ID `14931390678`, GitHub SHA-256 `d013f337452d542e316512b8d486e183fcf1f53133e2516107a487894fe8c43e`.
+- Derived Master candidate (bounceable Mainnet form): `EQC_gSnjZTc2Kufgl5ltFF-b2zr5_j4diozxC-IvEp9zzVaL`.
+- Master StateInit hash: `bf8129e36537362ae7e097996d145f9bdb3af9fe3e1d8a8cf10be22f129f73cd`; code hash: `e08c11238070eeaffbbe783077eb49f61ad770a71f2e3096f83956776ed28ed8`; data hash: `5c8dfa26503e30f1af0c5be2ccbdcf719e3c9670b69220fa9cd8bde85018868b`.
+- Derived Jetton Wallet candidates (bounceable Mainnet form):
+  - Founder: `EQDUY4YWgv2OHA9sbDch0Es1-Uq9dRDDzhMVV6Y4ODiJuLUU`
+  - Treasury: `EQBDU5EsmXzEqCLCvsLzDnuC6kwe9DVFTPUteUh8ydFeDCpf`
+  - Liquidity / Market: `EQAaRu9jWJxacm53NiNdw8z0vRWYNDvqubTWB38Io5lE15ni`
+  - Ecosystem / Marketing: `EQAkVrbn7SJp414LV_CvpmUsEYpxAVzk-rbOESC7C3aaRuuL`
+  - Mining Reserve: `EQCqKJ91CwwTe93W9mN71855otBgcsj10UPf47xF4hGm2lKH`
+- The derivation output is in `build/mainnet-address-derivation.json` within the release artifact. It explicitly sets `deployment_authorized=false`, `mainnet_authorized=false`, and all transaction-created/signed/broadcast flags to false.
+- These are **computed candidate addresses only**. They do not prove that a Master contract is deployed at the candidate address, do not verify any Jetton Wallet on-chain, and must not be used for transfers until independently reproduced and compared with the deployed Master getter.
+- The local offline `npm ci` attempt could not install missing cached dependency `zod@4.6.7`; the exact source did successfully compile and derive in the clean GitHub Actions runner. A separate independent reviewer/environment is still required to reproduce the results.
+- No contract source logic, supply, allocation, wallet owner address, authorization flag, or on-chain state was changed. No TON was spent; no transaction was created, signed, or broadcast.
+
+**Remaining gates:** independent reproduction of all hashes and addresses by a separate reviewer/environment; independent security review; live Mainnet fee and exact-message emulation; Founder wallet-control proof and destination confirmation; exact reviewed unsigned deployment payload. Only after those gates may a separate Founder signature authorize the exact deployment.
+
+---
+
+# ACTION #84 — Deterministic Mainnet address derivation tooling and clean-room attempt (2026-11-24)
+
+**Status:** Derivation tooling added to the isolated review branch; exact deterministic output awaits CI execution. Independent clean-room rebuild remains blocked locally by unavailable dependency cache. Mainnet remains HOLD / NO-GO.
+
+- Branch: `audit/action-83-burn-transfer-bounce-tests`; this continues the Action #83 review branch and is not merged to `main`.
+- Added `contracts/jetton/scripts/derive-mainnet-addresses.ts` and `npm run derive:addresses`.
+- Updated `.github/workflows/vcoin-jetton-verify.yml` to rebuild generated wrappers, derive the Master from the actual current constructor arguments (Founder owner + immutable metadata content cell), derive all five Jetton Wallet addresses from the generated wallet code and Master address, validate pairwise uniqueness, and export `build/mainnet-address-derivation.json` in the release artifact.
+- The derivation output explicitly records that it is offline-only, is not a deployment payload, and does not authorize, create, sign, or broadcast a transaction. CI continues to require both Mainnet authorization flags to remain false.
+- Source inspection confirms the current Tact constructor is `VCoinMaster(owner: Address, content: Cell)`. The older seven-argument constructor description in `allocation/INIT_PARAMETERS.md` is superseded historical material and must not be used to form a StateInit.
+- Retrieved exact Action #83 release artifact ID `14931325038`; GitHub digest `f35c548dbf3535eb7d264f81430fccd2d1889a5fd21cf0fa3cf98840868d17fd` matched local SHA-256 of the downloaded ZIP.
+- Retrieved exact Action #83 full-source artifact ID `14931430007`; GitHub digest `a21f286a362f67de2298e6aed2e694969dd8fe86b7103124715ee351be3fa564` matched local SHA-256 of the downloaded ZIP.
+- The release artifact contains Master code BOC SHA-256 `719ef61c0a2fe472e8ecea442abc3938783112d2d0c34b8e83f2661b734ce8e3` and metadata content BOC SHA-256 `005aeddd589838a3b603ccbe58a6e893015e7f5dbaf4c5f43edb3fb2a82ee287`. These are file digests, not TON cell hashes or proof of deployment.
+- A local independent `npm ci --offline` was attempted against the downloaded exact source and lockfile, but could not proceed because `zod@4.6.7` was not present in the local npm cache (`ENOTCACHED`). No local compiler rebuild or independent StateInit calculation is claimed.
+- No Mainnet address or five Jetton Wallet address is declared verified in this action until the new derivation step completes in CI and an independent reviewer reproduces the result.
+- No contract logic, supply, allocations, wallet owner addresses, authorization flags, or on-chain state changed. No TON was spent and no transaction was created, signed, or broadcast.
+
+**Remaining gates:** complete the new CI derivation; independent reviewer independently rebuilds and reproduces Master StateInit and all five Jetton Wallet addresses; third-party security review; live Mainnet fee / exact-message emulation; Founder wallet-control proof and recipient confirmation; reviewed unsigned deployment payload.
+
+---
+
+# ACTION #83 — Add Sandbox coverage for burn and ordinary transfer bounce (2026-11-24)
+
+**Status:** Implemented on an isolated review branch; exact-commit GitHub Actions build-and-test passed. Not merged to main. Mainnet remains HOLD / NO-GO.
+
+- Branch: `audit/action-83-burn-transfer-bounce-tests`.
+- Test commit: `040edf8aac520d677c2bd40a2fb2c7de92b330a8`.
+- Jetton workflow run #512: [GitHub Actions](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45413055194) — `build-and-test` SUCCESS; Pages deploy skipped as expected for this review branch.
+- Added three Sandbox cases in `contracts/jetton/tests/jetton-sandbox.spec.ts`:
+  1. Burn before Stage 5 is rejected by Master and the bounced burn notification restores the Founder Jetton Wallet balance.
+  2. Burn after Stage 5 succeeds, reduces the Founder Jetton Wallet balance and Master total supply equally, and leaves minting disabled.
+  3. A normal TEP-74 transfer to a deliberately rejecting recipient wallet bounces and restores the sender wallet balance.
+- Exact-head CI passed: 3 Jest suites / 20 tests; Tact compilation, lockfile verification, dependency audit gate, metadata-cell generation, release-policy guards, and read-only issuer page validation all passed.
+- Release artifact: ID `14929451710`, SHA-256 `136208023c675569875c6331bb9f79d455da5c5485dd865fa0486e89df15a539`.
+- Full-source artifact: ID `14928133959`, SHA-256 `296576f17ac67b3c005f9f5992663f89ad9f13819778964022ed1a938bdb2899`.
+- Downloaded release artifact SHA-256 was locally recomputed and matched GitHub's recorded digest exactly.
+- No contract source, supply, allocation, wallet address, deployment authorization flag, or Mainnet transaction behavior was changed. No wallet was connected; no TON was spent; no deployment, mint, or transfer occurred.
+
+**Still blocking Mainnet:** independent clean-room rebuild and StateInit / five wallet-address reproduction; independent third-party security review; live Mainnet config/fee and exact-message emulation; Founder wallet-control proof and recipient confirmation; exact reviewed unsigned deployment payload. The Mainnet planner remains disabled and public mining remains disabled.
+
+---
+
 # ACTION #82 — CI #511 exact-head verification and expanded Mainnet gate review (2026-11-24)
 
 ## Verified evidence

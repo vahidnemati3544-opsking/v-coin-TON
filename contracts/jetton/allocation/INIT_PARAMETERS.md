@@ -1,9 +1,42 @@
-# SUPERSEDED BY OWNER INSTRUCTION 2026-11-24
+# SUPERSEDED HISTORICAL PARAMETERS — DO NOT USE FOR CURRENT MAINNET
 
-The prior constructor/issuance mapping below describes the former direct five-wallet issuance model. It is **not valid for Mainnet deployment or signing** under the current Founder-first instruction. The full 2.1B VCOIN supply must first be received by Founder Mainnet wallet `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT` in two separately authorized transfers; the Founder then signs the four other allocation distributions. Former Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is Testnet-only. Contract constructor, allocation manifest, deployment configuration and tests must be redesigned together. Do not use the old five-wallet mint sequence until this redesign is complete.
+**Current design correction (2026-11-24):** The old direct five-wallet minting model and the older two-transfer Founder receipt wording below are both superseded. The current contract is the Founder-first five-stage design implemented in `src/vcoin.tact` and `src/jetton.tact`.
 
-See `docs/OWNER_INSTRUCTION_2026-11-24.md` and `docs/WALLET_ALLOCATION_REGISTER.md`.
+## Current exact initialization parameters
 
+- Constructor: `VCoinMaster(owner: Address, content: Cell)`.
+- `owner`: Founder Mainnet wallet `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT`; this is also the sole GAS & OPERATIONS wallet.
+- `content`: immutable TEP-64 metadata content cell whose cell hash and BOC SHA-256 must match the approved deployment template.
+- Fixed supply: 2,100,000,000 VCOIN; 6 decimals; maximum base units `2100000000000000`; no additional minting after Stage 5 acknowledgement.
+- No additional constructor allocation addresses exist. All five allocation owner addresses are stored in the approved off-chain manifest and receive Jetton Wallets deterministically through the deployed Master `get_wallet_address(owner)` getter.
+
+## Current Founder receipt sequence
+
+| Stage | Exact VCOIN | Exact base units | Recipient |
+|---:|---:|---:|---|
+| 1 | 420,000,000 | 420000000000000 | Founder |
+| 2 | 1,050,000,000 | 1050000000000000 | Founder |
+| 3 | 210,000,000 | 210000000000000 | Founder |
+| 4 | 210,000,000 | 210000000000000 | Founder |
+| 5 | 210,000,000 | 210000000000000 | Founder |
+
+Every stage is a separate Founder-authorized request. The next stage is blocked until the deterministic Founder Jetton Wallet acknowledges the previous stage. A natural bounce rolls back only the pending stage. Stage 5 acknowledgement permanently disables minting.
+
+## Post-receipt allocation sequence
+
+Only after all five receipt stages are independently confirmed on Mainnet does the Founder sign four separate TEP-74 transfers from the Founder Jetton Wallet:
+- Mining Reserve: 1,050,000,000 VCOIN.
+- Treasury: 210,000,000 VCOIN.
+- Liquidity / Market: 210,000,000 VCOIN.
+- Ecosystem / Marketing: 210,000,000 VCOIN.
+
+The Founder retains 420,000,000 VCOIN. No allocation transfer is authorized by this document.
+
+## Release safety
+
+This file is historical reference only beyond this current-design correction. The contract source, current deployment template, allocation manifest and current deployment runbook are authoritative. Never use any legacy direct-mint preview, seven-argument constructor, old two-stage receipt, or historical Testnet instruction for Mainnet. Current Mainnet status remains HOLD / NO-GO until the exact-build release gates and separate Founder approval pass. Never request or store a seed phrase, private key, PIN, or recovery phrase.
+
+---
 ---
 
 Current policy correction (2026-11-23): Any older requirement below for an independent qualified review/audit is superseded and is not an active project task or release gate. The approved execution policy is Mainnet-only, with local Sandbox tests permitted and no Testnet deployment/transactions authorized. Founder is also the sole GAS & OPERATIONS wallet; no separate fee wallet exists. This parameter document is not authorization to deploy or issue.

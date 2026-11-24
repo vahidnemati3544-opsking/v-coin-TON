@@ -1,3 +1,35 @@
+# Action #89 — Confirmed Mainnet address and Master correction (2026-11-24)
+
+This addendum supersedes historical statements below that describe the previously reported `EQBn4hW8...` Master as merely an unverified predicted address, and any claim that the `UQAdW09...` account is Testnet-only.
+
+- TON Center Mainnet read-only account query confirms `EQBn4hW8bKhFTSz9riY5q3Pr3SfJmv2VYKZQl_NWMbK--5fP` is **active**, indexed as a Jetton Master, with 2,100,000,000 VCOIN total supply and `mintable=false`.
+- The active Master code hash is `5087c882019324e9d8e309c78f42e3bcee9433a54d7d0367d49320a7bbabcc36`, matching the earlier Action #54 preview code hash, but not the current Founder-first exact-build code hash `e08c11238070eeaffbbe783077eb49f61ad770a71f2e3096f83956776ed28ed8`.
+- TON Center reports the Master admin as `EQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWuE3`. This normalizes to the same raw account as `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` (owner-supplied legacy address). **Correction:** `UQ...` is non-bounceable Mainnet; Testnet-only friendly prefixes are `kQ...` and `0Q...`. The prior Testnet-only label was wrong. This does not establish who controls the address.
+- Current Founder GAS wallet `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT` is active with 5.487534819 TON at the observed block.
+- The current exact-build candidate `EQC_gSnjZTc2Kufgl5ltFF-b2zr5_j4diozxC-IvEp9zzVaL` is uninitialized with zero TON; do not deploy it as a second Master.
+- The active Master does not expose the current `get_receipt_status` getter (read-only call returns exit code 11 / method ID 85110). This alone does not disprove that tokens were received in five transactions; inspect the Master-derived Jetton Wallets, wallet balances and successful incoming transfer messages.
+- Action #89 extends the CI report to derive both the current Founder and Master-admin Jetton Wallet addresses, read both wallet balances, and inspect up to 100 recent Founder Jetton Wallet transactions for the five exact stage transfer amounts/query IDs. The final report is required before any claim that the five receipts were completed.
+
+**Current decision:** Mainnet is live and an active VCOIN Jetton Master exists, but its admin and code do not match the current Founder-first build. Do not deploy another Master or send allocation transfers until Founder control of the admin account, current Founder Jetton balance, and the five receipt transactions are independently verified.
+
+
+# Action #90 — Existing 2.1B supply and five-wallet distribution verified (2026-11-24)
+
+TON Center read-only calls derived all five registered Jetton Wallets from the active Master and read their on-chain balances:
+- Current Founder owner address: Jetton Wallet uninitialized, **0 VCOIN**.
+- Treasury: **210,000,000 VCOIN**.
+- Liquidity / Market: **210,000,000 VCOIN**.
+- Ecosystem / Marketing: **210,000,000 VCOIN**.
+- Mining Reserve: **1,050,000,000 VCOIN**.
+- Legacy Master-admin / former Founder wallet: **420,000,000 VCOIN**.
+
+The four non-Founder registered balances total 1.68B; adding the legacy Founder/admin balance gives exactly 2.1B, matching the active Master supply. This is the older direct five-wallet allocation, not the new five-stage receipt to the current Founder wallet. The old Master has no `get_receipt_status` getter and no supported `change_admin` path. Do not deploy a second Master or consolidate existing balances without a separate Founder-approved migration plan and control proof for every source wallet.
+
+Exact-head workflow #45436098986 on commit `2369d75aba103c1efcdbf5ca9cf6e9f76b5d12f0` passed build-and-test and fresh-runner hash-reproduction. The release, full-source and clean-room artifact digests are recorded in `contracts/jetton/VERIFICATION_STATUS.md` Action #90.
+
+
+---
+
 Current policy correction (2026-11-23): This historical address-reconciliation report is superseded wherever it lists an independent qualified smart-contract/TEP audit as an active task or release gate. That workstream is excluded by the current project owner instruction. Mainnet-only execution applies; no Testnet deployment or transaction is authorized. Any address predictions or reconciliations in this report are not evidence of deployment or token issuance.
 
 # V COIN–TON Exact-Head Artifact and Master Address Reconciliation — Action #54

@@ -3,6 +3,8 @@
 **Date:** 2026-11-24  
 **Status:** Merged to main; exact-head Jetton, Backend, and Mining/PostgreSQL CI passed. Mainnet remains HOLD / NO-GO.
 
+**Live Mainnet correction — Action #90 (2026-11-24):** The active older Master has 2.1B supply and `mintable=false`, but its allocation pattern is not the current Founder-first five-stage receipt. The current Founder Jetton Wallet is uninitialized with zero balance; Treasury, Liquidity/Market and Ecosystem each hold 210M, Mining holds 1.05B, and the legacy Master-admin wallet holds 420M. The full supply is already distributed across the old Founder plus four allocation wallets. The old admin address was previously mislabeled Testnet; it is a Mainnet non-bounceable address. Do not treat the five new receipt stages as complete or deploy a second Master. See `contracts/jetton/VERIFICATION_STATUS.md` Actions #89–90.
+
 ## Controlling Founder instruction
 
 The full fixed supply of **2,100,000,000 VCOIN** (6 decimals; 2,100,000,000,000,000 base units) is initially received only by the registered Founder Mainnet wallet:
@@ -36,13 +38,13 @@ The Founder personally signs four ordinary TEP-74 transfers after all five recei
 - Founder Jetton wallet: stores the last receipt acknowledgement and permits owner-triggered resend; duplicate acknowledgements cannot advance twice.
 - Sandbox tests: all five stages, exact supply, out-of-order/wrong amount rejection, acknowledgement retry, Stage 1/2 natural bounce rollback, and four post-receipt distributions.
 - PostgreSQL reconciliation: records five exact finalized receipt events in order; prevents any distribution before all five are confirmed; enforces four exact destinations and amounts.
-- Testnet tool: five unsigned Testnet-only request previews; no signing or broadcast. Mainnet planner remains disabled pending independent verification and separate Founder release authorization.
-- CI: exact-head compilation, Sandbox, backend, migration, and Testnet preview gates must pass before merge.
+- Historical Testnet preview generator is quarantined and is not part of current operations. Local TON Sandbox is the only permitted simulation environment; Mainnet planning remains disabled pending live-state reconciliation, wallet-control proof, exact fee review and separate Founder authorization.
+- CI: exact-head compilation, dependency audit, Sandbox, backend, migration and read-only Mainnet state/receipt reconciliation must pass before release review. No Testnet deployment or transaction is authorized.
 
 ## Safety and authorization
 
 - Mainnet deployment, gas funding, receipt, and subsequent transfers are not authorized by this engineering instruction.
 - deployment_authorized=false and mainnet_authorized=false remain enforced.
 - No private key, recovery phrase, PIN, or seed phrase is requested or stored.
-- Historical Testnet wallet UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy is Testnet-only and must never be used on Mainnet.
+- **Action #89 address correction (2026-11-24):** `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is a non-bounceable Mainnet address, not Testnet. TON Center reports its corresponding `EQ...` form as the admin of the older active VCOIN Master. It is distinct from the current Founder receiving wallet; control and role remain unverified. Do not use it for current operations without explicit Founder confirmation.
 - PR #21's two-stage 1B + 1.1B plan is superseded. It must not be merged or used as a release plan.

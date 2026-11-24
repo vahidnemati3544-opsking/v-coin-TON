@@ -6,7 +6,9 @@
   "scripts": {
     "build": "tact --config ./tact.config.json",
     "test": "jest --runInBand",
-    "verify": "npm run build && npm test"
+    "verify": "npm run build && npm test",
+    "derive:addresses": "tsx scripts/derive-mainnet-addresses.ts",
+    "reconcile:mainnet-state": "tsx scripts/reconcile-mainnet-state.ts"
   },
   "devDependencies": {
     "@tact-lang/compiler": "1.6.13",

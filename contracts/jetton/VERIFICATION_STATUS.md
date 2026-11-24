@@ -734,3 +734,20 @@ The controlling initial receipt amounts are the Founder’s five-stage instructi
 - Corrective workflow commit: `ff2547131288bdd7c710a172ff218e2957f8bc2d`.
 
 **Next:** Verify the new exact-head CI run. If it passes, review all remaining release blockers independently; CI success alone does not establish Mainnet readiness or live mining.
+
+
+## Action #75 — Hard-disable archived public Testnet rehearsal tooling (2026-11-24)
+
+**Status:** Testnet rehearsal generator and configuration quarantined on main. Exact-head CI verification is pending. Mainnet remains HOLD / NO-GO.
+
+- Replaced `contracts/jetton/scripts/prepare-testnet-rehearsal.ts` with an immediate fail-closed guard. It throws before imports, wallet parsing, file reads, or artifact generation.
+- Replaced `contracts/jetton/testnet.rehearsal.config.json` with an archived, non-operational record: `network=disabled`, explicit public Testnet deployment/transaction authorization false, and the historical Testnet wallet labeled reference-only.
+- This closes a residual operational hazard: earlier documentation prohibited Testnet execution, but the old generator and active-looking configuration were still executable and could produce TON Connect request payloads.
+- The Mainnet deployment template, five-stage supply plan, contract source, wallet allocations, and Mainnet authorization flags were not changed.
+- No wallet was connected, no payload was created, and no transaction was signed or broadcast.
+- Exact-head Jetton CI run #500 passed both build-and-test and Pages deployment before this correction: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45399776945
+- A new CI run is required for this action's commit.
+
+**Remaining blockers:** Mainnet Master deployment and independent on-chain verification; Founder wallet-control proof; independent clean-room StateInit and Jetton-wallet derivation; production TON Connect wallet ownership proof; trusted finalized Mainnet balance snapshots; payout adapter and reconciliation. Public mining remains HTTP 503.
+
+**No authorization is implied by this correction or commit.**

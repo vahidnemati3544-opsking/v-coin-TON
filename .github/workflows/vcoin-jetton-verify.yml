@@ -108,6 +108,8 @@ jobs:
           node <<'NODE'
           const fs = require('node:fs');
           const html = fs.readFileSync('../../issuer/index.html', 'utf8');
+          const preview = JSON.parse(fs.readFileSync('../../issuer/deployment-preview.json', 'utf8'));
+          if (preview.status !== 'HOLD / NO-GO' || preview.transaction_payloads !== null || preview.legacy_direct_mint_preview_suppressed !== true) throw new Error('Public deployment preview must be sanitized and read-only');
           if (!html.includes('MAINNET RELEASE — HOLD / NO-GO')) throw new Error('Mainnet hold banner is required');
           if (!html.includes('Stage 2: a separate, fresh Founder signature')) throw new Error('Stage 2 fresh-signature guard is missing');
           if (!html.includes('2,100,000,000 VCOIN')) throw new Error('Fixed supply display is missing');

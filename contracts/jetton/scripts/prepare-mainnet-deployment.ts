@@ -17,7 +17,7 @@ const gasWallet = Address.parse(config.operational_fee_wallet.owner_provided_add
 if (!gasWallet.equals(founder)) throw new Error('GAS & OPERATIONS signer must be the Founder wallet');
 
 const MAX_SUPPLY = BigInt(config.initial_supply_base_units);
-const stageOneTokens = process.env.VCOIN_STAGE1_TOKENS;
+const stageOneTokens = process.env.VCOIN_STAGE1_TOKENS?.trim() || undefined;
 let receiptTransactions: Record<string, unknown> | null = null;
 if (stageOneTokens !== undefined && stageOneTokens.trim() !== '') {
   const scale = 10n ** BigInt(config.decimals);

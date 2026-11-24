@@ -50,12 +50,14 @@ jobs:
         run: |
           node <<'NODE'
           const fs = require('node:fs');
-          const workflow = fs.readFileSync('../../.github/workflows/vcoin-jetton-verify.yml', 'utf8');
-          const forbidden = ['prepare-testnet-rehearsal.ts', 'testnet-rehearsal-preview.json', 'TON Testnet wallet request'];
-          for (const token of forbidden) {
-            if (workflow.includes(token)) throw new Error('Public Testnet rehearsal must remain disabled: ' + token);
-          }
-          console.log('CI permits local TON Sandbox simulation only; no Testnet preview or transaction is generated.');
+          const config = JSON.parse(fs.readFileSync('deployment.config.template.json', 'utf8'));
+          const policy = config.network_policy || {};
+          if (policy.target_network !== 'mainnet' || policy.local_sandbox_only_for_simulation !== true) throw new Error('Mainnet production / local Sandbox-only policy is required.');
+          if (policy.testnet_deployment_authorized !== false || policy.testnet_transactions_authorized !== false) throw new Error('Public Testnet operations must remain unauthorized.');
+          if (config.deployment_authorized !== false || config.mainnet_authorized !== false) throw new Error('Mainnet deployment and transaction authorization must remain disabled.');
+          const generated = fs.readdirSync('build');
+          if (generated.some((name) => /testnet-rehearsal|\.testnet\./i.test(name))) throw new Error('Public Testnet rehearsal artifacts must not be generated.');
+          console.log('Mainnet target and local TON Sandbox-only simulation policy validated; no public Testnet artifacts generated.');
           NODE
       - name: Block obsolete direct-mint Mainnet transaction preview
         run: |

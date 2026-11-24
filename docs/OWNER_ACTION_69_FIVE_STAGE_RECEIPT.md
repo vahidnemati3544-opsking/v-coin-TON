@@ -3,6 +3,8 @@
 **Date:** 2026-11-24  
 **Status:** Merged to main; exact-head Jetton, Backend, and Mining/PostgreSQL CI passed. Mainnet remains HOLD / NO-GO.
 
+**Live Mainnet correction — Action #90 (2026-11-24):** The active older Master has 2.1B supply and `mintable=false`, but its allocation pattern is not the current Founder-first five-stage receipt. The current Founder Jetton Wallet is uninitialized with zero balance; Treasury, Liquidity/Market and Ecosystem each hold 210M, Mining holds 1.05B, and the legacy Master-admin wallet holds 420M. The full supply is already distributed across the old Founder plus four allocation wallets. The old admin address was previously mislabeled Testnet; it is a Mainnet non-bounceable address. Do not treat the five new receipt stages as complete or deploy a second Master. See `contracts/jetton/VERIFICATION_STATUS.md` Actions #89–90.
+
 ## Controlling Founder instruction
 
 The full fixed supply of **2,100,000,000 VCOIN** (6 decimals; 2,100,000,000,000,000 base units) is initially received only by the registered Founder Mainnet wallet:

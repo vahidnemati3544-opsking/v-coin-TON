@@ -46,6 +46,8 @@ jobs:
         run: npm run build
       - name: Build immutable TEP-64 metadata content cell
         run: node scripts/build-metadata-cell.cjs "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/e17bcb9d82ea182bff3358b9fac6b5fa25c166ee/contracts/jetton/metadata.json"
+      - name: Derive exact Master StateInit and five Jetton Wallet hashes
+        run: npx tsx scripts/derive-release-hashes.ts
       - name: Enforce local Sandbox-only simulation policy
         run: |
           node <<'NODE'
@@ -254,9 +256,50 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
 
+  hash-reproduction:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: contracts/jetton
+    steps:
+      - name: Checkout exact source commit
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install exact locked toolchain in a fresh runner
+        run: npm ci --no-audit --no-fund
+      - name: Download first-run compiled artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: vcoin-jetton-release-${{ github.sha }}
+          path: /tmp/vcoin-first-build
+      - name: Rebuild Tact contracts in clean runner
+        run: npm run build
+      - name: Rebuild pinned TEP-64 content cell
+        run: node scripts/build-metadata-cell.cjs "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/e17bcb9d82ea182bff3358b9fac6b5fa25c166ee/contracts/jetton/metadata.json"
+      - name: Independently derive Master and five Jetton Wallet hashes
+        run: npx tsx scripts/derive-release-hashes.ts
+      - name: Compare clean-room outputs with first runner
+        run: |
+          set -euo pipefail
+          diff -u /tmp/vcoin-first-build/build/release-hashes.json build/release-hashes.json
+          cmp /tmp/vcoin-first-build/build/VCoinMaster_VCoinMaster.code.boc build/VCoinMaster_VCoinMaster.code.boc
+          cmp /tmp/vcoin-first-build/build/VCoinMaster_VCoinJettonWallet.code.boc build/VCoinMaster_VCoinJettonWallet.code.boc
+          cmp /tmp/vcoin-first-build/build/VCoinMaster.content.boc build/VCoinMaster.content.boc
+          echo "Clean-room Tact build, metadata cell, Master StateInit, and five Jetton Wallet derivations match byte-for-byte."
+      - name: Preserve clean-room hash report
+        uses: actions/upload-artifact@v4
+        with:
+          name: vcoin-clean-room-hashes-${{ github.sha }}
+          path: contracts/jetton/build/release-hashes.json
+          if-no-files-found: error
+          retention-days: 30
   deploy-issuer:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: build-and-test
+    needs: [build-and-test, hash-reproduction]
     runs-on: ubuntu-latest
     permissions:
       pages: write

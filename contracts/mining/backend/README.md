@@ -120,3 +120,10 @@ Migration `database/migrations/010-founder-first-two-stage-reconciliation.sql` a
 - This migration creates accounting controls; it does not itself connect an indexer, verify chain finality, sign a transaction, or broadcast to TON. The backend ingestion service must validate the actual Mainnet transaction and call the database functions only after finality checks.
 
 Do not run the migration against production until the latest backend integration checks and schema review pass. Mainnet remains HOLD / NO-GO.
+
+
+### Verified-event adapter
+
+`src/services/vcoin-chain-reconciliation.js` provides a strict backend adapter for finalized Mainnet receipt and allocation events. It rejects Testnet, non-finalized events, an unconfigured or mismatched Jetton Master, missing/mismatched deterministic Jetton wallet addresses, wrong Founder source/recipient, invalid transaction hashes, and any role amount or destination that differs from the approved register.
+
+The adapter requires the caller to inject the exact deployed Master address and all five derived Jetton Wallet addresses. Those values must come from the reviewed exact-head deployment artifact and post-deployment on-chain getters; they are intentionally not guessed or hard-coded before deployment. This adapter is not an indexer or a source of finality by itself. A trusted TON indexer/provider must supply the verified event and proof of finality before the adapter is called.

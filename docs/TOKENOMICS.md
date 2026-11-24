@@ -54,7 +54,7 @@ The five official allocation destination addresses are recorded in `docs/WALLET_
 
 The founder allocation is fixed at 420,000,000 VCOIN, representing 20% of the total initial supply.
 
-The Founder retains 420,000,000 VCOIN (20%) as the Founder allocation, without vesting or lock. Separately, the entire fixed initial supply of 2,100,000,000 VCOIN is first received by the designated Founder TON Mainnet wallet through five separate, sequential Founder-authorized receipt stages. The installment amounts and timing must be entered in a transaction plan; installment 2 requires a fresh explicit Founder announcement/authorization. After receipt, the Founder personally signs distributions of the four other allocations to their registered destination wallets: Mining 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN. These transfers do not create additional tokens.
+The Founder retains 420,000,000 VCOIN (20%) as the Founder allocation, without vesting or lock. Separately, the entire fixed initial supply of 2,100,000,000 VCOIN is first received by the designated Founder TON Mainnet wallet through five separate, sequential Founder-authorized receipt stages. The five exact stage amounts are fixed in the controlling owner instruction; every subsequent stage requires a fresh explicit Founder announcement and signature after the preceding credit is independently confirmed. After receipt, the Founder personally signs distributions of the four other allocations to their registered destination wallets: Mining 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN. These transfers do not create additional tokens.
 
 5. User mining rewards
 

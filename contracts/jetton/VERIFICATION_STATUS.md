@@ -1,3 +1,46 @@
+# CURRENT CONTROLLING RELEASE STATUS — 2026-11-24 (Action #67)
+
+> This section supersedes conflicting older policy/status summaries below. Historical run records remain historical and must not be treated as verification of the current Founder-first design.
+
+## Approved custody and allocation policy
+
+- Fixed supply: **2,100,000,000 VCOIN**, six decimals, no additional minting.
+- The full supply is to reach Founder Mainnet wallet `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT` in two separate incoming transfers. Stage amounts are intentionally unspecified until the Founder approves the transaction plan; Stage 2 requires a fresh explicit Founder authorization.
+- After receipt, the Founder retains 420,000,000 VCOIN and signs four capped distributions: Mining 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN.
+- The Founder Mainnet wallet is also the sole GAS & OPERATIONS wallet. **There is no separate GAS wallet and no sixth allocation wallet.**
+- Former address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is Testnet-only historical data and must never be used on Mainnet.
+- No Testnet deployment or transaction is authorized. Local TON Sandbox is permitted. No Mainnet transaction is authorized by this status document.
+
+## Current implementation and CI evidence
+
+- Latest reviewed code-bearing commit: `5525a85f00b2b9b33c86e91192ad3403d09467e0` — [commit](https://github.com/vahidnemati3544-opsking/v-coin-TON/commit/5525a85f00b2b9b33c86e91192ad3403d09467e0).
+- Action #67 disabled the obsolete direct-five-wallet mint preview generator, removed its invocation from CI, and added a fail-closed artifact/planner guard. The public Pages page is read-only HOLD / NO-GO.
+- GitHub combined-status lookup for the reviewed code commit returned no check statuses, and the available workflow-run lookup did not expose a push-triggered run. **Exact-head CI for Action #67 is not verified.**
+- The last fully evidenced successful workflow is [run #320](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45127119730) on older commit `53039de8263b6e5b76ff2c0f3afb636e96c215d3`. Both build-and-test and Pages deployment/endpoint verification succeeded there. It predates the 2026-11-24 owner instruction and does not verify the current contract behavior or Action #67 guards.
+- `contracts/jetton/package-lock.json` exists, uses lockfileVersion 3, and is committed. The last recorded clean `npm ci`, Tact build, Sandbox and npm audit results belong to run #320, not the current code head.
+- Last recorded Sandbox result: 3 suites / 21 tests passed. Those tests cover the superseded direct-five-wallet mint design and the Founder-only TON withdrawal guard; they do **not** test the current two-stage Founder-first receipt and four capped distributions.
+- Last recorded npm audit in run #320: zero advisories. Current-head audit result is unavailable.
+- TEP-64 `metadata.json` exists and is pinned to commit `e17bcb9d82ea182bff3358b9fac6b5fa25c166ee`. Previously generated metadata content-cell hash: `abadcbc42c4e6309bea1d595dbfd1b834a07bfb171b2b1e2cb6d4b7e244330ca`. Current-head regeneration is not verified.
+- Earlier independent BOC parsing reproduced TON code-cell/StateInit and five Jetton Wallet hashes from a previous CI artifact. That was not a clean-room source rebuild and is not a current deployment package: the Founder address and custody policy have since changed. Rebuild and reproduce all hashes only after the contract redesign is complete.
+- The current `VCoinMaster` source still contains the old five-recipient fixed direct-mint logic. It does not implement two separately authorized Founder receipts followed by four capped Founder-signed distributions. The legacy preview generator is disabled so it cannot produce misleading payloads.
+- The current project policy does not define an external security-audit engagement as a project workstream or release condition. The earlier internal source review applies to the former contract design; a fresh internal engineering review of the redesigned contract remains necessary. No vulnerability-free or external-certification claim is made.
+- The five owner addresses are recorded in `docs/WALLET_ALLOCATION_REGISTER.md`; address presence is not proof of wallet control. Deployment template flags remain `deployment_authorized=false` and `mainnet_authorized=false`.
+- The read-only Pages source contains HOLD / NO-GO. Publication of the latest read-only page and workflow guard changes is not verified by an exact-head Actions run.
+
+## Remaining release gates
+
+1. Implement two separately authorized Founder receipts, with Stage 2 minting exactly the remaining supply after a fresh Founder transaction.
+2. Implement and test the four capped distributions to the registered destinations, including replay protection, bounce/retry, and full accounting reconciliation.
+3. Update the deployment/transaction planner only from the revised exact source; do not restore the legacy preview generator.
+4. Run exact-head clean `npm ci`, strict dependency audit, Tact compilation, and complete local TON Sandbox tests for the new flow.
+5. Perform a clean-room rebuild with the pinned toolchain and independently reproduce TON code-cell, metadata, Master StateInit, and all five Jetton Wallet StateInit hashes/addresses.
+6. Verify Founder wallet control, exact Mainnet destinations, live fees/reserve, and the published read-only status page.
+7. Present exact transaction details to the Founder and wait for explicit approval and wallet signatures. Never infer approval.
+
+**Safety boundary:** No Mainnet or Testnet transaction was sent by Action #67. No contract was deployed and no VCOIN was minted. Never request or store seed phrases, private keys, PINs, or recovery codes.
+
+---
+
 Current controlling status correction (2026-11-23): This file preserves historical verification snapshots. Any older checklist entry below that lists an independent external security audit, specialist audit, or independent TEP audit as a pending task or release gate is superseded and is not an active V COIN–TON work item. Current policy: 2,100,000,000 VCOIN (6 decimals); Founder 420,000,000 immediate/no vesting; exactly five allocation wallets, Founder also sole GAS & OPERATIONS wallet; Mainnet-only execution, local Sandbox permitted, no Testnet deployment or transaction authorized. Remaining engineering/owner gates must be judged only from current evidence, not historical checklists.
 
 > **Controlling baseline correction (2026-11-23):** This file contains historical verification snapshots. Current policy: 2,100,000,000 VCOIN total supply, six decimals, 420M Founder allocation credited immediately with no vesting/time lock/installments, 1.05B Mining reserve, 210M each Treasury/Liquidity/Ecosystem; Founder wallet is also the sole GAS & OPERATIONS wallet; Mainnet-only execution after local engineering verification; no Testnet deployment, transaction, or rehearsal; no independent external audit workstream, pending task, or release condition. Any older checklist entry below requiring external audit, Testnet rehearsal, Founder vesting, a separate fee wallet, or conflicting supply/price assumptions is historical and superseded. The current modelled USD reference baseline is 0.004, not a market quote or guarantee. Current technical release gates remain clean-room rebuild, engineering tests, wallet-control verification, live fee/reserve and exact-payload checks, and explicit Founder authorization. No Mainnet transaction is authorized by this document.

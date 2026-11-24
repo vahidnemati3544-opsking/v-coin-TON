@@ -1,4 +1,4 @@
-> **LATEST CONTROLLING UPDATE — Action #79 (2026-11-24):** Exact-current-main Jetton workflow #506 passed both build-and-test and read-only TonConnect issuer Pages deployment on commit `fb37ab2fd166a1c52616f1c66abc9af75b238923`. Mining #481 and Backend #390 also passed on the prior code head. Current Mainnet readiness remains HOLD / NO-GO: no verified Master deployment, no token issuance, and no transfer. See Actions #78–#79.
+> **LATEST CONTROLLING UPDATE — Action #80 (2026-11-24):** Current-main Jetton CI #507 passed on documentation commit `656f76b2d02e0bfeb0a420e74abe91ec3d08e125`; source build and read-only Pages publication also passed on source-identical contract head #506. Downloaded release and full-source ZIPs matched GitHub artifact SHA-256 digests exactly. A separate local clean-room `npm ci` attempt timed out before installing the Tact compiler, so independent rebuild remains pending. Mainnet remains HOLD / NO-GO; no deployment, mint, or transfer. See Action #80.
 
 # CURRENT CONTROLLING RELEASE STATUS — 2026-11-24 (Action #78)
 
@@ -851,3 +851,19 @@ The controlling initial receipt amounts are the Founder’s five-stage instructi
 **Next release gates:** independent clean-room rebuild and security review; Founder wallet-control proof and destination confirmation; live fee/reserve review; only then a reviewed unsigned Mainnet deployment package. The five receipt stages and four allocations remain separate Founder-approved operations.
 
 **No authorization is implied by CI success or Pages publication.**
+
+
+## Action #80 — Verify exact-head artifact integrity and attempt clean-room rebuild (2026-11-24)
+
+**Status:** Artifact integrity verified; independent clean-room rebuild not completed. Mainnet remains HOLD / NO-GO.
+
+- Downloaded the exact-head Jetton release artifact from workflow #506 (artifact ID `14924301153`). Local SHA-256: `9c9af07019f14280757c4e452ef985cc00e4722e0b5e68e777196c119f255c42`, exactly matching GitHub's published artifact digest.
+- Downloaded the exact-head full-source snapshot (artifact ID `14923132529`). Local SHA-256: `50ab0a5ffdab23a01c692180d04cb6d0ac3203f39479063cb3e2b5877928a7c3`, exactly matching GitHub's published artifact digest.
+- Inspected the release archive contents and confirmed it contains the generated Master and Jetton Wallet BOCs, generated metadata cell, compiler outputs, lockfile, and dependency audit report.
+- Extracted the full-source snapshot to an isolated local directory and attempted a fresh `npm ci` using the committed lockfile. The install exceeded the available execution window before the Tact compiler was installed; no independent local compilation or BOC comparison is claimed.
+- Exact-current-main Jetton workflow #507 passed on documentation commit `656f76b2d02e0bfeb0a420e74abe91ec3d08e125`: [GitHub Actions](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45402270604). Exact-head source build and Pages publication were separately confirmed by #506.
+- Artifact digest matching proves the downloaded files match GitHub's recorded artifacts; it does **not** establish a clean-room build, security audit, deployed contract, or wallet ownership.
+
+**Next:** Complete a reproducible independent build and compare Master/Wallet code and StateInit hashes; obtain independent security review; verify Founder and destination wallet control; complete live fee/reserve review. Only then prepare the unsigned Mainnet deployment package for Founder review.
+
+**No wallet was connected, no TON was spent, and no deployment, mint, or transfer was performed.**

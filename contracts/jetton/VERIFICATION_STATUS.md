@@ -1,4 +1,4 @@
-> **LATEST CONTROLLING UPDATE — Action #71 (2026-11-24):** Mainnet-only configuration correction committed. Obsolete Testnet rehearsal authorization removed from the deployment template; Testnet deployment/transactions, Mainnet deployment, issuance, and payouts are explicitly disabled. Master address and deployment transaction remain unset because no Mainnet deployment has been verified. This is preparation only; do not sign or broadcast. See the Action #71 section at the end.
+> **LATEST CONTROLLING UPDATE — Action #76 (2026-11-24):** Added an HTTP-level regression test proving that all four public mining endpoints remain fail-closed with HTTP 503 until verified Mainnet Jetton wallet balances and confirmed payouts are implemented. No mining activation or transaction is authorized. See Action #76 at the end.
 
 > **CONTROLLING UPDATE — Action #69 (2026-11-24):** The current approved receipt flow is five exact Founder-first stages: 420M, 1,050M, 210M, 210M, 210M VCOIN. Earlier two-stage notes below are historical and superseded. Use the Action #69 section at the end of this file for current implementation and release status. Mainnet remains HOLD / NO-GO.
 
@@ -751,3 +751,15 @@ The controlling initial receipt amounts are the Founder’s five-stage instructi
 **Remaining blockers:** Mainnet Master deployment and independent on-chain verification; Founder wallet-control proof; independent clean-room StateInit and Jetton-wallet derivation; production TON Connect wallet ownership proof; trusted finalized Mainnet balance snapshots; payout adapter and reconciliation. Public mining remains HTTP 503.
 
 **No authorization is implied by this correction or commit.**
+
+
+## Action #76 — Add HTTP-level regression coverage for the public mining fail-closed gate
+
+**Status:** Test committed; exact-head CI verification pending.
+
+- Added `contracts/mining/backend/test/mining-public-api-guard.test.js`.
+- The test starts the actual Express application on an ephemeral loopback port and checks all four public extraction routes: status, start, claim, and end.
+- Each route must return HTTP 503 with the exact `WALLET_BALANCE_MINING_NOT_IMPLEMENTED` response. This proves the public API does not accidentally expose the legacy internal-balance mining router.
+- The test performs no database connection, wallet connection, TON RPC call, signing, broadcast, token issuance, or payout.
+- This is regression coverage for the existing safety gate; it does not implement Mainnet mining or change any economic rule.
+- Next verification: exact-head GitHub Actions must run the backend test suite successfully. If the test fails, fix the test or guard before any mining integration work.

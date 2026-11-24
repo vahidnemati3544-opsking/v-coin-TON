@@ -198,7 +198,7 @@ async function main() {
     ? await runGetMethod(reportedFounderJettonWallet, 'get_wallet_data')
     : { status: 'unavailable' as const, error: 'Master get_wallet_address did not return a decodable address' };
   const reportedFounderWalletTransactionsResponse = reportedFounderJettonWallet
-    ? await readApi('getTransactions', { address: reportedFounderJettonWallet, limit: 50, archival: true })
+    ? await readApi('getTransactions', { address: reportedFounderJettonWallet, limit: 100, archival: true })
     : { status: 'unavailable' as const, error: 'Master get_wallet_address did not return a decodable address' };
   const founderReceiptMessages = reportedFounderWalletTransactionsResponse.status === 'ok' && Array.isArray(reportedFounderWalletTransactionsResponse.data)
     ? reportedFounderWalletTransactionsResponse.data
@@ -220,7 +220,7 @@ async function main() {
             aborted,
             compute_success: computeSuccess,
             action_success: actionSuccess,
-            credited_successfully: aborted === false && computeSuccess !== false && actionSuccess !== false,
+            credited_successfully: aborted === false && computeSuccess === true && actionSuccess === true,
           };
         })
         .filter((item: any) => item !== null)

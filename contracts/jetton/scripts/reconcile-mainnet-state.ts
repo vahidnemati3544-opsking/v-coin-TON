@@ -186,6 +186,8 @@ async function main() {
   const reportedTokenResponse = await readApi('getTokenData', { address: reportedMaster });
   const reportedOwnerResponse = await runGetMethod(reportedMaster, 'get_gas_operator_wallet');
   const reportedReceiptResponse = await runGetMethod(reportedMaster, 'get_receipt_status');
+  const reportedAllocationConfigResponse = await runGetMethod(reportedMaster, 'get_allocation_config');
+  const reportedAllocationStatusResponse = await runGetMethod(reportedMaster, 'get_allocation_status');
   const founderOwnerCell = beginCell().storeAddress(Address.parse(founder)).endCell().toBoc().toString('base64');
   const reportedFounderWalletResponse = await runGetMethod(reportedMaster, 'get_wallet_address', [['tvm.Slice', founderOwnerCell]]);
   const reportedFounderJettonWallet = decodeStackAddress(reportedFounderWalletResponse);
@@ -319,6 +321,18 @@ async function main() {
         error: reportedReceiptResponse.status === 'unavailable' ? reportedReceiptResponse.error : null,
         raw_stack: reportedReceiptResponse.status === 'ok' ? reportedReceiptResponse.data.stack : null,
         exit_code: reportedReceiptResponse.status === 'ok' ? reportedReceiptResponse.data.exit_code : null,
+      },
+      allocation_config_getter: {
+        status: reportedAllocationConfigResponse.status,
+        error: reportedAllocationConfigResponse.status === 'unavailable' ? reportedAllocationConfigResponse.error : null,
+        exit_code: reportedAllocationConfigResponse.status === 'ok' ? reportedAllocationConfigResponse.data.exit_code : null,
+        raw_stack: reportedAllocationConfigResponse.status === 'ok' ? reportedAllocationConfigResponse.data.stack : null,
+      },
+      allocation_status_getter: {
+        status: reportedAllocationStatusResponse.status,
+        error: reportedAllocationStatusResponse.status === 'unavailable' ? reportedAllocationStatusResponse.error : null,
+        exit_code: reportedAllocationStatusResponse.status === 'ok' ? reportedAllocationStatusResponse.data.exit_code : null,
+        raw_stack: reportedAllocationStatusResponse.status === 'ok' ? reportedAllocationStatusResponse.data.stack : null,
       },
       admin_jetton_wallet: {
         owner_address: reportedAdminAddress,

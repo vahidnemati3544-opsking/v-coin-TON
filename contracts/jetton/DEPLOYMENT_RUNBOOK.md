@@ -66,6 +66,7 @@ TON Testnet is not an authorized deployment, rehearsal, receipt, or transaction 
 - Four Mainnet allocation transfers: **not performed**.
 - Founder wallet-control proof and explicit confirmation of four destination owner addresses: **pending**.
 - Exact current Mainnet fee/message emulation and reviewed unsigned deployment payload: **pending**.
+- A prior Tonkeeper report (2026-11-22) identified `EQBn4hW8bKhFTSz9riY5q3Pr3SfJmv2VYKZQl_NWMbK--5fP` as a Jetton Master and showed an Active / 2.1B V COIN display; no transaction hash or independent on-chain confirmation was preserved. The current offline derivation produced a different candidate, `EQC_gSnjZTc2Kufgl5ltFF-b2zr5_j4diozxC-IvEp9zzVaL`. The template still has `master_address=null`. These facts conflict and must be reconciled against Mainnet code, storage, getters, metadata and transaction history before any deployment or issuance. Do not deploy a second Master or use either address for token transfers until verified.
 - The Founder reports that operational TON has been funded; the deposit amount and resulting balance have not been independently verified on-chain in this review.
 - Public mining and real-value payouts remain disabled pending production TON Connect proof, trusted finalized Mainnet balance snapshots, payout sender, and finalized reconciliation.
 - Mainnet readiness: **HOLD / NO-GO**. No deployment, reserve funding, receipt, allocation transfer, signing, or broadcast is authorized by this document.

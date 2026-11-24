@@ -1,3 +1,24 @@
+# ACTION #83 — Add Sandbox coverage for burn and ordinary transfer bounce (2026-11-24)
+
+**Status:** Implemented on an isolated review branch; exact-commit GitHub Actions build-and-test passed. Not merged to main. Mainnet remains HOLD / NO-GO.
+
+- Branch: `audit/action-83-burn-transfer-bounce-tests`.
+- Test commit: `040edf8aac520d677c2bd40a2fb2c7de92b330a8`.
+- Jetton workflow run #512: [GitHub Actions](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45413055194) — `build-and-test` SUCCESS; Pages deploy skipped as expected for this review branch.
+- Added three Sandbox cases in `contracts/jetton/tests/jetton-sandbox.spec.ts`:
+  1. Burn before Stage 5 is rejected by Master and the bounced burn notification restores the Founder Jetton Wallet balance.
+  2. Burn after Stage 5 succeeds, reduces the Founder Jetton Wallet balance and Master total supply equally, and leaves minting disabled.
+  3. A normal TEP-74 transfer to a deliberately rejecting recipient wallet bounces and restores the sender wallet balance.
+- Exact-head CI passed: 3 Jest suites / 20 tests; Tact compilation, lockfile verification, dependency audit gate, metadata-cell generation, release-policy guards, and read-only issuer page validation all passed.
+- Release artifact: ID `14929451710`, SHA-256 `136208023c675569875c6331bb9f79d455da5c5485dd865fa0486e89df15a539`.
+- Full-source artifact: ID `14928133959`, SHA-256 `296576f17ac67b3c005f9f5992663f89ad9f13819778964022ed1a938bdb2899`.
+- Downloaded release artifact SHA-256 was locally recomputed and matched GitHub's recorded digest exactly.
+- No contract source, supply, allocation, wallet address, deployment authorization flag, or Mainnet transaction behavior was changed. No wallet was connected; no TON was spent; no deployment, mint, or transfer occurred.
+
+**Still blocking Mainnet:** independent clean-room rebuild and StateInit / five wallet-address reproduction; independent third-party security review; live Mainnet config/fee and exact-message emulation; Founder wallet-control proof and recipient confirmation; exact reviewed unsigned deployment payload. The Mainnet planner remains disabled and public mining remains disabled.
+
+---
+
 # ACTION #82 — CI #511 exact-head verification and expanded Mainnet gate review (2026-11-24)
 
 ## Verified evidence

@@ -211,6 +211,37 @@ async function main() {
   const reportedAdminJettonWalletInfoResponse = reportedAdminJettonWallet
     ? await readApi('getAddressInformation', { address: reportedAdminJettonWallet })
     : { status: 'unavailable' as const, error: 'Master get_wallet_address did not return a decodable admin wallet address' };
+  const allocationWallets = [];
+  for (const [role, ownerAddress] of Object.entries(config.allocation_wallets as Record<string, string>)) {
+    const ownerCell = beginCell().storeAddress(Address.parse(ownerAddress)).endCell().toBoc().toString('base64');
+    const addressResponse = await runGetMethod(reportedMaster, 'get_wallet_address', [['tvm.Slice', ownerCell]]);
+    const jettonWalletAddress = decodeStackAddress(addressResponse);
+    const walletDataResponse = jettonWalletAddress
+      ? await runGetMethod(jettonWalletAddress, 'get_wallet_data')
+      : { status: 'unavailable' as const, error: 'Master get_wallet_address did not return a decodable address' };
+    const walletAccountResponse = jettonWalletAddress
+      ? await readApi('getAddressInformation', { address: jettonWalletAddress })
+      : { status: 'unavailable' as const, error: 'Master get_wallet_address did not return a decodable address' };
+    const balanceBaseUnits = walletDataResponse.status === 'ok' && walletDataResponse.data.exit_code === 0
+      ? decodeStackNumber(firstStackEntry(walletDataResponse))
+      : null;
+    allocationWallets.push({
+      role,
+      owner_address: ownerAddress,
+      jetton_wallet_address: jettonWalletAddress,
+      address_getter_status: addressResponse.status,
+      address_getter_exit_code: addressResponse.status === 'ok' ? addressResponse.data.exit_code : null,
+      wallet_account: walletAccountResponse.status === 'ok'
+        ? summarizeAccount(jettonWalletAddress!, walletAccountResponse)
+        : { status: 'unavailable', error: walletAccountResponse.error },
+      wallet_data_getter_status: walletDataResponse.status,
+      wallet_data_getter_exit_code: walletDataResponse.status === 'ok' ? walletDataResponse.data.exit_code : null,
+      balance_base_units: balanceBaseUnits,
+      balance_tokens: balanceBaseUnits === null ? null : formatTokenUnits(balanceBaseUnits, Number(config.decimals)),
+    });
+  }
+  const knownAllocationBalanceBaseUnits = allocationWallets.reduce((sum: bigint, wallet: any) =>
+    sum + (wallet.balance_base_units === null ? 0n : BigInt(wallet.balance_base_units)), 0n);
   const reportedFounderWalletTransactionsResponse = reportedFounderJettonWallet
     ? await readApi('getTransactions', { address: reportedFounderJettonWallet, limit: 100, archival: true })
     : { status: 'unavailable' as const, error: 'Master get_wallet_address did not return a decodable address' };
@@ -310,6 +341,15 @@ async function main() {
             ? decodeStackNumber(firstStackEntry(reportedAdminWalletDataResponse))
             : null,
         },
+      },
+      registered_allocation_jetton_wallets: {
+        wallets: allocationWallets,
+        observed_total_balance_base_units: knownAllocationBalanceBaseUnits.toString(),
+        observed_total_balance_tokens: formatTokenUnits(knownAllocationBalanceBaseUnits.toString(), Number(config.decimals)),
+        expected_total_supply_base_units: config.initial_supply_base_units,
+        total_matches_master_supply: reportedTokenResponse.status === 'ok'
+          ? knownAllocationBalanceBaseUnits.toString() === String(reportedTokenResponse.data.total_supply)
+          : false,
       },
       founder_jetton_wallet: {
         address: reportedFounderJettonWallet,

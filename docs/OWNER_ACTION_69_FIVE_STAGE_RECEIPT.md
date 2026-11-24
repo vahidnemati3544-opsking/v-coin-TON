@@ -44,5 +44,5 @@ The Founder personally signs four ordinary TEP-74 transfers after all five recei
 - Mainnet deployment, gas funding, receipt, and subsequent transfers are not authorized by this engineering instruction.
 - deployment_authorized=false and mainnet_authorized=false remain enforced.
 - No private key, recovery phrase, PIN, or seed phrase is requested or stored.
-- Historical Testnet wallet UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy is Testnet-only and must never be used on Mainnet.
+- **Action #89 address correction (2026-11-24):** `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is a non-bounceable Mainnet address, not Testnet. TON Center reports its corresponding `EQ...` form as the admin of the older active VCOIN Master. It is distinct from the current Founder receiving wallet; control and role remain unverified. Do not use it for current operations without explicit Founder confirmation.
 - PR #21's two-stage 1B + 1.1B plan is superseded. It must not be merged or used as a release plan.

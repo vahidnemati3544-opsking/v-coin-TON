@@ -39,7 +39,7 @@ These are transfers of the already-issued fixed supply, not additional minting. 
 
 ## 3. Former Testnet address
 
-The former address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is historical Testnet-only data. It must never be used for Mainnet deployment, signing, wallet connection, balance reconciliation, or transaction payloads. No public Testnet deployment or transaction is authorized by this instruction.
+**Action #89 address correction (2026-11-24):** The former address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is not Testnet-only: `UQ...` is the non-bounceable Mainnet representation; Testnet-only prefixes are `kQ...` and `0Q...`. TON Center reports the corresponding `EQ...` representation of this same raw account as the admin of the older active VCOIN Master. This address is distinct from the current Founder receiving wallet. Its control is not yet proven; do not use it for current operations until the Founder confirms control and role. No public Testnet deployment or transaction is authorized.
 
 ## 4. Contract and configuration requirements
 

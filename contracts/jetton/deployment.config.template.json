@@ -47,7 +47,7 @@
   },
   "deployment_authorized": false,
   "mainnet_authorized": false,
-  "notes": "Owner-approved fixed supply is 2,100,000,000 VCOIN at 6 decimals. The full supply is first received by the Founder Mainnet wallet in two separate transfers; the Founder then signs distributions to the four other registered allocation wallets and retains 420,000,000 VCOIN. The former Founder address was Testnet-only. Existing contract logic must be adapted and tested for this flow before any Mainnet use. Derived Master and Jetton Wallet addresses must be regenerated from the reviewed exact-build StateInit and checked with the deployed Master getter. This template is unsigned; deployment_authorized and mainnet_authorized remain false. Never commit secrets.",
+  "notes": "Owner-approved fixed supply is 2,100,000,000 VCOIN at 6 decimals. The revised Founder-first contract candidate receives the full supply in two separate Founder-authorized stages at the Founder Mainnet Jetton wallet; Stage 2 is the exact remainder and requires a fresh Founder signature after Stage 1 wallet-credit acknowledgement. The Founder then signs four ordinary TEP-74 transfers and retains 420,000,000 VCOIN. The former Founder address was Testnet-only. This template remains unsigned; deployment_authorized and mainnet_authorized remain false. Exact-head build, Sandbox verification, backend reconciliation, address-control, fee/reserve and wallet derivation checks are mandatory before any Mainnet operation.",
   "allocation_wallet_verification": {
     "status": "founder_address_review_pending_before_mainnet_signature",
     "note": "The Founder Mainnet receiving address and four other owner-provided allocation destination addresses are recorded here/register. Derived Jetton Wallet addresses must be regenerated from the revised exact-build Master StateInit and confirmed with the deployed Master's get_wallet_address getter after deployment.",
@@ -81,7 +81,7 @@
     "price_type": "modelled_reference_not_market_price",
     "not_a_market_quote": true
   },
-  "preview_status": "SUPERSEDED legacy five-wallet direct-issuance preview; do not sign or deploy until contract and exact-head artifacts are revised for Founder-first two-stage receipt",
+  "preview_status": "Founder-first two-stage preview candidate; unsigned; latest exact-head CI and release checks pending",
   "initial_receipt": {
     "network": "mainnet",
     "founder_wallet": "UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT",
@@ -89,14 +89,31 @@
     "installments": [
       {
         "stage": 1,
-        "amount_tokens": null
+        "amount_tokens": "1000000000",
+        "amount_base_units": "1000000000000000",
+        "founder_authorization_required": true
       },
       {
         "stage": 2,
-        "amount_tokens": null
+        "amount_tokens": "1100000000",
+        "amount_base_units": "1100000000000000",
+        "founder_authorization_required": true
       }
     ],
     "second_stage_requires_fresh_founder_announcement": true,
-    "status": "pending_transaction_plan_and_contract_revision"
+    "status": "amounts_recorded_testnet_rehearsal_pending_mainnet_hold"
+  },
+  "testnet_rehearsal": {
+    "authorized_by_founder": true,
+    "authorization_date": "2026-11-24",
+    "network": "testnet",
+    "founder_testnet_wallet": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
+    "stage_1_tokens": "1000000000",
+    "stage_1_base_units": "1000000000000000",
+    "stage_2_tokens": "1100000000",
+    "stage_2_base_units": "1100000000000000",
+    "status": "pending_public_testnet_execution_and_founder_wallet_signature",
+    "no_mainnet_authority": true,
+    "no_seed_phrase_or_private_key_collection": true
   }
 }

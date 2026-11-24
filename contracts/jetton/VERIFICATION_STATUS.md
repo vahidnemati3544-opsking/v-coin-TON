@@ -1,6 +1,6 @@
 # ACTION #90 — Reconcile all five registered Mainnet Jetton Wallet balances (2026-11-24)
 
-**Status:** Read-only Mainnet wallet derivation and balance queries succeeded; exact-head build-and-test passed. Fresh-runner hash reproduction is running. No transaction was created, signed, or broadcast.
+**Status:** Read-only Mainnet wallet derivation and balance queries succeeded; exact-head build-and-test and fresh-runner hash reproduction both passed. No transaction was created, signed, or broadcast.
 
 ## Active Master distribution observed
 
@@ -16,6 +16,8 @@ Supply: **2,100,000,000 VCOIN**; `mintable=false`.
 | Mining Reserve | `EQAeVMNyrzMYA5dbHtGmTf37e7ikIbzUGSEoeqY5oIKA3kMa` | active | 1,050,000,000 |
 
 The five currently registered owner addresses therefore account for **1,680,000,000 VCOIN**; the current Founder wallet has zero. Separately, the active Master admin/legacy Founder wallet `EQCOzLnnSrR-mbM_AeiKU2wpMJ28cPoRncBuQHJ-6_q-Mn0T` holds **420,000,000 VCOIN**. Combined, the legacy Founder balance plus the four non-Founder registered allocation balances equal exactly **2,100,000,000 VCOIN**, matching Master total supply.
+
+- Exact-head CI run #45436098986 on commit `2369d75aba103c1efcdbf5ca9cf6e9f76b5d12f0`: `build-and-test` **SUCCESS** and fresh-runner `hash-reproduction` **SUCCESS**; `deploy-issuer` skipped as expected on the review branch. Release artifact ID `14941791938`, SHA-256 `7d63097ac3559906d727d0a5c16d0b22bdfe17c43f4d5e44ebed6a3e6310f588`; full-source artifact ID `14942240545`, SHA-256 `ef17a041e9433e5524ffb07a2ba10b364e67d95e0f3f462d77ee4b83a00917c1`; clean-room report artifact ID `14942086172`, SHA-256 `a8b765c79c67f672d4e48ab3bc2163d0ad42e4b5cb0505852820227f06c245d3`.
 
 ## Interpretation and decision
 

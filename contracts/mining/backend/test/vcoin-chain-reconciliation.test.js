@@ -10,6 +10,13 @@ const {
 
 const MASTER = 'EQ' + 'a'.repeat(46);
 const HASH = 'ab'.repeat(32);
+const JETTON_WALLETS = Object.freeze({
+  founder: 'EQfounderJettonWallet',
+  mining_reserve: 'EQminingJettonWallet',
+  treasury: 'EQtreasuryJettonWallet',
+  liquidity_market: 'EQliquidityJettonWallet',
+  ecosystem_marketing: 'EQecosystemJettonWallet'
+});
 
 function createHarness() {
   const calls = [];
@@ -21,7 +28,7 @@ function createHarness() {
   };
   return {
     calls,
-    service: createVcoinChainReconciliation({ pool, expectedMasterAddress: MASTER })
+    service: createVcoinChainReconciliation({ pool, expectedMasterAddress: MASTER, expectedJettonWallets: JETTON_WALLETS })
   };
 }
 
@@ -34,6 +41,7 @@ function receiptEvent(overrides = {}) {
     stage: 1,
     amountBaseUnits: '1000000000000000',
     recipientOwnerAddress: FOUNDER_MAINNET_WALLET,
+    recipientJettonWalletAddress: JETTON_WALLETS.founder,
     ...overrides
   };
 }
@@ -50,6 +58,7 @@ test('receipt ingestion requires finalized Mainnet event and exact Master/Founde
   await assert.rejects(service.recordReceiptStage(receiptEvent({ finality: 'pending' })), /NOT_FINALIZED/);
   await assert.rejects(service.recordReceiptStage(receiptEvent({ jettonMasterAddress: 'EQ' + 'b'.repeat(46) })), /MASTER_MISMATCH/);
   await assert.rejects(service.recordReceiptStage(receiptEvent({ recipientOwnerAddress: 'UQwrong' })), /RECIPIENT_MISMATCH/);
+  await assert.rejects(service.recordReceiptStage(receiptEvent({ recipientJettonWalletAddress: 'EQwrong' })), /JETTON_WALLET_MISMATCH/);
   await assert.rejects(service.recordReceiptStage(receiptEvent({ transactionHash: 'not-a-hash' })), /INVALID_TRANSACTION_HASH/);
   assert.equal(calls.length, 1);
 });
@@ -70,9 +79,11 @@ test('allocation ingestion accepts exact Founder-signed role transfers only', as
       jettonMasterAddress: MASTER,
       transactionHash: HASH,
       sourceOwnerAddress: FOUNDER_MAINNET_WALLET,
+      sourceJettonWalletAddress: JETTON_WALLETS.founder,
       allocationRole,
       amountBaseUnits: allocation.amount,
-      destinationOwnerAddress: allocation.destination
+      destinationOwnerAddress: allocation.destination,
+      destinationJettonWalletAddress: JETTON_WALLETS[allocationRole]
     });
     assert.equal(result, 'confirmed');
   }

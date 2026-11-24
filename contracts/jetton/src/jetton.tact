@@ -135,8 +135,8 @@ contract VCoinJettonWallet {
         if (ctx.sender == self.master && (msg.query_id == 1 || msg.query_id == 2)) {
             send(SendParameters{
                 to: self.master,
-                value: 0,
-                mode: SendRemainingValue + SendIgnoreErrors,
+                value: ton("0.01"),
+                mode: SendPayGasSeparately + SendIgnoreErrors,
                 bounce: false,
                 body: VCoinReceiptAcknowledgement{query_id: msg.query_id, amount: msg.amount}.toCell()
             });

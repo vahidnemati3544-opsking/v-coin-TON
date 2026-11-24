@@ -132,6 +132,15 @@ contract VCoinJettonWallet {
         }
         require(msg.amount > 0, "Transfer amount must be positive");
         self.balance = self.balance + msg.amount;
+        if (ctx.sender == self.master && (msg.query_id == 1 || msg.query_id == 2)) {
+            send(SendParameters{
+                to: self.master,
+                value: 0,
+                mode: SendRemainingValue + SendIgnoreErrors,
+                bounce: false,
+                body: VCoinReceiptAcknowledgement{query_id: msg.query_id, amount: msg.amount}.toCell()
+            });
+        }
         let remaining: Int = ctx.value - self.gasConsumption;
         if (msg.forward_ton_amount > 0) {
             require(remaining >= msg.forward_ton_amount + ctx.readForwardFee(), "Insufficient notification TON");

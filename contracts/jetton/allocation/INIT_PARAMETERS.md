@@ -1,3 +1,11 @@
+# SUPERSEDED BY OWNER INSTRUCTION 2026-11-24
+
+The prior constructor/issuance mapping below describes the former direct five-wallet issuance model. It is **not valid for Mainnet deployment or signing** under the current Founder-first instruction. The full 2.1B VCOIN supply must first be received by Founder Mainnet wallet `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT` in two separately authorized transfers; the Founder then signs the four other allocation distributions. Former Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is Testnet-only. Contract constructor, allocation manifest, deployment configuration and tests must be redesigned together. Do not use the old five-wallet mint sequence until this redesign is complete.
+
+See `docs/OWNER_INSTRUCTION_2026-11-24.md` and `docs/WALLET_ALLOCATION_REGISTER.md`.
+
+---
+
 Current policy correction (2026-11-23): Any older requirement below for an independent qualified review/audit is superseded and is not an active project task or release gate. The approved execution policy is Mainnet-only, with local Sandbox tests permitted and no Testnet deployment/transactions authorized. Founder is also the sole GAS & OPERATIONS wallet; no separate fee wallet exists. This parameter document is not authorization to deploy or issue.
 
 # VCOIN Jetton Master initialization parameters

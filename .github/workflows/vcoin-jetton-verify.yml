@@ -77,7 +77,7 @@ jobs:
           const workflow = fs.readFileSync('../../.github/workflows/vcoin-jetton-verify.yml', 'utf8');
           const legacyPlannerInvocation = 'npx tsx scripts/' + 'prepare-mainnet-deployment.ts';
           if (workflow.includes(legacyPlannerInvocation)) throw new Error('CI must not execute the legacy direct-mint transaction planner.');
-          console.log('Legacy direct-mint transaction preview generation is disabled pending Founder-first contract implementation.');
+          console.log('Legacy direct-mint preview generation remains disabled; the Founder-first Mainnet planner remains disabled pending live release gates and explicit approval.');
           NODE
       - name: Validate Founder-first allocation manifest and authorization hold
         run: |
@@ -127,7 +127,16 @@ jobs:
           }
           if (config.initial_receipt.fifth_stage_requires_fresh_founder_announcement !== true || manifest.initial_receipt.stage_5_requires_fresh_founder_announcement !== true) throw new Error('Stage 5 Founder authorization gate missing.');
           if (manifest.predicted_jetton_master_address !== null || manifest.predicted_master_state_init_hash !== null || manifest.preview_source_commit !== null) throw new Error('Superseded deployment predictions must remain cleared.');
-          console.log('Founder-first wallet register, allocation totals, shared Founder/GAS role, and Mainnet HOLD flags validated.');
+          const plan = JSON.parse(fs.readFileSync('allocation/allocation-plan.json', 'utf8'));
+          if (plan.initialReceipt.founderReceivingWallet !== founder || plan.initialReceipt.installments.length !== 5) throw new Error('Canonical allocation plan must define five Founder receipt stages.');
+          for (let i = 0; i < receiptStages.length; i++) {
+            const [tokens, baseUnits] = receiptStages[i];
+            const p = plan.initialReceipt.installments[i];
+            if (p.stage !== i + 1 || p.amountTokens !== tokens || p.amountBaseUnits !== baseUnits) throw new Error('Canonical allocation plan stage mismatch: ' + (i + 1));
+          }
+          if (plan.initialReceipt.publicTestnetExecutionAuthorized !== false || plan.initialReceipt.simulationEnvironment !== 'local_ton_sandbox_only' || plan.initialReceipt.testnetRehearsal !== undefined) throw new Error('Public Testnet execution must remain disabled in the canonical plan.');
+          if (plan.releaseConstraints.some((item) => /authorized a Testnet-only rehearsal/i.test(item))) throw new Error('Superseded Testnet authorization remains in the canonical plan.');
+          console.log('Founder-first five-stage wallet register, canonical receipt schedule, shared Founder/GAS role, and Mainnet/Testnet authorization holds validated.');
           NODE
       - name: Run Jest tests
         run: npm test
@@ -158,7 +167,7 @@ jobs:
               'Mainnet release remains blocked: the current VCoinMaster lacks required Founder-first receipt/acknowledgement behavior or matching Sandbox cases. Missing: ' + missing.join(', ')
             );
           }
-          console.log('Founder-first receipt, credit acknowledgements, exact-remainder Stage 2, bounce and distribution Sandbox markers are present.');
+          console.log('Founder-first receipt, credit acknowledgements, exact Stage 2 amount, bounce and distribution Sandbox markers are present.');
           NODE
       - name: Preserve complete V COIN–TON source snapshot
         if: success()

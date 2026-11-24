@@ -204,11 +204,15 @@ jobs:
             "fixed_supply_tokens": "2100000000",
             "decimals": 6,
             "initial_receipt": {
-              "model": "Founder-first two-stage receipt",
+              "model": "Founder-first five-stage receipt",
               "founder_mainnet_wallet": "UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT",
-              "stage_1_amount_tokens": null,
-              "stage_2_amount_tokens": null,
-              "stage_2_requires_fresh_founder_signature": true
+              "stages": [
+                {"stage":1,"amount_tokens":"420000000","requires_fresh_founder_signature":true},
+                {"stage":2,"amount_tokens":"1050000000","requires_fresh_founder_signature":true},
+                {"stage":3,"amount_tokens":"210000000","requires_fresh_founder_signature":true},
+                {"stage":4,"amount_tokens":"210000000","requires_fresh_founder_signature":true},
+                {"stage":5,"amount_tokens":"210000000","requires_fresh_founder_signature":true}
+              ]
             },
             "legacy_direct_mint_preview_suppressed": true,
             "transaction_payloads": null,
@@ -234,7 +238,7 @@ jobs:
           const preview = JSON.parse(fs.readFileSync('../../issuer/deployment-preview.json', 'utf8'));
           if (preview.status !== 'HOLD / NO-GO' || preview.transaction_payloads !== null || preview.legacy_direct_mint_preview_suppressed !== true) throw new Error('Public deployment preview must be sanitized and read-only');
           if (!html.includes('MAINNET RELEASE — HOLD / NO-GO')) throw new Error('Mainnet hold banner is required');
-          if (!html.includes('Stage 2: a separate, fresh Founder signature')) throw new Error('Stage 2 fresh-signature guard is missing');
+          if (!html.includes('Stage 2: 1,050,000,000 VCOIN') || !html.includes('Stage 5: 210,000,000 VCOIN')) throw new Error('Five-stage Founder receipt display is missing');
           if (!html.includes('2,100,000,000 VCOIN')) throw new Error('Fixed supply display is missing');
           if (html.includes('TON_CONNECT_UI') || html.includes('sendTransaction(')) throw new Error('Read-only status page must not create or send transactions');
           if (html.includes('issuance_transactions')) throw new Error('Legacy direct-mint issuance UI must be removed');

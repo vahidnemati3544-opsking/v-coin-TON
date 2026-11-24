@@ -48,7 +48,7 @@ function requireBaseUnits(value) {
   return value;
 }
 
-function createVcoinChainReconciliation({ pool, expectedMasterAddress, founderWallet = FOUNDER_MAINNET_WALLET }) {
+function createVcoinChainReconciliation({ pool, expectedMasterAddress, expectedJettonWallets, founderWallet = FOUNDER_MAINNET_WALLET }) {
   requirePool(pool);
   if (typeof founderWallet !== 'string' || !founderWallet.trim()) {
     throw new TypeError('A Founder Mainnet wallet is required');
@@ -58,6 +58,8 @@ function createVcoinChainReconciliation({ pool, expectedMasterAddress, founderWa
     requireFinalizedMainnetEvent(event, expectedMasterAddress);
     if (![1, 2].includes(event.stage)) throw new Error('VCOIN_INVALID_RECEIPT_STAGE');
     if (event.recipientOwnerAddress !== founderWallet) throw new Error('VCOIN_RECEIPT_RECIPIENT_MISMATCH');
+    if (!expectedJettonWallets?.founder) throw new Error('VCOIN_JETTON_WALLETS_NOT_CONFIGURED');
+    if (event.recipientJettonWalletAddress !== expectedJettonWallets.founder) throw new Error('VCOIN_RECEIPT_JETTON_WALLET_MISMATCH');
     const amount = requireBaseUnits(event.amountBaseUnits);
     const result = await pool.query(
       'SELECT record_vcoin_receipt_stage($1::smallint, $2::numeric, $3, $4, $5) AS status',
@@ -69,10 +71,19 @@ function createVcoinChainReconciliation({ pool, expectedMasterAddress, founderWa
   async function recordAllocationTransfer(event) {
     requireFinalizedMainnetEvent(event, expectedMasterAddress);
     if (event.sourceOwnerAddress !== founderWallet) throw new Error('VCOIN_ALLOCATION_SOURCE_MISMATCH');
+    if (!expectedJettonWallets?.founder || !expectedJettonWallets?.[event.allocationRole]) {
+      throw new Error('VCOIN_JETTON_WALLETS_NOT_CONFIGURED');
+    }
+    if (event.sourceJettonWalletAddress !== expectedJettonWallets.founder) {
+      throw new Error('VCOIN_ALLOCATION_SOURCE_JETTON_WALLET_MISMATCH');
+    }
     const allocation = ALLOCATION_ROLES[event.allocationRole];
     if (!allocation) throw new Error('VCOIN_INVALID_ALLOCATION_ROLE');
     const amount = requireBaseUnits(event.amountBaseUnits);
     if (amount !== allocation.amount) throw new Error('VCOIN_ALLOCATION_AMOUNT_MISMATCH');
+    if (event.destinationJettonWalletAddress !== expectedJettonWallets[event.allocationRole]) {
+      throw new Error('VCOIN_ALLOCATION_DESTINATION_JETTON_WALLET_MISMATCH');
+    }
     if (event.destinationOwnerAddress !== allocation.destination) {
       throw new Error('VCOIN_ALLOCATION_DESTINATION_MISMATCH');
     }

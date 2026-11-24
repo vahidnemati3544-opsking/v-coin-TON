@@ -179,6 +179,18 @@ describe('VCOIN five-stage Founder-first issuance', () => {
     expect(status.next_receipt_stage).toBe(1n);
     expect(status.receipt_pending).toBe(false);
     expect(status.stage_1_confirmed).toBe(false);
+
+    const restoredWallet = await VCoinJettonWallet.fromInit(owner.address, master.address);
+    if (!restoredWallet.init) throw new Error('Founder Jetton Wallet StateInit missing for retry');
+    await chain.setShardAccount(walletAddress, createShardAccount({
+      address: walletAddress, code: restoredWallet.init.code, data: restoredWallet.init.data,
+      balance: toNano('1'), workchain: 0,
+    }));
+    const retried = await issueStage(master, owner, 1);
+    expect(retried.transactions).toHaveTransaction({ from: owner.address, to: master.address, success: true });
+    expect((await master.getGetJettonData()).total_supply).toBe(STAGES[0]);
+    expect((await (await founderWallet(chain, master, owner)).getGetWalletData()).balance).toBe(STAGES[0]);
+    expect((await master.getGetReceiptStatus()).next_receipt_stage).toBe(2n);
   });
 
   test('a natural Stage 2 bounce preserves Stage 1 and makes only Stage 2 retryable', async () => {

@@ -1,17 +1,18 @@
 /**
- * DISABLED — superseded by docs/OWNER_INSTRUCTION_2026-11-24.md.
+ * DISABLED — Mainnet transaction planning is intentionally blocked.
  *
- * This legacy generator constructs direct five-wallet VCoinMint payloads.
- * The current approved custody flow requires two separately authorized
- * Founder-first receipts, followed by four Founder-signed Jetton transfers.
- * The current VCoinMaster contract has not yet been adapted to that flow.
+ * The controlling custody sequence is the five-stage Founder-first receipt
+ * flow documented in docs/OWNER_INSTRUCTION_2026-11-24.md:
+ * 420M, 1.05B, 210M, 210M, 210M VCOIN to the Founder wallet, followed only
+ * after reconciliation by four Founder-signed TEP-74 allocation transfers.
  *
- * Do not restore or run this generator. A replacement transaction planner
- * must be written only after the contract, allocation accounting, and local
- * TON Sandbox tests implement the current owner instruction.
+ * The contract implements the five-stage flow, but this file is not a
+ * reviewed release planner. Do not restore or run it until exact-head
+ * independent verification, StateInit/wallet derivation, fee/reserve review,
+ * and a separate explicit Founder approval of the exact operation are complete.
  *
- * No Mainnet or Testnet transaction is created or sent by this file.
+ * No Mainnet or Testnet transaction is created, signed, or broadcast here.
  */
 throw new Error(
-  'DISABLED: legacy direct-mint Mainnet preview is incompatible with the 2026-11-24 Founder-first receipt instruction.',
+  'DISABLED: Mainnet planner remains blocked pending release gates and exact Founder approval.',
 );

@@ -17,10 +17,18 @@ Code commits:
 - [Make the artifact guard portable](https://github.com/vahidnemati3544-opsking/v-coin-TON/commit/6e0629291942e0ec9a7185fc0229f0aa124582c4)
 - [Disable the old transaction planner](https://github.com/vahidnemati3544-opsking/v-coin-TON/commit/22e8f7698e4a068b73b7a7380d4adaa129c23f83)
 - [Add workflow enforcement for the disabled planner](https://github.com/vahidnemati3544-opsking/v-coin-TON/commit/5525a85f00b2b9b33c86e91192ad3403d09467e0)
+- [Align the allocation manifest with the new Founder Mainnet address and staged custody policy](https://github.com/vahidnemati3544-opsking/v-coin-TON/commit/f3745c07e3474416c043ffe4ab7ff0f3060d2473)
+- [Add CI checks for lockfile drift and Founder-first manifest consistency](https://github.com/vahidnemati3544-opsking/v-coin-TON/commit/f3674758602bc86e65961f7297fe33f5f5e10c65)
+
+## Allocation-manifest correction
+
+The previous `allocation-manifest.template.json` still contained the former Testnet-only Founder address in its active Founder/GAS fields and stale direct-mint preview language. It has now been corrected to the current Founder Mainnet address, the shared Founder/GAS role, the five registered owner destinations, the final economic allocations, unset two-stage receipt amounts, and explicit HOLD / NO-GO flags. All predicted Master/StateInit/preview references remain cleared. A repository-side JSON consistency check confirmed the five destinations and amounts match the deployment template; this is not a wallet-control proof or a CI result.
+
+The workflow now also checks that the committed package lock does not drift after lockfile generation and validates the allocation manifest's supply, five unique destinations, shared Founder/GAS role, staged-receipt fields, and false authorization flags.
 
 ## Current evidence and limits
 
-- Latest reviewed `main` head at the time of this record: `5525a85f00b2b9b33c86e91192ad3403d09467e0`.
+- Latest code-bearing commit: `5525a85f00b2b9b33c86e91192ad3403d09467e0`; latest reviewed workflow/configuration commit: `f3674758602bc86e65961f7297fe33f5f5e10c65`.
 - GitHub combined-status lookup returned no check statuses for that head, and the available workflow-run lookup did not return a push-triggered run. Therefore exact-head CI is **not verified**; no success is claimed for the new guard.
 - The last fully evidenced passing run remains [run #320](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45127119730) on older commit `53039de8263b6e5b76ff2c0f3afb636e96c215d3`. Both build-and-test and Pages deployment/endpoint verification succeeded there. It predates the 2026-11-24 Founder-first owner instruction and does not verify the current contract flow or these new CI changes.
 - `contracts/jetton/package-lock.json` exists and uses lockfileVersion 3. The latest recorded clean `npm ci`, Tact build, Sandbox, and npm audit results belong to the older run #320, not the current head.

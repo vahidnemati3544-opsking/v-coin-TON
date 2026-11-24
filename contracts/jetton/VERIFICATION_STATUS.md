@@ -722,3 +722,15 @@ The controlling initial receipt amounts are the Founder’s five-stage instructi
 **Next verification:** Wait for run #497 to finish. If it fails, inspect the exact failing job and step, fix only the demonstrated issue, and rerun. If it succeeds, inspect the remaining release blockers: independent clean-room build and security review, exact Master StateInit and five Jetton-wallet derivation reproduction, Founder wallet-control verification, Mainnet Master deployment/getter verification, trusted finalized Mainnet balance provider, TON Connect ownership proof, payout adapter, and finality/reconciliation. Public mining remains disabled (HTTP 503). Mainnet deployment, issuance, transfers, and real extraction remain unperformed and unauthorized.
 
 **No authorization is implied by this correction or commit.**
+
+
+## Action #74 — Correct Sandbox policy guard after run #497 (2026-11-24)
+
+**Status:** Workflow guard corrected and committed. New exact-head CI run is required; Mainnet remains HOLD / NO-GO.
+
+- Run #497 failed at **“Enforce local Sandbox-only simulation policy”** because the guard read the workflow file and searched for forbidden Testnet strings that the guard itself necessarily contained. This was a self-referential CI assertion, not a contract compile or Sandbox test failure.
+- Replaced that assertion with checks against the authoritative deployment configuration: Mainnet target, local Sandbox-only simulation, Testnet deployment/transaction authorization false, Mainnet authorization false, and no Testnet rehearsal artifacts in the build output.
+- No contract source, token economics, addresses, or on-chain state changed. No signing, deployment, mint, transfer, or broadcast occurred.
+- Corrective workflow commit: `ff2547131288bdd7c710a172ff218e2957f8bc2d`.
+
+**Next:** Verify the new exact-head CI run. If it passes, review all remaining release blockers independently; CI success alone does not establish Mainnet readiness or live mining.

@@ -91,7 +91,7 @@ contract VCoinJettonWallet {
     balance: Int as coins = 0;
     owner: Address;
     master: Address;
-    receipt_ack_pending: Bool = false;
+    receipt_ack_retry_available: Bool = false;
     pending_receipt_stage: Int = 0;
     pending_receipt_amount: Int as coins = 0;
 
@@ -99,13 +99,13 @@ contract VCoinJettonWallet {
         self.balance = 0;
         self.owner = owner;
         self.master = master;
-        self.receipt_ack_pending = false;
+        self.receipt_ack_retry_available = false;
         self.pending_receipt_stage = 0;
         self.pending_receipt_amount = 0;
     }
 
     fun sendReceiptAcknowledgement() {
-        require(self.receipt_ack_pending, "No receipt acknowledgement is pending");
+        require(self.receipt_ack_retry_available, "No receipt acknowledgement is pending");
         send(SendParameters{
             to: self.master,
             value: ton("0.01"),
@@ -159,7 +159,7 @@ contract VCoinJettonWallet {
         require(msg.amount > 0, "Transfer amount must be positive");
         self.balance = self.balance + msg.amount;
         if (ctx.sender == self.master && msg.query_id >= 1 && msg.query_id <= 5) {
-            self.receipt_ack_pending = true;
+            self.receipt_ack_retry_available = true;
             self.pending_receipt_stage = msg.query_id;
             self.pending_receipt_amount = msg.amount;
             self.sendReceiptAcknowledgement();

@@ -1,3 +1,30 @@
+# ACTION #84 — Deterministic Mainnet Master and five Jetton Wallet derivation (2026-11-24)
+
+**Status:** CI derivation passed on a fresh GitHub Actions runner; candidate addresses are computed and recorded. Independent third-party reproduction and security review remain pending. Mainnet remains HOLD / NO-GO.
+
+- Branch: `audit/action-83-burn-transfer-bounce-tests`; not merged to `main`. Exact source head: `97fb9cf88914f3433d38502e357a84b1c4327cdd`.
+- Added `contracts/jetton/scripts/derive-mainnet-addresses.ts` and `npm run derive:addresses`.
+- Updated `.github/workflows/vcoin-jetton-verify.yml` to derive the Master StateInit and five deterministic Jetton Wallet addresses from the exact freshly compiled Tact wrappers, Founder owner address, and immutable metadata content cell.
+- Jetton workflow #522: [GitHub Actions](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45414164006) — SUCCESS. Tact compilation, metadata cell generation, deterministic address derivation, all release policy guards, and 3 Jest suites / 20 tests passed.
+- Release artifact ID `14931690742`, GitHub SHA-256 `aafaeaa9f48fc68b509102942b5fd0612a7ea14e166e3aa42ea3da690171c201`; the downloaded ZIP was locally hashed and matched exactly.
+- Full-source artifact ID `14931390678`, GitHub SHA-256 `d013f337452d542e316512b8d486e183fcf1f53133e2516107a487894fe8c43e`.
+- Derived Master candidate (bounceable Mainnet form): `EQC_gSnjZTc2Kufgl5ltFF-b2zr5_j4diozxC-IvEp9zzVaL`.
+- Master StateInit hash: `bf8129e36537362ae7e097996d145f9bdb3af9fe3e1d8a8cf10be22f129f73cd`; code hash: `e08c11238070eeaffbbe783077eb49f61ad770a71f2e3096f83956776ed28ed8`; data hash: `5c8dfa26503e30f1af0c5be2ccbdcf719e3c9670b69220fa9cd8bde85018868b`.
+- Derived Jetton Wallet candidates (bounceable Mainnet form):
+  - Founder: `EQDUY4YWgv2OHA9sbDch0Es1-Uq9dRDDzhMVV6Y4ODiJuLUU`
+  - Treasury: `EQBDU5EsmXzEqCLCvsLzDnuC6kwe9DVFTPUteUh8ydFeDCpf`
+  - Liquidity / Market: `EQAaRu9jWJxacm53NiNdw8z0vRWYNDvqubTWB38Io5lE15ni`
+  - Ecosystem / Marketing: `EQAkVrbn7SJp414LV_CvpmUsEYpxAVzk-rbOESC7C3aaRuuL`
+  - Mining Reserve: `EQCqKJ91CwwTe93W9mN71855otBgcsj10UPf47xF4hGm2lKH`
+- The derivation output is in `build/mainnet-address-derivation.json` within the release artifact. It explicitly sets `deployment_authorized=false`, `mainnet_authorized=false`, and all transaction-created/signed/broadcast flags to false.
+- These are **computed candidate addresses only**. They do not prove that a Master contract is deployed at the candidate address, do not verify any Jetton Wallet on-chain, and must not be used for transfers until independently reproduced and compared with the deployed Master getter.
+- The local offline `npm ci` attempt could not install missing cached dependency `zod@4.6.7`; the exact source did successfully compile and derive in the clean GitHub Actions runner. A separate independent reviewer/environment is still required to reproduce the results.
+- No contract source logic, supply, allocation, wallet owner address, authorization flag, or on-chain state was changed. No TON was spent; no transaction was created, signed, or broadcast.
+
+**Remaining gates:** independent reproduction of all hashes and addresses by a separate reviewer/environment; independent security review; live Mainnet fee and exact-message emulation; Founder wallet-control proof and destination confirmation; exact reviewed unsigned deployment payload. Only after those gates may a separate Founder signature authorize the exact deployment.
+
+---
+
 # ACTION #84 — Deterministic Mainnet address derivation tooling and clean-room attempt (2026-11-24)
 
 **Status:** Derivation tooling added to the isolated review branch; exact deterministic output awaits CI execution. Independent clean-room rebuild remains blocked locally by unavailable dependency cache. Mainnet remains HOLD / NO-GO.

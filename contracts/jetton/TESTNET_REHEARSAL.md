@@ -97,3 +97,22 @@ Each request pins the Testnet global ID `-3`, the registered Testnet Founder sen
 
 The generated preview file is local build output:
 `build/testnet-rehearsal-preview.json`. Do not commit generated BOCs or preview JSON without a separate review.
+
+
+## Source-level contract review — 2026-11-24
+
+The current Founder-first source was reviewed against the rehearsal configuration and Sandbox tests:
+
+- `VCoinMaster` is initialized with the Founder owner and metadata content; the active implementation is not the legacy five-destination constructor described in older sections of `docs/JETTON_CONTRACT_SPEC.md`.
+- The rehearsal configuration fixes Stage 1 at 1,000,000,000 VCOIN and Stage 2 at the exact remaining 1,100,000,000 VCOIN. The Master enforces a positive Stage 1 below the cap and an exact-remainder Stage 2; the rehearsal script pins the owner-approved exact amounts.
+- The Master accepts receipt acknowledgements only from the deterministic Founder Jetton Wallet and checks the stage query ID and exact amount. Stage 2 remains blocked until Stage 1 acknowledgement is confirmed.
+- Natural bounce handling authenticates the deterministic Founder Jetton Wallet and rolls back only the matching stage. The Sandbox suite includes Stage 1 and Stage 2 bounce scenarios.
+- The Master hard cap is 2,100,000,000,000,000 base units (six decimals); the Testnet config and two stage values reconcile exactly.
+
+**Open engineering review items — not cleared by CI:**
+
+1. Review real-network TON value/fee accounting for the Jetton Wallet's acknowledgement and excess-return messages. The current mint path attaches 0.1 TON to the Founder Jetton Wallet; the wallet sends a 0.01 TON acknowledgement and may also return excess to the response destination. The exact combined outbound fee/value trace must be simulated before public deployment.
+2. Independently verify TEP-74 transfer/burn interoperability and TEP-64 metadata with a standards-aware external parser or wallet/indexer. Current CI compiles the project and passes its own Sandbox suite; it is not an independent standards certification.
+3. Rewrite the legacy `docs/JETTON_CONTRACT_SPEC.md` sections before any release so constructor, allocation, and network instructions match the active branch. A prominent supersession notice has been added, but the full rewrite remains pending.
+
+No code change is made from this source review because fee behavior and the complete external interoperability trace cannot be established from source inspection alone. Keep public Testnet deployment blocked until these items are resolved.

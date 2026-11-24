@@ -4,278 +4,54 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#080808">
-  <title>V COIN — TON Mainnet Issuer</title>
+  <title>V COIN — TON Release Status</title>
   <style>
-    :root { color-scheme: dark; --gold:#d8b35b; --ink:#080808; --panel:#151515; --muted:#b8b3a8; --line:#39352c; }
-    * { box-sizing:border-box; }
-    body { margin:0; background:var(--ink); color:#f7f3e9; font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif; }
-    main { max-width:880px; margin:0 auto; padding:28px 18px 56px; }
-    header { border-bottom:1px solid var(--line); padding-bottom:20px; margin-bottom:22px; }
-    h1 { margin:0; color:var(--gold); letter-spacing:.08em; font-size:clamp(26px,5vw,38px); }
-    h2 { font-size:18px; color:var(--gold); margin:0 0 12px; }
-    p { color:var(--muted); }
-    .panel { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px; margin:16px 0; }
-    .warning { border-color:#8c6b2b; }
-    .grid { display:grid; grid-template-columns:1fr; gap:10px; }
-    @media(min-width:680px){ .grid{grid-template-columns:1fr 1fr;} }
-    .kv { overflow-wrap:anywhere; font-size:13px; color:#eee; }
-    .kv strong { display:block; color:var(--muted); font-size:12px; font-weight:600; margin-bottom:3px; }
-    code { color:#f0d28b; overflow-wrap:anywhere; }
-    button { background:var(--gold); color:#16120a; border:0; border-radius:9px; padding:12px 16px; font-weight:700; cursor:pointer; width:100%; margin-top:10px; }
-    button:disabled { opacity:.38; cursor:not-allowed; }
-    .connect { min-height:44px; }
-    .status { border-left:3px solid var(--gold); padding:8px 12px; background:#201b11; color:#f4e4bd; overflow-wrap:anywhere; }
-    .small { font-size:13px; }
-    .allocation { display:grid; grid-template-columns:1fr auto; gap:8px; padding:9px 0; border-bottom:1px solid var(--line); }
-    .allocation:last-child { border:0; }
-    label { display:flex; gap:10px; align-items:flex-start; color:var(--muted); font-size:14px; margin-top:12px; }
-    input { margin-top:4px; accent-color:var(--gold); }
-    .muted { color:var(--muted); }
-    .hidden { display:none; }
-    a { color:var(--gold); }
+    :root{color-scheme:dark;--gold:#d8b35b;--ink:#080808;--panel:#151515;--muted:#b8b3a8;--line:#39352c}
+    *{box-sizing:border-box}body{margin:0;background:var(--ink);color:#f7f3e9;font:16px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
+    main{max-width:850px;margin:0 auto;padding:28px 18px 56px}header{border-bottom:1px solid var(--line);padding-bottom:18px}
+    h1,h2{color:var(--gold)}h1{letter-spacing:.08em}h2{font-size:18px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin:16px 0}
+    .hold{border-color:#8c6b2b;background:#201b11}.hold strong{color:#f0d28b}.muted{color:var(--muted)}code{color:#f0d28b;overflow-wrap:anywhere}
+    li{margin:8px 0}.row{display:grid;grid-template-columns:1fr auto;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}.row:last-child{border:0}
   </style>
-  <script src="https://unpkg.com/@tonconnect/ui@5.0.3/dist/tonconnect-ui.min.js"></script>
 </head>
 <body>
 <main>
-  <header>
-    <h1>V COIN</h1>
-    <p>TON Mainnet deployment and fixed-supply allocation console</p>
-    <div id="ton-connect" class="connect"></div>
-  </header>
-
-  <section class="panel warning">
-    <h2>Critical transaction notice</h2>
-    <p>This page never receives or stores wallet keys. It can only ask the connected Tonkeeper-compatible wallet to sign transactions after you press a button.</p>
-    <p><strong>No automatic transaction is sent.</strong> The first transaction deploys the Master and funds its reserve. The five VCOIN allocations are five separate Founder-signed transactions after deployment is confirmed on-chain.</p>
-    <p>Verify the network, sender, destination, TON amount, and message in your wallet before every signature. Never share a seed phrase, private key, PIN, or recovery phrase.</p>
+  <header><h1>V COIN</h1><p class="muted">Independent TON Jetton — Founder-first release architecture</p></header>
+  <section class="panel hold">
+    <h2>MAINNET RELEASE — HOLD / NO-GO</h2>
+    <p><strong>This page is intentionally read-only.</strong> The former five-wallet direct-mint issuer has been retired. No wallet connection, transaction construction, signing request, or broadcast is available from this page.</p>
+    <p>Do not send VCOIN or TON based on this page. Mainnet operations remain disabled until the revised contract, exact-build artifacts, Sandbox tests, accounting reconciliation, address verification, and release review all pass.</p>
   </section>
-
   <section class="panel">
-    <h2>Network and connected wallet</h2>
-    <div id="wallet-status" class="status">Loading the fixed Mainnet deployment preview…</div>
-    <div class="grid" style="margin-top:12px">
-      <div class="kv"><strong>Required network</strong>TON Mainnet (−239)</div>
-      <div class="kv"><strong>Deployment signer</strong>Founder wallet (GAS &amp; OPERATIONS role)</div>
-      <div class="kv"><strong>Issuance signer</strong>Founder wallet</div>
-      <div class="kv"><strong>Master address</strong><code id="master-address">Loading…</code></div>
-      <div class="kv"><strong>Master StateInit hash</strong><code id="master-hash">Loading…</code></div>
-      <div class="kv"><strong>Metadata content cell hash</strong><code id="metadata-hash">Loading…</code></div>
-    </div>
+    <h2>Approved supply and staged receipt</h2>
+    <div class="row"><span>Total fixed supply</span><strong>2,100,000,000 VCOIN</strong></div>
+    <div class="row"><span>Decimals</span><strong>6</strong></div>
+    <div class="row"><span>Founder Mainnet receiving wallet</span><code>UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT</code></div>
+    <ol>
+      <li>Stage 1: Founder-authorized receipt to the Founder Jetton wallet. Amount remains unset until explicitly approved.</li>
+      <li>Stage 2: a separate, fresh Founder signature for the exact remaining supply, only after Stage 1 is confirmed.</li>
+      <li>After full receipt, the Founder signs four ordinary Jetton transfers to the registered destination wallets.</li>
+    </ol>
   </section>
-
   <section class="panel">
-    <h2>Step 1 — Deploy Master and fund reserve</h2>
-    <p class="small">Connect the registered Founder wallet (also GAS &amp; OPERATIONS). The deployment message carries the Master StateInit, a VCoinFund body, and the exact attached TON amount recorded in the signed-off release preview. Wallet/network fees are additional.</p>
-    <div class="kv"><strong>Required signer — Founder / GAS &amp; OPERATIONS</strong><code id="gas-signer">Loading…</code></div>
-    <div class="kv" style="margin-top:8px"><strong>Attached value</strong><span id="deploy-attached-ton">Loading exact preview amount…</span></div>
-    <button id="deploy-button" disabled>Deploy VCOIN Master from Founder wallet</button>
-    <p id="deploy-result" class="small muted"></p>
+    <h2>Final economic allocation</h2>
+    <div class="row"><span>Founder retained</span><strong>420,000,000 VCOIN</strong></div>
+    <div class="row"><span>Mining reserve</span><strong>1,050,000,000 VCOIN</strong></div>
+    <div class="row"><span>Treasury</span><strong>210,000,000 VCOIN</strong></div>
+    <div class="row"><span>Liquidity / Market</span><strong>210,000,000 VCOIN</strong></div>
+    <div class="row"><span>Ecosystem / Marketing</span><strong>210,000,000 VCOIN</strong></div>
   </section>
-
   <section class="panel">
-    <h2>Step 2 — Confirm Master deployment</h2>
-    <p class="small">Do not issue tokens until the Master is active on TON Mainnet and its on-chain getters match the five registered addresses.</p>
-    <label><input id="master-confirmed" type="checkbox"> I have independently confirmed the Master is active on TON Mainnet, and its allocation/gas getters match the approved wallet register.</label>
-  </section>
-
-  <section class="panel">
-    <h2>Step 3 — Issue the five fixed allocations</h2>
-    <p class="small">Connect the exact Founder wallet. Each button submits one VCoinMint message to the Master. The Master deploys/credits the corresponding deterministic Jetton Wallet. Do not press again until the previous transaction is confirmed and its balance/state has been checked.</p>
-    <div id="allocations"></div>
-  </section>
-
-  <section class="panel">
-    <h2>Release checks</h2>
-    <ul class="small muted">
-      <li>Initial fixed supply: 2,100,000,000 VCOIN; 6 decimals. Modelled USD reference price: $0.004 per VCOIN (not a market quote).</li>
-      <li>Founder: 420,000,000; Mining reserve: 1,050,000,000.</li>
-      <li>Treasury: 210,000,000; Liquidity/Market: 210,000,000; Ecosystem/Marketing: 210,000,000.</li>
-      <li>After all five credits: total_supply must equal 1.0 × 10^16 base units and mintable must be false.</li>
-      <li>No Master function can claw back, freeze, or confiscate recipient Jetton balances.</li>
-      <li>Predicted Jetton Wallet addresses must be confirmed using the deployed Master's get_wallet_address getter.</li>
+    <h2>Release controls</h2>
+    <ul class="muted">
+      <li>The previous Founder Testnet address is not valid for Mainnet use.</li>
+      <li>Only the Founder controls the signing of the staged receipt and all four subsequent allocation transfers.</li>
+      <li>Stage 2 is not pre-authorized by Stage 1.</li>
+      <li>No private key, seed phrase, PIN, or recovery phrase is requested or stored.</li>
+      <li>Successful source compilation or CI does not prove Mainnet deployment or token receipt.</li>
     </ul>
   </section>
-  <p class="small muted">V COIN — independent TON Jetton. This console is a transaction-request interface only; wallet signatures and on-chain finality remain under the Founder’s control.</p>
+  <p class="muted">V COIN — TON. This status page is informational only and does not submit blockchain transactions.</p>
 </main>
-
-<script>
-(async function () {
-  const previewUrl = './deployment-preview.json';
-  const $ = (id) => document.getElementById(id);
-  const status = $('wallet-status');
-  const deployButton = $('deploy-button');
-  const confirmed = $('master-confirmed');
-  const allocationsNode = $('allocations');
-  let preview = null;
-  let ui = null;
-  let wallet = null;
-  let nextAllocationIndex = 0;
-  let allocationCount = 0;
-
-  function setStatus(message) { status.textContent = message; }
-
-  function tonToNano(value) {
-    const text = String(value);
-    if (!/^\d+(?:\.\d{1,9})?$/.test(text)) {
-      throw new Error('Invalid deployment TON amount in release preview.');
-    }
-    const [whole, fraction = ''] = text.split('.');
-    return (BigInt(whole) * 1000000000n + BigInt(fraction.padEnd(9, '0'))).toString();
-  }
-
-  function walletRole() {
-    if (!wallet || !preview) return 'disconnected';
-    if (wallet.account.chain !== '-239') return 'wrong-network';
-    if (wallet.account.address === preview.signing.signer_raw && wallet.account.address === preview.signing.allocation_issuance_signer_raw) return 'founder-operator';
-    return 'other';
-  }
-
-  function updateControls() {
-    const role = walletRole();
-    deployButton.disabled = role !== 'founder-operator' || deployButton.dataset.submitted === 'true';
-    document.querySelectorAll('[data-issuance-role]').forEach((button) => {
-      const index = Number(button.dataset.sequence);
-      button.disabled = role !== 'founder-operator' || !confirmed.checked || index !== nextAllocationIndex || button.dataset.submitted === 'true';
-    });
-    if (role === 'disconnected') setStatus('No wallet connected. Connect the registered Founder wallet.');
-    else if (role === 'wrong-network') setStatus('Wrong network. This release console accepts TON Mainnet only.');
-    else if (role === 'founder-operator' && allocationCount > 0 && nextAllocationIndex >= allocationCount) setStatus('All five allocations are marked verified. Independently confirm Master total_supply equals 2,100,000,000,000,000 base units and mintable is false.');
-    else if (role === 'founder-operator') setStatus('Founder wallet connected on Mainnet. Deployment is enabled; only the next unverified allocation can be requested after Master confirmation.');
-    else setStatus('Connected wallet does not match the approved Founder signer. Disconnect and connect the registered wallet.');
-  }
-
-  function addAllocation(role, item, sequence) {
-    const row = document.createElement('div');
-    row.className = 'panel';
-    const title = document.createElement('h2');
-    title.textContent = role.replaceAll('_', ' ').toUpperCase() + ' — ' + Number(item.token_amount).toLocaleString('en-US') + ' VCOIN';
-    const owner = document.createElement('p');
-    owner.className = 'small';
-    owner.textContent = 'Owner address: ' + item.recipient_owner_address;
-    const jetton = document.createElement('p');
-    jetton.className = 'small';
-    jetton.textContent = 'Jetton Wallet: ' + item.recipient_jetton_wallet_address;
-    const amount = document.createElement('p');
-    amount.className = 'small';
-    amount.textContent = 'Attached TON: ' + item.attached_ton + ' TON + wallet/network fees';
-    const button = document.createElement('button');
-    button.textContent = 'Issue ' + Number(item.token_amount).toLocaleString('en-US') + ' VCOIN to ' + role.replaceAll('_', ' ');
-    button.dataset.issuanceRole = role;
-    button.dataset.sequence = String(sequence);
-    button.disabled = true;
-    const verifyLabel = document.createElement('label');
-    const verifyInput = document.createElement('input');
-    verifyInput.type = 'checkbox';
-    verifyInput.disabled = true;
-    verifyLabel.append(verifyInput, document.createTextNode(' I independently confirmed this transaction on TON Mainnet and verified the recipient Jetton Wallet balance and allocation status.'));
-    verifyInput.addEventListener('change', () => {
-      if (verifyInput.checked && sequence === nextAllocationIndex && button.dataset.submitted === 'true') {
-        button.dataset.verified = 'true';
-        nextAllocationIndex += 1;
-        updateControls();
-      }
-    });
-    button.addEventListener('click', async () => {
-      if (walletRole() !== 'founder-operator' || !confirmed.checked) return;
-      button.disabled = true;
-      try {
-        await ui.sendTransaction({
-          validUntil: Math.floor(Date.now() / 1000) + 300,
-          network: '-239',
-          from: wallet.account.address,
-          messages: [{
-            address: item.master_address,
-            amount: '10000000',
-            payload: item.payload_boc_base64
-          }]
-        });
-        button.dataset.submitted = 'true';
-        verifyInput.disabled = false;
-        button.textContent = 'Wallet request returned — verify on-chain before unlocking the next allocation';
-        $('deploy-result').textContent = 'Wallet returned from the signing flow. This page does not claim on-chain finality; verify the Master transaction and Jetton Wallet balance before the next allocation.';
-      } catch (error) {
-        button.disabled = false;
-        button.textContent = 'Retry only after checking whether the previous request was sent';
-        setStatus('Wallet request was cancelled or failed: ' + (error?.message || String(error)));
-      }
-      updateControls();
-    });
-    row.append(title, owner, jetton, amount, button, verifyLabel);
-    allocationsNode.appendChild(row);
-  }
-
-  try {
-    const response = await fetch(previewUrl, { cache: 'no-store' });
-    if (!response.ok) throw new Error('Deployment preview is unavailable (HTTP ' + response.status + ').');
-    preview = await response.json();
-    if (preview.status !== 'unsigned_mainnet_deployment_preview_only' || preview.network !== 'mainnet') {
-      throw new Error('Preview status or network is not approved for this Mainnet console.');
-    }
-    if (!preview.unsigned_deploy_message ||
-        preview.unsigned_deploy_message.network_fee_quote_required !== true ||
-        !preview.unsigned_deploy_message.attached_ton) {
-      throw new Error('Exact deployment amount or live fee-quote requirement is missing from the release preview.');
-    }
-    const deployAmountNano = tonToNano(preview.unsigned_deploy_message.attached_ton);
-    if (BigInt(deployAmountNano) < 750000000n) {
-      throw new Error('Release preview does not meet the Master minimum reserve-funding value.');
-    }
-    $('deploy-attached-ton').textContent =
-      preview.unsigned_deploy_message.attached_ton + ' TON + live wallet/network fees (quote required)';
-    $('master-address').textContent = preview.master_address;
-    $('master-hash').textContent = preview.state_init_hash;
-    $('metadata-hash').textContent = preview.metadata_content_cell_hash;
-    $('gas-signer').textContent = preview.signing.signer;
-
-    const uiOptions = {
-      manifestUrl: 'https://vahidnemati3544-opsking.github.io/v-coin-TON/tonconnect-manifest.json',
-      buttonRootId: 'ton-connect',
-      analytics: { mode: 'off' }
-    };
-    ui = new TON_CONNECT_UI.TonConnectUI(uiOptions);
-    ui.setConnectionNetwork('-239');
-    ui.onStatusChange((connectedWallet) => {
-      wallet = connectedWallet;
-      updateControls();
-    });
-    await ui.connectionRestored;
-    wallet = ui.wallet;
-    updateControls();
-
-    deployButton.addEventListener('click', async () => {
-      if (walletRole() !== 'founder-operator') return;
-      deployButton.disabled = true;
-      try {
-        await ui.sendTransaction({
-          validUntil: Math.floor(Date.now() / 1000) + 300,
-          network: '-239',
-          from: wallet.account.address,
-          messages: [{
-            address: preview.unsigned_deploy_message.destination,
-            amount: tonToNano(preview.unsigned_deploy_message.attached_ton),
-            stateInit: preview.unsigned_deploy_message.state_init_boc_base64,
-            payload: preview.unsigned_deploy_message.body_boc_base64
-          }]
-        });
-        deployButton.dataset.submitted = 'true';
-        $('deploy-result').textContent = 'Deployment request returned from Tonkeeper. The deploy button is locked for this page session. Wait for Mainnet confirmation and verify the Master getters before issuing any VCOIN.';
-      } catch (error) {
-        $('deploy-result').textContent = 'Wallet request was cancelled or failed: ' + (error?.message || String(error));
-      }
-      updateControls();
-    });
-
-    confirmed.addEventListener('change', updateControls);
-    const entries = Object.entries(preview.issuance_transactions);
-    allocationCount = entries.length;
-    entries.forEach(([role, item], index) => addAllocation(role, item, index));
-    updateControls();
-  } catch (error) {
-    setStatus('Console unavailable: ' + (error?.message || String(error)));
-    deployButton.disabled = true;
-  }
-})();
-</script>
 </body>
 </html>

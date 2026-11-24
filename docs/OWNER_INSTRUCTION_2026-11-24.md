@@ -43,7 +43,7 @@ The former address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` was used f
 
 ## 4. Contract and configuration impact
 
-The active implementation uses the five exact receipt stages above. The contract, allocation manifest, initialization parameters, deployment template, backend accounting, and Sandbox tests must remain consistent with this instruction. Do not deploy or use stale two-stage or direct-five-wallet issuance artifacts.
+The active implementation uses the five exact receipt stages above. The contract, allocation manifest, initialization parameters, deployment template, backend accounting, and Sandbox tests must remain consistent with this instruction. Do not deploy or use stale two-stage receipt or direct-five-wallet issuance artifacts.
 
 Required engineering checks include:
 

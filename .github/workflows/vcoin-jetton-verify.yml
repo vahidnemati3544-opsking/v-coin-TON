@@ -44,8 +44,23 @@ jobs:
         run: npm run build
       - name: Build immutable TEP-64 metadata content cell
         run: node scripts/build-metadata-cell.cjs "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/e17bcb9d82ea182bff3358b9fac6b5fa25c166ee/contracts/jetton/metadata.json"
-      - name: Generate unsigned Mainnet deployment preview
-        run: npx tsx scripts/prepare-mainnet-deployment.ts
+      - name: Block obsolete direct-mint Mainnet transaction preview
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const obsolete = [
+            'build/mainnet-deployment-preview.json',
+            'build/VCoinMaster.state-init.boc',
+          ];
+          for (const file of obsolete) {
+            if (fs.existsSync(file)) throw new Error('Obsolete Mainnet transaction artifact must not be generated: ' + file);
+          }
+          const { globSync } = require('node:fs');
+          if (globSync && globSync('build/jetton-wallet-*.state-init.boc').length) {
+            throw new Error('Obsolete direct-mint Jetton wallet StateInit artifacts must not be generated.');
+          }
+          console.log('Legacy direct-mint transaction preview generation is disabled pending Founder-first contract implementation.');
+          NODE
       - name: Run Jest tests
         run: npm test
       - name: Preserve complete V COIN–TON source snapshot

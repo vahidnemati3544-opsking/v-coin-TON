@@ -1,4 +1,14 @@
-Current policy correction (2026-11-23): This security requirements document is governed by the approved five-wallet baseline. Any wording in the historical section titled “Separate operational gas reserve” that implies a separate GAS wallet is superseded: Founder is the sole GAS & OPERATIONS wallet and also one of the five allocation destinations. No sixth wallet exists. External independent security audits are not a project task or release gate. No Testnet deployment or transaction is authorized; local Sandbox testing is permitted.
+## Controlling owner instruction — 2026-11-24 (supersedes conflicting legacy wording)
+
+- Fixed total supply: **2,100,000,000 VCOIN**, six decimals; no additional minting.
+- Sole initial receiving wallet: Founder-designated **TON Mainnet** address `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT`.
+- The entire supply is to reach this wallet in **two separate incoming transfers**. Installment amounts and timing remain to be entered in the transaction plan. Installment 2 occurs only after the Founder explicitly announces and authorizes it. This instruction does not assert that either transfer has occurred.
+- After receipt, the Founder personally controls and signs distributions to the four registered allocation wallets: Mining Reserve 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN. The Founder retains 420,000,000 VCOIN (20%).
+- Former Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` was **Testnet-only**. It is historical/test-only and must never be used as the Mainnet receiving address.
+- This instruction supersedes direct five-wallet initial issuance, any one-operation five-wallet issuance description, and any designation of the former Founder address as Mainnet.
+- Documentation changes do not authorize a Mainnet transaction. The exact deployed Jetton Master, Mainnet status, contract compatibility with the Founder-first two-stage flow, wallet-control proof, installment amounts, fees, and local Sandbox evidence must be verified before signing. Existing fixed-five-destination contract logic must be revised and tested if incompatible.
+
+Current policy correction (2026-11-24): Founder Mainnet wallet first receives the full 2.1B VCOIN supply in two separate transfers; Founder then signs distributions to the four other allocation wallets and retains 420M VCOIN. The previous Founder address was Testnet-only. Legacy fixed-five-destination direct issuance logic is superseded and must be adapted and tested. No Testnet deployment or transaction is authorized; local Sandbox testing is permitted.
 
 # V COIN – TON Security and Anti-Fraud Requirements
 
@@ -96,11 +106,11 @@ Before staging or production:
 
 No real-value transfer, token issuance, Mainnet deployment, or public mining launch is authorized by this document. Each requires a separate readiness review and explicit approval.
 
-## 9. Jetton fixed-allocation issuance and Bounce protection
+## 9. Jetton issuance, Founder-first receipt, distribution and Bounce protection (contract revision required)
 
-- The Master StateInit permanently fixes the founder, mining-reserve, treasury, liquidity/market, and ecosystem/marketing destination addresses.
-- The owner can request only the exact preassigned allocation for one of those five addresses; arbitrary destinations, partial amounts, and excess amounts are rejected.
-- Each role allocation can be issued once. After all five wallet credits succeed, the Master permanently disables further issuance.
+- The approved flow is two-stage receipt of the entire fixed supply by the Founder Mainnet Jetton wallet, followed by Founder-signed transfers of the four other allocations.
+- The current five-destination direct-issuance logic is incompatible unless explicitly redesigned; do not deploy it unchanged for this owner instruction.
+- Contract changes must enforce the fixed 2.1B total, prevent additional minting, and support exact Founder-first receipt plus capped, auditable distributions to the four registered destinations.
 - The Master requires a minimum TON funding amount before starting a wallet-credit operation, preventing an underfunded request from recording supply without enough value to create the destination wallet.
 - A natural bounced TokenTransferInternal message is accepted only from the deterministic Jetton wallet for the corresponding role and only for that role's exact allocation.
 - A valid bounce rolls back only the failed role's amount and reopens only that role for retry; successful allocations remain recorded.

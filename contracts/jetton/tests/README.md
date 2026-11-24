@@ -1,6 +1,6 @@
 # V COIN Jetton Sandbox verification
 
-**Scope:** Five exact Founder-first receipt stages, fixed 2.1 billion supply, retryable wallet acknowledgement, stage-specific bounce recovery, Founder-controlled distribution, and reserve controls.
+**Scope:** Local TON Sandbox verification of the five exact Founder-first receipt stages, fixed 2.1 billion supply, retryable wallet acknowledgement, stage-specific bounce recovery, Founder-controlled distribution, and reserve controls.
 
 ## Approved stages
 | Stage | VCOIN | Base units |
@@ -14,7 +14,7 @@
 
 ## Automated coverage
 1. Only the Founder can request a receipt and the only permitted recipient is the Founder Jetton wallet.
-2. Each of the five exact amounts is accepted only in its matching sequence position.
+2. Each exact amount is accepted only in its matching sequence position.
 3. Out-of-order, wrong-amount, zero, wrong-recipient, repeated, and over-cap requests are rejected.
 4. Each wallet-credit acknowledgement advances exactly one stage; repeated acknowledgements are idempotent.
 5. The Founder can retry a stored wallet acknowledgement without double issuance.
@@ -26,10 +26,10 @@
 ## CI acceptance
 - `npm run build` compiles VCoinMaster, VCoinJettonWallet, and the test-only BounceRejector fixture.
 - `npm test` runs the fixed-supply, allocation, receipt, bounce, retry, and Sandbox suites.
-- CI may generate unsigned Testnet inspection artifacts only; it must never sign or broadcast a transaction.
+- CI must not sign or broadcast transactions. Local TON Sandbox is the only permitted simulation environment.
 
 ## Release restrictions
-- Testnet and Mainnet are isolated. Testnet wallet requests are unsigned previews only until separately approved after emulator and fee review.
-- Mainnet deployment, receipt stages, and subsequent distributions each require separate Founder approval of exact payloads.
+- TON Testnet deployment and transactions are not authorized. Historical Testnet preview artifacts are quarantined and must not be used operationally.
+- Mainnet deployment, each receipt stage, and subsequent distributions each require separate Founder approval of exact payloads.
 - The former Founder Testnet address must never be used on Mainnet.
 - No Mainnet deployment or transfer is authorized until exact-head CI, independent review, StateInit/hash reproduction, wallet derivation, address control, and fee/reserve checks pass.

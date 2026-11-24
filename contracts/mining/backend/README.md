@@ -108,14 +108,14 @@ The schedule marks itself completed only when the `USER_MINING` reserve's confir
 The database migration must be applied before starting the backend. No front-end dashboard was present in the inspected repository, so rendering these API candles on the public home page remains a separate client-side task.
 
 
-## Founder-first Mainnet receipt reconciliation (Action #66)
+## Founder-first five-stage Mainnet receipt reconciliation (supersedes Action #66 five-stage draft)
 
-Migration `database/migrations/010-founder-first-two-stage-reconciliation.sql` adds a chain-confirmed reconciliation ledger for the two initial receipt stages and the four subsequent Founder-signed allocation transfers.
+Migration `database/migrations/010-founder-first-five-stage-reconciliation.sql` adds a chain-confirmed reconciliation ledger for the five exact initial receipt stages and the four subsequent Founder-signed allocation transfers.
 
-- Record Stage 1 only after the exact Mainnet transaction is independently confirmed and its Master, recipient, and amount are validated.
-- Record Stage 2 only after Stage 1 is recorded; its amount must equal the exact remaining fixed supply.
+- Record each of the five stages only after its exact Mainnet transaction is independently confirmed and its Master, Founder recipient, deterministic Jetton wallet, and stage amount are validated.
+- Stages must be recorded in strict order with exact amounts: 420M, 1,050M, 210M, 210M, 210M VCOIN.
 - Repeated ingestion of the same transaction hash and identical event is idempotent; conflicting hashes, amounts, stages, or allocation roles are rejected.
-- The four distribution roles are recorded only after Stage 2 is confirmed, only from the registered Founder wallet, and only at their exact approved amounts.
+- The four distribution roles are recorded only after all five receipt stages are confirmed, only from the registered Founder wallet, and only at their exact approved amounts.
 - The reconciliation view reports receipt base units and confirmed Founder distributions separately. Distribution transfers do not create new supply.
 - This migration creates accounting controls; it does not itself connect an indexer, verify chain finality, sign a transaction, or broadcast to TON. The backend ingestion service must validate the actual Mainnet transaction and call the database functions only after finality checks.
 

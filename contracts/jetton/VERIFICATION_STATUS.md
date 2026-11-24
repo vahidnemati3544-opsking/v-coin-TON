@@ -1,8 +1,43 @@
-> **LATEST CONTROLLING UPDATE — Action #77 (2026-11-24):** Action #76's HTTP-level public-mining fail-closed regression test now passes on exact-head CI (Mining #481 and Backend #390). The separate Jetton build-and-test plus read-only issuer deployment workflow #504 also passed on its own earlier commit. A source review confirms the internal-balance mining engine remains unmounted from public routes; Mainnet wallet-balance mining, proof, payout, and reconciliation are still not implemented. See Actions #76–#77 at the end.
+> **LATEST CONTROLLING UPDATE — Action #78 (2026-11-24):** The five-stage Founder-first Jetton implementation is on current `main`; exact-head Mining CI #481 and Backend CI #390 passed on `f12ea01f916a8c169600f9a119c705dfca5cc83f`. Jetton Build/Pages CI #504 also passed on its immediately preceding commit, with contract source unchanged in the follow-up. Public mining remains HTTP 503. **Mainnet is HOLD / NO-GO:** no verified deployed Master, no issued tokens, and no transfer has been established. See the current release gates below and Actions #76–#78 at the end.
 
-> **CONTROLLING UPDATE — Action #69 (2026-11-24):** The current approved receipt flow is five exact Founder-first stages: 420M, 1,050M, 210M, 210M, 210M VCOIN. Earlier two-stage notes below are historical and superseded. Use the Action #69 section at the end of this file for current implementation and release status. Mainnet remains HOLD / NO-GO.
+# CURRENT CONTROLLING RELEASE STATUS — 2026-11-24 (Action #78)
 
-# CURRENT CONTROLLING RELEASE STATUS — 2026-11-24 (Action #68)
+## Verified repository and CI state
+- Repository: `vahidnemati3544-opsking/v-coin-TON`, branch `main`; latest reviewed code commit: `f12ea01f916a8c169600f9a119c705dfca5cc83f`.
+- Mining CI #481: SUCCESS; Backend CI #390: SUCCESS, both on exact HEAD `f12ea01`.
+- Jetton build-and-test plus read-only issuer publication workflow #504: SUCCESS on preceding commit `a5cda253401c2714722de24cd6e2c49c0d6ea6d2`. The follow-up commit changed only test harness and status documentation; Jetton contract source/configuration remained unchanged.
+- Five-stage Founder-first contract is present on current main. Sandbox tests cover stage ordering, exact amounts, acknowledgement retry, natural bounce/retry, and Founder-signed allocation transfers.
+- Public mining API remains hard-disabled with HTTP 503; legacy internal-PostgreSQL-balance engine is not mounted on public routes.
+
+## Fixed supply and Founder-first sequence
+- Fixed supply: **2,100,000,000 VCOIN**, six decimals, hard cap `2100000000000000` base units; no additional minting.
+- Founder Mainnet receiving wallet: `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT`.
+- Five separately signed receipt stages: 420M, 1.05B, 210M, 210M, 210M VCOIN.
+- After all five stages are independently confirmed, Founder signs four separate TEP-74 transfers: Mining Reserve 1.05B; Treasury 210M; Liquidity/Market 210M; Ecosystem/Marketing 210M. Founder retains 420M.
+
+## Hard blockers before any Mainnet transaction
+1. Clean-room rebuild from exact source and pinned toolchain; independently reproduce Master StateInit and five deterministic Jetton Wallet addresses.
+2. Independent security review of the exact current contract/artifacts and resolution of findings. No independent audit/certification is evidenced.
+3. Founder wallet-control proof and explicit confirmation of all four destination addresses. Never collect seed phrases, private keys, PINs, or recovery codes.
+4. Live TON fee, attached-value, Master reserve and bounce/recovery review.
+5. Only after the above: Founder-reviewed deployment payload, separate Founder signature, and independent on-chain verification of Master address, code, owner, metadata, total supply, mintability and getters.
+6. Derive each recipient Jetton Wallet from deployed Master `get_wallet_address` and reconcile independent derivations.
+7. Execute the five exact Founder receipts one at a time. Wait for finalized Jetton Wallet credit and Master acknowledgement before the next stage.
+8. Verify Founder holds the full 2.1B, then prepare four separate Founder-signed TEP-74 allocation transfers and independently confirm each final balance.
+9. Keep real mining disabled until TON Connect ownership proof, trusted finalized Mainnet balance snapshots, payout sender, and finalized payout reconciliation are implemented and tested.
+
+## Authorization and transaction boundary
+- `deployment_authorized=false`, `mainnet_authorized=false`, and Mainnet issuance/payout authorization remain false in the deployment template.
+- Mainnet planner is deliberately disabled. No deployed Master or Mainnet token issuance/transfer is independently verified.
+- Deployment, reserve funding, each receipt, and each allocation transfer are separate irreversible operations requiring a separate explicit Founder approval.
+- Public Testnet operations are not authorized; local TON Sandbox is the only permitted simulation environment.
+- No transaction may be signed or broadcast based on CI success, documentation, predicted addresses, or Sandbox results alone.
+
+---
+
+# HISTORICAL RELEASE STATUS SNAPSHOT — Action #68 (superseded by Action #78)
+
+
 
 > This section supersedes older Mainnet readiness claims below. It distinguishes the current `main` branch from the unmerged Founder-first candidate branch.
 
@@ -782,3 +817,18 @@ The controlling initial receipt amounts are the Founder’s five-stage instructi
 **Remaining hard blockers before real extraction:** verified/deployed Mainnet Jetton Master; TON Connect wallet-ownership proof; trusted Mainnet provider and immutable finalized balance snapshots; secure payout sender; finalized on-chain payout reconciliation; replay/idempotency/concurrency/bounce recovery tests; independent contract security review and clean-room build. Public mining remains HTTP 503 and Mainnet remains HOLD / NO-GO.
 
 **No authorization is implied by this review or commit.**
+
+
+## Action #78 — Correct stale top-level release status and consolidate transfer gates (2026-11-24)
+
+**Status:** Current status reconciled in documentation. No production contract or transaction behavior changed.
+
+- Replaced the stale Action #68 top-level status, which incorrectly described the five-stage contract as unmerged, with the verified current-main state.
+- Recorded exact-head Mining CI #481 and Backend CI #390 success, and distinguished the preceding Jetton Build/Pages CI #504 from exact-head checks.
+- Consolidated the remaining deployment, wallet-control, security, fee/reserve, five-stage receipt, and four allocation-transfer gates in one controlling section.
+- Confirmed deployment and Mainnet authorization flags remain false, Mainnet planner remains disabled, public mining remains HTTP 503, and no Master deployment or VCOIN issuance/transfer is verified.
+- No wallet connection, signing, broadcast, deployment, mint, or transfer occurred.
+
+**Next:** Complete clean-room artifact reproduction and independent security review, verify Founder wallet control and recipient addresses, then prepare a reviewed unsigned deployment package. Each later on-chain action still requires separate Founder approval.
+
+**No authorization is implied by this documentation update.**

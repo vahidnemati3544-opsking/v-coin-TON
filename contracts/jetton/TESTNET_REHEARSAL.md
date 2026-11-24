@@ -116,3 +116,10 @@ The current Founder-first source was reviewed against the rehearsal configuratio
 3. Rewrite the legacy `docs/JETTON_CONTRACT_SPEC.md` sections before any release so constructor, allocation, and network instructions match the active branch. A prominent supersession notice has been added, but the full rewrite remains pending.
 
 No code change is made from this source review because fee behavior and the complete external interoperability trace cannot be established from source inspection alone. Keep public Testnet deployment blocked until these items are resolved.
+
+
+## Pull-request integration gate — 2026-11-24
+
+GitHub comparison of `main` against `feat/founder-first-two-stage` reports the branches as **diverged**: feature branch is 71 commits ahead and 16 commits behind the current `main` merge base comparison. Pull request #21 is open, Draft, and currently reports `mergeable: false` / `mergeable_state: dirty`.
+
+Do not merge this branch in its current state. Resolve the 16-commit divergence and any resulting conflicts in a controlled review, preserve unrelated Main changes, then rerun exact-head Jetton, Backend, and Mining CI. This integration issue is separate from the passing CI runs for the earlier code commit. No branch rebase, merge, force-push, or Main modification was performed as part of this phone-only review.

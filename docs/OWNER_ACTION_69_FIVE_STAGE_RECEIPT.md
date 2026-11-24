@@ -36,8 +36,8 @@ The Founder personally signs four ordinary TEP-74 transfers after all five recei
 - Founder Jetton wallet: stores the last receipt acknowledgement and permits owner-triggered resend; duplicate acknowledgements cannot advance twice.
 - Sandbox tests: all five stages, exact supply, out-of-order/wrong amount rejection, acknowledgement retry, Stage 1/2 natural bounce rollback, and four post-receipt distributions.
 - PostgreSQL reconciliation: records five exact finalized receipt events in order; prevents any distribution before all five are confirmed; enforces four exact destinations and amounts.
-- Testnet tool: five unsigned Testnet-only request previews; no signing or broadcast. Mainnet planner remains disabled pending independent verification and separate Founder release authorization.
-- CI: exact-head compilation, Sandbox, backend, migration, and Testnet preview gates must pass before merge.
+- Historical Testnet preview generator is quarantined and is not part of current operations. Local TON Sandbox is the only permitted simulation environment; Mainnet planning remains disabled pending live-state reconciliation, wallet-control proof, exact fee review and separate Founder authorization.
+- CI: exact-head compilation, dependency audit, Sandbox, backend, migration and read-only Mainnet state/receipt reconciliation must pass before release review. No Testnet deployment or transaction is authorized.
 
 ## Safety and authorization
 

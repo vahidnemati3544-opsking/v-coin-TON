@@ -237,6 +237,9 @@ jobs:
           const html = fs.readFileSync('../../issuer/index.html', 'utf8');
           const preview = JSON.parse(fs.readFileSync('../../issuer/deployment-preview.json', 'utf8'));
           if (preview.status !== 'HOLD / NO-GO' || preview.transaction_payloads !== null || preview.legacy_direct_mint_preview_suppressed !== true) throw new Error('Public deployment preview must be sanitized and read-only');
+          const publicStages = ['420000000','1050000000','210000000','210000000','210000000'];
+          if (preview.initial_receipt.model !== 'Founder-first five-stage receipt' || preview.initial_receipt.stages.length !== 5) throw new Error('Public preview must expose exactly five approved receipt stages.');
+          preview.initial_receipt.stages.forEach((stage, i) => { if (stage.stage !== i + 1 || stage.amount_tokens !== publicStages[i] || stage.requires_fresh_founder_signature !== true) throw new Error('Public preview receipt stage mismatch: ' + (i + 1)); });
           if (!html.includes('MAINNET RELEASE — HOLD / NO-GO')) throw new Error('Mainnet hold banner is required');
           if (!html.includes('Stage 2: 1,050,000,000 VCOIN') || !html.includes('Stage 5: 210,000,000 VCOIN')) throw new Error('Five-stage Founder receipt display is missing');
           if (!html.includes('2,100,000,000 VCOIN')) throw new Error('Fixed supply display is missing');

@@ -59,6 +59,8 @@ jobs:
           if (result.deployment_authorized !== false || result.mainnet_authorized !== false || result.transaction_created !== false || result.transaction_signed !== false || result.transaction_broadcast !== false) throw new Error('Address derivation must remain offline and unauthorized.');
           console.log('Master StateInit and all five Jetton Wallet addresses derived; no transaction created or authorized.');
           NODE
+      - name: Reconcile reported and exact-build Master addresses plus Founder fee wallet (read-only Mainnet query)
+        run: npm run reconcile:mainnet-state
       - name: Enforce local Sandbox-only simulation policy
         run: |
           node <<'NODE'

@@ -27,9 +27,11 @@ Architecture documents describe intended behavior unless a section explicitly id
 
 - [Owner Instruction — Founder-first five-stage Mainnet receipt (2026-11-24)](OWNER_INSTRUCTION_2026-11-24.md) — controlling change to initial custody and Founder-signed distribution.
 
-- [Action #69 — Five-stage Founder-first VCOIN receipt](OWNER_ACTION_66_FOUNDER_FIRST_RECEIPT.md): records the controlling five-stage amounts, sequential receipt rules, and subsequent Founder-signed distributions.
+- [Action #69 — Five-stage Founder-first VCOIN receipt](OWNER_ACTION_69_FIVE_STAGE_RECEIPT.md): records the controlling five-stage amounts, sequential receipt rules, and subsequent Founder-signed distributions.
 
 - [Action #67 — Disable Superseded Direct-Mint Preview](WORKFLOW_PREVIEW_SUPPRESSION_ACTION_67.md): records the fail-closed CI and planner changes that prevent use of outdated transaction payloads.
+
+- [Action #83 — Repository-wide five-stage Founder-first alignment](OWNER_ACTION_83_REPOSITORY_FIVE_STAGE_ALIGNMENT.md): records the repository consistency sweep, code/tooling review, and remaining release gates.
 
 ## Latest repository consistency record
 

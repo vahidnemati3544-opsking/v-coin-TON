@@ -92,17 +92,21 @@ test('allocation ingestion accepts exact Founder-signed role transfers only', as
     network: 'mainnet', finality: 'finalized', jettonMasterAddress: MASTER,
     transactionHash: HASH, sourceOwnerAddress: 'UQwrong', allocationRole: 'treasury',
     amountBaseUnits: ALLOCATION_ROLES.treasury.amount,
+    sourceJettonWalletAddress: JETTON_WALLETS.founder,
+    destinationJettonWalletAddress: JETTON_WALLETS.treasury,
     destinationOwnerAddress: ALLOCATION_ROLES.treasury.destination
   }), /SOURCE_MISMATCH/);
   await assert.rejects(service.recordAllocationTransfer({
     network: 'mainnet', finality: 'finalized', jettonMasterAddress: MASTER,
     transactionHash: HASH, sourceOwnerAddress: FOUNDER_MAINNET_WALLET, allocationRole: 'treasury',
-    amountBaseUnits: '1', destinationOwnerAddress: ALLOCATION_ROLES.treasury.destination
+    amountBaseUnits: '1', sourceJettonWalletAddress: JETTON_WALLETS.founder,
+    destinationJettonWalletAddress: JETTON_WALLETS.treasury, destinationOwnerAddress: ALLOCATION_ROLES.treasury.destination
   }), /AMOUNT_MISMATCH/);
   await assert.rejects(service.recordAllocationTransfer({
     network: 'mainnet', finality: 'finalized', jettonMasterAddress: MASTER,
     transactionHash: HASH, sourceOwnerAddress: FOUNDER_MAINNET_WALLET, allocationRole: 'treasury',
-    amountBaseUnits: ALLOCATION_ROLES.treasury.amount, destinationOwnerAddress: ALLOCATION_ROLES.mining_reserve.destination
+    amountBaseUnits: ALLOCATION_ROLES.treasury.amount, sourceJettonWalletAddress: JETTON_WALLETS.founder,
+    destinationJettonWalletAddress: JETTON_WALLETS.mining_reserve, destinationOwnerAddress: ALLOCATION_ROLES.mining_reserve.destination
   }), /DESTINATION_MISMATCH/);
   assert.equal(calls.length, 4);
 });

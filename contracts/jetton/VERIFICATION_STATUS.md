@@ -1,3 +1,36 @@
+# ACTION #90 — Reconcile all five registered Mainnet Jetton Wallet balances (2026-11-24)
+
+**Status:** Read-only Mainnet wallet derivation and balance queries succeeded; exact-head build-and-test passed. Fresh-runner hash reproduction is running. No transaction was created, signed, or broadcast.
+
+## Active Master distribution observed
+
+Master: `EQBn4hW8bKhFTSz9riY5q3Pr3SfJmv2VYKZQl_NWMbK--5fP`  
+Supply: **2,100,000,000 VCOIN**; `mintable=false`.
+
+| Registered owner role | Master-derived Jetton Wallet | Account state | Observed VCOIN |
+|---|---|---|---:|
+| Founder (current registered address UQBh…) | `EQAuxau8FXYX_lCIBvxzFg6c8jVjqfqvaRszrcrofh5BVMFv` | uninitialized | 0 |
+| Treasury | `EQCXegSjHrFZxC_H2TVVaastC8CxBScqjAbdDZWEEm1GBZ2U` | active | 210,000,000 |
+| Liquidity / Market | `EQD5mlEiKvw0KYN8MKLUUfIsjRs1xS_NAb3YEhC_KyigrA59` | active | 210,000,000 |
+| Ecosystem / Marketing | `EQA2hJ0zEZilgcBGw_ycCT8_bzgUtoS6sxqohbXDCx2PEM6t` | active | 210,000,000 |
+| Mining Reserve | `EQAeVMNyrzMYA5dbHtGmTf37e7ikIbzUGSEoeqY5oIKA3kMa` | active | 1,050,000,000 |
+
+The five currently registered owner addresses therefore account for **1,680,000,000 VCOIN**; the current Founder wallet has zero. Separately, the active Master admin/legacy Founder wallet `EQCOzLnnSrR-mbM_AeiKU2wpMJ28cPoRncBuQHJ-6_q-Mn0T` holds **420,000,000 VCOIN**. Combined, the legacy Founder balance plus the four non-Founder registered allocation balances equal exactly **2,100,000,000 VCOIN**, matching Master total supply.
+
+## Interpretation and decision
+
+- The active Master already has the old five-wallet allocation pattern: 420M at the legacy admin/Founder address, 1.05B Mining, and 210M each in Treasury, Liquidity/Market and Ecosystem/Marketing.
+- This is **not** the requested current Founder-first five-stage receipt. The current Founder Jetton Wallet is uninitialized, has zero balance, and has no transaction history.
+- The active Master does not implement `get_receipt_status`; the read-only call returns exit code 11 / method ID 85110. The old contract therefore cannot attest to the new five-stage acknowledgement state.
+- Do not deploy a second Master and do not move the 1.68B already sitting in the four allocation wallets merely to simulate the newer receipt flow. That would create unnecessary risk and fees.
+- Any migration of the 420M legacy Founder balance to the current Founder address, or any broader consolidation/re-distribution, requires a separate explicit Founder-approved migration plan, proof of control of every source wallet, exact fee/payload review, and a fresh signature for each transfer.
+- Before deciding whether to keep the current old Master as canonical, the Founder must confirm control of the legacy admin address. The old `UQ...` address is Mainnet non-bounceable, not Testnet; its `EQ...` representation is the same raw account.
+- Current Founder GAS wallet remains active with 5.487534819 TON at the observed block. This is an observed balance, not a fixed fee quote.
+
+**Mainnet decision: HOLD / NO-GO for new deployment, issuance or transfers.** The active Master and full supply are confirmed, but current Founder wallet, admin control, code compatibility and receipt sequence do not match the latest approved design. Public mining remains disabled.
+
+---
+
 # ACTION #89 — Live Mainnet Master and Founder wallet reconciliation (2026-11-24)
 
 **Status:** Read-only TON Center Mainnet queries succeeded. Current Founder receipt balance is not present in the active Master-derived Founder Jetton Wallet. Mainnet remains HOLD / NO-GO.

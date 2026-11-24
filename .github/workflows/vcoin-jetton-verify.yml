@@ -62,7 +62,8 @@ jobs:
           const planner = fs.readFileSync('scripts/prepare-mainnet-deployment.ts', 'utf8');
           if (!planner.includes('DISABLED: legacy direct-mint Mainnet preview')) throw new Error('Legacy transaction planner must remain disabled until Founder-first implementation is verified.');
           const workflow = fs.readFileSync('../../.github/workflows/vcoin-jetton-verify.yml', 'utf8');
-          if (workflow.includes('npx tsx scripts/prepare-mainnet-deployment.ts')) throw new Error('CI must not execute the legacy direct-mint transaction planner.');
+          const legacyPlannerInvocation = 'npx tsx scripts/' + 'prepare-mainnet-deployment.ts';
+          if (workflow.includes(legacyPlannerInvocation)) throw new Error('CI must not execute the legacy direct-mint transaction planner.');
           console.log('Legacy direct-mint transaction preview generation is disabled pending Founder-first contract implementation.');
           NODE
       - name: Validate Founder-first allocation manifest and authorization hold
@@ -103,6 +104,28 @@ jobs:
           NODE
       - name: Run Jest tests
         run: npm test
+      - name: Block release until Founder-first staged contract and Sandbox coverage exist
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const source = fs.readFileSync('src/vcoin.tact', 'utf8');
+          const tests = fs.readFileSync('tests/jetton-sandbox.spec.ts', 'utf8');
+          const checks = {
+            stageOneMessage: source.includes('VCoinMintStageOne'),
+            stageTwoMessage: source.includes('VCoinMintStageTwo'),
+            stageOneState: source.includes('founder_stage_one_issued'),
+            stageTwoState: source.includes('founder_stage_two_issued'),
+            stageOneSandboxCase: /Founder Stage 1/i.test(tests),
+            stageTwoSandboxCase: /Founder Stage 2/i.test(tests),
+          };
+          const missing = Object.entries(checks).filter(([, passed]) => !passed).map(([name]) => name);
+          if (missing.length) {
+            throw new Error(
+              'Mainnet release remains blocked: the current VCoinMaster still lacks the approved Founder-first two-stage receipt implementation and matching Sandbox cases. Missing: ' + missing.join(', ')
+            );
+          }
+          console.log('Founder-first two-stage receipt implementation and Sandbox coverage markers are present.');
+          NODE
       - name: Preserve complete V COIN–TON source snapshot
         if: success()
         uses: actions/upload-artifact@v4

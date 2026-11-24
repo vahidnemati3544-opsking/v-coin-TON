@@ -32,7 +32,11 @@ The former Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is
 - **Backend CI:** [Run #45326854872](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45326854872) — **success** on the same head; backend syntax, PostgreSQL schema/migrations, migration-runner idempotency, and integration tests passed.
 - **Mining/PostgreSQL CI:** [Run #45326854945](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45326854945) — **success** on the same head; migration 010, both receipt stages, idempotency, all four allocation roles, and mismatch rejection passed.
 - **Latest backend reconciliation adapter test:** [Run #45327118111](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45327118111) — **success** on commit `b9c41653898d3ad395b0060025e67cd7d26c13a7`; strict Mainnet finality/Master/Jetton-wallet checks and PostgreSQL integration tests passed.
-- The Stage 1 amount is still unset. CI generated no receipt payloads.
+- **Latest exact-head Jetton CI:** [Run #45327687083](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45327687083) — **success** on commit `2d448d2f9304b2eb6910ce2ba8ae4f2876f67e06`; Tact compilation, zero-moderate-or-higher dependency audit, Sandbox tests, and sanitized read-only public preview validation passed.
+- **Latest exact-head Backend CI:** [Run #45327687002](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45327687002) — **success**.
+- **Latest exact-head Mining/PostgreSQL CI:** [Run #45327686925](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45327686925) — **success**.
+- Exact-head verification for contract code and the sanitized Pages workflow completed successfully on source commit `2d448d2f9304b2eb6910ce2ba8ae4f2876f67e06`; the current head `4898a631b27cba68578d55d290c1c5626fd2a5c7` adds only this checkpoint documentation.
+- The Stage 1 amount is still unset. CI generated no Mainnet receipt payloads.
 - The new predicted Master address and Jetton wallet addresses are build-derived preview values only; none is evidence of Mainnet deployment.
 - The feature branch is not merged into `main`.
 

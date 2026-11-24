@@ -1,3 +1,39 @@
+# ACTION #82 — CI #511 exact-head verification and expanded Mainnet gate review (2026-11-24)
+
+## Verified evidence
+- Exact current main commit: `9ed1cb439dc2e4c5b0c8c7cdfec04270dad70e53`.
+- Jetton workflow #511: SUCCESS — [GitHub Actions run](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45403615960).
+- Both `build-and-test` and `deploy-issuer` jobs completed successfully. The build job verified the committed lockfile, clean dependency installation, zero moderate/high/critical npm audit advisories, Tact compilation, metadata-cell generation, release-policy guards, and 3 Jest suites / 17 tests. The read-only Pages/TonConnect issuer endpoints were published and checked.
+- The Pages deployment is only a read-only issuer/status site; it is not a TON contract deployment.
+- `contracts/jetton/scripts/prepare-mainnet-deployment.ts` intentionally throws and remains disabled. No unsigned Mainnet deployment payload is available for review.
+- The run logs include Node.js 20 action deprecation warnings and dependency deprecation warnings. These are maintenance warnings, not evidence of an npm security advisory; update the workflow/runtime compatibility before a production release.
+
+## Expanded source and test coverage review
+- Reviewed the exact current `jetton.tact`, `vcoin.tact`, `messages.tact`, Sandbox suite, deployment template, allocation manifest, runbook, and disabled Mainnet planner.
+- The current 17-test suite verifies Founder-only five-stage receipt, exact 2.1B cap, sequential acknowledgements and retry, Stage 1/2 natural bounce rollback, normal allocation transfers, and Founder-only reserve funding/withdrawal.
+- **Additional test gap identified:** the current automated suite contains no dedicated burn-flow test and no dedicated ordinary Jetton transfer-bounce/refund test. These must be added and pass in Sandbox before Mainnet approval. This does not assert that the source paths are broken; it means those failure/edge paths are not currently evidenced by tests.
+- A clean-room rebuild and independent reproduction of Master StateInit / deterministic Jetton Wallet addresses remain uncompleted.
+- No independent third-party security audit is evidenced. The current review is an internal source-level review only.
+
+## Live-network and authorization gates still open
+1. Independent clean-room build from the exact commit and pinned compiler/dependency toolchain; independently reproduce the Master StateInit and all five wallet derivations.
+2. Independent third-party review of the exact source and release artifacts; remediate and retest every finding.
+3. Add Sandbox tests for burn success/rejection and ordinary transfer bounce/refund, then rerun exact-head CI.
+4. Prove Founder wallet control using a safe wallet signature/proof challenge, and have the Founder confirm all four destination owner addresses. Never request or disclose seed phrases, private keys, PINs, or recovery codes.
+5. Read current Mainnet configuration parameters for storage, gas and forwarding fees; emulate the exact deployment and subsequent messages using the current network configuration. Review attached TON values, Master reserve, bounce/recovery behavior, and possible stuck funds. Static reserve constants alone are not a live fee analysis.
+6. Re-enable no planner automatically: first produce a reviewed, unsigned deployment payload containing exact owner, metadata content, code/data hashes, StateInit hash, and expected Master address; independently inspect it.
+7. Only after all prior gates pass, the Founder may separately approve and sign deployment in Tonkeeper. Verify deployed Master code, owner, metadata, supply, mintability and getters on Mainnet.
+8. Execute the five exact Founder receipts one at a time, each with a fresh Founder signature and independent finalized on-chain confirmation. After full 2.1B receipt, execute four separate Founder-signed allocations and verify final balances.
+9. Keep public mining disabled until wallet ownership proof, trusted finalized Mainnet balance snapshots, payout sender and finalized payout reconciliation are implemented and tested.
+
+## Controlling decision
+- Mainnet disposition remains **HOLD / NO-GO**.
+- `deployment_authorized=false`; `mainnet_authorized=false`.
+- No Master deployment, issuance, transfer, or Mainnet transaction has been verified or authorized by this review.
+- CI success, a published status page, or this internal review does not replace independent audit, clean-room derivation, live fee analysis, or Founder signature.
+
+---
+
 > **LATEST CONTROLLING UPDATE — Action #81 (2026-11-24):** Exact-current-main Jetton CI #510 passed on commit `1775483bf84d7ed918c30476e186f64c9ed29fe8`: clean lockfile install, `npm audit` reported zero vulnerabilities, Tact compilation succeeded, and all 17 Sandbox/policy tests passed (3 suites). The read-only TonConnect issuer Pages deployment and endpoint checks also passed. Source-level review reconfirmed the Founder-only five-stage issuance, exact 2.1B cap, acknowledgement retry path, bounce rollback, and Founder-signed allocation transfers. This is not an independent third-party audit or an independently reproduced clean-room build. Mainnet remains HOLD / NO-GO: no deployed Master, no signed/broadcast transaction, no mint, and no transfer. Remaining release gates are listed below. See [CI #510](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45402776908).
 
 # CURRENT CONTROLLING RELEASE STATUS — 2026-11-24 (Action #81)

@@ -34,13 +34,13 @@ describe('VCOIN Founder-first two-stage issuance', () => {
     const attacker = await chain.treasury('attacker');
     const master = await deployMaster(chain, owner);
     const denied = await master.send(attacker.getSender(), { value: toNano('0.5') }, {
-      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
+      $$$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
     });
     expect(denied.transactions).toHaveTransaction({ to: master.address, success: false });
     expect((await master.getGetJettonData()).total_supply).toBe(0n);
 
     const stage1 = await master.send(owner.getSender(), { value: toNano('0.5') }, {
-      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
+      $$$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
     });
     expect(stage1.transactions).toHaveTransaction({ from: owner.address, to: master.address, success: true });
     expect((await master.getGetJettonData()).total_supply).toBe(STAGE_ONE);
@@ -57,16 +57,16 @@ describe('VCOIN Founder-first two-stage issuance', () => {
     const owner = await chain.treasury('owner');
     const master = await deployMaster(chain, owner);
     await master.send(owner.getSender(), { value: toNano('0.5') }, {
-      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
+      $$$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
     });
     const wrong = await master.send(owner.getSender(), { value: toNano('0.5') }, {
-      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_TWO - 1n,
+      $$$type: 'VCoinMint', receiver: owner.address, amount: STAGE_TWO - 1n,
     });
     expect(wrong.transactions).toHaveTransaction({ to: master.address, success: false });
     expect((await master.getGetJettonData()).total_supply).toBe(STAGE_ONE);
 
     const stage2 = await master.send(owner.getSender(), { value: toNano('0.5') }, {
-      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_TWO,
+      $$$type: 'VCoinMint', receiver: owner.address, amount: STAGE_TWO,
     });
     expect(stage2.transactions).toHaveTransaction({ from: owner.address, to: master.address, success: true });
     const data = await master.getGetJettonData();
@@ -95,10 +95,10 @@ describe('VCOIN Founder-first two-stage issuance', () => {
       expect(rejected.transactions).toHaveTransaction({ to: master.address, success: false });
     }
     await master.send(owner.getSender(), { value: toNano('0.5') }, {
-      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
+      $$$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
     });
     const repeated = await master.send(owner.getSender(), { value: toNano('0.5') }, {
-      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
+      $$$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
     });
     expect(repeated.transactions).toHaveTransaction({ to: master.address, success: false });
     expect((await master.getGetJettonData()).total_supply).toBe(STAGE_ONE);
@@ -113,10 +113,10 @@ describe('VCOIN Founder-first two-stage issuance', () => {
     const ecosystem = await chain.treasury('ecosystem');
     const master = await deployMaster(chain, owner);
     await master.send(owner.getSender(), { value: toNano('0.5') }, {
-      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
+      $$$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
     });
     await master.send(owner.getSender(), { value: toNano('0.5') }, {
-      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_TWO,
+      $$$type: 'VCoinMint', receiver: owner.address, amount: STAGE_TWO,
     });
     const wallet = await founderWallet(chain, master, owner);
     const shares = [
@@ -152,7 +152,7 @@ describe('VCOIN Founder-first two-stage issuance', () => {
       balance: toNano('1'), workchain: 0,
     }));
     const bounced = await master.send(owner.getSender(), { value: toNano('0.5') }, {
-      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
+      $$$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
     });
     expect(bounced.transactions).toHaveTransaction({
       from: walletAddress, to: master.address, inMessageBounced: true, success: true,
@@ -166,7 +166,7 @@ describe('VCOIN Founder-first two-stage issuance', () => {
     const owner = await chain.treasury('owner');
     const master = await deployMaster(chain, owner);
     await master.send(owner.getSender(), { value: toNano('0.5') }, {
-      $type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
+      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_ONE,
     });
     const walletAddress = await master.getGetWalletAddress(owner.address);
     const rejector = await BounceRejector.fromInit();
@@ -177,7 +177,7 @@ describe('VCOIN Founder-first two-stage issuance', () => {
     }));
 
     const bounced = await master.send(owner.getSender(), { value: toNano('0.5') }, {
-      $type: 'VCoinMint', receiver: owner.address, amount: STAGE_TWO,
+      $$type: 'VCoinMint', receiver: owner.address, amount: STAGE_TWO,
     });
     expect(bounced.transactions).toHaveTransaction({
       from: walletAddress, to: master.address, inMessageBounced: true, success: true,

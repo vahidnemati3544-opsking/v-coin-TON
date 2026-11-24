@@ -115,27 +115,6 @@ async function main() {
   const founderInfoResponse = await readApi('getAddressInformation', { address: founder });
   const founderInfo = summarizeAccount(founder, founderInfoResponse);
 
-  const founderTransactionsResponse = await readApi('getTransactions', {
-    address: founder,
-    limit: 20,
-    archival: true,
-  });
-  const inbound = founderTransactionsResponse.status === 'ok' && Array.isArray(founderTransactionsResponse.data)
-    ? founderTransactionsResponse.data
-        .filter((tx: any) => tx.in_msg && tx.in_msg.source && tx.in_msg.destination)
-        .map((tx: any) => ({
-          utime: tx.utime ?? null,
-          timestamp_utc: tx.utime ? new Date(Number(tx.utime) * 1000).toISOString() : null,
-          source: tx.in_msg.source,
-          destination: tx.in_msg.destination,
-          value_nanotons: tx.in_msg.value ?? null,
-          value_ton: formatNano(tx.in_msg.value),
-          transaction_lt: tx.transaction_id?.lt ?? null,
-          transaction_hash: tx.transaction_id?.hash ?? null,
-          transaction_fee_nanotons: tx.fee ?? null,
-        }))
-    : [];
-
   const reportedInfoResponse = await readApi('getAddressInformation', { address: reportedMaster });
   const reportedTokenResponse = await readApi('getTokenData', { address: reportedMaster });
   const derivedInfoResponse = await readApi('getAddressInformation', { address: derivedMaster });
@@ -170,9 +149,6 @@ async function main() {
     api_key_configured: Boolean(API_KEY),
     requests_made: requestCount,
     founder_wallet: founderInfo,
-    founder_recent_inbound_transactions: inbound,
-    founder_transaction_history_status: founderTransactionsResponse.status,
-    founder_transaction_history_error: founderTransactionsResponse.status === 'unavailable' ? founderTransactionsResponse.error : null,
     reported_tonkeeper_master: {
       account: reportedAccount,
       jetton_data: summarizeToken(reportedTokenResponse),
@@ -211,7 +187,6 @@ async function main() {
     reported_master_supply: (report.reported_tonkeeper_master.jetton_data as any).total_supply_tokens ?? null,
     derived_master_status: derivedAccount.status,
     derived_master_observed_code_matches_build: report.exact_build_derived_master.observed_code_matches_exact_build,
-    founder_recent_inbound_count: inbound.length,
     api_requests: requestCount,
     transaction_created: false,
     transaction_signed: false,

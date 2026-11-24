@@ -12,7 +12,7 @@
 
 **Document ID:** VCT-WALLET-ALLOC-001  
 **Version:** 1.2  
-**Status:** Owner-approved Founder-first, five-stage Mainnet receipt and Founder-controlled distribution; contract adaptation and deployed-address verification pending  
+**Status:** Owner-approved Founder-first five-stage Mainnet receipt and Founder-controlled distribution; source code and Sandbox coverage present, live Master compatibility and wallet/source verification pending  
 **Network:** TON Blockchain  
 **Token:** VCOIN Jetton (TEP-74)  
 **Total initial supply:** 2,100,000,000 VCOIN  

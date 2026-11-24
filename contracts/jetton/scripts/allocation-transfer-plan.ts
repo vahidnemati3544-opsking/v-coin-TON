@@ -41,7 +41,7 @@ export function buildFounderAllocationPlan(
   requests: RequestedAllocation[],
   founderJettonBalanceBaseUnits: string,
 ) {
-  if (!/^\\d+$/.test(founderJettonBalanceBaseUnits)) {
+  if (!/^\d+$/.test(founderJettonBalanceBaseUnits)) {
     throw new Error("Founder Jetton balance must be a non-negative integer string");
   }
   if (requests.length !== APPROVED_ALLOCATIONS.length) {

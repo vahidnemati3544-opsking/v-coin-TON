@@ -67,7 +67,7 @@ async function applyTestMigrations(pool) {
     await client.query(settlementMigration);
 
     const founderFirstMigration = await fs.readFile(
-      path.join(databaseDir, 'migrations/010-founder-first-two-stage-reconciliation.sql'), 'utf8'
+      path.join(databaseDir, 'migrations/010-founder-first-five-stage-reconciliation.sql'), 'utf8'
     );
     await client.query(founderFirstMigration);
   } finally {

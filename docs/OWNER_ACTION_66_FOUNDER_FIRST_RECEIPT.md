@@ -1,42 +1,46 @@
 # Action #66 — Founder-First Two-Stage Mainnet Receipt Policy
 
 **Date:** 2026-11-24  
-**Status:** Core contract redesign committed to isolated feature branch; CI/Sandbox verification pending  
+**Status:** Contract redesign and automated verification passed on isolated feature branch; backend ingestion and Mainnet release gates remain pending  
 **Branch:** `feat/founder-first-two-stage`  
+**Latest feature-branch head at this checkpoint:** `5548ea95db951142ebcfe2a9bbb7544f306a89b2`  
 **Scope:** V COIN–TON only; no changes to the legacy BNB project
 
 ## Owner instruction
 
-The full fixed supply of 2,100,000,000 VCOIN is to be received by Founder Mainnet wallet `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT` in two separate, Founder-authorized stages. The second stage requires a fresh Founder-signed transaction and must equal the exact remaining supply. Stage 1 amount remains unspecified until the Founder approves it. After full receipt, the Founder personally signs four Jetton-wallet transfers: Mining 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN. The Founder retains 420,000,000 VCOIN.
+The full fixed supply of 2,100,000,000 VCOIN is to be received by Founder Mainnet wallet `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT` in two separate, Founder-authorized stages. Stage 2 requires a fresh Founder-signed transaction and must equal the exact remaining supply. Stage 1 amount remains unspecified until explicitly approved by the Founder. After full receipt, the Founder personally signs four Jetton transfers: Mining 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN. The Founder retains 420,000,000 VCOIN.
 
 The former Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is Testnet-only historical data and must not be used on Mainnet.
 
 ## Completed engineering changes on feature branch
 
-1. `contracts/jetton/src/vcoin.tact`: replaced the legacy five-recipient direct-mint logic with Founder-only two-stage receipt. Stage 1 must be positive and below cap; Stage 2 must equal the exact remaining supply. Stage 2 disables further minting.
-2. `contracts/jetton/src/jetton.tact`: receipt-stage query IDs are carried through the internal Jetton credit message to authenticate the corresponding bounce rollback.
-3. `contracts/jetton/src/messages.tact`: replaced old allocation status/config structs with staged receipt status.
-4. `contracts/jetton/tests/jetton-sandbox.spec.ts`: replaced legacy five-wallet mint tests with Founder-only staged receipt, fixed cap, four Founder-signed transfer, and bounce coverage.
-5. `contracts/jetton/scripts/prepare-mainnet-deployment.ts`: derives the revised StateInit and Jetton wallets; it generates stage payloads only when `VCOIN_STAGE1_TOKENS` is explicitly supplied. Stage 2 is calculated as the exact remainder and requires a separate signature.
-6. `contracts/jetton/tests/README.md`: updated test and release-gate documentation.
+1. `contracts/jetton/src/vcoin.tact`: replaced legacy five-recipient direct minting with Founder-only two-stage receipt. Stage 1 must be positive and below cap; Stage 2 must equal the exact remaining supply.
+2. `contracts/jetton/src/jetton.tact`: the Founder Jetton wallet sends a receipt acknowledgement after its balance is actually credited. Stage 2 is rejected until Stage 1 acknowledgement is confirmed. Burns are blocked until both initial receipt stages are complete. Stage-specific natural bounces roll back only the failed stage.
+3. `contracts/jetton/src/messages.tact`: added the receipt acknowledgement message and receipt status fields.
+4. `contracts/jetton/tests/jetton-sandbox.spec.ts`: covers Founder-only receipt, exact cap, Stage 2 fresh request, four Founder-signed transfers, Stage 1/Stage 2 bounce rollback, and post-issuance mint lock.
+5. `contracts/jetton/scripts/prepare-mainnet-deployment.ts`: derives revised StateInit and Jetton wallets; receipt payloads are generated only when an explicit Stage 1 amount is supplied. Stage 2 is calculated as the exact remainder and requires a separate signature.
+6. `issuer/index.html`: legacy transaction console retired and replaced with a read-only HOLD / NO-GO status page.
+7. `contracts/mining/backend/database/migrations/010-founder-first-two-stage-reconciliation.sql`: adds idempotent chain-receipt and four-role allocation reconciliation functions, exact amount and destination checks, and a reconciliation view.
+8. `contracts/mining/backend/test/mining-ledger.integration.test.js`: applies migration 010 and verifies both receipt stages, idempotency, exact four destination transfers, and mismatch rejection.
+9. Deployment template, allocation manifest, runbook, verification status, and contract README updated to the Founder-first architecture.
 
-## Verification state
+## Automated verification evidence
 
-- GitHub Actions verification was triggered on the feature branch; final result is pending.
-- No successful Tact compilation or Sandbox pass is claimed until the workflow reports success.
-- Backend reconciliation, issuer UI, deployment runbook, and exact-head release artifacts still require alignment with the new flow.
-- The feature branch has not been merged into `main`.
+- **Jetton CI:** [Run #45326599824](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45326599824) — **success** on commit `9f7e060aef326f408ec69cfdc69de9970c44ceb7`. Tact compilation, metadata cell generation, unsigned deployment preview, Jest Sandbox tests, read-only issuer checks, and artifact preservation passed.
+- **Backend/PostgreSQL CI:** [Run #45326689464](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45326689464) — **success** on commit `5548ea95db951142ebcfe2a9bbb7544f306a89b2`. Syntax checks and PostgreSQL integration tests, including migration 010 and all four allocation roles, passed.
+- The Stage 1 amount is still unset. CI generated no receipt payloads.
+- The new predicted Master address and Jetton wallet addresses are build-derived preview values only; none is evidence of Mainnet deployment.
+- The feature branch is not merged into `main`.
 
 ## Remaining work — do not mark complete
 
-1. Obtain passing Tact build and Sandbox tests; repair any compiler/test failures.
-2. Add and verify Stage 2 natural-bounce rollback/retry coverage.
-3. Update backend accounting/reconciliation so the two receipt stages and four subsequent transfers cannot be double-counted.
-4. Update TonConnect issuer UI and release workflow to remove the old direct-five-mint sequence.
-5. Update deployment runbook and verification status from exact revised source.
-6. Validate JSON schema, StateInit/code/data hashes, Jetton wallet derivations, address control, and live fees/reserves.
-7. Only then prepare unsigned Mainnet payloads for the Founder’s personal review and signatures.
+1. Connect the production backend/indexer to validate actual TON transaction finality, expected Jetton Master and wallet relationships, and then call the tested reconciliation functions. Migration and database functions alone do not prove on-chain events.
+2. Review the exact latest feature-branch head and regenerate/reconcile final artifacts and hashes.
+3. Verify Founder wallet control, all four registered destination addresses, deterministic Jetton Wallet addresses, Mainnet network, and current fees/reserves.
+4. Implement/review a new Founder-first signing interface; the issuer page is currently read-only and must remain so until that flow is approved.
+5. Record the Stage 1 amount only after the Founder explicitly chooses it. Stage 2 must be separately authorized after Stage 1 is confirmed.
+6. Prepare unsigned payloads for personal Founder review only after all release gates pass.
 
 ## Safety status
 
-**Mainnet transfer readiness: HOLD / NO-GO.** No Mainnet deployment, receipt, or allocation transfer is authorized by this engineering work. Do not send either installment or any allocation transfer until all release checks pass and the Founder approves each exact transaction. Never request or share recovery phrases or private keys.
+**Mainnet transfer readiness: HOLD / NO-GO.** No Mainnet deployment, receipt, or allocation transfer is authorized. The source branch is not merged. No token receipt is claimed. Never request or share recovery phrases, private keys, or PINs.

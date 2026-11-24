@@ -17,6 +17,25 @@ describe('VCOIN five-wallet allocation manifest', () => {
     ]);
   });
 
+  test('defines the exact five Founder-first receipt stages and prohibits public Testnet execution', () => {
+    expect(plan.initialReceipt.network).toBe('mainnet');
+    expect(plan.initialReceipt.founderReceivingWallet).toBe('UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT');
+    expect(plan.initialReceipt.installments.map((item: { stage: number; amountTokens: string; amountBaseUnits: string }) => [
+      item.stage, item.amountTokens, item.amountBaseUnits
+    ])).toEqual([
+      [1, '420000000', '420000000000000'],
+      [2, '1050000000', '1050000000000000'],
+      [3, '210000000', '210000000000000'],
+      [4, '210000000', '210000000000000'],
+      [5, '210000000', '210000000000000'],
+    ]);
+    expect(plan.initialReceipt.publicTestnetExecutionAuthorized).toBe(false);
+    expect(plan.initialReceipt.simulationEnvironment).toBe('local_ton_sandbox_only');
+    expect(plan.initialReceipt.testnetRehearsal).toBeUndefined();
+    expect(plan.initialReceipt.status).toBe('five_stage_amounts_recorded_local_sandbox_only_mainnet_hold');
+    expect(plan.releaseConstraints.some((item: string) => /No public TON Testnet deployment/i.test(item))).toBe(true);
+  });
+
   test('allocations sum to 100 percent and the fixed 2.1 billion supply', () => {
     const percentTotal = plan.allocations.reduce((sum: number, item: { percent: number }) => sum + item.percent, 0);
     const baseUnitTotal = plan.allocations.reduce((sum: bigint, item: { amountBaseUnits: string }) => sum + BigInt(item.amountBaseUnits), 0n);

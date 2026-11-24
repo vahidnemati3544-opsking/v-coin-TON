@@ -1,5 +1,5 @@
 import { Blockchain, SandboxContract, TreasuryContract, createShardAccount } from '@ton/sandbox';
-import { Address, Cell, toNano } from '@ton/core';
+import { Cell, toNano } from '@ton/core';
 import '@ton/test-utils';
 import { VCoinMaster } from '../build/VCoinMaster_VCoinMaster';
 import { VCoinJettonWallet } from '../build/VCoinMaster_VCoinJettonWallet';
@@ -22,7 +22,7 @@ async function deployMaster(blockchain: Blockchain, owner: SandboxContract<Treas
   return master;
 }
 
-async function founderWallet(blockchain: Blockchain, master: SandboxContract<ReturnType<typeof VCoinMaster>>, owner: SandboxContract<TreasuryContract>) {
+async function founderWallet(blockchain: Blockchain, master: any, owner: any) {
   const address = await master.getGetWalletAddress(owner.address);
   return blockchain.openContract(VCoinJettonWallet.fromAddress(address));
 }

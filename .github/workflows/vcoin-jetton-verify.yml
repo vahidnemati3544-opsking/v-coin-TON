@@ -34,6 +34,8 @@ jobs:
           node-version: 22
       - name: Generate deterministic dependency lockfile
         run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Verify committed lockfile is current
+        run: git diff --exit-code -- package-lock.json
       - name: Install from generated lockfile
         run: npm ci --no-audit --no-fund
       - name: Capture dependency audit report
@@ -62,6 +64,42 @@ jobs:
           const workflow = fs.readFileSync('../../.github/workflows/vcoin-jetton-verify.yml', 'utf8');
           if (workflow.includes('npx tsx scripts/prepare-mainnet-deployment.ts')) throw new Error('CI must not execute the legacy direct-mint transaction planner.');
           console.log('Legacy direct-mint transaction preview generation is disabled pending Founder-first contract implementation.');
+          NODE
+      - name: Validate Founder-first allocation manifest and authorization hold
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const config = JSON.parse(fs.readFileSync('deployment.config.template.json', 'utf8'));
+          const manifest = JSON.parse(fs.readFileSync('allocation-manifest.template.json', 'utf8'));
+          const founder = config.allocation_wallets.founder;
+          const expected = {
+            founder: '420000000000000',
+            mining_reserve: '1050000000000000',
+            treasury: '210000000000000',
+            liquidity_market: '210000000000000',
+            ecosystem_marketing: '210000000000000',
+          };
+          const actualTotal = Object.values(config.allocation_base_units).reduce((sum, value) => sum + BigInt(value), 0n);
+          if (actualTotal !== 2100000000000000n || config.initial_supply_base_units !== '2100000000000000') throw new Error('Fixed 2.1B supply accounting mismatch.');
+          for (const [role, amount] of Object.entries(expected)) {
+            if (config.allocation_base_units[role] !== amount) throw new Error('Unexpected allocation amount for ' + role);
+          }
+          const owners = Object.values(config.allocation_wallets);
+          if (owners.length !== 5 || new Set(owners).size !== 5) throw new Error('Exactly five unique owner allocation addresses are required.');
+          if (config.operational_fee_wallet.owner_provided_address !== founder) throw new Error('GAS & OPERATIONS must be the Founder wallet.');
+          if (manifest.founder_wallet_candidate !== founder || manifest.gas_operations_wallet.address !== founder) throw new Error('Manifest Founder/GAS address mismatch.');
+          if (manifest.gas_operations_wallet.is_separate_wallet !== false) throw new Error('A separate GAS wallet is not part of the approved design.');
+          if (manifest.transfers.length !== 5) throw new Error('Manifest must contain exactly five final allocation rows.');
+          for (const row of manifest.transfers) {
+            if (row.destination !== config.allocation_wallets[row.allocation]) throw new Error('Manifest destination mismatch for ' + row.allocation);
+            if (row.base_units !== config.allocation_base_units[row.allocation]) throw new Error('Manifest allocation mismatch for ' + row.allocation);
+          }
+          if (!manifest.status.includes('HOLD / NO-GO') || !manifest.preview_status.includes('HOLD / NO-GO')) throw new Error('Manifest must remain HOLD / NO-GO.');
+          if (config.deployment_authorized !== false || config.mainnet_authorized !== false || manifest.founder_confirmed_release_intent.mainnet_transaction_authorized !== false) throw new Error('Mainnet authorization flags must remain false.');
+          if (config.initial_receipt.installments[0].amount_tokens !== null || config.initial_receipt.installments[1].amount_tokens !== null || config.initial_receipt.second_stage_requires_fresh_founder_announcement !== true) throw new Error('Unapproved staged receipt amounts or authorization state found.');
+          if (manifest.initial_receipt.installments[0].amount_tokens !== null || manifest.initial_receipt.installments[1].amount_tokens !== null || manifest.initial_receipt.stage_2_requires_fresh_founder_announcement !== true) throw new Error('Manifest staged receipt amounts or authorization state mismatch.');
+          if (manifest.predicted_jetton_master_address !== null || manifest.predicted_master_state_init_hash !== null || manifest.preview_source_commit !== null) throw new Error('Superseded deployment predictions must remain cleared.');
+          console.log('Founder-first wallet register, allocation totals, shared Founder/GAS role, and Mainnet HOLD flags validated.');
           NODE
       - name: Run Jest tests
         run: npm test

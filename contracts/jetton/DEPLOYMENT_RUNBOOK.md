@@ -55,7 +55,7 @@ These transfers move already-issued tokens and do not create additional supply.
 TON Testnet is not an authorized deployment, rehearsal, receipt, or transaction environment for the current project direction. Historical Testnet files and addresses are retained only as quarantined reference material and must not be used for current operations. Local TON Sandbox is the permitted simulation environment. No Testnet wallet signing or broadcast is authorized.
 
 ## 7. Current release status — Action #86 (2026-11-24)
-- The exact-current-main baseline remains commit `9ed1cb439dc2e4c5b0c8c7cdfec04270dad70e53`; it does not yet include PR #24.
+- The exact-current-main baseline is commit `4a981a9625f7dc59b53ba52502c20f4219e92b4b`; it does not yet include PR #24.
 - PR #24 remains open and Draft on branch `audit/action-83-burn-transfer-bounce-tests`; it is not merged to `main`.
 - PR #24 adds the three missing Sandbox edge-case tests (burn rejection before Stage 5, burn after Stage 5 with supply reconciliation, and ordinary transfer bounce/refund), bringing the suite to 20 tests.
 - Workflow #535 passed both `build-and-test` and fresh-runner `hash-reproduction`; PR workflow #539 also passed both jobs on the updated PR head. The Pages issuer deployment job was skipped on the review branch as expected. These are CI and deterministic-build results, not Mainnet deployment.

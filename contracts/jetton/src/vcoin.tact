@@ -106,27 +106,26 @@ contract VCoinMaster with JettonMaster {
         require(msg.query_id >= 1 && msg.query_id <= 5, "Unknown receipt acknowledgement stage");
         let expected: Int = self.expectedReceiptAmount(msg.query_id);
         require(msg.amount == expected, "Receipt acknowledgement amount mismatch");
-        if (msg.query_id < self.next_receipt_stage) {
-            return;
-        }
-        require(msg.query_id == self.next_receipt_stage, "Unexpected receipt acknowledgement sequence");
-        require(self.receipt_pending && self.pending_receipt_amount == msg.amount, "No matching receipt is pending");
-
-        self.receipt_pending = false;
-        self.pending_receipt_amount = 0;
-        if (msg.query_id == 1) {
-            self.stage_1_confirmed = true;
-        } else if (msg.query_id == 2) {
-            self.stage_2_confirmed = true;
-        } else if (msg.query_id == 3) {
-            self.stage_3_confirmed = true;
-        } else if (msg.query_id == 4) {
-            self.stage_4_confirmed = true;
+        if (msg.query_id == self.next_receipt_stage) {
+            require(self.receipt_pending && self.pending_receipt_amount == msg.amount, "No matching receipt is pending");
+            self.receipt_pending = false;
+            self.pending_receipt_amount = 0;
+            if (msg.query_id == 1) {
+                self.stage_1_confirmed = true;
+            } else if (msg.query_id == 2) {
+                self.stage_2_confirmed = true;
+            } else if (msg.query_id == 3) {
+                self.stage_3_confirmed = true;
+            } else if (msg.query_id == 4) {
+                self.stage_4_confirmed = true;
+            } else {
+                self.stage_5_confirmed = true;
+                self.mintable = false;
+            }
+            self.next_receipt_stage = self.next_receipt_stage + 1;
         } else {
-            self.stage_5_confirmed = true;
-            self.mintable = false;
+            require(msg.query_id < self.next_receipt_stage, "Unexpected receipt acknowledgement sequence");
         }
-        self.next_receipt_stage = self.next_receipt_stage + 1;
     }
 
     // A natural bounce rolls back only the pending stage. The same exact stage

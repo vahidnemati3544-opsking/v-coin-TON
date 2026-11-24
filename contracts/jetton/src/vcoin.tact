@@ -20,7 +20,9 @@ contract VCoinMaster with JettonMaster {
 
     first_receipt_amount: Int as coins = 0;
     first_receipt_issued: Bool = false;
+    first_receipt_confirmed: Bool = false;
     second_receipt_issued: Bool = false;
+    second_receipt_confirmed: Bool = false;
     second_receipt_amount: Int as coins = 0;
 
     init(owner: Address, content: Cell) {
@@ -30,7 +32,9 @@ contract VCoinMaster with JettonMaster {
         self.content = content;
         self.first_receipt_amount = 0;
         self.first_receipt_issued = false;
+        self.first_receipt_confirmed = false;
         self.second_receipt_issued = false;
+        self.second_receipt_confirmed = false;
         self.second_receipt_amount = 0;
     }
 
@@ -77,6 +81,7 @@ contract VCoinMaster with JettonMaster {
             self.first_receipt_issued = true;
             self.mintTo(self.owner, msg.amount, self.owner, 1);
         } else {
+            require(self.first_receipt_confirmed, "Stage 1 wallet credit is not yet confirmed");
             require(!self.second_receipt_issued, "Stage 2 already issued");
             require(
                 msg.amount == VCOIN_MAX_SUPPLY - self.total_supply,
@@ -85,7 +90,24 @@ contract VCoinMaster with JettonMaster {
             self.second_receipt_issued = true;
             self.second_receipt_amount = msg.amount;
             self.mintTo(self.owner, msg.amount, self.owner, 2);
+        }
+    }
+
+    // The deterministic Founder Jetton wallet acknowledges successful initial credits.
+    receive(msg: VCoinReceiptAcknowledgement) {
+        let ctx: Context = context();
+        require(ctx.sender == contractAddress(self.walletInit(self.owner)), "Untrusted receipt acknowledgement wallet");
+        if (msg.query_id == 1) {
+            require(self.first_receipt_issued && !self.first_receipt_confirmed, "Unexpected Stage 1 acknowledgement");
+            require(msg.amount == self.first_receipt_amount, "Stage 1 acknowledgement amount mismatch");
+            self.first_receipt_confirmed = true;
+        } else if (msg.query_id == 2) {
+            require(self.second_receipt_issued && !self.second_receipt_confirmed, "Unexpected Stage 2 acknowledgement");
+            require(msg.amount == self.second_receipt_amount, "Stage 2 acknowledgement amount mismatch");
+            self.second_receipt_confirmed = true;
             self.mintable = false;
+        } else {
+            require(false, "Unknown receipt acknowledgement stage");
         }
     }
 
@@ -105,6 +127,7 @@ contract VCoinMaster with JettonMaster {
             self.total_supply = self.total_supply - msg.amount;
             self.first_receipt_amount = 0;
             self.first_receipt_issued = false;
+            self.first_receipt_confirmed = false;
         } else if (msg.query_id == 2) {
             require(self.second_receipt_issued, "No Stage 2 receipt is pending");
             require(
@@ -113,6 +136,7 @@ contract VCoinMaster with JettonMaster {
             );
             self.total_supply = self.total_supply - msg.amount;
             self.second_receipt_issued = false;
+            self.second_receipt_confirmed = false;
             self.second_receipt_amount = 0;
             self.mintable = true;
         } else {
@@ -124,7 +148,9 @@ contract VCoinMaster with JettonMaster {
         return VCoinReceiptStatus{
             first_receipt_amount: self.first_receipt_amount,
             first_receipt_issued: self.first_receipt_issued,
+            first_receipt_confirmed: self.first_receipt_confirmed,
             second_receipt_issued: self.second_receipt_issued,
+            second_receipt_confirmed: self.second_receipt_confirmed,
             remaining_supply: VCOIN_MAX_SUPPLY - self.total_supply
         };
     }

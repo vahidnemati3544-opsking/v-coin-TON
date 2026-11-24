@@ -1,3 +1,13 @@
+## Controlling owner instruction — 2026-11-24 (supersedes conflicting legacy wording)
+
+- Fixed total supply: **2,100,000,000 VCOIN**, six decimals; no additional minting.
+- Sole initial receiving wallet: Founder-designated **TON Mainnet** address `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT`.
+- The entire supply is to reach this wallet in **two separate incoming transfers**. Installment amounts and timing remain to be entered in the transaction plan. Installment 2 occurs only after the Founder explicitly announces and authorizes it. This instruction does not assert that either transfer has occurred.
+- After receipt, the Founder personally controls and signs distributions to the four registered allocation wallets: Mining Reserve 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN. The Founder retains 420,000,000 VCOIN (20%).
+- Former Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` was **Testnet-only**. It is historical/test-only and must never be used as the Mainnet receiving address.
+- This instruction supersedes direct five-wallet initial issuance, any one-operation five-wallet issuance description, and any designation of the former Founder address as Mainnet.
+- Documentation changes do not authorize a Mainnet transaction. The exact deployed Jetton Master, Mainnet status, contract compatibility with the Founder-first two-stage flow, wallet-control proof, installment amounts, fees, and local Sandbox evidence must be verified before signing. Existing fixed-five-destination contract logic must be revised and tested if incompatible.
+
 # V COIN – TON Purchase, Level Balance, and Mining Payout Policy
 
 **Document ID:** VCT-FIN-001  
@@ -20,10 +30,10 @@ The total initial supply is exactly 2,100,000,000 VCOIN (2,100,000,000,000,000 b
 
 1. The user initiates a purchase through the Telegram Mini App / wallet flow and selects the amount.
 2. The system creates a unique order containing the TON amount, VCOIN amount, quote expiry, intended network, and the user's verified TON wallet destination.
-3. The TON payment is directed to the Founder allocation wallet:
-   `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy`
+3. The TON payment is directed to the Founder Mainnet receiving wallet:
+   `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT`
 4. After the exact payment is verified as successful and final on the intended TON network, the corresponding already-issued VCOIN is transferred from the Founder Jetton wallet to the user's verified Jetton wallet.
-5. The purchase is a transfer of existing VCOIN, never a mint. The amount deliverable through this route is limited by the available, unencumbered VCOIN balance in the Founder wallet's approved 420,000,000 VCOIN allocation. It cannot consume the mining reserve or another allocation without a separately approved policy change.
+5. The purchase is a transfer of existing VCOIN, never a mint. The amount deliverable through this route is limited by the available, unencumbered VCOIN balance under Founder control and must not consume amounts already reserved for the four other approved allocations. The Founder initially receives the full supply in two transfers, then funds the four allocation wallets by Founder-signed transfers.
 6. The backend reconciles the TON payment and VCOIN delivery using transaction hashes, exact amounts, sender/recipient, approved Jetton master, unique order ID, and idempotency key.
 7. The order is not marked complete until both payment receipt and VCOIN delivery are verified. If delivery fails or bounces after payment, it remains an exception (unpaid delivery) for a controlled retry or refund process; never silently mark it complete.
 

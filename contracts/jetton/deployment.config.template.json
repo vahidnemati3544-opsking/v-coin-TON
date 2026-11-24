@@ -89,14 +89,31 @@
     "installments": [
       {
         "stage": 1,
-        "amount_tokens": null
+        "amount_tokens": "1000000000",
+        "amount_base_units": "1000000000000000",
+        "founder_authorization_required": true
       },
       {
         "stage": 2,
-        "amount_tokens": null
+        "amount_tokens": "1100000000",
+        "amount_base_units": "1100000000000000",
+        "founder_authorization_required": true
       }
     ],
     "second_stage_requires_fresh_founder_announcement": true,
-    "status": "pending_stage1_amount_and_exact_head_verification"
+    "status": "amounts_recorded_testnet_rehearsal_pending_mainnet_hold"
+  },
+  "testnet_rehearsal": {
+    "authorized_by_founder": true,
+    "authorization_date": "2026-11-24",
+    "network": "testnet",
+    "founder_testnet_wallet": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
+    "stage_1_tokens": "1000000000",
+    "stage_1_base_units": "1000000000000000",
+    "stage_2_tokens": "1100000000",
+    "stage_2_base_units": "1100000000000000",
+    "status": "pending_public_testnet_execution_and_founder_wallet_signature",
+    "no_mainnet_authority": true,
+    "no_seed_phrase_or_private_key_collection": true
   }
 }

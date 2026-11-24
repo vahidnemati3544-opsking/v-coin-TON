@@ -465,7 +465,7 @@ test('Founder-first receipt and allocation reconciliation is exact, idempotent, 
     const reconciliation = await pool.query('SELECT * FROM vcoin_founder_first_reconciliation');
     assert.equal(reconciliation.rows[0].confirmed_receipt_base_units, '2100000000000000');
     assert.equal(reconciliation.rows[0].founder_signed_distributions_base_units, '1680000000000000');
-    assert.equal(reconciliation.rows[0].confirmed_distribution_count, 4);
+    assert.equal(reconciliation.rows[0].confirmed_distribution_count, '4');
     assert.equal(reconciliation.rows[0].full_supply_receipt_confirmed, true);
   } finally {
     await pool.end();

@@ -449,10 +449,23 @@ test('Founder-first receipt and allocation reconciliation is exact, idempotent, 
       /registered wallet/i
     );
 
+    const otherTransfers = [
+      ['treasury', '210000000000000', 'UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ'],
+      ['liquidity_market', '210000000000000', 'UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn'],
+      ['ecosystem_marketing', '210000000000000', 'UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE'],
+    ];
+    for (const [role, amount, destination] of otherTransfers) {
+      const result = await pool.query(
+        'SELECT record_vcoin_allocation_transfer($1, $2::numeric, $3, $4, $5) AS status',
+        [role, amount, randomBytes(32).toString('hex'), founder, destination]
+      );
+      assert.equal(result.rows[0].status, 'confirmed');
+    }
+
     const reconciliation = await pool.query('SELECT * FROM vcoin_founder_first_reconciliation');
     assert.equal(reconciliation.rows[0].confirmed_receipt_base_units, '2100000000000000');
-    assert.equal(reconciliation.rows[0].founder_signed_distributions_base_units, '1050000000000000');
-    assert.equal(reconciliation.rows[0].confirmed_distribution_count, 1);
+    assert.equal(reconciliation.rows[0].founder_signed_distributions_base_units, '1680000000000000');
+    assert.equal(reconciliation.rows[0].confirmed_distribution_count, 4);
     assert.equal(reconciliation.rows[0].full_supply_receipt_confirmed, true);
   } finally {
     await pool.end();

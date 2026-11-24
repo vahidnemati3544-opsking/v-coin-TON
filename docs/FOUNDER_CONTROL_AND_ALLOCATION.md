@@ -2,11 +2,11 @@
 
 - Fixed total supply: **2,100,000,000 VCOIN**, six decimals; no additional minting.
 - Sole initial receiving wallet: Founder-designated **TON Mainnet** address `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT`.
-- The entire supply is to reach this wallet in **two separate incoming transfers**. Installment amounts and timing remain to be entered in the transaction plan. Installment 2 occurs only after the Founder explicitly announces and authorizes it. This instruction does not assert that either transfer has occurred.
+- The entire fixed supply is received by the Founder Mainnet wallet through five separate, sequential, Founder-authorized stages: 420,000,000; 1,050,000,000; 210,000,000; 210,000,000; and 210,000,000 VCOIN. Each stage requires a fresh Founder announcement and signature, and the next stage is blocked until the preceding Founder Jetton-wallet credit is independently confirmed. This does not assert that any receipt has occurred.
 - After receipt, the Founder personally controls and signs distributions to the four registered allocation wallets: Mining Reserve 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN. The Founder retains 420,000,000 VCOIN (20%).
 - Former Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` was **Testnet-only**. It is historical/test-only and must never be used as the Mainnet receiving address.
 - This instruction supersedes direct five-wallet initial issuance, any one-operation five-wallet issuance description, and any designation of the former Founder address as Mainnet.
-- Documentation changes do not authorize a Mainnet transaction. The exact deployed Jetton Master, Mainnet status, contract compatibility with the Founder-first two-stage flow, wallet-control proof, installment amounts, fees, and local Sandbox evidence must be verified before signing. Existing fixed-five-destination contract logic must be revised and tested if incompatible.
+- Documentation changes do not authorize a Mainnet transaction. The exact deployed Jetton Master, Mainnet status, contract compatibility with the Founder-first five-stage flow, wallet-control proof, exact five-stage amounts, fees, and local Sandbox evidence must be verified before signing. The five-stage contract implementation must pass exact-head CI, local Sandbox, deployed-Master compatibility, source-wallet, and address/hash checks before any signing.
 
 # V COIN – TON Founder Authority and Allocation Control
 
@@ -21,7 +21,7 @@
 
 This document defines the founder's operational authority over VCOIN issuance, custody, allocation and treasury distributions. It applies only to the independent TON project and does not modify or reuse the legacy BNB project.
 
-The Founder Mainnet receiving wallet is also the sole GAS & OPERATIONS wallet. It first receives the entire fixed supply in two separate incoming transfers; the Founder then signs the four other allocation distributions.
+The Founder Mainnet receiving wallet is also the sole GAS & OPERATIONS wallet. It first receives the entire fixed supply through five separate, sequential Founder-authorized receipt stages; the Founder then signs the four other allocation distributions.
 
 ## 2. Fixed supply
 
@@ -56,7 +56,7 @@ A founder cannot unilaterally reverse a confirmed TON transaction or seize token
 
 Accordingly, this project will not describe founder authority as the ability to reverse all transfers or control users' private wallets. The default design is founder approval before release, not undisclosed post-transfer confiscation.
 
-The Founder retains 420,000,000 VCOIN as the 20% Founder allocation, without vesting or lock. The full 2,100,000,000 supply is initially received by the Founder wallet in two separate transfers; these are custody/receipt stages, not vesting. After receipt, the Founder signs distributions to the four other allocation wallets. Do not add hidden freeze, confiscation or arbitrary clawback functions.
+The Founder retains 420,000,000 VCOIN as the 20% Founder allocation, without vesting or lock. The full 2,100,000,000 supply is initially received by the Founder wallet through five separate, sequential Founder-authorized receipt stages; these are custody/receipt stages, not vesting. After receipt, the Founder signs distributions to the four other allocation wallets. Do not add hidden freeze, confiscation or arbitrary clawback functions.
 
 ## 5. Approved allocation register
 
@@ -69,7 +69,7 @@ The Founder retains 420,000,000 VCOIN as the 20% Founder allocation, without ves
 | Ecosystem and marketing | 10% | 210,000,000 VCOIN |
 | **Total** | **100%** | **2,100,000,000 VCOIN** |
 
-The Founder Mainnet receiving address and four allocation destination addresses are maintained in `docs/WALLET_ALLOCATION_REGISTER.md`. The Founder receives the full fixed supply in two transfers and then signs distribution of 1.05B Mining, 210M Treasury, 210M Liquidity/Market, and 210M Ecosystem/Marketing. The Founder retains 420M VCOIN (20%). The mining reserve is funded by the Founder-signed distribution and must never mint new tokens.
+The Founder Mainnet receiving address and four allocation destination addresses are maintained in `docs/WALLET_ALLOCATION_REGISTER.md`. The Founder receives the full fixed supply through five separate, sequential Founder-authorized receipt stages and then signs distribution of 1.05B Mining, 210M Treasury, 210M Liquidity/Market, and 210M Ecosystem/Marketing. The Founder retains 420M VCOIN (20%). The mining reserve is funded by the Founder-signed distribution and must never mint new tokens.
 
 ## 6. Operational TON network-fee funding
 

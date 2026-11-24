@@ -3,7 +3,7 @@
 **Date:** 2026-11-24  
 **Branch:** `fix/five-stage-founder-receipt-docs`  
 **Scope:** Repository documentation, allocation manifest, deployment/runbook references, contract and tooling consistency.  
-**Disposition:** Documentation alignment in progress; Mainnet remains **HOLD / NO-GO**.
+**Disposition:** Repository alignment committed to this review branch; draft PR #26 is open and unmerged. Mainnet remains **HOLD / NO-GO**.
 
 ## 1. Controlling receipt instruction
 
@@ -66,7 +66,13 @@ The current repository source already defines the five exact base-unit constants
 
 The Mainnet preparation script intentionally remains disabled. The public Testnet rehearsal generator is disabled/archived. CI and local TON Sandbox are the permitted engineering verification paths; this action does not authorize public Testnet transactions.
 
-## 5. Outstanding release gates
+## 5. Verification and review record
+
+- Draft pull request: [#26 — repository-wide five-stage Founder-first alignment](https://github.com/vahidnemati3544-opsking/v-coin-TON/pull/26); it is open, mergeable, and intentionally unmerged.
+- Exact-head Jetton verification: [workflow run #45463073528](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45463073528) passed on branch head `0847a32acd667081634a3c40d421d0f209558d50`; build-and-test succeeded and the issuer deployment job was skipped.
+- Backend CI: [run #45462908532](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45462908532) passed after the migration-runner update; Mining CI: [run #45462908508](https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45462908508) passed. These CI results do not prove a live Mainnet operation or replace a non-skipped local PostgreSQL integration run.
+
+## 6. Outstanding release gates
 
 - Re-run exact-head CI after all branch edits; prior CI results predate this alignment branch.
 - Review every active document, configuration, manifest, workflow, test, and script for stale conflicting instructions.
@@ -75,4 +81,4 @@ The Mainnet preparation script intentionally remains disabled. The public Testne
 - Verify source wallet ownership/control and actual balances before any receipt operation.
 - Complete fee/reserve and bounce/recovery review for the exact live deployment configuration.
 
-**Mainnet remains HOLD / NO-GO.** `deployment_authorized=false`, `mainnet_authorized=false`. No deployment, mint, transfer, signing payload, or transaction was created or broadcast by this action. Each of the five Mainnet receipt stages still requires a separate explicit Founder announcement and wallet signature after all applicable release gates pass.
+**Mainnet remains HOLD / NO-GO.** `deployment_authorized=false`, `mainnet_authorized=false`. No deployment, mint, transfer, signing payload, or transaction was created or broadcast by this action. Each of the five Mainnet receipt stages still requires a separate explicit Founder announcement and wallet signature after all applicable release gates pass. PR #26 remains a draft and has not been merged to `main`.

@@ -1,3 +1,5 @@
+> **CONTROLLING UPDATE — Action #69 (2026-11-24):** The current approved receipt flow is five exact Founder-first stages: 420M, 1,050M, 210M, 210M, 210M VCOIN. Earlier two-stage notes below are historical and superseded. Use the Action #69 section at the end of this file for current implementation and release status. Mainnet remains HOLD / NO-GO.
+
 # CURRENT CONTROLLING RELEASE STATUS — 2026-11-24 (Action #68)
 
 > This section supersedes older Mainnet readiness claims below. It distinguishes the current `main` branch from the unmerged Founder-first candidate branch.

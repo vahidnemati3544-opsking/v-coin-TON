@@ -233,3 +233,96 @@ describe('VCOIN five-stage Founder-first issuance', () => {
     expect(withdrawal.transactions).toHaveTransaction({ from: master.address, to: owner.address, success: true });
   });
 });
+
+
+describe('VCOIN burn and ordinary transfer bounce recovery', () => {
+  test('burn is rejected before all Founder receipt stages and wallet balance is restored', async () => {
+    const chain = await Blockchain.create();
+    const owner = await chain.treasury('owner');
+    const master = await deployMaster(chain, owner);
+    await issueStage(master, owner, 1);
+    const wallet = await founderWallet(chain, master, owner);
+
+    const rejected = await wallet.send(owner.getSender(), { value: toNano('0.15') }, {
+      $$type: 'TokenBurn',
+      query_id: 91n,
+      amount: 1000n,
+      response_destination: owner.address,
+      custom_payload: null,
+    });
+
+    expect(rejected.transactions).toHaveTransaction({ from: owner.address, to: wallet.address, success: true });
+    expect(rejected.transactions).toHaveTransaction({
+      from: master.address,
+      to: wallet.address,
+      inMessageBounced: true,
+      success: true,
+    });
+    expect((await wallet.getGetWalletData()).balance).toBe(STAGES[0]);
+    expect((await master.getGetJettonData()).total_supply).toBe(STAGES[0]);
+  });
+
+  test('burn after Stage 5 reduces wallet balance and Master total supply', async () => {
+    const chain = await Blockchain.create();
+    const owner = await chain.treasury('owner');
+    const master = await deployMaster(chain, owner);
+    for (let stage = 1; stage <= 5; stage++) await issueStage(master, owner, stage);
+    const wallet = await founderWallet(chain, master, owner);
+    const burnAmount = 25_000_000n;
+
+    const burned = await wallet.send(owner.getSender(), { value: toNano('0.15') }, {
+      $$type: 'TokenBurn',
+      query_id: 92n,
+      amount: burnAmount,
+      response_destination: owner.address,
+      custom_payload: null,
+    });
+
+    expect(burned.transactions).toHaveTransaction({ from: owner.address, to: wallet.address, success: true });
+    expect(burned.transactions).toHaveTransaction({ from: wallet.address, to: master.address, success: true });
+    expect((await wallet.getGetWalletData()).balance).toBe(MAX_SUPPLY - burnAmount);
+    expect((await master.getGetJettonData()).total_supply).toBe(MAX_SUPPLY - burnAmount);
+    expect((await master.getGetJettonData()).mintable).toBe(false);
+  });
+
+  test('ordinary Jetton transfer bounce restores the sender wallet balance', async () => {
+    const chain = await Blockchain.create();
+    const owner = await chain.treasury('owner');
+    const recipient = await chain.treasury('recipient');
+    const master = await deployMaster(chain, owner);
+    for (let stage = 1; stage <= 5; stage++) await issueStage(master, owner, stage);
+    const wallet = await founderWallet(chain, master, owner);
+    const recipientWalletAddress = await master.getGetWalletAddress(recipient.address);
+    const rejector = await BounceRejector.fromInit();
+    if (!rejector.init) throw new Error('BounceRejector StateInit missing');
+    await chain.setShardAccount(recipientWalletAddress, createShardAccount({
+      address: recipientWalletAddress,
+      code: rejector.init.code,
+      data: rejector.init.data,
+      balance: toNano('1'),
+      workchain: 0,
+    }));
+
+    const transferAmount = 10_000_000n;
+    const bounced = await wallet.send(owner.getSender(), { value: toNano('0.15') }, {
+      $$type: 'TokenTransfer',
+      query_id: 93n,
+      amount: transferAmount,
+      destination: recipient.address,
+      response_destination: owner.address,
+      custom_payload: null,
+      forward_ton_amount: 0n,
+      forward_payload: Cell.EMPTY.beginParse(),
+    });
+
+    expect(bounced.transactions).toHaveTransaction({ from: owner.address, to: wallet.address, success: true });
+    expect(bounced.transactions).toHaveTransaction({
+      from: recipientWalletAddress,
+      to: wallet.address,
+      inMessageBounced: true,
+      success: true,
+    });
+    expect((await wallet.getGetWalletData()).balance).toBe(MAX_SUPPLY);
+    expect((await master.getGetJettonData()).total_supply).toBe(MAX_SUPPLY);
+  });
+});

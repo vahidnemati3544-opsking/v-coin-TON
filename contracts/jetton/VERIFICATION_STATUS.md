@@ -707,3 +707,18 @@ The controlling initial receipt amounts are the Founder’s five-stage instructi
 **Remaining blockers:** independent clean-room build and security review; exact Master StateInit and five Jetton-wallet derivation reproduction; Founder wallet-control verification; Mainnet Master deployment and on-chain getter verification; trusted finalized Mainnet balance provider; wallet ownership proof; payout adapter and finality reconciliation; non-skipped PostgreSQL integration verification for the production configuration. Public mining remains HTTP 503. No Mainnet deployment, token issuance, transfer, or real extraction is claimed complete.
 
 **No authorization is implied by this documentation or commit.**
+
+
+## Action #73 — CI failure diagnosis and workflow policy correction (2026-11-24)
+
+**Status:** Root cause identified and CI workflow corrected on main. New exact-head run #497 is queued; this action remains awaiting CI verification. Mainnet remains HOLD / NO-GO.
+
+- Diagnosed run #496 failure from the GitHub Actions job/step report. The failing step was **“Block obsolete direct-mint Mainnet transaction preview”**; its guard still searched for the former literal error string `DISABLED: legacy direct-mint Mainnet preview`, while the disabled planner had been updated to the new Mainnet-blocked message. This was a stale CI assertion, not a contract compilation failure.
+- Corrected `.github/workflows/vcoin-jetton-verify.yml` to assert the current disabled-planner message.
+- Found a second policy mismatch in the same workflow: CI was still generating and validating an unsigned public Testnet rehearsal preview, although the controlling Mainnet-only policy permits local TON Sandbox simulation only. Removed those Testnet preview-generation and validation steps and replaced them with a guard that rejects Testnet rehearsal script/preview references in the workflow.
+- No contract source, token supply, allocation, wallet address, or on-chain state was changed. No wallet request, signature, deployment, mint, transfer, or broadcast was performed.
+- New workflow run #497: https://github.com/vahidnemati3544-opsking/v-coin-TON/actions/runs/45399549724 — queued at the time of this entry.
+
+**Next verification:** Wait for run #497 to finish. If it fails, inspect the exact failing job and step, fix only the demonstrated issue, and rerun. If it succeeds, inspect the remaining release blockers: independent clean-room build and security review, exact Master StateInit and five Jetton-wallet derivation reproduction, Founder wallet-control verification, Mainnet Master deployment/getter verification, trusted finalized Mainnet balance provider, TON Connect ownership proof, payout adapter, and finality/reconciliation. Public mining remains disabled (HTTP 503). Mainnet deployment, issuance, transfers, and real extraction remain unperformed and unauthorized.
+
+**No authorization is implied by this correction or commit.**

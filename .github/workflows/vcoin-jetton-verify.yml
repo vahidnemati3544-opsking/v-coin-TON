@@ -46,6 +46,24 @@ jobs:
         run: node scripts/build-metadata-cell.cjs "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/e17bcb9d82ea182bff3358b9fac6b5fa25c166ee/contracts/jetton/metadata.json"
       - name: Generate unsigned Mainnet deployment preview
         run: npx tsx scripts/prepare-mainnet-deployment.ts
+      - name: Generate unsigned Testnet rehearsal preview
+        run: npx tsx scripts/prepare-testnet-rehearsal.ts
+      - name: Validate isolated Testnet-only rehearsal artifacts
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const p = JSON.parse(fs.readFileSync('build/testnet-rehearsal-preview.json', 'utf8'));
+          if (p.network !== 'testnet' || p.test_only !== true) throw new Error('Testnet-only network guard failed');
+          if (p.fixed_supply_tokens !== '2100000000' || p.decimals !== 6) throw new Error('Fixed supply mismatch');
+          if (p.unsigned_messages.stage_1.token_amount !== '1000000000') throw new Error('Stage 1 amount mismatch');
+          if (p.unsigned_messages.stage_2.token_amount !== '1100000000') throw new Error('Stage 2 amount mismatch');
+          if (p.safety.mainnet_wallets_loaded !== false || p.safety.mainnet_addresses_emitted !== false || p.safety.mainnet_payloads_generated !== false) throw new Error('Mainnet isolation guard failed');
+          if (p.safety.signing_performed !== false || p.safety.broadcast_performed !== false) throw new Error('Unsigned-only guard failed');
+          for (const file of ['build/VCoinMaster.testnet.state-init.boc', 'build/VCoinFounderJettonWallet.testnet.state-init.boc']) {
+            if (!fs.existsSync(file) || fs.statSync(file).size === 0) throw new Error('Missing Testnet StateInit artifact: ' + file);
+          }
+          console.log('Unsigned Testnet rehearsal artifacts validated; no signing or broadcast performed.');
+          NODE
       - name: Run Jest tests
         run: npm test
       - name: Preserve complete V COIN–TON source snapshot

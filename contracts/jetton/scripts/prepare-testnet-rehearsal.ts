@@ -178,7 +178,7 @@ async function main() {
   };
 
   const outputPath = path.join(root, 'build/testnet-rehearsal-preview.json');
-  fs.writeFileSync(outputPath, JSON.stringify(preview, null, 2) + '\\n');
+  fs.writeFileSync(outputPath, JSON.stringify(preview, null, 2) + '\n');
   fs.writeFileSync(path.join(root, 'build/VCoinMaster.testnet.state-init.boc'), masterStateInit.toBoc());
   fs.writeFileSync(path.join(root, 'build/VCoinFounderJettonWallet.testnet.state-init.boc'), walletStateInit.toBoc());
   console.log(JSON.stringify({

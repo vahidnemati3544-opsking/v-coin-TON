@@ -119,14 +119,14 @@ Before any Founder signature, present:
 - Source commit, toolchain, lockfile, BOC checksums, TON cell / StateInit hashes, and engineering verification status.
 - Clear explanation of irreversibility and residual risks.
 
-Deployment, gas-reserve funding, and each of the five allocation issuance messages are separate on-chain operations. Do not sign or broadcast any of them until the corresponding complete transaction review has been presented and the Founder has explicitly approved it. Never send Mainnet transactions from CI.
+Deployment, gas-reserve funding, and each of the five initial Founder receipt stages followed by four Founder-signed allocation transfers are separate on-chain operations. Do not sign or broadcast any of them until the corresponding complete transaction review has been presented and the Founder has explicitly approved it. Never send Mainnet transactions from CI.
 
 ## 9. Current disposition
 
 **Mainnet release status: NO-GO / NOT DEPLOYED.**
 
 - Contract source and Sandbox tests: present.
-- Exact-head CI for the current 2.1B allocation revision: pending.
+- Exact-head CI for the current five-stage 2.1B allocation revision: pending.
 - `package-lock.json`: committed to `main`; clean `npm ci` must be verified again on the current exact head.
 - Metadata JSON, immutable commit-pinned URI, content cell, and canonical logo URL: generated and verified in exact-head CI; external TEP-64 parser review remains a release gate.
 - Engineering verification against TON standards: pending where not yet evidenced.
@@ -136,7 +136,7 @@ Deployment, gas-reserve funding, and each of the five allocation issuance messag
 - VCOIN issuance or transfers: none.
 - Mainnet authorization: false.
 
-No Testnet deployment is included in the current execution path. This specification does not authorize deployment, issuance, or transfer.
+Unsigned Testnet-only rehearsal previews may be generated for inspection; no Testnet signing or broadcast is implied. This specification does not authorize Mainnet deployment, issuance, or transfer.
 
 
 ## 10. Purchase and mining distribution policy (owner-approved)

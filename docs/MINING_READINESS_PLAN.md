@@ -1,3 +1,5 @@
+> **Controlling V COIN–TON receipt rule (2026-11-24):** The full fixed 2,100,000,000 VCOIN supply is first credited only to Founder Mainnet wallet `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT` in five sequential, separately Founder-announced and Founder-signed stages: 420,000,000; 1,050,000,000; 210,000,000; 210,000,000; 210,000,000 VCOIN. Confirm each credit before authorizing the next. After all five receipts, the Founder signs four separate allocations: Mining 1.05B, Treasury 210M, Liquidity 210M, Ecosystem 210M; Founder retains 420M. This is an accounting/architecture rule, not evidence of receipt or permission to transact. Mainnet remains HOLD; public Testnet operations are not authorized.
+
 # V COIN–TON — Mining Readiness Plan
 
 **Document ID:** VCT-MINING-READY-001  

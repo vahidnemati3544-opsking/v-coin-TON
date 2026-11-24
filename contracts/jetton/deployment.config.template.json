@@ -13,12 +13,12 @@
   "deployment_transaction": null,
   "operational_fee_wallet": {
     "purpose": "TON network fees and authorized operational transaction costs",
-    "wallet_type": "Founder allocation wallet — shared GAS & OPERATIONS role",
-    "owner_provided_address": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
+    "wallet_type": "Founder Mainnet receiving wallet — shared GAS & OPERATIONS role",
+    "owner_provided_address": "UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT",
     "is_vcoin_allocation_wallet": true,
-    "owner_deposit_instruction": "Use only the Founder allocation wallet for deployment, Master reserve funding, and authorized network fees. No separate GAS address or sixth wallet exists.",
+    "owner_deposit_instruction": "Use only the Founder Mainnet receiving wallet for the two-stage receipt, deployment, Master reserve funding, and authorized network fees. Former Founder Testnet address is prohibited on Mainnet.",
     "network_verification_required_before_funding": true,
-    "address_control_verification_status": "founder_wallet_address_previously_provided; network/control verification pending",
+    "address_control_verification_status": "new_founder_mainnet_address_provided; wallet-control verification pending",
     "role_sharing": "identical address to allocation_wallets.founder"
   },
   "allocation_base_units": {
@@ -29,7 +29,7 @@
     "ecosystem_marketing": "210000000000000"
   },
   "allocation_wallets": {
-    "founder": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
+    "founder": "UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT",
     "treasury": "UQBEW5bLGbq0yVDOimgl6fpZbQkdla9Wk5b0tXyx69bmBktQ",
     "liquidity_market": "UQA0_thi3mXZ6jFlHHBfnyjVmXayR3hsGx5PC43_fBOTzXWn",
     "ecosystem_marketing": "UQBQDb73DWWMGnxEr37TsqZSKNvVOC9MMwkvRmNY91LJqLsE",
@@ -47,10 +47,10 @@
   },
   "deployment_authorized": false,
   "mainnet_authorized": false,
-  "notes": "Owner-approved fixed supply is 2,100,000,000 VCOIN at 6 decimals, allocated across exactly five owner-provided wallets in shares 20/50/10/10/10. Founder is the sole GAS & OPERATIONS wallet, deployment signer, and Master reserve funder. No separate GAS address or sixth wallet exists. All derived Master and Jetton Wallet addresses are intentionally omitted from this template and must be regenerated from the reviewed exact-build StateInit; verify each Jetton Wallet with the deployed Master's get_wallet_address getter before issuance. This template is unsigned; deployment_authorized and mainnet_authorized remain false. Never commit secrets.",
+  "notes": "Owner-approved fixed supply is 2,100,000,000 VCOIN at 6 decimals. The full supply is first received by the Founder Mainnet wallet in two separate transfers; the Founder then signs distributions to the four other registered allocation wallets and retains 420,000,000 VCOIN. The former Founder address was Testnet-only. Existing contract logic must be adapted and tested for this flow before any Mainnet use. Derived Master and Jetton Wallet addresses must be regenerated from the reviewed exact-build StateInit and checked with the deployed Master getter. This template is unsigned; deployment_authorized and mainnet_authorized remain false. Never commit secrets.",
   "allocation_wallet_verification": {
     "status": "founder_address_review_pending_before_mainnet_signature",
-    "note": "The five owner-provided Mainnet owner addresses below are the canonical allocation destinations. Derived Jetton Wallet addresses are intentionally not stored here because previous predictions are stale; regenerate from the exact reviewed Master StateInit and confirm each on-chain get_wallet_address result after deployment.",
+    "note": "The Founder Mainnet receiving address and four other owner-provided allocation destination addresses are recorded here/register. Derived Jetton Wallet addresses must be regenerated from the revised exact-build Master StateInit and confirmed with the deployed Master's get_wallet_address getter after deployment.",
     "destinations": {
       "founder": "owner_provided_address_in_constructor_preview",
       "treasury": "owner_provided_address_in_constructor_preview",
@@ -61,7 +61,7 @@
   },
   "release_intent": {
     "founder_confirmed": true,
-    "scope": "issue_and_allocate_full_fixed_supply_to_all_five_registered_wallets",
+    "scope": "receive the full fixed supply in two stages at Founder Mainnet wallet, then Founder-signed distributions to the four other allocation wallets",
     "total_tokens": "2100000000",
     "allocations": {
       "founder": "420000000",
@@ -81,5 +81,22 @@
     "price_type": "modelled_reference_not_market_price",
     "not_a_market_quote": true
   },
-  "preview_status": "stale derived addresses and artifact references removed; regenerate from reviewed exact-head StateInit before any signing"
+  "preview_status": "SUPERSEDED legacy five-wallet direct-issuance preview; do not sign or deploy until contract and exact-head artifacts are revised for Founder-first two-stage receipt",
+  "initial_receipt": {
+    "network": "mainnet",
+    "founder_wallet": "UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT",
+    "total_tokens": "2100000000",
+    "installments": [
+      {
+        "stage": 1,
+        "amount_tokens": null
+      },
+      {
+        "stage": 2,
+        "amount_tokens": null
+      }
+    ],
+    "second_stage_requires_fresh_founder_announcement": true,
+    "status": "pending_transaction_plan_and_contract_revision"
+  }
 }

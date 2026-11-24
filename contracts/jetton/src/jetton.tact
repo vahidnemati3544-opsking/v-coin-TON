@@ -8,6 +8,7 @@ trait JettonMaster {
     content: Cell;
 
     receive(msg: TokenBurnNotification) {
+        require(!self.mintable, "Burn disabled until both receipt stages complete");
         let init: StateInit = self.walletInit(msg.sender);
         require(contractAddress(init) == sender(), "Invalid Jetton wallet");
         require(self.total_supply >= msg.amount, "Burn exceeds supply");
@@ -45,7 +46,7 @@ trait JettonMaster {
         return initOf VCoinJettonWallet(ownerAddress, myAddress());
     }
 
-    fun mintTo(receiver: Address, amount: Int, response: Address) {
+    fun mintTo(receiver: Address, amount: Int, response: Address, stageQueryId: Int) {
         require(self.mintable, "Minting permanently disabled");
         require(amount > 0, "Mint amount must be positive");
         self.total_supply = self.total_supply + amount;
@@ -56,7 +57,7 @@ trait JettonMaster {
             bounce: true,
             mode: SendPayGasSeparately,
             body: TokenTransferInternal{
-                query_id: 0,
+                query_id: stageQueryId,
                 amount: amount,
                 from: myAddress(),
                 response_destination: response,
@@ -131,6 +132,15 @@ contract VCoinJettonWallet {
         }
         require(msg.amount > 0, "Transfer amount must be positive");
         self.balance = self.balance + msg.amount;
+        if (ctx.sender == self.master && (msg.query_id == 1 || msg.query_id == 2)) {
+            send(SendParameters{
+                to: self.master,
+                value: ton("0.01"),
+                mode: SendPayGasSeparately,
+                bounce: false,
+                body: VCoinReceiptAcknowledgement{query_id: msg.query_id, amount: msg.amount}.toCell()
+            });
+        }
         let remaining: Int = ctx.value - self.gasConsumption;
         if (msg.forward_ton_amount > 0) {
             require(remaining >= msg.forward_ton_amount + ctx.readForwardFee(), "Insufficient notification TON");
@@ -179,12 +189,8 @@ contract VCoinJettonWallet {
         });
     }
 
-    bounced(msg: bounced<TokenTransferInternal>) {
-        self.balance = self.balance + msg.amount;
-    }
-    bounced(msg: bounced<TokenBurnNotification>) {
-        self.balance = self.balance + msg.amount;
-    }
+    bounced(msg: bounced<TokenTransferInternal>) { self.balance = self.balance + msg.amount; }
+    bounced(msg: bounced<TokenBurnNotification>) { self.balance = self.balance + msg.amount; }
 
     get fun get_wallet_data(): JettonWalletData {
         return JettonWalletData{

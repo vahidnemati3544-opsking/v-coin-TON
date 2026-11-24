@@ -1,3 +1,23 @@
+# ACTION #84 — Deterministic Mainnet address derivation tooling and clean-room attempt (2026-11-24)
+
+**Status:** Derivation tooling added to the isolated review branch; exact deterministic output awaits CI execution. Independent clean-room rebuild remains blocked locally by unavailable dependency cache. Mainnet remains HOLD / NO-GO.
+
+- Branch: `audit/action-83-burn-transfer-bounce-tests`; this continues the Action #83 review branch and is not merged to `main`.
+- Added `contracts/jetton/scripts/derive-mainnet-addresses.ts` and `npm run derive:addresses`.
+- Updated `.github/workflows/vcoin-jetton-verify.yml` to rebuild generated wrappers, derive the Master from the actual current constructor arguments (Founder owner + immutable metadata content cell), derive all five Jetton Wallet addresses from the generated wallet code and Master address, validate pairwise uniqueness, and export `build/mainnet-address-derivation.json` in the release artifact.
+- The derivation output explicitly records that it is offline-only, is not a deployment payload, and does not authorize, create, sign, or broadcast a transaction. CI continues to require both Mainnet authorization flags to remain false.
+- Source inspection confirms the current Tact constructor is `VCoinMaster(owner: Address, content: Cell)`. The older seven-argument constructor description in `allocation/INIT_PARAMETERS.md` is superseded historical material and must not be used to form a StateInit.
+- Retrieved exact Action #83 release artifact ID `14931325038`; GitHub digest `f35c548dbf3535eb7d264f81430fccd2d1889a5fd21cf0fa3cf98840868d17fd` matched local SHA-256 of the downloaded ZIP.
+- Retrieved exact Action #83 full-source artifact ID `14931430007`; GitHub digest `a21f286a362f67de2298e6aed2e694969dd8fe86b7103124715ee351be3fa564` matched local SHA-256 of the downloaded ZIP.
+- The release artifact contains Master code BOC SHA-256 `719ef61c0a2fe472e8ecea442abc3938783112d2d0c34b8e83f2661b734ce8e3` and metadata content BOC SHA-256 `005aeddd589838a3b603ccbe58a6e893015e7f5dbaf4c5f43edb3fb2a82ee287`. These are file digests, not TON cell hashes or proof of deployment.
+- A local independent `npm ci --offline` was attempted against the downloaded exact source and lockfile, but could not proceed because `zod@4.6.7` was not present in the local npm cache (`ENOTCACHED`). No local compiler rebuild or independent StateInit calculation is claimed.
+- No Mainnet address or five Jetton Wallet address is declared verified in this action until the new derivation step completes in CI and an independent reviewer reproduces the result.
+- No contract logic, supply, allocations, wallet owner addresses, authorization flags, or on-chain state changed. No TON was spent and no transaction was created, signed, or broadcast.
+
+**Remaining gates:** complete the new CI derivation; independent reviewer independently rebuilds and reproduces Master StateInit and all five Jetton Wallet addresses; third-party security review; live Mainnet fee / exact-message emulation; Founder wallet-control proof and recipient confirmation; reviewed unsigned deployment payload.
+
+---
+
 # ACTION #83 — Add Sandbox coverage for burn and ordinary transfer bounce (2026-11-24)
 
 **Status:** Implemented on an isolated review branch; exact-commit GitHub Actions build-and-test passed. Not merged to main. Mainnet remains HOLD / NO-GO.

@@ -161,6 +161,7 @@ async function main() {
   const derived = JSON.parse(readFileSync(resolve(__dirname, '../build/mainnet-address-derivation.json'), 'utf8'));
   const founder = config.allocation_wallets.founder as string;
   const reportedMaster = 'EQBn4hW8bKhFTSz9riY5q3Pr3SfJmv2VYKZQl_NWMbK--5fP';
+  const previouslyMisclassifiedTestnetWallet = 'UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy';
   const derivedMaster = derived.master.address as string;
 
   const founderInfoResponse = await readApi('getAddressInformation', { address: founder });
@@ -224,6 +225,7 @@ async function main() {
       mintable: token.mintable ?? null,
       admin_address: token.admin_address ?? null,
       admin_is_founder: sameAddress(token.admin_address, founder),
+      admin_matches_previously_misclassified_testnet_label: sameAddress(token.admin_address, previouslyMisclassifiedTestnetWallet),
       jetton_content_type: token.jetton_content?.type ?? null,
       jetton_content: token.jetton_content ?? null,
     };

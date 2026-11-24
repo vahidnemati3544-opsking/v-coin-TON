@@ -1,21 +1,30 @@
-# ACTION #89 — First confirmed TON Mainnet state findings (2026-11-24)
+# ACTION #89 — Live Mainnet Master and Founder wallet reconciliation (2026-11-24)
 
-**Status:** Read-only Mainnet RPC returned valid account and Jetton data. Exact-head CI is running against this change set. No transaction was created, signed, or broadcast.
+**Status:** Read-only TON Center Mainnet queries succeeded. Current Founder receipt balance is not present in the active Master-derived Founder Jetton Wallet. Mainnet remains HOLD / NO-GO.
 
-- Founder GAS wallet `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT` is active and had **5.487534819 TON** at the observed block (masterchain seqno 107530882).
-- Previously Tonkeeper-reported Master `EQBn4hW8bKhFTSz9riY5q3Pr3SfJmv2VYKZQl_NWMbK--5fP` is **active** with **0.540643302 TON**, indexed as `jetton_master`, total supply `2100000000000000` base units (**2,100,000,000 VCOIN**), and `mintable=false`.
-- The same Mainnet query reports its admin as `EQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWuE3`, not the current Founder wallet. This has the same raw workchain/account ID as the previously labeled `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy`. **Correction:** `UQ...` is the non-bounceable Mainnet representation, not a Testnet-only prefix; Testnet-only user-friendly prefixes are `kQ...` and `0Q...`. The historical record that classified this address as Testnet must be treated as incorrect. This does not prove who controls the wallet; Founder must verify control through Tonkeeper / a safe wallet challenge.
-- The observed Master code hash is `5087c882019324e9d8e309c78f42e3bcee9433a54d7d0367d49320a7bbabcc36`, which does **not** match the current exact-build code hash `e08c11238070eeaffbbe783077eb49f61ad770a71f2e3096f83956776ed28ed8`.
-- The exact-build candidate `EQC_gSnjZTc2Kufgl5ltFF-b2zr5_j4diozxC-IvEp9zzVaL` is `uninitialized` with zero TON. It is not the active Master reported by Tonkeeper.
-- The active Master metadata URI matches the project's pinned metadata URL, but metadata/name/logo and a full supply alone do not prove that its code, admin, staged receipt history, or Founder wallet balance meet the current approved release design.
-- Action #89 extends the read-only reconciliation to call the active Master getters `get_gas_operator_wallet`, `get_receipt_status`, `get_wallet_address(founder)`, and the returned Founder Jetton Wallet's `get_wallet_data`. The generated report is required to determine whether the five receipt acknowledgements and Founder Jetton balance can be independently confirmed.
-- **No new Master deployment is authorized or advisable** until the active Master identity, admin control, Founder Jetton balance and receipt-stage state are reconciled. The current exact-build candidate must not be deployed merely because the template has `master_address=null`.
+## Confirmed chain observations
 
-## Action #89 release decision
+- Founder GAS wallet `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT`: active; **5.487534819 TON** at the observed block.
+- Previously Tonkeeper-reported Master `EQBn4hW8bKhFTSz9riY5q3Pr3SfJmv2VYKZQl_NWMbK--5fP`: active; 0.540643302 TON; indexed as `jetton_master`; supply **2,100,000,000 VCOIN**; `mintable=false`; metadata URI matches the pinned project metadata.
+- Active Master code hash: `5087c882019324e9d8e309c78f42e3bcee9433a54d7d0366f83956776ed28ed8` (observed exact hash: `5087c882019324e9d8e309c78f42e3bcee9433a54d7d0367d49320a7bbabcc36`). It differs from the current Founder-first exact-build code hash `e08c11238070eeaffbbe783077eb49f61ad770a71f2e3096f83956776ed28ed8`.
+- `get_gas_operator_wallet` returns admin `EQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWuE3`, not the current Founder wallet.
+- `get_receipt_status` is not implemented by the active Master (TON Center exit code 11 / method ID 85110). This old Master cannot prove the current five-stage acknowledgement state through that getter.
+- The admin's Master-derived Jetton Wallet is `EQCOzLnnSrR-mbM_AeiKU2wpMJ28cPoRncBuQHJ-6_q-Mn0T`, active, and `get_wallet_data` reports **420,000,000 VCOIN** (`420000000000000` base units).
+- The current Founder address's Master-derived Jetton Wallet is `EQAuxau8FXYX_lCIBvxzFg6c8jVjqfqvaRszrcrofh5BVMFv`; account state is `uninitialized`, balance 0, and it has no transaction history. The active Master has not credited the current Founder wallet with the requested five receipts.
+- The formerly labeled `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` is a non-bounceable Mainnet address, not Testnet. Its corresponding `EQ...` encoding is the active Master admin. Testnet-only prefixes are `kQ...` and `0Q...`; previous Testnet classification was incorrect.
+- Current exact-build candidate `EQC_gSnjZTc2Kufgl5ltFF-b2zr5_j4diozxC-IvEp9zzVaL` is `uninitialized` with zero TON. It must not be deployed as a second Master while the active Master exists.
 
-Mainnet network access and a funded Founder GAS wallet are confirmed by read-only chain data. The active VCOIN Jetton Master is also confirmed, but it is not the exact current contract build and its admin differs from the current Founder wallet. Mainnet therefore remains **HOLD / NO-GO for any new deployment, minting or transfers** pending Founder wallet control proof and verification of the active Master / Founder Jetton Wallet state. The reported 2.1B supply and `mintable=false` are observed facts, not proof of the requested five-stage receipt sequence.
+## Actions #89–90 and release decision
 
----
+- Action #89 adds read-only calls to `get_gas_operator_wallet`, `get_receipt_status`, `get_wallet_address`, and `get_wallet_data`, plus the Founder Jetton Wallet transaction-history check.
+- The current Founder wallet transaction history contains zero transactions because its Master-derived Jetton Wallet is uninitialized.
+- Action #90 extends the read-only report to all five registered allocation owners (Founder, Treasury, Liquidity/Market, Ecosystem/Marketing, Mining Reserve), deriving each Jetton Wallet from the active Master and comparing balances with the 2.1B Master supply. That reconciliation is required before deciding whether tokens are already held by the four other allocation wallets.
+- No new Master deployment, mint, transfer, signing, or broadcast is authorized or advisable until the five registered wallet balances, the legacy admin's wallet control, and the existing supply distribution are reconciled.
+- Founder reports that five-stage receipt operations were performed; chain evidence currently shows **no credit to the current Founder Jetton Wallet**. Do not record the five stages as complete.
+
+## Safety
+
+Mainnet network access and the Founder TON fee balance are confirmed. An active VCOIN Master exists, but it is an older contract with a different admin and code, and the current Founder Jetton Wallet is empty/uninitialized. Mainnet remains **HOLD / NO-GO** for new deployment, issuance, and allocation transfers. Public mining remains disabled.
 
 # ACTION #86 — Mainnet release-gate reconciliation (2026-11-24)
 

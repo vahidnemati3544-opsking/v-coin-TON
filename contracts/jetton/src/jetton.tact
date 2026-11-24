@@ -8,6 +8,7 @@ trait JettonMaster {
     content: Cell;
 
     receive(msg: TokenBurnNotification) {
+        require(!self.mintable, "Burn disabled until both receipt stages complete");
         let init: StateInit = self.walletInit(msg.sender);
         require(contractAddress(init) == sender(), "Invalid Jetton wallet");
         require(self.total_supply >= msg.amount, "Burn exceeds supply");

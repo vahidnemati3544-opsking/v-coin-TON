@@ -53,7 +53,7 @@
     "Never send Mainnet transactions from CI.",
     "Verify the exact Mainnet Master, all owner addresses, Jetton wallet derivations, fee/reserve sufficiency, and transaction finality before accounting transfers as complete.",
     "The Founder is the sole signer for the initial receipt instructions and all subsequent allocation transfers.",
-    "Founder explicitly authorized a Testnet-only rehearsal on 2026-11-24; it must use the recorded Testnet wallet only, never a Mainnet wallet, and must not be treated as Mainnet authorization."
+    "No public TON Testnet deployment, wallet request, signing, broadcast, or transaction is authorized; local TON Sandbox is the only permitted simulation environment."
   ],
   "priceReference": {
     "initialPriceUsd": "0.004",
@@ -98,40 +98,8 @@
       }
     ],
     "status": "five_stage_amounts_recorded_local_sandbox_only_mainnet_hold",
-    "testnetRehearsal": {
-      "authorizedByFounder": true,
-      "authorizationDate": "2026-11-24",
-      "testnetOnlyFounderWallet": "UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy",
-      "mainnetTransactionsAuthorized": false,
-      "publicNetworkExecutionStatus": "pending_wallet_review_and_manual_testnet_signing",
-      "stages": [
-        {
-          "stage": 1,
-          "amountTokens": "420000000",
-          "amountBaseUnits": "420000000000000"
-        },
-        {
-          "stage": 2,
-          "amountTokens": "1050000000",
-          "amountBaseUnits": "1050000000000000"
-        },
-        {
-          "stage": 3,
-          "amountTokens": "210000000",
-          "amountBaseUnits": "210000000000000"
-        },
-        {
-          "stage": 4,
-          "amountTokens": "210000000",
-          "amountBaseUnits": "210000000000000"
-        },
-        {
-          "stage": 5,
-          "amountTokens": "210000000",
-          "amountBaseUnits": "210000000000000"
-        }
-      ]
-    },
-    "stage5RequiresFreshFounderAnnouncement": true
+    "stage5RequiresFreshFounderAnnouncement": true,
+    "publicTestnetExecutionAuthorized": false,
+    "simulationEnvironment": "local_ton_sandbox_only"
   }
 }

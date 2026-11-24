@@ -32,7 +32,7 @@ After all five receipts, the Founder retains 420,000,000 VCOIN and personally si
 - Never deploy, sign, or broadcast without separate explicit Founder approval of the exact operation. CI must never send Mainnet transactions.
 
 ## Current status
-- Five-stage implementation is under exact-head build and automated verification on `feat/five-stage-founder-receipt`.
+- Five-stage implementation is merged to `main`; exact-head Jetton, Backend, and Mining/PostgreSQL CI all passed on the pre-merge head.
 - Mainnet deployment, minting, and transfers remain **HOLD / NO-GO** until all release gates and documented internal security review pass.
 - No on-chain deployment or token receipt is claimed.
 

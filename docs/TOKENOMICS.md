@@ -1,3 +1,13 @@
+## Controlling owner instruction — 2026-11-24 (supersedes conflicting legacy wording)
+
+- Fixed total supply: **2,100,000,000 VCOIN**, six decimals; no additional minting.
+- Sole initial receiving wallet: Founder-designated **TON Mainnet** address `UQBh9jVKAypc4TrbFx2jsVB2EI1ONChg22zDputisQjENQOT`.
+- The entire supply is to reach this wallet in **two separate incoming transfers**. Installment amounts and timing remain to be entered in the transaction plan. Installment 2 occurs only after the Founder explicitly announces and authorizes it. This instruction does not assert that either transfer has occurred.
+- After receipt, the Founder personally controls and signs distributions to the four registered allocation wallets: Mining Reserve 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN. The Founder retains 420,000,000 VCOIN (20%).
+- Former Founder address `UQAdW09EvIesUXt9jzLq1T32O0351TaczwWJQLGGmw4aWrzy` was **Testnet-only**. It is historical/test-only and must never be used as the Mainnet receiving address.
+- This instruction supersedes direct five-wallet initial issuance, any one-operation five-wallet issuance description, and any designation of the former Founder address as Mainnet.
+- Documentation changes do not authorize a Mainnet transaction. The exact deployed Jetton Master, Mainnet status, contract compatibility with the Founder-first two-stage flow, wallet-control proof, installment amounts, fees, and local Sandbox evidence must be verified before signing. Existing fixed-five-destination contract logic must be revised and tested if incompatible.
+
 V COIN – TON Tokenomics
 
 Document version: 1.5
@@ -44,11 +54,7 @@ The five official allocation destination addresses are recorded in `docs/WALLET_
 
 The founder allocation is fixed at 420,000,000 VCOIN, representing 20% of the total initial supply.
 
-The founder has the explicit right to receive and withdraw the entire 420,000,000 VCOIN allocation at once. No vesting period, monthly installments, time lock, or staged release applies to this allocation.
-
-The founder's full allocation is credited to the founder's designated wallet as one exact allocation. After receipt, the founder controls and may transfer or withdraw the full amount, subject to ordinary TON network rules and applicable law.
-
-No additional founder allocation is authorized by this document.
+The Founder retains 420,000,000 VCOIN (20%) as the Founder allocation, without vesting or lock. Separately, the entire fixed initial supply of 2,100,000,000 VCOIN is first received by the designated Founder TON Mainnet wallet in two separate incoming transfers. The installment amounts and timing must be entered in a transaction plan; installment 2 requires a fresh explicit Founder announcement/authorization. After receipt, the Founder personally signs distributions of the four other allocations to their registered destination wallets: Mining 1,050,000,000; Treasury 210,000,000; Liquidity/Market 210,000,000; Ecosystem/Marketing 210,000,000 VCOIN. These transfers do not create additional tokens.
 
 5. User mining rewards
 
@@ -102,7 +108,7 @@ Standard-compatible Jetton Wallet contracts.
 Fixed initial supply.
 Verified disabling of additional minting.
 Controlled allocation and distribution of the approved reserves.
-Immediate, unrestricted founder access to the full 420,000,000 VCOIN founder allocation.
+Founder-first receipt of the full fixed supply in two transfers, followed by Founder-signed distribution of the four other allocations; Founder retains 420,000,000 VCOIN.
 Secure accounting and transaction verification.
 Contract implementation must be reviewed against the applicable TON standards and security requirements.
 

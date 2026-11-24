@@ -46,29 +46,16 @@ jobs:
         run: npm run build
       - name: Build immutable TEP-64 metadata content cell
         run: node scripts/build-metadata-cell.cjs "https://raw.githubusercontent.com/vahidnemati3544-opsking/v-coin-TON/e17bcb9d82ea182bff3358b9fac6b5fa25c166ee/contracts/jetton/metadata.json"
-      - name: Generate unsigned Testnet five-stage rehearsal preview
-        run: npx tsx scripts/prepare-testnet-rehearsal.ts
-      - name: Validate isolated five-stage Testnet preview
+      - name: Enforce local Sandbox-only simulation policy
         run: |
           node <<'NODE'
           const fs = require('node:fs');
-          const { Address } = require('@ton/core');
-          const p = JSON.parse(fs.readFileSync('build/testnet-rehearsal-preview.json', 'utf8'));
-          const expected = ['420000000','1050000000','210000000','210000000','210000000'];
-          if (p.network !== 'testnet' || p.test_only !== true) throw new Error('Testnet-only network guard failed');
-          if (!Address.parseFriendly(p.master_address).isTestOnly || !Address.parseFriendly(p.founder_jetton_wallet_address).isTestOnly) throw new Error('Testnet-only address flag missing');
-          if (p.fixed_supply_tokens !== '2100000000' || p.decimals !== 6) throw new Error('Fixed supply mismatch');
-          if (!Array.isArray(p.unsigned_messages.stages) || p.unsigned_messages.stages.length !== 5) throw new Error('Exactly five unsigned receipt requests are required');
-          p.unsigned_messages.stages.forEach((stage, i) => {
-            if (stage.stage !== i + 1 || stage.token_amount !== expected[i]) throw new Error('Five-stage receipt amount or sequence mismatch at stage ' + (i + 1));
-            if (!stage.requires_fresh_founder_signature || !stage.ton_connect_request) throw new Error('Founder signature gate missing');
-          });
-          if (p.safety.mainnet_wallets_loaded !== false || p.safety.mainnet_addresses_emitted !== false || p.safety.mainnet_payloads_generated !== false) throw new Error('Mainnet isolation guard failed');
-          if (p.safety.signing_performed !== false || p.safety.broadcast_performed !== false) throw new Error('Unsigned-only guard failed');
-          for (const file of ['build/VCoinMaster.testnet.state-init.boc','build/VCoinFounderJettonWallet.testnet.state-init.boc']) {
-            if (!fs.existsSync(file) || fs.statSync(file).size === 0) throw new Error('Missing Testnet StateInit artifact: ' + file);
+          const workflow = fs.readFileSync('../../.github/workflows/vcoin-jetton-verify.yml', 'utf8');
+          const forbidden = ['prepare-testnet-rehearsal.ts', 'testnet-rehearsal-preview.json', 'TON Testnet wallet request'];
+          for (const token of forbidden) {
+            if (workflow.includes(token)) throw new Error('Public Testnet rehearsal must remain disabled: ' + token);
           }
-          console.log('Five unsigned Testnet receipt previews validated; no signing or broadcast performed.');
+          console.log('CI permits local TON Sandbox simulation only; no Testnet preview or transaction is generated.');
           NODE
       - name: Block obsolete direct-mint Mainnet transaction preview
         run: |
@@ -84,7 +71,7 @@ jobs:
           const walletArtifacts = fs.readdirSync('build').filter((name) => /^jetton-wallet-.*\.state-init\.boc$/.test(name));
           if (walletArtifacts.length) throw new Error('Obsolete direct-mint Jetton wallet StateInit artifacts must not be generated.');
           const planner = fs.readFileSync('scripts/prepare-mainnet-deployment.ts', 'utf8');
-          if (!planner.includes('DISABLED: legacy direct-mint Mainnet preview')) throw new Error('Legacy transaction planner must remain disabled until Founder-first implementation is verified.');
+          if (!planner.includes('DISABLED — Mainnet transaction planning is intentionally blocked')) throw new Error('Mainnet transaction planner must remain disabled pending release gates.');
           const workflow = fs.readFileSync('../../.github/workflows/vcoin-jetton-verify.yml', 'utf8');
           const legacyPlannerInvocation = 'npx tsx scripts/' + 'prepare-mainnet-deployment.ts';
           if (workflow.includes(legacyPlannerInvocation)) throw new Error('CI must not execute the legacy direct-mint transaction planner.');

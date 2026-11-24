@@ -1,6 +1,6 @@
 # V COIN Mainnet Issuer
 
-This static TonConnect console is a Founder-controlled interface for reviewing and requesting signatures for the V COIN TON Jetton the five-stage Founder-first initial receipt, followed by the four Founder-signed allocation transfers.
+This static TonConnect console is a read-only Founder-facing status interface for reviewing the V COIN TON Jetton's five-stage Founder-first receipt plan and the four subsequent Founder-signed allocation transfers. It does not request signatures or create transaction payloads.
 
 ## Build and deployment
 

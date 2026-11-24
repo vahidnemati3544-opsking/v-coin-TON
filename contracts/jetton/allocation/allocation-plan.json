@@ -48,7 +48,7 @@
     "The entire fixed supply must first be received by the Founder Mainnet wallet in two separately authorized transfers; installment amounts remain unset until recorded in an approved transaction plan.",
     "After full receipt, the Founder personally signs the four other allocation transfers to their registered destination wallets and retains the 420,000,000 VCOIN Founder allocation.",
     "The previous Founder address was Testnet-only and must not be used for Mainnet.",
-    "The current fixed-five-destination VCoinMaster logic must be revised and locally tested for Founder-first receipt and subsequent distributions before this manifest is used for deployment or signing.",
+    "The Founder-first two-stage VCoinMaster candidate is isolated on feat/founder-first-two-stage; latest exact-head build, Sandbox, acknowledgement, bounce/retry, and backend reconciliation checks must pass before any deployment or signing.",
     "The hard total supply is 2,100,000,000 VCOIN; no additional minting is permitted.",
     "Never send Mainnet transactions from CI.",
     "Verify the exact Mainnet Master, all owner addresses, Jetton wallet derivations, fee/reserve sufficiency, and transaction finality before accounting transfers as complete.",
@@ -80,6 +80,6 @@
       }
     ],
     "stage2RequiresFreshFounderAnnouncement": true,
-    "status": "amounts_pending_contract_revision"
+    "status": "stage1_amount_pending_and_exact_head_verification"
   }
 }

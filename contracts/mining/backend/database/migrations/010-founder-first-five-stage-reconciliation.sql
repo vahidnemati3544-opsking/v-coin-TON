@@ -84,7 +84,9 @@ BEGIN
     IF FOUND THEN
         IF v_existing.stage=p_stage
            AND v_existing.transaction_hash=lower(p_transaction_hash)
-           AND v_existing.amount_base_units=p_amount_base_units THEN
+           AND v_existing.amount_base_units=p_amount_base_units
+           AND v_existing.master_address=p_master_address
+           AND v_existing.recipient_owner_address=p_recipient_owner_address THEN
             RETURN 'duplicate';
         END IF;
         RAISE EXCEPTION 'Receipt stage or transaction hash already recorded with different data';

@@ -144,9 +144,7 @@ function decodeStackNumber(entry: any): string | null {
       }
       if (typeof payload === 'number' || typeof payload === 'bigint') return String(payload);
     }
-    if ((kind === 'tvm.Tuple' || kind === 'tuple') && Array.isArray(payload?.elements)) {
-      return decodeStackNumber(payload.elements[0]);
-    }
+    if (Array.isArray(payload?.elements)) return decodeStackNumber(payload.elements[0]);
     return null;
   }
   const raw = entry.number?.number ?? entry.number;

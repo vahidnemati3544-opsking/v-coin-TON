@@ -1,11 +1,6 @@
 import "./jetton";
 
 const VCOIN_MAX_SUPPLY: Int = 2100000000000000; // 2,100,000,000 VCOIN * 10^6
-const VCOIN_FOUNDER_ALLOCATION: Int = 420000000000000; // 420,000,000 VCOIN
-const VCOIN_MINING_ALLOCATION: Int = 1050000000000000; // 1,050,000,000 VCOIN
-const VCOIN_TREASURY_ALLOCATION: Int = 210000000000000; // 210,000,000 VCOIN
-const VCOIN_LIQUIDITY_ALLOCATION: Int = 210000000000000; // 210,000,000 VCOIN
-const VCOIN_ECOSYSTEM_ALLOCATION: Int = 210000000000000; // 210,000,000 VCOIN
 const VCOIN_MIN_MASTER_RESERVE: Int = ton("0.25");
 const VCOIN_WITHDRAWAL_FEE_BUFFER: Int = ton("0.10");
 
@@ -15,10 +10,7 @@ message VCoinMint {
 }
 
 message VCoinFund {}
-
-message VCoinWithdraw {
-    amount: Int as coins;
-}
+message VCoinWithdraw { amount: Int as coins; }
 
 contract VCoinMaster with JettonMaster {
     total_supply: Int as coins = 0;
@@ -26,70 +18,26 @@ contract VCoinMaster with JettonMaster {
     owner: Address;
     content: Cell;
 
-    mining_reserve_wallet: Address;
-    treasury_wallet: Address;
-    liquidity_wallet: Address;
-    ecosystem_wallet: Address;
-    gas_operator_wallet: Address;
+    first_receipt_amount: Int as coins = 0;
+    first_receipt_issued: Bool = false;
+    second_receipt_issued: Bool = false;
 
-    founder_issued: Bool = false;
-    mining_reserve_issued: Bool = false;
-    treasury_issued: Bool = false;
-    liquidity_issued: Bool = false;
-    ecosystem_issued: Bool = false;
-
-    // The five destination addresses are fixed in StateInit at deployment.
-    // owner is the founder wallet; the other four destinations cannot be changed.
-    init(
-        owner: Address,
-        content: Cell,
-        miningReserveWallet: Address,
-        treasuryWallet: Address,
-        liquidityWallet: Address,
-        ecosystemWallet: Address,
-        gasOperatorWallet: Address
-    ) {
-        require(owner != miningReserveWallet, "Duplicate allocation wallet");
-        require(owner != treasuryWallet, "Duplicate allocation wallet");
-        require(owner != liquidityWallet, "Duplicate allocation wallet");
-        require(owner != ecosystemWallet, "Duplicate allocation wallet");
-        require(gasOperatorWallet == owner, "GAS & OPERATIONS must be Founder");
-        require(miningReserveWallet != treasuryWallet, "Duplicate allocation wallet");
-        require(miningReserveWallet != liquidityWallet, "Duplicate allocation wallet");
-        require(miningReserveWallet != ecosystemWallet, "Duplicate allocation wallet");
-        require(treasuryWallet != liquidityWallet, "Duplicate allocation wallet");
-        require(treasuryWallet != ecosystemWallet, "Duplicate allocation wallet");
-        require(liquidityWallet != ecosystemWallet, "Duplicate allocation wallet");
-        require(gasOperatorWallet != miningReserveWallet, "Gas operator must be separate");
-        require(gasOperatorWallet != treasuryWallet, "Gas operator must be separate");
-        require(gasOperatorWallet != liquidityWallet, "Gas operator must be separate");
-        require(gasOperatorWallet != ecosystemWallet, "Gas operator must be separate");
-
+    init(owner: Address, content: Cell) {
         self.total_supply = 0;
         self.mintable = true;
         self.owner = owner;
         self.content = content;
-        self.mining_reserve_wallet = miningReserveWallet;
-        self.treasury_wallet = treasuryWallet;
-        self.liquidity_wallet = liquidityWallet;
-        self.ecosystem_wallet = ecosystemWallet;
-        self.gas_operator_wallet = gasOperatorWallet;
-        self.founder_issued = false;
-        self.mining_reserve_issued = false;
-        self.treasury_issued = false;
-        self.liquidity_issued = false;
-        self.ecosystem_issued = false;
+        self.first_receipt_amount = 0;
+        self.first_receipt_issued = false;
+        self.second_receipt_issued = false;
     }
 
-    // Founder wallet also serves as GAS & OPERATIONS. This role can fund
-    // the Master reserve; VCOIN issuance remains separately guarded by VCoinMint.
     receive(msg: VCoinFund) {
         let ctx: Context = context();
-        require(ctx.sender == self.gas_operator_wallet, "Unauthorized gas funding source");
+        require(ctx.sender == self.owner, "Unauthorized gas funding source");
         require(ctx.value >= ton("0.75"), "Gas reserve deposit must be at least 0.75 TON");
     }
 
-    // Founder-only recovery of operational TON; recipient is always self.owner.
     receive(msg: VCoinWithdraw) {
         let ctx: Context = context();
         require(ctx.sender == self.owner, "Unauthorized TON withdrawal");
@@ -108,124 +56,74 @@ contract VCoinMaster with JettonMaster {
         });
     }
 
-    // Owner-authorized allocation issuance. Each approved wallet can receive
-    // only its exact allocation and only once; no arbitrary receiver or amount
-    // is accepted. A bounced share alone becomes eligible for retry.
+    // Two-stage, Founder-only initial receipt. Stage 1 may be any positive
+    // amount below the hard cap. Stage 2 must be the exact remaining supply.
+    // Each call is a separate Founder-signed on-chain transaction.
     receive(msg: VCoinMint) {
         let ctx: Context = context();
         require(ctx.sender == self.owner, "Unauthorized issuance authority");
-        require(self.mintable, "All allocations already issued");
+        require(msg.receiver == self.owner, "Initial receipt must go to Founder wallet");
+        require(self.mintable, "Fixed supply already fully received");
         require(ctx.value >= ton("0.01"), "Insufficient TON for issuance request");
         require(myBalance() >= ton("0.15"), "Master gas reserve is insufficient");
+        require(msg.amount > 0, "Receipt amount must be positive");
         require(self.total_supply + msg.amount <= VCOIN_MAX_SUPPLY, "Fixed supply exceeded");
 
-        if (msg.receiver == self.owner) {
-            require(!self.founder_issued, "Founder allocation already issued");
-            require(msg.amount == VCOIN_FOUNDER_ALLOCATION, "Invalid founder allocation");
-            self.mintTo(msg.receiver, msg.amount, self.owner);
-            self.founder_issued = true;
-        } else if (msg.receiver == self.mining_reserve_wallet) {
-            require(!self.mining_reserve_issued, "Mining allocation already issued");
-            require(msg.amount == VCOIN_MINING_ALLOCATION, "Invalid mining allocation");
-            self.mintTo(msg.receiver, msg.amount, self.owner);
-            self.mining_reserve_issued = true;
-        } else if (msg.receiver == self.treasury_wallet) {
-            require(!self.treasury_issued, "Treasury allocation already issued");
-            require(msg.amount == VCOIN_TREASURY_ALLOCATION, "Invalid treasury allocation");
-            self.mintTo(msg.receiver, msg.amount, self.owner);
-            self.treasury_issued = true;
-        } else if (msg.receiver == self.liquidity_wallet) {
-            require(!self.liquidity_issued, "Liquidity allocation already issued");
-            require(msg.amount == VCOIN_LIQUIDITY_ALLOCATION, "Invalid liquidity allocation");
-            self.mintTo(msg.receiver, msg.amount, self.owner);
-            self.liquidity_issued = true;
-        } else if (msg.receiver == self.ecosystem_wallet) {
-            require(!self.ecosystem_issued, "Ecosystem allocation already issued");
-            require(msg.amount == VCOIN_ECOSYSTEM_ALLOCATION, "Invalid ecosystem allocation");
-            self.mintTo(msg.receiver, msg.amount, self.owner);
-            self.ecosystem_issued = true;
+        if (!self.first_receipt_issued) {
+            require(msg.amount < VCOIN_MAX_SUPPLY, "Stage 1 must leave a Stage 2 remainder");
+            self.first_receipt_amount = msg.amount;
+            self.first_receipt_issued = true;
+            self.mintTo(self.owner, msg.amount, self.owner, 1);
         } else {
-            require(false, "Receiver is not an approved allocation wallet");
-        }
-
-        if (
-            self.founder_issued &&
-            self.mining_reserve_issued &&
-            self.treasury_issued &&
-            self.liquidity_issued &&
-            self.ecosystem_issued
-        ) {
+            require(!self.second_receipt_issued, "Stage 2 already issued");
+            require(
+                msg.amount == VCOIN_MAX_SUPPLY - self.first_receipt_amount,
+                "Stage 2 must equal the exact remaining supply"
+            );
+            self.second_receipt_issued = true;
+            self.mintTo(self.owner, msg.amount, self.owner, 2);
             self.mintable = false;
         }
     }
 
-    // A bounce is accepted only from the deterministic wallet for the
-    // matching fixed allocation. Only that allocation is rolled back, so the
-    // owner can retry it without reissuing any successfully credited share.
+    // Only a natural bounce from the deterministic Founder Jetton wallet may
+    // roll back the matching stage. Stage 2 can be retried without reissuing
+    // Stage 1; a Stage 1 bounce resets the two-stage process.
     bounced(msg: bounced<TokenTransferInternal>) {
         let ctx: Context = context();
-
-        if (ctx.sender == contractAddress(self.walletInit(self.owner))) {
-            require(self.founder_issued, "No founder allocation is pending");
-            require(msg.amount == VCOIN_FOUNDER_ALLOCATION, "Invalid founder bounce amount");
-            require(self.total_supply >= msg.amount, "Founder rollback exceeds supply");
+        require(
+            ctx.sender == contractAddress(self.walletInit(self.owner)),
+            "Untrusted Founder wallet bounce"
+        );
+        require(self.total_supply >= msg.amount, "Bounce rollback exceeds supply");
+        if (msg.query_id == 1) {
+            require(self.first_receipt_issued, "No Stage 1 receipt is pending");
+            require(msg.amount == self.first_receipt_amount, "Invalid Stage 1 bounce amount");
             self.total_supply = self.total_supply - msg.amount;
-            self.founder_issued = false;
-            self.mintable = true;
-        } else if (ctx.sender == contractAddress(self.walletInit(self.mining_reserve_wallet))) {
-            require(self.mining_reserve_issued, "No mining allocation is pending");
-            require(msg.amount == VCOIN_MINING_ALLOCATION, "Invalid mining bounce amount");
-            require(self.total_supply >= msg.amount, "Mining rollback exceeds supply");
+            self.first_receipt_amount = 0;
+            self.first_receipt_issued = false;
+        } else if (msg.query_id == 2) {
+            require(self.second_receipt_issued, "No Stage 2 receipt is pending");
+            require(
+                msg.amount == VCOIN_MAX_SUPPLY - self.first_receipt_amount,
+                "Invalid Stage 2 bounce amount"
+            );
             self.total_supply = self.total_supply - msg.amount;
-            self.mining_reserve_issued = false;
-            self.mintable = true;
-        } else if (ctx.sender == contractAddress(self.walletInit(self.treasury_wallet))) {
-            require(self.treasury_issued, "No treasury allocation is pending");
-            require(msg.amount == VCOIN_TREASURY_ALLOCATION, "Invalid treasury bounce amount");
-            require(self.total_supply >= msg.amount, "Treasury rollback exceeds supply");
-            self.total_supply = self.total_supply - msg.amount;
-            self.treasury_issued = false;
-            self.mintable = true;
-        } else if (ctx.sender == contractAddress(self.walletInit(self.liquidity_wallet))) {
-            require(self.liquidity_issued, "No liquidity allocation is pending");
-            require(msg.amount == VCOIN_LIQUIDITY_ALLOCATION, "Invalid liquidity bounce amount");
-            require(self.total_supply >= msg.amount, "Liquidity rollback exceeds supply");
-            self.total_supply = self.total_supply - msg.amount;
-            self.liquidity_issued = false;
-            self.mintable = true;
-        } else if (ctx.sender == contractAddress(self.walletInit(self.ecosystem_wallet))) {
-            require(self.ecosystem_issued, "No ecosystem allocation is pending");
-            require(msg.amount == VCOIN_ECOSYSTEM_ALLOCATION, "Invalid ecosystem bounce amount");
-            require(self.total_supply >= msg.amount, "Ecosystem rollback exceeds supply");
-            self.total_supply = self.total_supply - msg.amount;
-            self.ecosystem_issued = false;
+            self.second_receipt_issued = false;
             self.mintable = true;
         } else {
-            require(false, "Untrusted allocation bounce sender");
+            require(false, "Unknown receipt stage bounce");
         }
     }
 
-    get fun get_allocation_config(): VCoinAllocationConfig {
-        return VCoinAllocationConfig{
-            founder_wallet: self.owner,
-            mining_reserve_wallet: self.mining_reserve_wallet,
-            treasury_wallet: self.treasury_wallet,
-            liquidity_wallet: self.liquidity_wallet,
-            ecosystem_wallet: self.ecosystem_wallet
+    get fun get_receipt_status(): VCoinReceiptStatus {
+        return VCoinReceiptStatus{
+            first_receipt_amount: self.first_receipt_amount,
+            first_receipt_issued: self.first_receipt_issued,
+            second_receipt_issued: self.second_receipt_issued,
+            remaining_supply: VCOIN_MAX_SUPPLY - self.total_supply
         };
     }
 
-    get fun get_gas_operator_wallet(): Address {
-        return self.gas_operator_wallet;
-    }
-
-    get fun get_allocation_status(): VCoinAllocationStatus {
-        return VCoinAllocationStatus{
-            founder_issued: self.founder_issued,
-            mining_reserve_issued: self.mining_reserve_issued,
-            treasury_issued: self.treasury_issued,
-            liquidity_issued: self.liquidity_issued,
-            ecosystem_issued: self.ecosystem_issued
-        };
-    }
+    get fun get_gas_operator_wallet(): Address { return self.owner; }
 }
